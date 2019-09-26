@@ -1,0 +1,20 @@
+# gets recreated when deleted - android sdk path
+local.properties
+
+# android studio internal files
+.idea
+
+# gradle cache
+.gradle
+
+# android studio internal files
+*.iml
+
+# project build directory
+build
+
+#ignore Mac's system file
+.DS_Store
+
+# android studio generated files capturing the state of the app
+captures/

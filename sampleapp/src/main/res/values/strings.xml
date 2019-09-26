@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Orbit Sample App</string>
+    <string name="error_occur">An error has occur, please try again</string>
+    <string name="retry">Retry</string>
+    <string name="todo_dialog_title">This Dialog displays more information about a todo</string>
+    <string name="todo_dialog_msg">You clicked the todo with id %1$d</string>
+    <string name="all_ok">Ok</string>
+    <string name="user_dialog_title">This Dialog displays more information about a user</string>
+    <string name="user_dialog_msg">This todo has been created by the user %1$s</string>
+</resources>
