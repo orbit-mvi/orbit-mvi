@@ -33,17 +33,14 @@ data class State(val total: Int = 0)
 
 data class AddAction(val number: Int)
 
-class CalculatorMiddleware: Middleware<State> {
-    override val initialState = State()
+class CalculatorMiddleware: Middleware<State, Unit> by middleware(State(), {
 
-    override val orbits = orbits {
-        perform("addition")
-            .on<AddAction>()
-            .withReducer { state, action ->
-                state.copy(state.total + action.number)
-            }
-    }
-}
+    perform("addition")
+        .on<AddAction>()
+        .withReducer { state, action ->
+            state.copy(state.total + action.number)
+        }
+})
 ```
 
 Read more about what makes an [orbit](docs/orbits.md).

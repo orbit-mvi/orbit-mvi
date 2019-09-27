@@ -5,14 +5,12 @@ orbits. This is what binds actions to transformations and reducers, acting as
 the glue between small, distinct functions.
 
 ``` kotlin
-orbits {
-    perform("add random number")
-        .on<AddRandomNumberButtonPressed>()
-        .transform { this.compose(getRandomNumberUseCase) }
-        .withReducer { state, useCaseEvent ->
-            state.copy(state.total + useCaseEvent.number)
-        }
-}
+perform("add random number")
+    .on<AddRandomNumberButtonPressed>()
+    .transform { this.compose(getRandomNumberUseCase) }
+    .withReducer { state, useCaseEvent ->
+        state.copy(state.total + useCaseEvent.number)
+    }
 ```
 
 We can break an orbit into its constituent parts to be able to understand it
