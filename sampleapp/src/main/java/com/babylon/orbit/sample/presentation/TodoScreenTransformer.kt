@@ -18,16 +18,13 @@ class TodoScreenTransformer(
     internal fun loadTodos(actions: Observable<ActionState<TodoScreenState, Any>>) =
         actions.switchMap { todoUseCase.getTodoList() }
 
-    internal fun trackSelectedTodo(
-        actions: Observable<ActionState<TodoScreenState,
-            TodoScreenAction.TodoSelected>>
-    ) =
+    internal fun trackSelectedTodo(actions: Observable<ActionState<TodoScreenState, TodoScreenAction.TodoSelected>>) =
         actions.doOnNext { analyticsManager.trackAnalytics(it.action.todoId.toString()) }
 
     internal fun loadUserProfileSwitches(actions: Observable<ActionState<TodoScreenState, TodoScreenAction.TodoUserSelected>>) =
-        actions.switchMap { actions ->
+        actions.switchMap { actionState ->
             getUserProfileSwitchesUseCase.getUserProfileSwitches()
-                .map { UserProfileExtra(it, actions.action.userId) }
+                .map { UserProfileExtra(it, actionState.action.userId) }
         }
 
     internal fun loadUserProfile(actions: Observable<ActionState<TodoScreenState, UserProfileExtra>>) =
