@@ -17,7 +17,6 @@
 include(
     "orbit",
     "orbit-android",
-    "datalayer",
     "sampleapp"
 )
 

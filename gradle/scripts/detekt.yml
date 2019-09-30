@@ -1,6 +1,9 @@
 autoCorrect: true
 failFast: false
 
+build:
+  maxIssues: 0
+
 formatting:
   MaximumLineLength:
     active: false

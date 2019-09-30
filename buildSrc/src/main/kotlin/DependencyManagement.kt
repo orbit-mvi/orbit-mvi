@@ -40,8 +40,6 @@ object Versions {
 
     const val timber = "4.7.1"
 
-    const val nyTimesGuavaCache = "3.1.1"
-
     // Testing
     const val spek = "1.2.1"
     const val junitPlatform = "1.5.1"
@@ -58,7 +56,7 @@ object ProjectDependencies {
     const val androidLifecycleCompiler = "androidx.lifecycle:lifecycle-compiler:${Versions.androidLifecycles}"
     const val androidSupportLibrary = "androidx.appcompat:appcompat:${Versions.androidSupportLibrary}"
     const val androidSupportLibraryConstrainLayout = "androidx.constraintlayout:constraintlayout:" +
-        "${Versions.androidSupportLibraryConstrainLayout}"
+            Versions.androidSupportLibraryConstrainLayout
     const val androidMaterial = "com.google.android.material:material:${Versions.androidMaterial}"
     const val androidKoinViewModel = "org.koin:koin-androidx-viewmodel:${Versions.androidKoin}"
     const val androidRxBindings = "com.jakewharton.rxbinding3:rxbinding-material:${Versions.androidRxBindings}"
@@ -78,7 +76,6 @@ object ProjectDependencies {
 
     // Debugging tools
     const val timber = "com.jakewharton.timber:timber:${Versions.timber}"
-    const val nyTimesGuavaCache = "com.nytimes.android:cache3:${Versions.nyTimesGuavaCache}"
 
     // Spek test prerequisites
     const val spekApi = "org.jetbrains.spek:spek-api:${Versions.spek}"
