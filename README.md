@@ -1,5 +1,7 @@
 # Orbit Android MVI
 
+![Logo](logo.png)
+
 Orbit is an MVI framework for Android we use at [Babylon Health](https://www.babylonhealth.com).
 
 ## Why Orbit
