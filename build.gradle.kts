@@ -14,8 +14,7 @@
  *  limitations under the License.
  */
 
-import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
-import java.net.URI
+import com.github.benmanes.gradle.versions.updates.*
 
 buildscript {
     repositories {
@@ -36,21 +35,10 @@ plugins {
 
 apply(from = "gradle/scripts/detekt.gradle.kts")
 
-val babylonInternalRepoUrl: String by project
-val artifactoryAndroidReleasesLocalRepoKey: String by project
-
 subprojects {
     repositories {
         google()
         jcenter()
-
-        maven {
-            url = URI(babylonInternalRepoUrl)
-            credentials {
-                username = "babylon-android-app"
-                password = artifactoryAndroidReleasesLocalRepoKey
-            }
-        }
     }
 
     apply(from = "$rootDir/gradle/scripts/tests.gradle.kts")

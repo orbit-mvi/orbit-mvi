@@ -16,28 +16,6 @@
 
 apply plugin: 'maven-publish'
 
-//ext.prepareJavadocTask = { includeSet, excludeSet = [] ->
-//    android {
-//        libraryVariants.all { variant ->
-//            if (variant.name == 'release') {
-//                def taskJavadoc = task('releaseJavadocs', type: Javadoc) {
-//                    failOnError true
-//                    source = variant.javaCompiler.source
-//                    classpath = files(((Object) android.bootClasspath.join(File.pathSeparator)))
-//                    classpath += variant.javaCompiler.classpath
-//                    includes = includeSet
-//                    excludes = excludeSet
-//                }
-//                task('releaseJavadocsJar', type: Jar) {
-//                    dependsOn(taskJavadoc)
-//                    classifier = 'javadoc'
-//                    from taskJavadoc.destinationDir
-//                }
-//            }
-//        }
-//    }
-//}
-
 task sourcesJar(type: Jar) {
     if (project.plugins.findPlugin('com.android.library')) {
         from android.sourceSets.main.java.srcDirs
@@ -55,18 +33,10 @@ publishing {
     repositories {
         maven {
             name = 'public'
-            url "$babylonSdkRepoUrl"
+            url "TODO"
             credentials {
-                username artifactory_username
-                password artifactory_password
-            }
-        }
-        maven {
-            name = 'internal'
-            url "$babylonInternalRepoUrl"
-            credentials {
-                username artifactory_username
-                password artifactory_password
+                username "TODO"
+                password "TODO"
             }
         }
     }
@@ -98,11 +68,5 @@ publishing {
                 }
             }
         }
-//            mapping(MavenPublication) {
-//                groupId "$sdkArtifactGroupId"
-//                artifactId "${project.name}-mapping"
-//                version "$sdkArtifactVersion"
-//                artifact "$buildDir/outputs/mapping/release/mapping.txt"
-//            }
     }
 }

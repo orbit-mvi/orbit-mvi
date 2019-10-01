@@ -44,7 +44,6 @@ object Versions {
     const val spek = "1.2.1"
     const val junitPlatform = "1.5.1"
     const val assertk = "0.19"
-    const val mockito = "3.0.0"
     const val mockitoKotlin = "2.1.0"
 }
 
@@ -82,7 +81,6 @@ object ProjectDependencies {
     const val spekJunitPlatformEngine = "org.jetbrains.spek:spek-junit-platform-engine:${Versions.spek}"
     const val junitPlatformConsole = "org.junit.platform:junit-platform-console:${Versions.junitPlatform}"
     const val assertk = "com.willowtreeapps.assertk:assertk-jvm:${Versions.assertk}"
-    const val mockito = "org.mockito:mockito-core:${Versions.mockito}"
     const val mockitoKotlin = "com.nhaarman.mockitokotlin2:mockito-kotlin:${Versions.mockitoKotlin}"
 }
 
@@ -96,7 +94,6 @@ object GroupedDependencies {
         ProjectDependencies.kotlinReflect,
         ProjectDependencies.spekApi,
         ProjectDependencies.assertk,
-        ProjectDependencies.mockito,
         ProjectDependencies.mockitoKotlin
     )
 

@@ -70,6 +70,4 @@ dependencies {
     implementation(ProjectDependencies.rxAndroid)
     implementation(ProjectDependencies.autodispose)
     implementation(ProjectDependencies.autodisposeArchComponents)
-
-    implementation(ProjectDependencies.timber)
 }
