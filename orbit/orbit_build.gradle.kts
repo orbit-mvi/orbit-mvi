@@ -34,6 +34,12 @@ dependencies {
     GroupedDependencies.spekTestsRuntime.forEach { testRuntimeOnly(it) }
 }
 
+tasks.withType<Test> {
+    useJUnitPlatform {
+        includeEngines = setOf("spek2")
+    }
+}
+
 java {
     sourceCompatibility = JavaVersion.VERSION_1_7
     targetCompatibility = JavaVersion.VERSION_1_7

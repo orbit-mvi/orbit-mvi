@@ -41,9 +41,9 @@ object Versions {
     const val timber = "4.7.1"
 
     // Testing
-    const val spek = "1.2.1"
-    const val junitPlatform = "1.5.1"
-    const val assertk = "0.19"
+    const val spek = "2.0.7"
+    const val junitPlatform = "1.5.2"
+    const val assertJ = "2.9.1"
     const val mockitoKotlin = "2.1.0"
 }
 
@@ -77,10 +77,10 @@ object ProjectDependencies {
     const val timber = "com.jakewharton.timber:timber:${Versions.timber}"
 
     // Spek test prerequisites
-    const val spekApi = "org.jetbrains.spek:spek-api:${Versions.spek}"
-    const val spekJunitPlatformEngine = "org.jetbrains.spek:spek-junit-platform-engine:${Versions.spek}"
+    const val spekDsl = "org.spekframework.spek2:spek-dsl-jvm:${Versions.spek}"
+    const val spekRunner = "org.spekframework.spek2:spek-runner-junit5:${Versions.spek}"
     const val junitPlatformConsole = "org.junit.platform:junit-platform-console:${Versions.junitPlatform}"
-    const val assertk = "com.willowtreeapps.assertk:assertk-jvm:${Versions.assertk}"
+    const val assertJ = "org.assertj:assertj-core:${Versions.assertJ}"
     const val mockitoKotlin = "com.nhaarman.mockitokotlin2:mockito-kotlin:${Versions.mockitoKotlin}"
 }
 
@@ -92,13 +92,13 @@ object PluginDependencies {
 object GroupedDependencies {
     val spekTestsImplementation = listOf(
         ProjectDependencies.kotlinReflect,
-        ProjectDependencies.spekApi,
-        ProjectDependencies.assertk,
+        ProjectDependencies.spekDsl,
+        ProjectDependencies.assertJ,
         ProjectDependencies.mockitoKotlin
     )
 
     val spekTestsRuntime = listOf(
         ProjectDependencies.junitPlatformConsole,
-        ProjectDependencies.spekJunitPlatformEngine
+        ProjectDependencies.spekRunner
     )
 }

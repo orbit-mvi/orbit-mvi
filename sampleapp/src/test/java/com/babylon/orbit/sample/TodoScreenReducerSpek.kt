@@ -1,101 +1,120 @@
 package com.babylon.orbit.sample
 
-import assertk.assertThat
-import assertk.assertions.isEqualTo
 import com.babylon.orbit.sample.domain.todo.Todo
 import com.babylon.orbit.sample.domain.todo.TodoStatus
 import com.babylon.orbit.sample.presentation.ScreenState
 import com.babylon.orbit.sample.presentation.TodoScreenAction
 import com.babylon.orbit.sample.presentation.TodoScreenReducer
 import com.babylon.orbit.sample.presentation.TodoScreenState
-import org.jetbrains.spek.api.Spek
-import org.jetbrains.spek.api.dsl.given
-import org.jetbrains.spek.api.dsl.it
-import org.jetbrains.spek.api.dsl.on
+import org.assertj.core.api.Assertions.assertThat
+import org.spekframework.spek2.Spek
+import org.spekframework.spek2.style.gherkin.Feature
 import java.io.IOException
 
 class TodoScreenReducerSpek : Spek({
     val reducer by memoized { TodoScreenReducer() }
 
-    given("a TodoStatus.Loading event") {
-        val event = TodoStatus.Loading
+    Feature("todo screen reducers") {
+        Scenario("reducing load todos loading event") {
+            lateinit var todoScreenState: TodoScreenState
+            lateinit var event: TodoStatus
 
-        lateinit var todoScreenState: TodoScreenState
-        on("applying the reducer") {
-            todoScreenState = reducer.reduceLoadTodos(TodoScreenState(), event)
+            Given("a TodoStatus.Loading event") {
+                event = TodoStatus.Loading
+            }
 
-            it("should apply the correct state") {
+            When("applying the reducer") {
+                todoScreenState = reducer.reduceLoadTodos(TodoScreenState(), event)
+            }
+
+            Then("should apply the correct state") {
                 assertThat(todoScreenState).isEqualTo(
-                    TodoScreenState(screenState = ScreenState.Loading)
+                        TodoScreenState(screenState = ScreenState.Loading)
                 )
             }
         }
-    }
 
-    given("a TodoStatus.Failure event") {
-        val event = TodoStatus.Failure(IOException())
+        Scenario("reducing load todos failure event") {
+            lateinit var todoScreenState: TodoScreenState
+            lateinit var event: TodoStatus
 
-        lateinit var todoScreenState: TodoScreenState
-        on("applying the reducer") {
-            todoScreenState = reducer.reduceLoadTodos(TodoScreenState(), event)
+            Given("a TodoStatus.Failure event") {
+                event = TodoStatus.Failure(IOException())
+            }
 
-            it("should apply the correct state") {
+            When("applying the reducer") {
+                todoScreenState = reducer.reduceLoadTodos(TodoScreenState(), event)
+            }
+
+            Then("should apply the correct state") {
                 assertThat(todoScreenState).isEqualTo(
-                    TodoScreenState(screenState = ScreenState.Error)
+                        TodoScreenState(screenState = ScreenState.Error)
                 )
             }
         }
-    }
 
-    given("a TodoStatus.Failure event") {
-        val event = TodoStatus.Result(DUMMY_TODO_LIST)
+        Scenario("a TodoStatus.Failure event") {
+            lateinit var todoScreenState: TodoScreenState
+            lateinit var event: TodoStatus
 
-        lateinit var todoScreenState: TodoScreenState
-        on("applying the reducer") {
-            todoScreenState = reducer.reduceLoadTodos(TodoScreenState(), event)
+            Given("a TodoStatus.Failure event") {
+                event = TodoStatus.Result(DUMMY_TODO_LIST)
+            }
 
-            it("should apply the correct state") {
+            When("applying the reducer") {
+                todoScreenState = reducer.reduceLoadTodos(TodoScreenState(), event)
+            }
+
+            Then("should apply the correct state") {
                 assertThat(todoScreenState).isEqualTo(
-                    TodoScreenState(screenState = ScreenState.Ready, todoList = DUMMY_TODO_LIST)
+                        TodoScreenState(screenState = ScreenState.Ready, todoList = DUMMY_TODO_LIST)
                 )
             }
         }
-    }
 
-    given("a TodoScreenAction.TodoSelected event") {
-        val todoId = 2
-        val event = TodoScreenAction.TodoSelected(todoId)
+        Scenario("a TodoScreenAction.TodoSelected event") {
+            lateinit var todoScreenState: TodoScreenState
+            lateinit var event: TodoScreenAction.TodoSelected
+            val todoId = 2
 
-        lateinit var todoScreenState: TodoScreenState
-        on("applying the reducer") {
-            todoScreenState = reducer.reduceLoadSelectedTodo(TodoScreenState(), event)
+            Given("a TodoScreenAction.TodoSelected event") {
+                event = TodoScreenAction.TodoSelected(todoId)
+            }
 
-            it("should apply the correct state") {
+            When("applying the reducer") {
+                todoScreenState = reducer.reduceLoadSelectedTodo(TodoScreenState(), event)
+            }
+
+            Then("should apply the correct state") {
                 assertThat(todoScreenState).isEqualTo(
-                    TodoScreenState(todoSelectedId = todoId)
+                        TodoScreenState(todoSelectedId = todoId)
                 )
             }
         }
-    }
 
-    given("a state with a selected todo event") {
-        val todoId = 2
+        Scenario("a state with a selected todo event") {
+            lateinit var todoScreenState: TodoScreenState
+            val todoId = 2
 
-        lateinit var todoScreenState: TodoScreenState
-        on("applying the reducer") {
-            todoScreenState = reducer.reduceDismissSelectedTodo(
-                TodoScreenState(todoSelectedId = todoId)
-            )
+            Given("a state with a selected todo event") {
+                todoScreenState = TodoScreenState(todoSelectedId = todoId)
+            }
 
-            it("should apply the correct state") {
+            When("applying the reducer") {
+                todoScreenState = reducer.reduceDismissSelectedTodo(
+                        TodoScreenState(todoSelectedId = todoId)
+                )
+            }
+
+            Then("should apply the correct state") {
                 assertThat(todoScreenState).isEqualTo(TodoScreenState())
             }
         }
     }
 })
 
-val DUMMY_TODO_LIST = listOf(
-    Todo(1, 1, "first todo"),
-    Todo(2, 2, "second todo"),
-    Todo(3, 3, "third todo")
+private val DUMMY_TODO_LIST = listOf(
+        Todo(1, 1, "first todo"),
+        Todo(2, 2, "second todo"),
+        Todo(3, 3, "third todo")
 )
