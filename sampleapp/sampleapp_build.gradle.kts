@@ -76,6 +76,9 @@ dependencies {
 
     implementation(ProjectDependencies.timber)
 
+    implementation(ProjectDependencies.groupie)
+    implementation(ProjectDependencies.groupieKotlinAndroidExtensions)
+
     // Testing
     GroupedDependencies.spekTestsImplementation.forEach { testImplementation(it) }
     GroupedDependencies.spekTestsRuntime.forEach { testRuntimeOnly(it) }

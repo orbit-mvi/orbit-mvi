@@ -4,7 +4,9 @@
     <string name="retry">Retry</string>
     <string name="todo_dialog_title">This Dialog displays more information about a todo</string>
     <string name="todo_dialog_msg">You clicked the todo with id %1$d</string>
-    <string name="all_ok">Ok</string>
     <string name="user_dialog_title">This Dialog displays more information about a user</string>
     <string name="user_dialog_msg">This todo has been created by the user %1$s</string>
+    <string name="library_name">Orbit Android MVI</string>
+    <string name="todo_id">The todo id is %d</string>
+    <string name="todo_user_id">The user\'s todo id is %d</string>
 </resources>

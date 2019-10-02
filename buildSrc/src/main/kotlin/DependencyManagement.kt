@@ -40,6 +40,8 @@ object Versions {
 
     const val timber = "4.7.1"
 
+    const val groupie = "2.6.0"
+
     // Testing
     const val spek = "2.0.7"
     const val junitPlatform = "1.5.2"
@@ -72,6 +74,9 @@ object ProjectDependencies {
     const val rxAndroid = "io.reactivex.rxjava2:rxandroid:${Versions.rxAndroid}"
     const val autodispose = "com.uber.autodispose:autodispose:${Versions.autodispose}"
     const val autodisposeArchComponents = "com.uber.autodispose:autodispose-android-archcomponents:${Versions.autodispose}"
+
+    const val groupie = "com.xwray:groupie:${Versions.groupie}"
+    const val groupieKotlinAndroidExtensions = "com.xwray:groupie-kotlin-android-extensions:${Versions.groupie}"
 
     // Debugging tools
     const val timber = "com.jakewharton.timber:timber:${Versions.timber}"
