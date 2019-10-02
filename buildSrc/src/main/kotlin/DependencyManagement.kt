@@ -16,16 +16,16 @@
 
 object Versions {
 
-    const val gradleVersionsPlugin = "0.23.0"
+    const val gradleVersionsPlugin = "0.25.0"
     const val gradleAndroidPlugin = "3.5.0"
     const val markdownLintPlugin = "0.5.0"
 
     const val kotlin = "1.3.50"
 
-    const val androidLifecycles = "2.0.0"
-    const val androidSupportLibrary = "1.0.0"
-    const val androidSupportLibraryConstrainLayout = "1.1.3"
-    const val androidMaterial = "1.1.0-alpha09"
+    const val androidLifecycles = "2.1.0"
+    const val androidAppCompat = "1.1.0"
+    const val androidConstrainLayout = "1.1.3"
+    const val androidMaterial = "1.1.0-alpha10"
     const val androidKoin = "2.0.1"
     const val androidRxBindings = "3.0.0"
 
@@ -36,7 +36,7 @@ object Versions {
     const val rxRelay = "2.1.1"
     const val rxKotlin = "2.4.0"
     const val rxAndroid = "2.1.1"
-    const val autodispose = "1.3.0"
+    const val autodispose = "1.4.0"
 
     const val timber = "4.7.1"
 
@@ -45,7 +45,7 @@ object Versions {
     // Testing
     const val spek = "2.0.7"
     const val junitPlatform = "1.5.2"
-    const val assertJ = "2.9.1"
+    const val assertJ = "3.13.2"
     const val mockitoKotlin = "2.1.0"
 }
 
@@ -55,9 +55,8 @@ object ProjectDependencies {
     // Android libraries
     const val androidLifecycleComponents = "androidx.lifecycle:lifecycle-extensions:${Versions.androidLifecycles}"
     const val androidLifecycleCompiler = "androidx.lifecycle:lifecycle-compiler:${Versions.androidLifecycles}"
-    const val androidSupportLibrary = "androidx.appcompat:appcompat:${Versions.androidSupportLibrary}"
-    const val androidSupportLibraryConstrainLayout = "androidx.constraintlayout:constraintlayout:" +
-            Versions.androidSupportLibraryConstrainLayout
+    const val androidAppCompat = "androidx.appcompat:appcompat:${Versions.androidAppCompat}"
+    const val androidConstrainLayout = "androidx.constraintlayout:constraintlayout:${Versions.androidConstrainLayout}"
     const val androidMaterial = "com.google.android.material:material:${Versions.androidMaterial}"
     const val androidKoinViewModel = "org.koin:koin-androidx-viewmodel:${Versions.androidKoin}"
     const val androidRxBindings = "com.jakewharton.rxbinding3:rxbinding-material:${Versions.androidRxBindings}"
