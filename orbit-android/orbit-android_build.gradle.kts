@@ -22,14 +22,12 @@ plugins {
     kotlin("kapt")
 }
 
-apply(from = "$rootDir/gradle/scripts/artifact-publishing-common.gradle")
-
-val sdkArtifactGroupId: String by project
+apply(from = "$rootDir/gradle/scripts/bintray.gradle.kts")
 
 android {
     compileSdkVersion(29)
     defaultConfig {
-        minSdkVersion(19)
+        minSdkVersion(21)
         targetSdkVersion(29)
         versionCode = 1
         versionName = "1.0"
@@ -44,9 +42,6 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
-
-        kotlinOptions.freeCompilerArgs += "-module-name"
-        kotlinOptions.freeCompilerArgs += "$sdkArtifactGroupId.${project.name}"
     }
 }
 

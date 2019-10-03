@@ -23,8 +23,6 @@ plugins {
     id("kotlin-android-extensions")
 }
 
-val sdkArtifactGroupId: String by project
-
 android {
     compileSdkVersion(29)
     defaultConfig {
@@ -59,8 +57,8 @@ dependencies {
     implementation(kotlin("stdlib-jdk8"))
 
     implementation(ProjectDependencies.androidLifecycleComponents)
-    implementation(ProjectDependencies.androidSupportLibrary)
-    implementation(ProjectDependencies.androidSupportLibraryConstrainLayout)
+    implementation(ProjectDependencies.androidAppCompat)
+    implementation(ProjectDependencies.androidConstrainLayout)
     kapt(ProjectDependencies.androidLifecycleCompiler)
     implementation(ProjectDependencies.androidMaterial)
     // Koin Android ViewModel features

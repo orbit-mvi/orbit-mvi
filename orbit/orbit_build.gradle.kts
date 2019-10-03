@@ -19,7 +19,7 @@ plugins {
     kotlin("jvm")
 }
 
-apply(from = "$rootDir/gradle/scripts/artifact-publishing-common.gradle")
+apply(from = "$rootDir/gradle/scripts/bintray.gradle.kts")
 
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
@@ -47,3 +47,12 @@ java {
 
 tasks.getByName("check").dependsOn(rootProject.tasks.getByName("detekt"))
 tasks.getByName("check").dependsOn(rootProject.tasks.getByName("markdownlint"))
+
+// Fix lack of source code when publishing pure Kotlin projects
+// See https://github.com/novoda/bintray-release/issues/262
+tasks.whenTaskAdded {
+    if (name == "generateSourcesJarForMavenPublication") {
+        this as Jar
+        from(sourceSets.main.get().allSource)
+    }
+}
