@@ -1,5 +1,7 @@
 # Orbit Android MVI
 
+[![CI status](https://github.com/Babylonpartners/orbit-android-mvi/workflows/Android%20CI/badge.svg)](https://github.com/Babylonpartners/orbit-android-mvi/actions)
+
 ![Logo](images/logo.png)
 
 Orbit is an MVI framework for Android we use at [Babylon Health](https://www.babylonhealth.com).
