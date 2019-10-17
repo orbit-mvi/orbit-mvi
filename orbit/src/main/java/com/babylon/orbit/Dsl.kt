@@ -87,6 +87,14 @@ open class OrbitsBuilder<STATE : Any, EVENT : Any>(private val initialState: STA
                     }
             }
 
+        fun sideEffect(sideEffect: () -> Unit) =
+            this@OrbitsBuilder.Transformer { rawActions ->
+                upstreamTransformer(rawActions.observeOn(Schedulers.io()))
+                    .doOnNext {
+                        sideEffect()
+                    }
+            }
+
         fun withReducer(reducer: (STATE, ACTION) -> STATE) {
             this@OrbitsBuilder.orbits += { rawActions, _ ->
                 upstreamTransformer(rawActions)
@@ -126,6 +134,23 @@ open class OrbitsBuilder<STATE : Any, EVENT : Any>(private val initialState: STA
                         sideEffect(this@OrbitsBuilder.sideEffectRelay, it)
                     }
             }
+
+
+        fun sideEffect(sideEffect: (SideEffectRelay<EVENT>) -> Unit) =
+                this@OrbitsBuilder.Transformer { rawActions ->
+                    upstreamTransformer(rawActions.observeOn(Schedulers.io()))
+                            .doOnNext {
+                                sideEffect(this@OrbitsBuilder.sideEffectRelay)
+                            }
+                }
+
+        fun sideEffect(sideEffect: () -> Unit) =
+                this@OrbitsBuilder.Transformer { rawActions ->
+                    upstreamTransformer(rawActions.observeOn(Schedulers.io()))
+                            .doOnNext {
+                                sideEffect()
+                            }
+                }
 
         fun <T : Any> loopBack(mapper: (ACTION) -> T) {
             this@OrbitsBuilder.orbits += { upstream, inputRelay ->
