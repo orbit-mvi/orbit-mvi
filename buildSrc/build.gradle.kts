@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 /*
  * Copyright 2019 Babylon Partners Limited
  *
@@ -20,4 +22,10 @@ plugins {
 
 repositories {
     jcenter()
+}
+
+tasks.withType(KotlinCompile::class.java).all {
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
 }
