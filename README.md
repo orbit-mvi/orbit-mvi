@@ -1,6 +1,8 @@
 # Orbit Android MVI
 
 [![CI status](https://github.com/babylonhealth/orbit-android-mvi/workflows/Android%20CI/badge.svg)](https://github.com/babylonhealth/orbit-android-mvi/actions)
+[![Download](https://api.bintray.com/packages/babylonpartners/maven/orbit/images/download.svg)](https://bintray.com/babylonpartners/maven/orbit/_latestVersion)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE.md)
 
 ![Logo](images/logo.png)
 
@@ -22,6 +24,8 @@ We drew inspiration from [Managing State with RxJava by Jake Wharton](https://ww
 For more details about MVI and our implementation, read our [overview](docs/overview.md).
 
 ## Getting started
+
+[![Download](https://api.bintray.com/packages/babylonpartners/maven/orbit/images/download.svg)](https://bintray.com/babylonpartners/maven/orbit/_latestVersion)
 
 Include the following dependencies in your build.gradle.kts file:
 
