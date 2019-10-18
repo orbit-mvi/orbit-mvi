@@ -1,6 +1,6 @@
 # Orbit Android MVI
 
-[![CI status](https://github.com/Babylonpartners/orbit-android-mvi/workflows/Android%20CI/badge.svg)](https://github.com/Babylonpartners/orbit-android-mvi/actions)
+[![CI status](https://github.com/babylonhealth/orbit-android-mvi/workflows/Android%20CI/badge.svg)](https://github.com/babylonhealth/orbit-android-mvi/actions)
 
 ![Logo](images/logo.png)
 
@@ -58,7 +58,7 @@ requests to us.
 ## Versioning
 
 We use [SemVer](http://semver.org/) for versioning. For the versions
-available, see the [tags on this repository](https://github.com/Babylonpartners/orbit-android-mvi/tags).
+available, see the [tags on this repository](https://github.com/babylonhealth/orbit-android-mvi/tags).
 
 ## License
 
