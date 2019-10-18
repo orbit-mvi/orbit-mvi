@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 /*
  * Copyright 2019 Babylon Partners Limited
  *
@@ -41,8 +43,14 @@ tasks.withType<Test> {
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_1_7
-    targetCompatibility = JavaVersion.VERSION_1_7
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+tasks.withType(KotlinCompile::class.java).all {
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
 }
 
 tasks.getByName("check").dependsOn(rootProject.tasks.getByName("detekt"))
