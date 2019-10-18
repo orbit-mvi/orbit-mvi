@@ -129,16 +129,15 @@ open class OrbitsBuilder<STATE : Any, EVENT : Any>(private val initialState: STA
 
         fun sideEffect(sideEffect: (SideEffectRelay<EVENT>, ACTION) -> Unit) =
             this@OrbitsBuilder.Transformer { rawActions ->
-                upstreamTransformer(rawActions.observeOn(Schedulers.io()))
+                upstreamTransformer(rawActions)
                     .doOnNext {
                         sideEffect(this@OrbitsBuilder.sideEffectRelay, it)
                     }
             }
 
-
         fun sideEffect(sideEffect: (SideEffectRelay<EVENT>) -> Unit) =
                 this@OrbitsBuilder.Transformer { rawActions ->
-                    upstreamTransformer(rawActions.observeOn(Schedulers.io()))
+                    upstreamTransformer(rawActions)
                             .doOnNext {
                                 sideEffect(this@OrbitsBuilder.sideEffectRelay)
                             }
@@ -146,7 +145,7 @@ open class OrbitsBuilder<STATE : Any, EVENT : Any>(private val initialState: STA
 
         fun sideEffect(sideEffect: () -> Unit) =
                 this@OrbitsBuilder.Transformer { rawActions ->
-                    upstreamTransformer(rawActions.observeOn(Schedulers.io()))
+                    upstreamTransformer(rawActions)
                             .doOnNext {
                                 sideEffect()
                             }
