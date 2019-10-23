@@ -16,13 +16,13 @@
 
 package com.babylon.orbit
 
-import com.jakewharton.rxrelay2.PublishRelay
 import io.reactivex.Observable
+import io.reactivex.subjects.PublishSubject
 
-typealias TransformerFunction<STATE> = (Observable<ActionState<STATE, Any>>, PublishRelay<Any>) -> (Observable<(STATE) -> STATE>)
+typealias TransformerFunction<STATE> = (Observable<ActionState<STATE, Any>>, PublishSubject<Any>) -> (Observable<(STATE) -> STATE>)
 
-interface Middleware<STATE : Any, EVENT : Any> {
+interface Middleware<STATE : Any, SIDE_EFFECT : Any> {
     val initialState: STATE
     val orbits: List<TransformerFunction<STATE>>
-    val sideEffect: Observable<EVENT>
+    val sideEffect: Observable<SIDE_EFFECT>
 }

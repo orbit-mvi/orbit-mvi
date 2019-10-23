@@ -12,7 +12,6 @@ import com.babylon.orbit.sample.presentation.ui.SpaceItemDecoration
 import com.babylon.orbit.sample.presentation.ui.ToDoItem
 import com.babylon.orbit.sample.presentation.ui.show
 import com.babylon.orbit.sample.presentation.ui.throttledClick
-import com.uber.autodispose.android.lifecycle.AndroidLifecycleScopeProvider
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.GroupieViewHolder
 import com.xwray.groupie.Section
@@ -23,8 +22,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class TodoActivity : AppCompatActivity() {
 
-    private val viewModel by viewModel<TodoActivityViewModel>()
-    private val scopeProvider: AndroidLifecycleScopeProvider by lazy { AndroidLifecycleScopeProvider.from(this) }
+    private val viewModel by viewModel<TodoViewModel>()
 
     private val actionPublisher = PublishSubject.create<TodoScreenAction>()
     private var todoDialog: AppCompatDialog? = null
@@ -60,7 +58,7 @@ class TodoActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        viewModel.connect(scopeProvider, actions, ::render)
+        viewModel.connect(this, actions, ::render)
     }
 
     private fun render(state: TodoScreenState) {
@@ -69,7 +67,13 @@ class TodoActivity : AppCompatActivity() {
         recyclerView.show(state.screenState == ScreenState.Ready)
 
         if (state.screenState == ScreenState.Ready) {
-            state.todoList?.map { todo -> ToDoItem(applicationContext.resources, actionPublisher, todo) }?.let {
+            state.todoList?.map { todo ->
+                ToDoItem(
+                    applicationContext.resources,
+                    actionPublisher,
+                    todo
+                )
+            }?.let {
                 section.update(it)
             }
             state.todoSelectedId?.let { showTodoDialog(it) }

@@ -16,16 +16,21 @@
 
 package com.babylon.orbit
 
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
-import com.uber.autodispose.android.lifecycle.AndroidLifecycleScopeProvider
-import com.uber.autodispose.autoDispose
+import com.uber.autodispose.android.lifecycle.autoDispose
 import io.reactivex.Observable
 
-abstract class OrbitViewModel<STATE : Any, EVENT : Any>(
-    middleware: Middleware<STATE, EVENT>
+abstract class OrbitViewModel<STATE : Any, SIDE_EFFECT : Any>(
+    middleware: Middleware<STATE, SIDE_EFFECT>
 ) : ViewModel() {
 
-    private val container: AndroidOrbitContainer<STATE, EVENT> = AndroidOrbitContainer(middleware)
+    constructor(
+        initialState: STATE,
+        init: OrbitsBuilder<STATE, SIDE_EFFECT>.() -> Unit
+    ) : this(middleware(initialState, init))
+
+    private val container: AndroidOrbitContainer<STATE, SIDE_EFFECT> = AndroidOrbitContainer(middleware)
 
     val state: STATE
         get() = container.state
@@ -37,22 +42,22 @@ abstract class OrbitViewModel<STATE : Any, EVENT : Any>(
      * For example onStart -> onStop, onResume -> onPause, onCreate -> onDestroy.
      */
     fun connect(
-        scoper: AndroidLifecycleScopeProvider,
+        lifecycleOwner: LifecycleOwner,
         actions: Observable<out Any>,
         stateConsumer: (STATE) -> Unit,
-        eventConsumer: (EVENT) -> Unit = {}
+        sideEffectConsumer: (SIDE_EFFECT) -> Unit = {}
     ) {
 
         container.orbit
-            .autoDispose(scoper)
+            .autoDispose(lifecycleOwner)
             .subscribe(stateConsumer)
 
-        actions.autoDispose(scoper)
-            .subscribe(container.inputRelay::accept)
+        actions.autoDispose(lifecycleOwner)
+            .subscribe(container.inputRelay::onNext)
 
         container.sideEffect
-            .autoDispose(scoper)
-            .subscribe(eventConsumer)
+            .autoDispose(lifecycleOwner)
+            .subscribe(sideEffectConsumer)
     }
 
     override fun onCleared() {

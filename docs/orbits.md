@@ -8,9 +8,7 @@ the glue between small, distinct functions.
 perform("add random number")
     .on<AddRandomNumberButtonPressed>()
     .transform { this.compose(getRandomNumberUseCase) }
-    .withReducer { state, useCaseEvent ->
-        state.copy(state.total + useCaseEvent.number)
-    }
+    .withReducer { state.copy(currentState.total + event.number) }
 ```
 
 We can break an orbit into its constituent parts to be able to understand it
@@ -38,7 +36,7 @@ actions.
 ## Transformers
 
 ``` kotlin
-    .transform { this.compose(getRandomNumberUseCase) }
+.transform { this.compose(getRandomNumberUseCase) }
 ```
 
 Next we apply transformations to the action observable within the lambda here.
@@ -56,9 +54,9 @@ observable. There are three possible reactions:
 ### Reducers
 
 ``` kotlin
-    .withReducer { state, useCaseEvent ->
-        state.copy(state.total + useCaseEvent.number)
-    }
+.withReducer {
+    state.copy(currentState.total + event.number)
+}
 ```
 
 We can apply the `withReducer` function to a transformed observable in order to
@@ -68,24 +66,18 @@ Reducers can also be applied directly to an action observable, without any
 transformations beforehand:
 
 ``` kotlin
-orbits {
-    perform("addition")
-        .on<AddAction>()
-        .withReducer { state, action ->
-            state.copy(state.total + action.number)
-        }
-}
+perform("addition")
+    .on<AddAction>()
+    .withReducer { state.copy(currentState.total + event.number) }
 ```
 
 ### Ignored events
 
 ``` kotlin
-orbits {
-    perform("add random number")
-        .on<AddRandomNumberButtonPressed>()
-        .transform { this.doOnNext(…) }
-        .ignoringEvents()
-}
+perform("add random number")
+    .on<AddRandomNumberButtonPressed>()
+    .transform { this.map{ … } }
+    .ignoringEvents()
 ```
 
 If we have an orbit that mainly invokes side effects in response to an action
@@ -94,20 +86,76 @@ and does not need to produce a new state, we can ignore it.
 ### Loopbacks
 
 ``` kotlin
-orbits {
-    perform("add random number")
-        .on<AddAction>()
-        .transform { this.compose(getRandomNumberUseCase) }
-        .loopBack { it }
+perform("add random number")
+    .on<AddAction>()
+    .transform { this.compose(getRandomNumberUseCase) }
+    .loopBack { event }
 
-    perform("reduce add random number")
-        .on<GetRandomNumberUseCaseEvent>()
-        .withReducer { state, event ->
-            state.copy(state.total + event.number)
-        }
-}
+perform("reduce add random number")
+    .on<GetRandomNumberUseCaseEvent>()
+    .withReducer { state.copy(currentState.total + event.number) }
 ```
 
 Loopbacks allow you to create feedback loops where events coming from one orbit
 can create new actions that feed into the system. These are useful to represent
 a cascade of events.
+
+### Side effects
+
+We cannot run away from the fact that working with Android will
+inherently have some side effects. We've made side effects a first class
+citizen in Orbit as we believe that it's better to have a full, clear
+view of what side effects are possible in a particular view model.
+
+This functionality is commonly used for things like truly one-off events,
+navigation, logging, analytics etc.
+
+It comes in two flavors:
+
+1. `sideEffect` lets us perform side effects that are not intended for
+   consumption outside the Orbit container.
+1. `postSideEffect` sends the value returned from the closure to a relay
+   that can be subscribed when connecting to the view model. Use this for
+   view-related side effects like Toasts, Navigation, etc.
+
+``` kotlin
+sealed class SideEffect {
+    data class Toast(val text: String) : SideEffect()
+    data class Navigate(val screen: Screen) : SideEffect()
+}
+
+OrbitViewModel<State, SideEffect>(State(), {
+
+    perform("side effect straight on the incoming action")
+        .on<SomeAction>()
+        .sideEffect { state, event ->
+            Timber.log(inputState)
+            Timber.log(action)
+        }
+        .ignoringEvents()
+
+    perform("side effect after transformation")
+        .on<OtherAction>()
+        .transform { this.compose(getRandomNumberUseCase) }
+        .sideEffect { Timber.log(event) }
+        .ignoringEvents()
+
+    perform("add random number")
+        .on<YetAnotherAction>()
+        .transform { this.compose(getRandomNumberUseCase) }
+        .postSideEffect { SideEffect.Toast(event.toString()) }
+        .postSideEffect { SideEffect.Navigate(Screen.Home) }
+        .ignoringEvents()
+
+    perform("post side effect straight on the incoming action")
+        .on<NthAction>()
+        .postSideEffect { SideEffect.Toast(inputState.toString()) }
+        .postSideEffect { SideEffect.Toast(action.toString()) }
+        .postSideEffect { SideEffect.Navigate(Screen.Home) }
+        .ignoringEvents()
+})
+```
+
+The `OrbitContainer` hosted in the `OrbitViewModel` provides a relay that
+you can subscribe through the `connect` method on `OrbitViewModel` in order
+to receive view-related side effects.

@@ -9,10 +9,10 @@ import com.babylon.orbit.sample.network.TodoService
 import com.babylon.orbit.sample.network.TodoServiceImpl
 import com.babylon.orbit.sample.network.UserService
 import com.babylon.orbit.sample.network.UserServiceImpl
-import com.babylon.orbit.sample.presentation.TodoActivityViewModel
-import com.babylon.orbit.sample.presentation.TodoMiddleware
 import com.babylon.orbit.sample.presentation.TodoScreenReducer
+import com.babylon.orbit.sample.presentation.TodoScreenSideEffect
 import com.babylon.orbit.sample.presentation.TodoScreenTransformer
+import com.babylon.orbit.sample.presentation.TodoViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
@@ -33,11 +33,11 @@ val domainModule = module {
 
 val presentationModule = module {
 
-    single { TodoScreenTransformer(get(), get(), get(), get()) }
+    single { TodoScreenTransformer(get(), get(), get()) }
 
     single { TodoScreenReducer() }
 
-    single { TodoMiddleware(get(), get()) }
+    single { TodoScreenSideEffect(get()) }
 
-    viewModel { TodoActivityViewModel(get()) }
+    viewModel { TodoViewModel(get(), get(), get()) }
 }

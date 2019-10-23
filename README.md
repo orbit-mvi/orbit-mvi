@@ -21,7 +21,10 @@ that RxJava gives you out of the box.
 We drew inspiration from [Managing State with RxJava by Jake Wharton](https://www.reddit.com/r/androiddev/comments/656ter/managing_state_with_rxjava_by_jake_wharton/),
 [RxFeedback](https://github.com/NoTests/RxFeedback.kt) and [Mosby MVI](https://github.com/sockeqwe/mosby).
 
-For more details about MVI and our implementation, read our [overview](docs/overview.md).
+For more details about MVI and our implementation, please read
+
+1. [MVI overview](docs/overview.md).
+1. [Creating flows in Orbit](docs/orbits.md).
 
 ## Getting started
 
@@ -41,14 +44,46 @@ data class State(val total: Int = 0)
 
 data class AddAction(val number: Int)
 
-class CalculatorMiddleware: Middleware<State, Unit> by middleware(State(), {
+sealed class SideEffect {
+    data class Toast(val text: String) : SideEffect()
+}
+
+class CalculatorViewModel: OrbitViewModel<State, SideEffect> (State(), {
 
     perform("addition")
         .on<AddAction>()
-        .withReducer { state, action ->
-            state.copy(state.total + action.number)
-        }
+        .postSideEffect { SideEffect.Toast("Adding ${action.number}") }
+        .withReducer { state.copy(currentState.total + event.number) }
+
+    ...
 })
+```
+
+And then in your activity / fragment
+
+``` kotlin
+private val actions by lazy {
+        Observable.merge(
+            listOf(
+                addButton.clicks().map { AddAction }
+                ...
+            )
+        )
+    }
+
+override fun onStart() {
+    viewModel.connect(this, actions, ::handleState, ::handleSideEffect)
+}
+
+private fun handleState(state: State) {
+    ...
+}
+
+private fun handleSideEffect(sideEffect: SideEffect) {
+    when(sideEffect) {
+        is SideEffect.Toast -> toast(sideEffect.text)
+    }
+}
 ```
 
 Read more about what makes an [orbit](docs/orbits.md).

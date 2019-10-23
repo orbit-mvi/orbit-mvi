@@ -16,10 +16,10 @@
 
 package com.babylon.orbit
 
-import com.jakewharton.rxrelay2.PublishRelay
 import io.reactivex.Observable
 import io.reactivex.Scheduler
 import io.reactivex.schedulers.Schedulers
+import io.reactivex.subjects.PublishSubject
 import java.util.concurrent.Executors
 
 data class ActionState<out STATE : Any, out ACTION : Any>(
@@ -29,7 +29,7 @@ data class ActionState<out STATE : Any, out ACTION : Any>(
 
 fun <STATE : Any, EVENT : Any> Observable<ActionState<STATE, *>>.buildOrbit(
     middleware: Middleware<STATE, EVENT>,
-    inputRelay: PublishRelay<Any>
+    inputRelay: PublishSubject<Any>
 ): Observable<STATE> {
     val scheduler = createSingleScheduler()
     return this
