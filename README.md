@@ -62,14 +62,13 @@ class CalculatorViewModel: OrbitViewModel<State, SideEffect> (State(), {
 And then in your activity / fragment
 
 ``` kotlin
-private val actions by lazy {
-        Observable.merge(
-            listOf(
-                addButton.clicks().map { AddAction }
-                ...
-            )
-        )
-    }
+// Example of injection using koin, your DI system might differ
+private val viewModel by viewModel<CalculatorViewModel>()
+
+override fun onCreate() {
+    ...
+    addButton.setOnClickListener{ viewModel.postAction(AddAction) }
+}
 
 override fun onStart() {
     viewModel.connect(this, actions, ::handleState, ::handleSideEffect)
