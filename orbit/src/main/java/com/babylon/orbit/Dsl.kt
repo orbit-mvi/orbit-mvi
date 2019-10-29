@@ -170,11 +170,6 @@ open class OrbitsBuilder<STATE : Any, SIDE_EFFECT : Any>(private val initialStat
     }
 }
 
-class TransformerReceiver<STATE : Any, EVENT : Any>(
-    val inputState: STATE,
-    val action: EVENT
-)
-
 class ReducerReceiver<STATE : Any, EVENT : Any>(
     val currentState: STATE,
     val event: EVENT
