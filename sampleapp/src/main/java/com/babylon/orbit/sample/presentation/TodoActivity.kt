@@ -11,12 +11,9 @@ import com.babylon.orbit.sample.presentation.ui.LogoItem
 import com.babylon.orbit.sample.presentation.ui.SpaceItemDecoration
 import com.babylon.orbit.sample.presentation.ui.ToDoItem
 import com.babylon.orbit.sample.presentation.ui.show
-import com.babylon.orbit.sample.presentation.ui.throttledClick
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.GroupieViewHolder
 import com.xwray.groupie.Section
-import io.reactivex.Observable
-import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.activity_main.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -24,19 +21,9 @@ class TodoActivity : AppCompatActivity() {
 
     private val viewModel by viewModel<TodoViewModel>()
 
-    private val actionPublisher = PublishSubject.create<TodoScreenAction>()
     private var todoDialog: AppCompatDialog? = null
     private var userProfileDialog: AppCompatDialog? = null
     private val section = Section()
-
-    private val actions by lazy {
-        Observable.merge(
-            listOf(
-                actionPublisher,
-                retryButton.throttledClick().map { TodoScreenAction.RetryAction }
-            )
-        )
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,11 +41,15 @@ class TodoActivity : AppCompatActivity() {
                 add(section)
             }
         }
+
+        retryButton.setOnClickListener {
+            viewModel.sendAction(TodoScreenAction.RetryAction)
+        }
     }
 
     override fun onStart() {
         super.onStart()
-        viewModel.connect(this, actions, ::render)
+        viewModel.connect(this, ::render)
     }
 
     private fun render(state: TodoScreenState) {
@@ -70,7 +61,7 @@ class TodoActivity : AppCompatActivity() {
             state.todoList?.map { todo ->
                 ToDoItem(
                     applicationContext.resources,
-                    actionPublisher,
+                    { viewModel.sendAction(it) },
                     todo
                 )
             }?.let {
@@ -88,7 +79,7 @@ class TodoActivity : AppCompatActivity() {
                 .setMessage(getString(R.string.todo_dialog_msg, todoId))
                 .setPositiveButton(android.R.string.ok) { _, _ -> }
                 .setOnDismissListener {
-                    actionPublisher.onNext(TodoScreenAction.TodoSelectedDismissed)
+                    viewModel.sendAction(TodoScreenAction.TodoSelectedDismissed)
                     todoDialog = null
                 }
                 .create()
@@ -103,7 +94,7 @@ class TodoActivity : AppCompatActivity() {
                 .setMessage(getString(R.string.user_dialog_msg, userProfile.name))
                 .setPositiveButton(android.R.string.ok) { _, _ -> }
                 .setOnDismissListener {
-                    actionPublisher.onNext(TodoScreenAction.UserSelectedDismissed)
+                    viewModel.sendAction(TodoScreenAction.UserSelectedDismissed)
                     todoDialog = null
                 }
                 .create()

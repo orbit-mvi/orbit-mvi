@@ -17,7 +17,6 @@
 package com.babylon.orbit
 
 import io.reactivex.Observable
-import io.reactivex.subjects.PublishSubject
 
 interface OrbitContainer<STATE : Any, EVENT : Any> {
     val orbit: Observable<STATE>
