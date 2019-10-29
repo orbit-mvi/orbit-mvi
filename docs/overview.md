@@ -47,7 +47,7 @@ notification service listening on a socket even if there are no incoming actions
 or nothing is listening to the emitted states at the time.
 
 In order to make this possible we need to host a running Rx cycle observable
-somewhere. We call this a `Orbit Container`. It:
+somewhere. We call this an `Orbit Container`. It:
 
 - Hosts the redux cycle and keeps it running until disposed
 - Allows you to dispose of the cycle when it's no longer needed
@@ -76,7 +76,7 @@ In a default `OrbitContainer`, every action sent to it is listened to on an IO
 scheduler. The state updates will also come back on the IO scheduler. It's up
 to the implementer to take care of listening on the correct thread.
 
-A `OrbitViewModel` uses an `AndroidOrbitContainer` internally, which modifies
+An `OrbitViewModel` uses an `AndroidOrbitContainer` internally, which modifies
 the output of the default one to listen in on the UI thread. This means that
 from the UI perspective you do not need to worry about which thread to send or
 receive events from.

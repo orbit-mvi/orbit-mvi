@@ -20,8 +20,8 @@ import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
 
 interface OrbitContainer<STATE : Any, EVENT : Any> {
-    val inputRelay: PublishSubject<Any>
     val orbit: Observable<STATE>
     val sideEffect: Observable<EVENT>
+    fun sendAction(action: Any)
     fun disposeOrbit()
 }

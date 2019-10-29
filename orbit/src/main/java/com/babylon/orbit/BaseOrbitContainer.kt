@@ -26,10 +26,11 @@ import io.reactivex.subjects.PublishSubject
 class BaseOrbitContainer<STATE : Any, SIDE_EFFECT : Any>(
     middleware: Middleware<STATE, SIDE_EFFECT>
 ) : OrbitContainer<STATE, SIDE_EFFECT> {
+
     var state: Single<STATE>
         private set
 
-    override val inputRelay: PublishSubject<Any> = PublishSubject.create()
+    private val inputRelay: PublishSubject<Any> = PublishSubject.create()
     override val orbit: ConnectableObservable<STATE>
     override val sideEffect: Observable<SIDE_EFFECT> = middleware.sideEffect
 
@@ -45,6 +46,10 @@ class BaseOrbitContainer<STATE : Any, SIDE_EFFECT : Any>(
         orbit.connect { disposables += it }
         state = orbit
             .first(middleware.initialState)
+    }
+
+    override fun sendAction(action: Any) {
+        inputRelay.onNext(action)
     }
 
     override fun disposeOrbit() {

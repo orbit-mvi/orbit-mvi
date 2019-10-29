@@ -19,7 +19,6 @@ package com.babylon.orbit
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
 import com.uber.autodispose.android.lifecycle.autoDispose
-import io.reactivex.Observable
 
 abstract class OrbitViewModel<STATE : Any, SIDE_EFFECT : Any>(
     middleware: Middleware<STATE, SIDE_EFFECT>
@@ -43,7 +42,6 @@ abstract class OrbitViewModel<STATE : Any, SIDE_EFFECT : Any>(
      */
     fun connect(
         lifecycleOwner: LifecycleOwner,
-        actions: Observable<out Any>,
         stateConsumer: (STATE) -> Unit,
         sideEffectConsumer: (SIDE_EFFECT) -> Unit = {}
     ) {
@@ -52,12 +50,13 @@ abstract class OrbitViewModel<STATE : Any, SIDE_EFFECT : Any>(
             .autoDispose(lifecycleOwner)
             .subscribe(stateConsumer)
 
-        actions.autoDispose(lifecycleOwner)
-            .subscribe(container.inputRelay::onNext)
-
         container.sideEffect
             .autoDispose(lifecycleOwner)
             .subscribe(sideEffectConsumer)
+    }
+
+    fun sendAction(action: Any) {
+        container.sendAction(action)
     }
 
     override fun onCleared() {
