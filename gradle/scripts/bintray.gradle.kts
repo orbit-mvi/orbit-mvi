@@ -38,8 +38,8 @@ configure<PublishExtension> {
 
     repoName = "maven"
     userOrg = "babylonpartners"
-    desc = "Orbit, an MVI framework for Android and Kotlin"
-    website = "https://github.com/babylonhealth/orbit-android-mvi"
+    desc = "Orbit MVI for Kotlin and Android"
+    website = "https://github.com/babylonhealth/orbit-mvi"
     setLicences("Apache-2.0")
 
     dryRun = false
