@@ -1,6 +1,6 @@
 # Orbit MVI for Kotlin and Android
 
-[![CI status](https://github.com/babylonhealth/orbit-android-mvi/workflows/Android%20CI/badge.svg)](https://github.com/babylonhealth/orbit-android-mvi/actions)
+[![CI status](https://github.com/babylonhealth/orbit-mvi/workflows/Android%20CI/badge.svg)](https://github.com/babylonhealth/orbit-mvi/actions)
 [![Download](https://api.bintray.com/packages/babylonpartners/maven/orbit/images/download.svg)](https://bintray.com/babylonpartners/maven/orbit/_latestVersion)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE.md)
 
@@ -96,7 +96,7 @@ requests to us.
 ## Versioning
 
 We use [SemVer](http://semver.org/) for versioning. For the versions
-available, see the [tags on this repository](https://github.com/babylonhealth/orbit-android-mvi/tags).
+available, see the [tags on this repository](https://github.com/babylonhealth/orbit-mvi/tags).
 
 ## License
 
