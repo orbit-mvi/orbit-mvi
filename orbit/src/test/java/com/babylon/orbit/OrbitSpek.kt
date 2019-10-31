@@ -60,7 +60,7 @@ internal class OrbitSpek : Spek({
 
             When("sending an action") {
                 testObserver = orbitContainer.orbit.test()
-                orbitContainer.inputRelay.onNext(5)
+                orbitContainer.sendAction(5)
             }
 
             Then("produces a correct end state") {
@@ -86,7 +86,7 @@ internal class OrbitSpek : Spek({
 
             When("sending an action") {
                 testObserver = orbitContainer.orbit.test()
-                orbitContainer.inputRelay.onNext(5)
+                orbitContainer.sendAction(5)
             }
 
             Then("produces a correct end state") {
@@ -113,7 +113,7 @@ internal class OrbitSpek : Spek({
 
             When("sending an action") {
                 testObserver = orbitContainer.orbit.test()
-                orbitContainer.inputRelay.onNext(5)
+                orbitContainer.sendAction(5)
             }
 
             Then("produces a correct end state") {
@@ -149,7 +149,7 @@ internal class OrbitSpek : Spek({
 
             When("sending an action") {
                 testObserver = orbitContainer.orbit.test()
-                orbitContainer.inputRelay.onNext(5)
+                orbitContainer.sendAction(5)
                 latch.await()
             }
 
@@ -182,7 +182,7 @@ internal class OrbitSpek : Spek({
 
             When("sending an action") {
                 testObserver = orbitContainer.orbit.test()
-                orbitContainer.inputRelay.onNext(5)
+                orbitContainer.sendAction(5)
             }
 
             Then("produces a correct end state") {
@@ -217,7 +217,7 @@ internal class OrbitSpek : Spek({
 
             When("sending an action") {
                 testObserver = orbitContainer.orbit.test()
-                orbitContainer.inputRelay.onNext(5)
+                orbitContainer.sendAction(5)
             }
 
             Then("produces a correct series of states") {
@@ -259,7 +259,7 @@ internal class OrbitSpek : Spek({
                     val value = (i % 3)
                     expectedOutput.add(State(value + 1))
 
-                    orbitContainer.inputRelay.onNext(
+                    orbitContainer.sendAction(
                         when (value) {
                             0 -> One()
                             1 -> Two()
@@ -296,7 +296,7 @@ internal class OrbitSpek : Spek({
                 testObserver = orbitContainer.orbit.test()
                 sideEffects = orbitContainer.sideEffect.test()
 
-                orbitContainer.inputRelay.onNext(5)
+                orbitContainer.sendAction(5)
 
                 testObserver.awaitCount(2)
             }
@@ -331,7 +331,7 @@ internal class OrbitSpek : Spek({
                 testObserver = orbitContainer.orbit.test()
                 sideEffects = orbitContainer.sideEffect.test()
 
-                orbitContainer.inputRelay.onNext(5)
+                orbitContainer.sendAction(5)
 
                 testObserver.awaitCount(2)
             }
@@ -366,7 +366,7 @@ internal class OrbitSpek : Spek({
                 testObserver = orbitContainer.orbit.test()
                 sideEffects = orbitContainer.sideEffect.test()
 
-                orbitContainer.inputRelay.onNext(5)
+                orbitContainer.sendAction(5)
 
                 testObserver.awaitCount(2)
             }
@@ -406,7 +406,7 @@ internal class OrbitSpek : Spek({
                 testObserver = orbitContainer.orbit.test()
                 sideEffects = orbitContainer.sideEffect.test()
 
-                orbitContainer.inputRelay.onNext(5)
+                orbitContainer.sendAction(5)
 
                 testObserver.awaitCount(2)
             }
