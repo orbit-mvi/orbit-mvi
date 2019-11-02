@@ -4,6 +4,7 @@ import hu.akarnokd.rxjava2.subjects.UnicastWorkSubject
 import io.reactivex.Observable
 import io.reactivex.rxkotlin.cast
 import io.reactivex.schedulers.Schedulers
+import io.reactivex.subjects.PublishSubject
 import io.reactivex.subjects.Subject
 
 /*
@@ -37,17 +38,17 @@ open class OrbitsBuilder<STATE : Any, SIDE_EFFECT : Any>(private val initialStat
     fun OrbitsBuilder<STATE, SIDE_EFFECT>.perform(description: String) = ActionFilter(description)
 
     inline fun <reified ACTION : Any> ActionFilter.on() =
-        this@OrbitsBuilder.FirstTransformer<ACTION> { it.ofActionType() }
+        this@OrbitsBuilder.Transformer<ActionState<STATE, ACTION>>(description, false) { it.ofActionType() }
 
     @Suppress("unused") // Used for the nice extension function highlight
-    fun ActionFilter.on(vararg classes: Class<*>) = this@OrbitsBuilder.FirstTransformer { actions ->
+    fun ActionFilter.on(vararg classes: Class<*>) = this@OrbitsBuilder.Transformer(description, false) { actions ->
         Observable.merge(
             classes.map { clazz -> actions.filter { clazz.isInstance(it.action) } }
         )
     }
 
     @OrbitDsl
-    inner class ActionFilter(private val description: String) {
+    inner class ActionFilter(val description: String) {
 
         inline fun <reified ACTION : Any> Observable<ActionState<STATE, *>>.ofActionType(): Observable<ActionState<STATE, ACTION>> =
             filter { it.action is ACTION }
@@ -55,64 +56,21 @@ open class OrbitsBuilder<STATE : Any, SIDE_EFFECT : Any>(private val initialStat
                 .doOnNext { } // TODO logging the flow description
     }
 
+    private  val inProgress = mutableMapOf<String, Transformer<*>>()
+
     @OrbitDsl
-    inner class FirstTransformer<ACTION : Any>(
-        private val upstreamTransformer: (Observable<ActionState<STATE, *>>) -> Observable<ActionState<STATE, ACTION>>
+    inner class Transformer<EVENT : Any>(
+        private val description: String,
+        private val ioScheduled: Boolean,
+        private val upstreamTransformer: (Observable<ActionState<STATE, *>>) -> Observable<EVENT>
     ) {
 
-        fun <T : Any> transform(transformer: Observable<ActionState<STATE, ACTION>>.() -> Observable<T>) =
-            this@OrbitsBuilder.Transformer { rawActions ->
-                transformer(upstreamTransformer(rawActions.observeOn(Schedulers.io())))
-            }
-
-        fun postSideEffect(sideEffect: ActionState<STATE, ACTION>.() -> SIDE_EFFECT) =
-            sideEffectInternal {
-                this@OrbitsBuilder.sideEffectSubject.onNext(
-                    it.sideEffect()
-                )
-            }
-
-        fun sideEffect(sideEffect: ActionState<STATE, ACTION>.() -> Unit) =
-            sideEffectInternal {
-                it.sideEffect()
-            }
-
-        private fun sideEffectInternal(sideEffect: (ActionState<STATE, ACTION>) -> Unit) =
-            this@OrbitsBuilder.FirstTransformer { rawActions ->
-                upstreamTransformer(rawActions)
-                    .doOnNext {
-                        sideEffect(it)
-                    }
-            }
-
-        fun withReducer(reducer: ReducerReceiver<STATE, ACTION>.() -> STATE) {
-            this@OrbitsBuilder.orbits += { rawActions, _ ->
-                upstreamTransformer(rawActions)
-                    .map {
-                        { state: STATE ->
-                            ReducerReceiver(state, it.action).reducer()
-                        }
-                    }
-            }
-        }
-
-        fun ignoringEvents() {
-            this@OrbitsBuilder.orbits += { upstream, _ ->
-                upstreamTransformer(upstream)
-                    .map {
-                        { state: STATE -> state }
-                    }
-            }
-        }
-    }
-
-    @OrbitDsl
-    inner class Transformer<EVENT : Any>(private val upstreamTransformer: (Observable<ActionState<STATE, *>>) -> Observable<EVENT>) {
-
         fun <T : Any> transform(transformer: Observable<EVENT>.() -> Observable<T>) =
-            this@OrbitsBuilder.Transformer { rawActions ->
-                transformer(upstreamTransformer(rawActions))
+            this@OrbitsBuilder.Transformer(description, true) { rawActions ->
+                val actions = if(ioScheduled) rawActions else rawActions.observeOn(Schedulers.io())
+                transformer(upstreamTransformer(actions))
             }
+                .also { this@OrbitsBuilder.inProgress[description] = it }
 
         fun postSideEffect(sideEffect: EventReceiver<EVENT>.() -> SIDE_EFFECT) =
             sideEffectInternal {
@@ -125,14 +83,16 @@ open class OrbitsBuilder<STATE : Any, SIDE_EFFECT : Any>(private val initialStat
             }
 
         private fun sideEffectInternal(sideEffect: (EVENT) -> Unit) =
-            this@OrbitsBuilder.Transformer { rawActions ->
+            this@OrbitsBuilder.Transformer(description, false) { rawActions ->
                 upstreamTransformer(rawActions)
                     .doOnNext {
                         sideEffect(it)
                     }
             }
+                .also { this@OrbitsBuilder.inProgress[description] = it }
 
         fun <T : Any> loopBack(mapper: EventReceiver<EVENT>.() -> T) {
+            this@OrbitsBuilder.inProgress.remove(description)
             this@OrbitsBuilder.orbits += { upstream, inputRelay ->
                 upstreamTransformer(upstream)
                     .doOnNext { action -> inputRelay.onNext(EventReceiver(action).mapper()) }
@@ -142,16 +102,8 @@ open class OrbitsBuilder<STATE : Any, SIDE_EFFECT : Any>(private val initialStat
             }
         }
 
-        fun ignoringEvents() {
-            this@OrbitsBuilder.orbits += { upstream, _ ->
-                upstreamTransformer(upstream)
-                    .map {
-                        { state: STATE -> state }
-                    }
-            }
-        }
-
         fun withReducer(reducer: ReducerReceiver<STATE, EVENT>.() -> STATE) {
+            this@OrbitsBuilder.inProgress.remove(description)
             this@OrbitsBuilder.orbits += { rawActions, _ ->
                 upstreamTransformer(rawActions)
                     .map {
@@ -164,6 +116,9 @@ open class OrbitsBuilder<STATE : Any, SIDE_EFFECT : Any>(private val initialStat
     }
 
     fun build() = object : Middleware<STATE, SIDE_EFFECT> {
+        init {
+            ArrayList(inProgress.values).forEach { transformer -> transformer.withReducer { currentState } }
+        }
         override val initialState: STATE = this@OrbitsBuilder.initialState
         override val orbits: List<TransformerFunction<STATE>> = this@OrbitsBuilder.orbits
         override val sideEffect: Observable<SIDE_EFFECT> = sideEffectSubject.hide()

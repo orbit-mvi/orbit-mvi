@@ -53,7 +53,7 @@ internal class OrbitSpek : Spek({
                 middleware = createTestMiddleware {
                     perform("something")
                         .on<Int>()
-                        .withReducer { State(currentState.id + event) }
+                        .withReducer { State(currentState.id + event.action) }
                 }
                 orbitContainer = BaseOrbitContainer(middleware)
             }
@@ -134,7 +134,6 @@ internal class OrbitSpek : Spek({
                         .on<Int>()
                         .transform { map { it.action * 2 } }
                         .transform { map { it * 2 } }
-                        .ignoringEvents()
 
                     perform("unlatch")
                         .on<Int>()
@@ -142,7 +141,6 @@ internal class OrbitSpek : Spek({
                             latch.countDown()
                             this
                         }
-                        .ignoringEvents()
                 }
                 orbitContainer = BaseOrbitContainer(middleware)
             }
@@ -286,7 +284,7 @@ internal class OrbitSpek : Spek({
                 middleware = createTestMiddleware(State(1)) {
                     perform("something")
                         .on<Int>()
-                        .postSideEffect { "${inputState.id + action}" }
+                        .postSideEffect { "${event.inputState.id + event.action}" }
                         .withReducer { currentState.copy(id = currentState.id + 1) }
                 }
                 orbitContainer = BaseOrbitContainer(middleware)
@@ -299,6 +297,7 @@ internal class OrbitSpek : Spek({
                 orbitContainer.sendAction(5)
 
                 testObserver.awaitCount(2)
+                sideEffects.awaitCount(1)
             }
 
             Then("produces a correct series of states") {
@@ -334,6 +333,7 @@ internal class OrbitSpek : Spek({
                 orbitContainer.sendAction(5)
 
                 testObserver.awaitCount(2)
+                sideEffects.awaitCount(1)
             }
 
             Then("produces a correct series of states") {
@@ -356,7 +356,7 @@ internal class OrbitSpek : Spek({
                 middleware = createTestMiddleware(State(1)) {
                     perform("something")
                         .on<Int>()
-                        .sideEffect { sideEffectList.add("${inputState.id + action}") }
+                        .sideEffect { sideEffectList.add("${event.inputState.id + event.action}") }
                         .withReducer { currentState.copy(id = currentState.id + 1) }
                 }
                 orbitContainer = BaseOrbitContainer(middleware)
