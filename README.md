@@ -8,6 +8,10 @@
 
 Orbit is an MVI framework for Kotlin and Android which we use at [Babylon Health](https://www.babylonhealth.com).
 
+![slack logo](images/slack-logo-icon.png) [Join us at the Kotlinlang slack!](https://kotlinlang.slack.com/messages/CPM6UMD2P)
+
+If you do not yet have an account with the Kotlinlang slack workspace, [sign up here](https://slack.kotlinlang.org).
+
 ## Why Orbit
 
 Orbit provides the minimum structure possible around your redux implementation
