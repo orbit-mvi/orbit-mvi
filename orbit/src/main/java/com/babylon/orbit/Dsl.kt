@@ -27,6 +27,9 @@ fun <STATE : Any, SIDE_EFFECT : Any> middleware(
 }
 
 @OrbitDsl
+class ActionFilter(val description: String)
+
+@OrbitDsl
 open class OrbitsBuilder<STATE : Any, SIDE_EFFECT : Any>(private val initialState: STATE) {
     // Since this caches unconsumed events we restrict it to one subscriber at a time
     protected val sideEffectSubject: Subject<SIDE_EFFECT> = UnicastWorkSubject.create()
@@ -52,9 +55,6 @@ open class OrbitsBuilder<STATE : Any, SIDE_EFFECT : Any>(private val initialStat
                 classes.map { clazz -> rawActions.filter { clazz.isInstance(it) } }
             )
         }
-
-    @OrbitDsl
-    inner class ActionFilter(val description: String)
 
     private val inProgress = mutableMapOf<String, Transformer<*>>()
     private val descriptions = mutableSetOf<String>()
