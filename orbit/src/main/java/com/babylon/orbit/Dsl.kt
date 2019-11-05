@@ -56,7 +56,7 @@ open class OrbitsBuilder<STATE : Any, SIDE_EFFECT : Any>(private val initialStat
             )
         }
 
-    private val inProgress = mutableMapOf<String, Transformer<*>>()
+    private val inProgress = mutableMapOf<String, OrbitContext<STATE>.() -> Observable<*>>()
     private val descriptions = mutableSetOf<String>()
 
     @OrbitDsl
@@ -73,8 +73,7 @@ open class OrbitsBuilder<STATE : Any, SIDE_EFFECT : Any>(private val initialStat
                     ).transformer()
                 }
             }
-                .also { this@OrbitsBuilder.inProgress[description] = it }
-
+                .also { this@OrbitsBuilder.inProgress[description] = it.upstreamTransformer }
 
         fun sideEffect(sideEffect: SideEffectEventReceiver<STATE, EVENT, SIDE_EFFECT>.() -> Unit) =
             this@OrbitsBuilder.Transformer(
@@ -89,11 +88,12 @@ open class OrbitsBuilder<STATE : Any, SIDE_EFFECT : Any>(private val initialStat
                         ).sideEffect()
                     }
             }
-                .also { this@OrbitsBuilder.inProgress[description] = it }
+                .also { this@OrbitsBuilder.inProgress[description] = it.upstreamTransformer }
 
-        fun <T : Any> loopBack(mapper: EventReceiver<STATE, EVENT>.() -> T) {
-            this@OrbitsBuilder.inProgress.remove(description)
-            this@OrbitsBuilder.orbits += {
+        fun <T : Any> loopBack(mapper: EventReceiver<STATE, EVENT>.() -> T) =
+            this@OrbitsBuilder.Transformer(
+                description
+            ) {
                 upstreamTransformer()
                     .doOnNext { action ->
                         inputRelay.onNext(
@@ -103,45 +103,36 @@ open class OrbitsBuilder<STATE : Any, SIDE_EFFECT : Any>(private val initialStat
                             ).mapper()
                         )
                     }
-                    .map {
-                        { state: STATE -> state }
-                    }
-            }
-        }
+            }.also { this@OrbitsBuilder.inProgress[description] = it.upstreamTransformer }
 
-        fun withReducer(reducer: EventReceiver<STATE, EVENT>.() -> STATE) {
-            this@OrbitsBuilder.inProgress.remove(description)
-            this@OrbitsBuilder.orbits += {
+        fun withReducer(reducer: EventReceiver<STATE, EVENT>.() -> STATE) =
+            this@OrbitsBuilder.Transformer(
+                description
+            ) {
                 upstreamTransformer()
-                    .map {
-                        { state: STATE ->
+                    .doOnNext {
+                        reducerRelay.onNext { state ->
                             EventReceiver({ state }, it).reducer()
                         }
                     }
-            }
-        }
+            }.also { this@OrbitsBuilder.inProgress[description] = it.upstreamTransformer }
 
         private fun OrbitContext<STATE>.switchContextIfNeeded(): OrbitContext<STATE> {
-            return if (ioScheduled)
-                this
-            else
-                OrbitContext(
-                    currentStateProvider,
-                    rawActions.observeOn(Schedulers.io()),
-                    inputRelay,
-                    true
-                )
+            return if (ioScheduled) this
+            else OrbitContext(
+                currentStateProvider,
+                rawActions.observeOn(Schedulers.io()),
+                inputRelay,
+                reducerRelay,
+                true
+            )
         }
     }
 
     fun build() = object : Middleware<STATE, SIDE_EFFECT> {
-        init {
-            // Terminates the unterminated chains with a no-op reducer
-            ArrayList(inProgress.values).forEach { transformer -> transformer.withReducer { getCurrentState() } }
-        }
-
         override val initialState: STATE = this@OrbitsBuilder.initialState
-        override val orbits: List<TransformerFunction<STATE>> = this@OrbitsBuilder.orbits
+        override val orbits: List<TransformerFunction<STATE>> =
+            this@OrbitsBuilder.inProgress.values.toList()
         override val sideEffect: Observable<SIDE_EFFECT> = sideEffectSubject.hide()
     }
 }

@@ -30,6 +30,7 @@ class BaseOrbitContainer<STATE : Any, SIDE_EFFECT : Any>(
 ) : OrbitContainer<STATE, SIDE_EFFECT> {
 
     private val inputRelay: PublishSubject<Any> = PublishSubject.create()
+    private val reducerRelay: PublishSubject<(STATE) -> STATE> = PublishSubject.create()
     private val disposables = CompositeDisposable()
 
     @Volatile
@@ -39,10 +40,39 @@ class BaseOrbitContainer<STATE : Any, SIDE_EFFECT : Any>(
     override val sideEffect: Observable<SIDE_EFFECT> = middleware.sideEffect
 
     init {
-        orbit = inputRelay.doOnSubscribe { disposables += it }
+        val scheduler = createSingleScheduler()
+
+        disposables += inputRelay.doOnSubscribe { disposables += it }
             .startWith(LifecycleAction.Created)
-            .buildOrbit(middleware)
+            .observeOn(scheduler)
+            .publish { actions ->
+                with(
+                    OrbitContext(
+                        { currentState },
+                        actions,
+                        inputRelay,
+                        reducerRelay,
+                        false
+                    )
+                ) {
+                    Observable.merge(
+                        middleware.orbits.map { transformer ->
+                            transformer()
+                        }
+                    )
+                }
+            }
+            .subscribe()
+
+        orbit = reducerRelay
+            .observeOn(scheduler)
+            .scan(middleware.initialState) { currentState, partialReducer ->
+                partialReducer(
+                    currentState
+                )
+            }
             .doOnNext { currentState = it }
+            .distinctUntilChanged()
             .replay(1)
 
         orbit.connect { disposables += it }
@@ -54,35 +84,6 @@ class BaseOrbitContainer<STATE : Any, SIDE_EFFECT : Any>(
 
     override fun disposeOrbit() {
         disposables.clear()
-    }
-
-    private fun Observable<*>.buildOrbit(middleware: Middleware<STATE, SIDE_EFFECT>): Observable<STATE> {
-        val scheduler = createSingleScheduler()
-        return this
-            .observeOn(scheduler)
-            .publish { actions ->
-                with(
-                    OrbitContext(
-                        { currentState },
-                        actions,
-                        inputRelay,
-                        false
-                    )
-                ) {
-                    Observable.merge(
-                        middleware.orbits.map { transformer ->
-                            transformer()
-                        }
-                    )
-                }
-                    .observeOn(scheduler)
-                    .scan(middleware.initialState) { currentState, partialReducer ->
-                        partialReducer(
-                            currentState
-                        )
-                    }
-                    .distinctUntilChanged()
-            }
     }
 
     private fun createSingleScheduler(): Scheduler {
