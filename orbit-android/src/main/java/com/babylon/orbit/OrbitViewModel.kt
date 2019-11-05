@@ -31,8 +31,8 @@ abstract class OrbitViewModel<STATE : Any, SIDE_EFFECT : Any>(
 
     private val container: AndroidOrbitContainer<STATE, SIDE_EFFECT> = AndroidOrbitContainer(middleware)
 
-    val state: STATE
-        get() = container.state
+    val currentState: STATE
+        get() = container.currentState
 
     /**
      * Designed to be called in onStart or onResume, depending on your use case.

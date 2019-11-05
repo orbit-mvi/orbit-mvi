@@ -56,7 +56,7 @@ class CalculatorViewModel : OrbitViewModel<State, SideEffect> (State(), {
 
     perform("addition")
         .on<AddAction>()
-        .postSideEffect { SideEffect.Toast("Adding ${action.number}") }
+        .sideEffect { post(SideEffect.Toast("Adding ${event.number}")) }
         .withReducer { state.copy(currentState.total + event.number) }
 
     ...

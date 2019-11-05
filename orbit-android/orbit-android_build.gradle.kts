@@ -60,7 +60,6 @@ dependencies {
     kapt(ProjectDependencies.androidLifecycleCompiler)
 
     implementation(ProjectDependencies.rxJava2)
-    implementation(ProjectDependencies.rxRelay)
     implementation(ProjectDependencies.rxKotlin)
     implementation(ProjectDependencies.rxAndroid)
     implementation(ProjectDependencies.autodispose)

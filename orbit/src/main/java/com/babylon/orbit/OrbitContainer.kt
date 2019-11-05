@@ -19,6 +19,7 @@ package com.babylon.orbit
 import io.reactivex.Observable
 
 interface OrbitContainer<STATE : Any, EVENT : Any> {
+    val currentState: STATE
     val orbit: Observable<STATE>
     val sideEffect: Observable<EVENT>
     fun sendAction(action: Any)

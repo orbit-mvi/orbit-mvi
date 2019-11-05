@@ -14,13 +14,12 @@ class TodoViewModel(
             LifecycleAction.Created::class.java,
             TodoScreenAction.RetryAction::class.java
         )
-        .transform { transformers.loadTodos(this) }
+        .transform { transformers.loadTodos(eventObservable) }
         .withReducer { reducers.reduceLoadTodos(currentState, event) }
 
     perform("track analytics for selected todo")
         .on<TodoScreenAction.TodoSelected>()
-        .sideEffect { sideEffects.trackSelectedTodo(action) }
-        .ignoringEvents()
+        .sideEffect { sideEffects.trackSelectedTodo(event) }
 
     perform("load the selected todo")
         .on<TodoScreenAction.TodoSelected>()
@@ -32,12 +31,12 @@ class TodoViewModel(
 
     perform("load the user profile switch for the user profile")
         .on<TodoScreenAction.TodoUserSelected>()
-        .transform { transformers.loadUserProfileSwitches(this) }
+        .transform { transformers.loadUserProfileSwitches(eventObservable) }
         .loopBack { event }
 
     perform("load the user profile is the switch is on")
         .on<UserProfileExtra>()
-        .transform { transformers.loadUserProfile(this) }
+        .transform { transformers.loadUserProfile(eventObservable) }
         .withReducer { reducers.reduceLoadUserProfile(currentState, event) }
 
     perform("handle user profile switch is off")

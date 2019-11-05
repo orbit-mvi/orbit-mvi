@@ -25,9 +25,6 @@ class AndroidOrbitContainer<STATE : Any, SIDE_EFFECT : Any> private constructor(
 
     constructor(middleware: Middleware<STATE, SIDE_EFFECT>) : this(BaseOrbitContainer(middleware))
 
-    val state: STATE
-        get() = delegate.state.blockingGet()
-
     override val orbit: Observable<STATE> = delegate.orbit.observeOn(AndroidSchedulers.mainThread())
 
     override val sideEffect: Observable<SIDE_EFFECT> =
