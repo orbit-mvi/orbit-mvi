@@ -72,21 +72,11 @@ open class OrbitsBuilder<STATE : Any, SIDE_EFFECT : Any>(private val initialStat
             }
                 .also { this@OrbitsBuilder.inProgress[description] = it }
 
-        fun postSideEffect(sideEffect: EventReceiver<EVENT>.() -> SIDE_EFFECT) =
-            sideEffectInternal {
-                this@OrbitsBuilder.sideEffectSubject.onNext(EventReceiver(it).sideEffect())
-            }
-
-        fun sideEffect(sideEffect: EventReceiver<EVENT>.() -> Unit) =
-            sideEffectInternal {
-                EventReceiver(it).sideEffect()
-            }
-
-        private fun sideEffectInternal(sideEffect: (EVENT) -> Unit) =
+        fun sideEffect(sideEffect: SideEffectEventReceiver<EVENT, SIDE_EFFECT>.() -> Unit) =
             this@OrbitsBuilder.Transformer(description, false) { rawActions ->
                 upstreamTransformer(rawActions)
                     .doOnNext {
-                        sideEffect(it)
+                        SideEffectEventReceiver(this@OrbitsBuilder.sideEffectSubject, it).sideEffect()
                     }
             }
                 .also { this@OrbitsBuilder.inProgress[description] = it }
@@ -133,3 +123,10 @@ class ReducerReceiver<STATE : Any, EVENT : Any>(
 class EventReceiver<EVENT : Any>(
     val event: EVENT
 )
+
+class SideEffectEventReceiver<EVENT : Any, SIDE_EFFECT: Any>(
+    private val sideEffectRelay: Subject<SIDE_EFFECT>,
+    val event: EVENT
+) {
+    fun post(sideEffect: SIDE_EFFECT) = sideEffectRelay.onNext(sideEffect)
+}
