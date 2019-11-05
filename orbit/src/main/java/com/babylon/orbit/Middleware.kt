@@ -17,16 +17,16 @@
 package com.babylon.orbit
 
 import io.reactivex.Observable
-import io.reactivex.Scheduler
-import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.PublishSubject
-import java.util.concurrent.Executors
 
-typealias TransformerFunction<STATE> = (
-        () -> STATE,
-        Observable<*>,
-        PublishSubject<Any>
-) -> (Observable<(STATE) -> STATE>)
+typealias TransformerFunction<STATE> = OrbitContext<STATE>.() -> (Observable<(STATE) -> STATE>)
+
+class OrbitContext<STATE : Any>(
+    val currentStateProvider: () -> STATE,
+    val rawActions: Observable<*>,
+    val inputRelay: PublishSubject<Any>,
+    val ioScheduled: Boolean
+)
 
 interface Middleware<STATE : Any, SIDE_EFFECT : Any> {
     val initialState: STATE

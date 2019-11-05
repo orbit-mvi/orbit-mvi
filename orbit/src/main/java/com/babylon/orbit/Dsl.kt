@@ -43,14 +43,11 @@ open class OrbitsBuilder<STATE : Any, SIDE_EFFECT : Any>(private val initialStat
         }
 
     inline fun <reified ACTION : Any> ActionFilter.on() =
-        this@OrbitsBuilder.Transformer<ACTION>(
-            description,
-            false
-        ) { _, rawActions -> rawActions.ofType() }
+        this@OrbitsBuilder.Transformer<ACTION>(description) { rawActions.ofType() }
 
     @Suppress("unused") // Used for the nice extension function highlight
     fun ActionFilter.on(vararg classes: Class<*>) =
-        this@OrbitsBuilder.Transformer(description, false) { _, rawActions ->
+        this@OrbitsBuilder.Transformer(description) {
             Observable.merge(
                 classes.map { clazz -> rawActions.filter { clazz.isInstance(it) } }
             )
@@ -65,25 +62,25 @@ open class OrbitsBuilder<STATE : Any, SIDE_EFFECT : Any>(private val initialStat
     @OrbitDsl
     inner class Transformer<EVENT : Any>(
         private val description: String,
-        private val ioScheduled: Boolean,
-        private val upstreamTransformer: (() -> STATE, Observable<*>) -> Observable<EVENT>
+        private val upstreamTransformer: OrbitContext<STATE>.() -> Observable<EVENT>
     ) {
         fun <T : Any> transform(transformer: TransformerReceiver<STATE, EVENT>.() -> Observable<T>) =
-            this@OrbitsBuilder.Transformer(description, true) { currentStateProvider, rawActions ->
-                val actions = if (ioScheduled) rawActions else rawActions.observeOn(Schedulers.io())
-                TransformerReceiver(
-                    currentStateProvider,
-                    upstreamTransformer(currentStateProvider, actions)
-                ).transformer()
+            this@OrbitsBuilder.Transformer(description) {
+                with(switchContextIfNeeded()) {
+                    TransformerReceiver(
+                        currentStateProvider,
+                        upstreamTransformer()
+                    ).transformer()
+                }
             }
                 .also { this@OrbitsBuilder.inProgress[description] = it }
 
+
         fun sideEffect(sideEffect: SideEffectEventReceiver<STATE, EVENT, SIDE_EFFECT>.() -> Unit) =
             this@OrbitsBuilder.Transformer(
-                description,
-                ioScheduled
-            ) { currentStateProvider, rawActions ->
-                upstreamTransformer(currentStateProvider, rawActions)
+                description
+            ) {
+                upstreamTransformer()
                     .doOnNext {
                         SideEffectEventReceiver(
                             currentStateProvider,
@@ -96,8 +93,8 @@ open class OrbitsBuilder<STATE : Any, SIDE_EFFECT : Any>(private val initialStat
 
         fun <T : Any> loopBack(mapper: EventReceiver<STATE, EVENT>.() -> T) {
             this@OrbitsBuilder.inProgress.remove(description)
-            this@OrbitsBuilder.orbits += { currentStateProvider, rawActions, inputRelay ->
-                upstreamTransformer(currentStateProvider, rawActions)
+            this@OrbitsBuilder.orbits += {
+                upstreamTransformer()
                     .doOnNext { action ->
                         inputRelay.onNext(
                             EventReceiver(
@@ -112,23 +109,35 @@ open class OrbitsBuilder<STATE : Any, SIDE_EFFECT : Any>(private val initialStat
             }
         }
 
-        fun withReducer(reducer: ReducerReceiver<STATE, EVENT>.() -> STATE) {
+        fun withReducer(reducer: EventReceiver<STATE, EVENT>.() -> STATE) {
             this@OrbitsBuilder.inProgress.remove(description)
-            this@OrbitsBuilder.orbits += { currentStateProvider, rawActions, _ ->
-                upstreamTransformer(currentStateProvider, rawActions)
+            this@OrbitsBuilder.orbits += {
+                upstreamTransformer()
                     .map {
                         { state: STATE ->
-                            ReducerReceiver(state, it).reducer()
+                            EventReceiver({ state }, it).reducer()
                         }
                     }
             }
+        }
+
+        private fun OrbitContext<STATE>.switchContextIfNeeded(): OrbitContext<STATE> {
+            return if (ioScheduled)
+                this
+            else
+                OrbitContext(
+                    currentStateProvider,
+                    rawActions.observeOn(Schedulers.io()),
+                    inputRelay,
+                    true
+                )
         }
     }
 
     fun build() = object : Middleware<STATE, SIDE_EFFECT> {
         init {
             // Terminates the unterminated chains with a no-op reducer
-            ArrayList(inProgress.values).forEach { transformer -> transformer.withReducer { currentState } }
+            ArrayList(inProgress.values).forEach { transformer -> transformer.withReducer { getCurrentState() } }
         }
 
         override val initialState: STATE = this@OrbitsBuilder.initialState
@@ -138,33 +147,24 @@ open class OrbitsBuilder<STATE : Any, SIDE_EFFECT : Any>(private val initialStat
 }
 
 class TransformerReceiver<STATE : Any, EVENT : Any>(
-    private val currentStateProvider: () -> STATE,
+    private val stateProvider: () -> STATE,
     val eventObservable: Observable<EVENT>
 ) {
-    val currentState: STATE
-        get() = currentStateProvider()
+    fun getCurrentState() = stateProvider()
 }
 
-class ReducerReceiver<STATE : Any, EVENT : Any>(
-    val currentState: STATE,
-    val event: EVENT
-)
-
 class EventReceiver<STATE : Any, EVENT : Any>(
-    private val currentStateProvider: () -> STATE,
+    private val stateProvider: () -> STATE,
     val event: EVENT
 ) {
-    val currentState: STATE
-        get() = currentStateProvider()
+    fun getCurrentState() = stateProvider()
 }
 
 class SideEffectEventReceiver<STATE : Any, EVENT : Any, SIDE_EFFECT : Any>(
-    private val currentStateProvider: () -> STATE,
+    private val stateProvider: () -> STATE,
     private val sideEffectRelay: Subject<SIDE_EFFECT>,
     val event: EVENT
 ) {
-    val currentState: STATE
-        get() = currentStateProvider()
-
+    fun getCurrentState() = stateProvider()
     fun post(sideEffect: SIDE_EFFECT) = sideEffectRelay.onNext(sideEffect)
 }

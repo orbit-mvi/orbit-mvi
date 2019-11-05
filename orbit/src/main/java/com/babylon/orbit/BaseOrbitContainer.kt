@@ -61,23 +61,28 @@ class BaseOrbitContainer<STATE : Any, SIDE_EFFECT : Any>(
         return this
             .observeOn(scheduler)
             .publish { actions ->
-                Observable.merge(
-                    middleware.orbits.map { transformer ->
-                        transformer(
-                            { currentState },
-                            actions,
-                            inputRelay
+                with(
+                    OrbitContext(
+                        { currentState },
+                        actions,
+                        inputRelay,
+                        false
+                    )
+                ) {
+                    Observable.merge(
+                        middleware.orbits.map { transformer ->
+                            transformer()
+                        }
+                    )
+                }
+                    .observeOn(scheduler)
+                    .scan(middleware.initialState) { currentState, partialReducer ->
+                        partialReducer(
+                            currentState
                         )
                     }
-                )
+                    .distinctUntilChanged()
             }
-            .observeOn(scheduler)
-            .scan(middleware.initialState) { currentState, partialReducer ->
-                partialReducer(
-                    currentState
-                )
-            }
-            .distinctUntilChanged()
     }
 
     private fun createSingleScheduler(): Scheduler {

@@ -31,19 +31,19 @@ internal class OrbitSpek : Spek({
 
             perform("something")
                 .on<Int>()
-                .withReducer { currentState.copy(id = currentState.id + event) }
+                .withReducer { getCurrentState().copy(id = getCurrentState().id + event) }
 
             perform("something else")
                 .on<Int>()
-                .loopBack { currentState.id + event }
+                .loopBack { getCurrentState().id + event }
 
             perform("something entirely else")
                 .on<Int>()
-                .sideEffect { println("${currentState.id + event}") }
-                .transform { eventObservable.map { currentState.id + it + 2 } }
+                .sideEffect { println("${getCurrentState().id + event}") }
+                .transform { eventObservable.map { getCurrentState().id + it + 2 } }
                 .sideEffect { println("$event") }
                 .sideEffect { post("$event") }
-                .withReducer { State(currentState.id + event) }
+                .withReducer { State(getCurrentState().id + event) }
         }
     }
 
@@ -77,7 +77,7 @@ internal class OrbitSpek : Spek({
                 middleware = createTestMiddleware {
                     perform("something")
                         .on<Int>()
-                        .withReducer { State(currentState.id + event) }
+                        .withReducer { State(getCurrentState().id + event) }
                 }
                 orbitContainer = BaseOrbitContainer(middleware)
             }
@@ -103,7 +103,7 @@ internal class OrbitSpek : Spek({
                     perform("something")
                         .on<Int>()
                         .transform { eventObservable.map { it * 2 } }
-                        .withReducer { State(currentState.id + event) }
+                        .withReducer { State(getCurrentState().id + event) }
                 }
                 orbitContainer = BaseOrbitContainer(middleware)
             }
@@ -130,7 +130,7 @@ internal class OrbitSpek : Spek({
                         .on<Int>()
                         .transform { eventObservable.map { it * 2 } }
                         .transform { eventObservable.map { it * 2 } }
-                        .withReducer { State(currentState.id + event) }
+                        .withReducer { State(getCurrentState().id + event) }
                 }
                 orbitContainer = BaseOrbitContainer(middleware)
             }
@@ -197,7 +197,7 @@ internal class OrbitSpek : Spek({
                     perform("something else")
                         .on<IntModified>()
                         .transform { eventObservable.map { it.value * 2 } }
-                        .withReducer { State(currentState.id + event) }
+                        .withReducer { State(getCurrentState().id + event) }
                 }
                 orbitContainer = BaseOrbitContainer(middleware)
             }
@@ -307,7 +307,7 @@ internal class OrbitSpek : Spek({
                 middleware = createTestMiddleware(State(1)) {
                     perform("something")
                         .on<Int>()
-                        .sideEffect { post("${currentState.id + event}") }
+                        .sideEffect { post("${getCurrentState().id + event}") }
                 }
                 orbitContainer = BaseOrbitContainer(middleware)
             }
@@ -336,7 +336,7 @@ internal class OrbitSpek : Spek({
                 middleware = createTestMiddleware(State(1)) {
                     perform("something")
                         .on<Int>()
-                        .sideEffect { testSideEffectRelay.onNext("${currentState.id + event}") }
+                        .sideEffect { testSideEffectRelay.onNext("${getCurrentState().id + event}") }
                 }
                 orbitContainer = BaseOrbitContainer(middleware)
             }
