@@ -1,10 +1,8 @@
 package com.babylon.orbit.sample
 
-import com.babylon.orbit.ActionState
 import com.babylon.orbit.LifecycleAction
 import com.babylon.orbit.sample.domain.todo.GetTodoUseCase
 import com.babylon.orbit.sample.presentation.TodoScreenAction
-import com.babylon.orbit.sample.presentation.TodoScreenState
 import com.babylon.orbit.sample.presentation.TodoScreenTransformer
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verify
@@ -29,7 +27,7 @@ class TodoScreenTransformerSpek : Spek({
                 Given("an $event") {}
 
                 When("passing the event named ${event.javaClass} into the transformer") {
-                    transformer.loadTodos(createActionState(TodoScreenState(), event)).test()
+                    transformer.loadTodos(Observable.just(event)).test()
                 }
 
                 Then("should trigger the correct action") {
@@ -39,8 +37,3 @@ class TodoScreenTransformerSpek : Spek({
         }
     }
 })
-
-private fun <ACTION : Any, STATE : Any> createActionState(action: ACTION, state: STATE) =
-    Observable.just(
-        ActionState(action, state)
-    )
