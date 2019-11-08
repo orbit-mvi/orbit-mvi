@@ -71,7 +71,7 @@ private val viewModel by viewModel<CalculatorViewModel>()
 
 override fun onCreate() {
     ...
-    addButton.setOnClickListener { viewModel.postAction(AddAction) }
+    addButton.setOnClickListener { viewModel.sendAction(AddAction) }
 }
 
 override fun onStart() {
