@@ -75,7 +75,7 @@ override fun onCreate() {
 }
 
 override fun onStart() {
-    viewModel.connect(this, actions, ::handleState, ::handleSideEffect)
+    viewModel.connect(this, ::handleState, ::handleSideEffect)
 }
 
 private fun handleState(state: State) {
