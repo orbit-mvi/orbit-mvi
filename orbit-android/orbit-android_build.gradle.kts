@@ -68,8 +68,6 @@ dependencies {
     implementation(ProjectDependencies.rxJava2)
     implementation(ProjectDependencies.rxKotlin)
     implementation(ProjectDependencies.rxAndroid)
-    implementation(ProjectDependencies.autodispose)
-    implementation(ProjectDependencies.autodisposeArchComponents)
 
     // Testing
     GroupedDependencies.spekTestsImplementation.forEach { testImplementation(it) }
