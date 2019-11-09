@@ -19,18 +19,18 @@ package com.babylon.orbit
 import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
 
-typealias TransformerFunction<STATE> = OrbitContext<STATE>.() -> (Observable<*>)
+typealias TransformerFunction<STATE, SIDE_EFFECT> = OrbitContext<STATE, SIDE_EFFECT>.() -> (Observable<*>)
 
-class OrbitContext<STATE : Any>(
+data class OrbitContext<STATE : Any, SIDE_EFFECT : Any>(
     val currentStateProvider: () -> STATE,
     val rawActions: Observable<*>,
-    val inputRelay: PublishSubject<Any>,
-    val reducerRelay: PublishSubject<(STATE) -> STATE>,
+    val inputSubject: PublishSubject<Any>,
+    val reducerSubject: PublishSubject<(STATE) -> STATE>,
+    val sideEffectSubject: PublishSubject<SIDE_EFFECT>,
     val ioScheduled: Boolean
 )
 
 interface Middleware<STATE : Any, SIDE_EFFECT : Any> {
     val initialState: STATE
-    val orbits: List<TransformerFunction<STATE>>
-    val sideEffect: Observable<SIDE_EFFECT>
+    val orbits: List<TransformerFunction<STATE, SIDE_EFFECT>>
 }

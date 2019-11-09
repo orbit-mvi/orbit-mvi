@@ -1,6 +1,5 @@
 package com.babylon.orbit
 
-import hu.akarnokd.rxjava2.subjects.UnicastWorkSubject
 import io.reactivex.Observable
 import io.reactivex.rxkotlin.ofType
 import io.reactivex.schedulers.Schedulers
@@ -31,10 +30,9 @@ class ActionFilter(val description: String)
 
 @OrbitDsl
 open class OrbitsBuilder<STATE : Any, SIDE_EFFECT : Any>(private val initialState: STATE) {
-    // Since this caches unconsumed events we restrict it to one subscriber at a time
-    protected val sideEffectSubject: Subject<SIDE_EFFECT> = UnicastWorkSubject.create()
-
-    private val orbits = mutableListOf<TransformerFunction<STATE>>()
+    private val orbits =
+        mutableMapOf<String, OrbitContext<STATE, SIDE_EFFECT>.() -> Observable<*>>()
+    private val descriptions = mutableSetOf<String>()
 
     @Suppress("unused") // Used for the nice extension function highlight
     fun OrbitsBuilder<STATE, SIDE_EFFECT>.perform(description: String) = ActionFilter(description)
@@ -56,84 +54,73 @@ open class OrbitsBuilder<STATE : Any, SIDE_EFFECT : Any>(private val initialStat
             )
         }
 
-    private val inProgress = mutableMapOf<String, OrbitContext<STATE>.() -> Observable<*>>()
-    private val descriptions = mutableSetOf<String>()
-
     @OrbitDsl
     inner class Transformer<EVENT : Any>(
         private val description: String,
-        private val upstreamTransformer: OrbitContext<STATE>.() -> Observable<EVENT>
+        private val upstreamTransformer: OrbitContext<STATE, SIDE_EFFECT>.() -> Observable<EVENT>
     ) {
         fun <T : Any> transform(transformer: TransformerReceiver<STATE, EVENT>.() -> Observable<T>) =
             this@OrbitsBuilder.Transformer(description) {
-                with(switchContextIfNeeded()) {
+                val newContext = switchContextIfNeeded()
+                val upstream = if (this != newContext) {
+                    upstreamTransformer().observeOn(Schedulers.io())
+                } else upstreamTransformer()
+
+                with(newContext) {
                     TransformerReceiver(
                         currentStateProvider,
-                        upstreamTransformer()
+                        upstream
                     ).transformer()
                 }
             }
-                .also { this@OrbitsBuilder.inProgress[description] = it.upstreamTransformer }
+                .also { this@OrbitsBuilder.orbits[description] = it.upstreamTransformer }
 
         fun sideEffect(sideEffect: SideEffectEventReceiver<STATE, EVENT, SIDE_EFFECT>.() -> Unit) =
-            this@OrbitsBuilder.Transformer(
-                description
-            ) {
-                upstreamTransformer()
-                    .doOnNext {
-                        SideEffectEventReceiver(
-                            currentStateProvider,
-                            this@OrbitsBuilder.sideEffectSubject,
-                            it
-                        ).sideEffect()
-                    }
+            doOnNextTransformer { event ->
+                SideEffectEventReceiver(
+                    currentStateProvider,
+                    sideEffectSubject,
+                    event
+                ).sideEffect()
             }
-                .also { this@OrbitsBuilder.inProgress[description] = it.upstreamTransformer }
 
         fun <T : Any> loopBack(mapper: EventReceiver<STATE, EVENT>.() -> T) =
-            this@OrbitsBuilder.Transformer(
-                description
-            ) {
-                upstreamTransformer()
-                    .doOnNext { action ->
-                        inputRelay.onNext(
-                            EventReceiver(
-                                currentStateProvider,
-                                action
-                            ).mapper()
-                        )
-                    }
-            }.also { this@OrbitsBuilder.inProgress[description] = it.upstreamTransformer }
+            doOnNextTransformer { event ->
+                inputSubject.onNext(
+                    EventReceiver(
+                        currentStateProvider,
+                        event
+                    ).mapper()
+                )
+            }
 
         fun withReducer(reducer: EventReceiver<STATE, EVENT>.() -> STATE) =
+            doOnNextTransformer { event ->
+                reducerSubject.onNext { state ->
+                    EventReceiver({ state }, event).reducer()
+                }
+            }
+
+        private fun doOnNextTransformer(func: OrbitContext<STATE, SIDE_EFFECT>.(EVENT) -> Unit) =
             this@OrbitsBuilder.Transformer(
                 description
             ) {
                 upstreamTransformer()
                     .doOnNext {
-                        reducerRelay.onNext { state ->
-                            EventReceiver({ state }, it).reducer()
-                        }
+                        func(it)
                     }
-            }.also { this@OrbitsBuilder.inProgress[description] = it.upstreamTransformer }
+            }.also { this@OrbitsBuilder.orbits[description] = it.upstreamTransformer }
 
-        private fun OrbitContext<STATE>.switchContextIfNeeded(): OrbitContext<STATE> {
+        private fun OrbitContext<STATE, SIDE_EFFECT>.switchContextIfNeeded(): OrbitContext<STATE, SIDE_EFFECT> {
             return if (ioScheduled) this
-            else OrbitContext(
-                currentStateProvider,
-                rawActions.observeOn(Schedulers.io()),
-                inputRelay,
-                reducerRelay,
-                true
-            )
+            else copy(ioScheduled = true)
         }
     }
 
     fun build() = object : Middleware<STATE, SIDE_EFFECT> {
         override val initialState: STATE = this@OrbitsBuilder.initialState
-        override val orbits: List<TransformerFunction<STATE>> =
-            this@OrbitsBuilder.inProgress.values.toList()
-        override val sideEffect: Observable<SIDE_EFFECT> = sideEffectSubject.hide()
+        override val orbits: List<TransformerFunction<STATE, SIDE_EFFECT>> =
+            this@OrbitsBuilder.orbits.values.toList()
     }
 }
 

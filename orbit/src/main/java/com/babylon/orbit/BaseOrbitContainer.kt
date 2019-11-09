@@ -29,20 +29,21 @@ class BaseOrbitContainer<STATE : Any, SIDE_EFFECT : Any>(
     middleware: Middleware<STATE, SIDE_EFFECT>
 ) : OrbitContainer<STATE, SIDE_EFFECT> {
 
-    private val inputRelay: PublishSubject<Any> = PublishSubject.create()
-    private val reducerRelay: PublishSubject<(STATE) -> STATE> = PublishSubject.create()
+    private val inputSubject: PublishSubject<Any> = PublishSubject.create()
+    private val reducerSubject: PublishSubject<(STATE) -> STATE> = PublishSubject.create()
+    private val sideEffectSubject: PublishSubject<SIDE_EFFECT> = PublishSubject.create()
     private val disposables = CompositeDisposable()
 
     @Volatile
     override var currentState: STATE = middleware.initialState
         private set
     override val orbit: ConnectableObservable<STATE>
-    override val sideEffect: Observable<SIDE_EFFECT> = middleware.sideEffect
+    override val sideEffect: Observable<SIDE_EFFECT> = sideEffectSubject.hide()
 
     init {
         val scheduler = createSingleScheduler()
 
-        disposables += inputRelay.doOnSubscribe { disposables += it }
+        disposables += inputSubject.doOnSubscribe { disposables += it }
             .startWith(LifecycleAction.Created)
             .observeOn(scheduler)
             .publish { actions ->
@@ -50,8 +51,9 @@ class BaseOrbitContainer<STATE : Any, SIDE_EFFECT : Any>(
                     OrbitContext(
                         { currentState },
                         actions,
-                        inputRelay,
-                        reducerRelay,
+                        inputSubject,
+                        reducerSubject,
+                        sideEffectSubject,
                         false
                     )
                 ) {
@@ -64,7 +66,7 @@ class BaseOrbitContainer<STATE : Any, SIDE_EFFECT : Any>(
             }
             .subscribe()
 
-        orbit = reducerRelay
+        orbit = reducerSubject
             .observeOn(scheduler)
             .scan(middleware.initialState) { currentState, partialReducer ->
                 partialReducer(
@@ -79,7 +81,7 @@ class BaseOrbitContainer<STATE : Any, SIDE_EFFECT : Any>(
     }
 
     override fun sendAction(action: Any) {
-        inputRelay.onNext(action)
+        inputSubject.onNext(action)
     }
 
     override fun disposeOrbit() {

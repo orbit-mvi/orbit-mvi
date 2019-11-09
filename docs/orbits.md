@@ -7,8 +7,8 @@ the glue between small, distinct functions.
 ``` kotlin
 perform("add random number")
     .on<AddRandomNumberButtonPressed>()
-    .transform { this.compose(getRandomNumberUseCase) }
-    .withReducer { state.copy(currentState.total + event.number) }
+    .transform { eventObservable.compose(getRandomNumberUseCase) }
+    .withReducer { getCurrentState().copy(currentState.total + event.number) }
 ```
 
 We can break an orbit into its constituent parts to be able to understand it
