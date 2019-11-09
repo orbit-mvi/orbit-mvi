@@ -26,7 +26,7 @@ import java.util.concurrent.CountDownLatch
 
 internal class OrbitSpek : Spek({
 
-    Feature("Orbit DSL syntax") {
+    Feature("DSL - syntax") {
         createTestMiddleware {
 
             perform("something")
@@ -43,41 +43,23 @@ internal class OrbitSpek : Spek({
                 .transform { eventObservable.map { getCurrentState().id + it + 2 } }
                 .sideEffect { println("$event") }
                 .sideEffect { post("$event") }
-                .withReducer { State(getCurrentState().id + event) }
+                .withReducer { TestState(getCurrentState().id + event) }
+                .transform { eventObservable.map { getCurrentState().id + it + 2 } }
         }
     }
 
-    Feature("Orbit DSL tests") {
-
-        Scenario("no flows") {
-            lateinit var middleware: Middleware<State, String>
-            lateinit var orbitContainer: BaseOrbitContainer<State, String>
-            lateinit var testObserver: TestObserver<State>
-
-            Given("A middleware with no flows") {
-                middleware = createTestMiddleware {}
-                orbitContainer = BaseOrbitContainer(middleware)
-            }
-
-            When("connecting to the middleware") {
-                testObserver = orbitContainer.orbit.test()
-            }
-
-            Then("emits the initial state") {
-                testObserver.assertValueSequence(listOf(middleware.initialState))
-            }
-        }
+    Feature("DSL - tests") {
 
         Scenario("a flow that reduces an action") {
-            lateinit var middleware: Middleware<State, String>
-            lateinit var orbitContainer: BaseOrbitContainer<State, String>
-            lateinit var testObserver: TestObserver<State>
+            lateinit var middleware: Middleware<TestState, String>
+            lateinit var orbitContainer: BaseOrbitContainer<TestState, String>
+            lateinit var testObserver: TestObserver<TestState>
 
             Given("A middleware with one reducer flow") {
                 middleware = createTestMiddleware {
                     perform("something")
                         .on<Int>()
-                        .withReducer { State(getCurrentState().id + event) }
+                        .withReducer { TestState(getCurrentState().id + event) }
                 }
                 orbitContainer = BaseOrbitContainer(middleware)
             }
@@ -89,21 +71,21 @@ internal class OrbitSpek : Spek({
 
             Then("produces a correct end state") {
                 testObserver.awaitCount(2)
-                testObserver.assertValueSequence(listOf(State(42), State(47)))
+                testObserver.assertValueSequence(listOf(TestState(42), TestState(47)))
             }
         }
 
         Scenario("a flow with a transformer and reducer") {
-            lateinit var middleware: Middleware<State, String>
-            lateinit var orbitContainer: BaseOrbitContainer<State, String>
-            lateinit var testObserver: TestObserver<State>
+            lateinit var middleware: Middleware<TestState, String>
+            lateinit var orbitContainer: BaseOrbitContainer<TestState, String>
+            lateinit var testObserver: TestObserver<TestState>
 
             Given("A middleware with a transformer and reducer") {
                 middleware = createTestMiddleware {
                     perform("something")
                         .on<Int>()
                         .transform { eventObservable.map { it * 2 } }
-                        .withReducer { State(getCurrentState().id + event) }
+                        .withReducer { TestState(getCurrentState().id + event) }
                 }
                 orbitContainer = BaseOrbitContainer(middleware)
             }
@@ -115,14 +97,14 @@ internal class OrbitSpek : Spek({
 
             Then("produces a correct end state") {
                 testObserver.awaitCount(2)
-                testObserver.assertValueSequence(listOf(State(42), State(52)))
+                testObserver.assertValueSequence(listOf(TestState(42), TestState(52)))
             }
         }
 
         Scenario("a flow with two transformers and a reducer") {
-            lateinit var middleware: Middleware<State, String>
-            lateinit var orbitContainer: BaseOrbitContainer<State, String>
-            lateinit var testObserver: TestObserver<State>
+            lateinit var middleware: Middleware<TestState, String>
+            lateinit var orbitContainer: BaseOrbitContainer<TestState, String>
+            lateinit var testObserver: TestObserver<TestState>
 
             Given("A middleware with two transformers and a reducer") {
                 middleware = createTestMiddleware {
@@ -130,7 +112,7 @@ internal class OrbitSpek : Spek({
                         .on<Int>()
                         .transform { eventObservable.map { it * 2 } }
                         .transform { eventObservable.map { it * 2 } }
-                        .withReducer { State(getCurrentState().id + event) }
+                        .withReducer { TestState(getCurrentState().id + event) }
                 }
                 orbitContainer = BaseOrbitContainer(middleware)
             }
@@ -142,15 +124,15 @@ internal class OrbitSpek : Spek({
 
             Then("produces a correct end state") {
                 testObserver.awaitCount(2)
-                testObserver.assertValueSequence(listOf(State(42), State(62)))
+                testObserver.assertValueSequence(listOf(TestState(42), TestState(62)))
             }
         }
 
-        Scenario("a flow with two transformers that is ignored") {
+        Scenario("a flow with two transformers and no reducer") {
             val latch = CountDownLatch(1)
-            lateinit var middleware: Middleware<State, String>
-            lateinit var orbitContainer: BaseOrbitContainer<State, String>
-            lateinit var testObserver: TestObserver<State>
+            lateinit var middleware: Middleware<TestState, String>
+            lateinit var orbitContainer: BaseOrbitContainer<TestState, String>
+            lateinit var testObserver: TestObserver<TestState>
 
             Given("A middleware with two transformer flows") {
                 middleware = createTestMiddleware {
@@ -176,16 +158,16 @@ internal class OrbitSpek : Spek({
             }
 
             Then("emits just the initial state after connecting") {
-                testObserver.assertValueSequence(listOf(State(42)))
+                testObserver.assertValueSequence(listOf(TestState(42)))
             }
         }
 
         Scenario("a flow with a transformer loopback and a flow with a transformer and reducer") {
             data class IntModified(val value: Int)
 
-            lateinit var middleware: Middleware<State, String>
-            lateinit var orbitContainer: BaseOrbitContainer<State, String>
-            lateinit var testObserver: TestObserver<State>
+            lateinit var middleware: Middleware<TestState, String>
+            lateinit var orbitContainer: BaseOrbitContainer<TestState, String>
+            lateinit var testObserver: TestObserver<TestState>
 
             Given("A middleware with a transformer loopback flow and transform/reduce flow") {
                 middleware = createTestMiddleware {
@@ -197,7 +179,7 @@ internal class OrbitSpek : Spek({
                     perform("something else")
                         .on<IntModified>()
                         .transform { eventObservable.map { it.value * 2 } }
-                        .withReducer { State(getCurrentState().id + event) }
+                        .withReducer { TestState(getCurrentState().id + event) }
                 }
                 orbitContainer = BaseOrbitContainer(middleware)
             }
@@ -209,17 +191,17 @@ internal class OrbitSpek : Spek({
 
             Then("produces a correct end state") {
                 testObserver.awaitCount(2)
-                testObserver.assertValueSequence(listOf(State(42), State(62)))
+                testObserver.assertValueSequence(listOf(TestState(42), TestState(62)))
             }
         }
 
         Scenario("a flow with two transformers with reducers") {
-            lateinit var middleware: Middleware<State, String>
-            lateinit var orbitContainer: BaseOrbitContainer<State, String>
-            lateinit var testObserver: TestObserver<State>
+            lateinit var middleware: Middleware<TestState, String>
+            lateinit var orbitContainer: BaseOrbitContainer<TestState, String>
+            lateinit var testObserver: TestObserver<TestState>
 
-            fun myReducer(event: Int): State {
-                return State(event)
+            fun myReducer(event: Int): TestState {
+                return TestState(event)
             }
 
             Given("A middleware with two transform/reduce flows") {
@@ -232,7 +214,7 @@ internal class OrbitSpek : Spek({
                     perform("something else")
                         .on<Int>()
                         .transform { eventObservable.map { it + 2 } }
-                        .withReducer { State(event) }
+                        .withReducer { TestState(event) }
                 }
                 orbitContainer = BaseOrbitContainer(middleware)
             }
@@ -244,7 +226,7 @@ internal class OrbitSpek : Spek({
 
             Then("produces a correct series of states") {
                 testObserver.awaitCount(3)
-                testObserver.assertValueSet(listOf(State(42), State(10), State(7)))
+                testObserver.assertValueSet(listOf(TestState(42), TestState(10), TestState(7)))
             }
         }
         Scenario("a flow with three transformers with reducers") {
@@ -253,24 +235,24 @@ internal class OrbitSpek : Spek({
             class Two
             class Three
 
-            lateinit var middleware: Middleware<State, String>
-            lateinit var orbitContainer: BaseOrbitContainer<State, String>
-            lateinit var testObserver: TestObserver<State>
-            val expectedOutput = mutableListOf(State(0))
+            lateinit var middleware: Middleware<TestState, String>
+            lateinit var orbitContainer: BaseOrbitContainer<TestState, String>
+            lateinit var testObserver: TestObserver<TestState>
+            val expectedOutput = mutableListOf(TestState(0))
 
             Given("A middleware with three transform/reduce flows") {
-                middleware = createTestMiddleware(State(0)) {
+                middleware = createTestMiddleware(TestState(0)) {
                     perform("one")
                         .on<One>()
-                        .withReducer { State(1) }
+                        .withReducer { TestState(1) }
 
                     perform("two")
                         .on<Two>()
-                        .withReducer { State(2) }
+                        .withReducer { TestState(2) }
 
                     perform("three")
                         .on<Three>()
-                        .withReducer { State(3) }
+                        .withReducer { TestState(3) }
                 }
                 orbitContainer = BaseOrbitContainer(middleware)
             }
@@ -279,7 +261,7 @@ internal class OrbitSpek : Spek({
                 testObserver = orbitContainer.orbit.test()
                 for (i in 0 until 99) {
                     val value = (i % 3)
-                    expectedOutput.add(State(value + 1))
+                    expectedOutput.add(TestState(value + 1))
 
                     orbitContainer.sendAction(
                         when (value) {
@@ -299,12 +281,12 @@ internal class OrbitSpek : Spek({
         }
 
         Scenario("posting side effects") {
-            lateinit var middleware: Middleware<State, String>
-            lateinit var orbitContainer: BaseOrbitContainer<State, String>
+            lateinit var middleware: Middleware<TestState, String>
+            lateinit var orbitContainer: BaseOrbitContainer<TestState, String>
             lateinit var sideEffects: TestObserver<String>
 
             Given("A middleware with a single post side effect as the first transformer") {
-                middleware = createTestMiddleware(State(1)) {
+                middleware = createTestMiddleware(TestState(1)) {
                     perform("something")
                         .on<Int>()
                         .sideEffect { post("${getCurrentState().id + event}") }
@@ -326,14 +308,14 @@ internal class OrbitSpek : Spek({
         }
 
         Scenario("non-posting side effects") {
-            lateinit var middleware: Middleware<State, String>
-            lateinit var orbitContainer: BaseOrbitContainer<State, String>
+            lateinit var middleware: Middleware<TestState, String>
+            lateinit var orbitContainer: BaseOrbitContainer<TestState, String>
             lateinit var sideEffects: TestObserver<String>
             val testSideEffectRelay = PublishSubject.create<String>()
             val testSideEffectObserver = testSideEffectRelay.test()
 
             Given("A middleware with a single side effect as the first transformer") {
-                middleware = createTestMiddleware(State(1)) {
+                middleware = createTestMiddleware(TestState(1)) {
                     perform("something")
                         .on<Int>()
                         .sideEffect { testSideEffectRelay.onNext("${getCurrentState().id + event}") }
@@ -359,7 +341,7 @@ internal class OrbitSpek : Spek({
         }
 
         Scenario("trying to build flows with the same description throw an exception") {
-            lateinit var flows: OrbitsBuilder<State, String>.() -> Unit
+            lateinit var flows: OrbitsBuilder<TestState, String>.() -> Unit
             lateinit var throwable: Throwable
 
             Given("Flows with duplicate flow descriptions") {
@@ -383,15 +365,49 @@ internal class OrbitSpek : Spek({
             }
         }
     }
+
+    Feature("Container - State") {
+
+        Scenario("Initial state is always emitted") {
+            lateinit var middleware: Middleware<TestState, String>
+            lateinit var orbitContainer: BaseOrbitContainer<TestState, String>
+            lateinit var testObserver: TestObserver<TestState>
+
+            Given("A middleware with no flows") {
+                middleware = createTestMiddleware {}
+                orbitContainer = BaseOrbitContainer(middleware)
+            }
+
+            When("connecting to the middleware") {
+                testObserver = orbitContainer.orbit.test()
+            }
+
+            Then("emits the initial state") {
+                testObserver.assertValueSequence(listOf(middleware.initialState))
+            }
+        }
+
+        Scenario("Current state always emitted upon subscription") {}
+        Scenario("Updated state is emitted after it changes while nothing is connected") {}
+        Scenario("Current state can be queried directly after modification") {}
+    }
+
+    Feature("Container - Side Effects") {
+        Scenario("Side effects are multicast to all current observers") {}
+        Scenario("Side effects are cached while there is no connected observer") {} // Is this the responsibility of this library?
+        Scenario("Cached side effects are guaranteed to be delivered to the first observer") {}
+        Scenario("Cached side effects are not guaranteed to be delivered to observers beyond the first") {}
+    }
+
+    Feature("Container - Threading") {
+        Scenario("Side effects execute on the current thread (before a tranform - reducer thread)") {}
+        Scenario("Reducers execute on reducer thread") {}
+        Scenario("Transformer executes on IO thread") {}
+        Scenario("The downstream transformers and side effects of a transformer execute on IO thread") {}
+        Scenario("The downstream reducers of a transformer executes on reducer thread") {}
+    }
+
+    Feature("Container - Lifecycle") {
+        Scenario("Lifecycle action sent on container creation") {}
+    }
 })
-
-private fun createTestMiddleware(
-    initialState: State = State(42),
-    block: OrbitsBuilder<State, String>.() -> Unit
-) = middleware<State, String>(initialState) {
-    this.apply(block)
-}
-
-private data class State(val id: Int)
-
-private const val AWAIT_TIMEOUT = 10000L
