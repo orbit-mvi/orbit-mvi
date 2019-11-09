@@ -71,11 +71,11 @@ private val viewModel by viewModel<CalculatorViewModel>()
 
 override fun onCreate() {
     ...
-    addButton.setOnClickListener { viewModel.postAction(AddAction) }
+    addButton.setOnClickListener { viewModel.sendAction(AddAction) }
 }
 
 override fun onStart() {
-    viewModel.connect(this, actions, ::handleState, ::handleSideEffect)
+    viewModel.connect(this, ::handleState, ::handleSideEffect)
 }
 
 private fun handleState(state: State) {
