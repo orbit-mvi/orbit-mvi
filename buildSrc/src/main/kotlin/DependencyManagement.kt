@@ -43,7 +43,7 @@ object Versions {
     const val groupie = "2.6.0"
 
     // Testing
-    const val spek = "2.0.7"
+    const val spek = "2.0.8"
     const val junitPlatform = "1.5.2"
     const val assertJ = "3.13.2"
     const val mockitoKotlin = "2.1.0"

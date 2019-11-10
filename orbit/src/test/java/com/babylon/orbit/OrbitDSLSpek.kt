@@ -17,6 +17,7 @@
 package com.babylon.orbit
 
 import io.reactivex.observers.TestObserver
+import io.reactivex.plugins.RxJavaPlugins
 import io.reactivex.subjects.PublishSubject
 import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
@@ -24,7 +25,7 @@ import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.gherkin.Feature
 import java.util.concurrent.CountDownLatch
 
-internal class OrbitSpek : Spek({
+internal class OrbitDSLSpek : Spek({
 
     Feature("DSL - syntax") {
         createTestMiddleware {
@@ -364,50 +365,5 @@ internal class OrbitSpek : Spek({
                     .hasMessageContaining("something")
             }
         }
-    }
-
-    Feature("Container - State") {
-
-        Scenario("Initial state is always emitted") {
-            lateinit var middleware: Middleware<TestState, String>
-            lateinit var orbitContainer: BaseOrbitContainer<TestState, String>
-            lateinit var testObserver: TestObserver<TestState>
-
-            Given("A middleware with no flows") {
-                middleware = createTestMiddleware {}
-                orbitContainer = BaseOrbitContainer(middleware)
-            }
-
-            When("connecting to the middleware") {
-                testObserver = orbitContainer.orbit.test()
-            }
-
-            Then("emits the initial state") {
-                testObserver.assertValueSequence(listOf(middleware.initialState))
-            }
-        }
-
-        Scenario("Current state always emitted upon subscription") {}
-        Scenario("Updated state is emitted after it changes while nothing is connected") {}
-        Scenario("Current state can be queried directly after modification") {}
-    }
-
-    Feature("Container - Side Effects") {
-        Scenario("Side effects are multicast to all current observers") {}
-        Scenario("Side effects are cached while there is no connected observer") {} // Is this the responsibility of this library?
-        Scenario("Cached side effects are guaranteed to be delivered to the first observer") {}
-        Scenario("Cached side effects are not guaranteed to be delivered to observers beyond the first") {}
-    }
-
-    Feature("Container - Threading") {
-        Scenario("Side effects execute on the current thread (before a tranform - reducer thread)") {}
-        Scenario("Reducers execute on reducer thread") {}
-        Scenario("Transformer executes on IO thread") {}
-        Scenario("The downstream transformers and side effects of a transformer execute on IO thread") {}
-        Scenario("The downstream reducers of a transformer executes on reducer thread") {}
-    }
-
-    Feature("Container - Lifecycle") {
-        Scenario("Lifecycle action sent on container creation") {}
     }
 })

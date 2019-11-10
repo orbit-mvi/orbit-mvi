@@ -89,6 +89,6 @@ class BaseOrbitContainer<STATE : Any, SIDE_EFFECT : Any>(
     }
 
     private fun createSingleScheduler(): Scheduler {
-        return Schedulers.from(Executors.newSingleThreadExecutor())
+        return Schedulers.from(Executors.newSingleThreadExecutor { Thread(it, "reducerThread") })
     }
 }
