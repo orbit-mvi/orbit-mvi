@@ -47,6 +47,8 @@ object Versions {
     const val junitPlatform = "1.5.2"
     const val assertJ = "3.13.2"
     const val mockitoKotlin = "2.1.0"
+    const val robolectric = "4.3"
+    const val junit4 = "4.12"
 }
 
 object ProjectDependencies {
@@ -68,7 +70,6 @@ object ProjectDependencies {
     // Reactive extension related stuff
     const val rxJava2 = "io.reactivex.rxjava2:rxjava:${Versions.rxJava2}"
     const val rxJava2Extensions = "com.github.akarnokd:rxjava2-extensions:${Versions.rxJava2Extensions}"
-    const val rxRelay = "com.jakewharton.rxrelay2:rxrelay:${Versions.rxRelay}"
     const val rxKotlin = "io.reactivex.rxjava2:rxkotlin:${Versions.rxKotlin}"
     const val rxAndroid = "io.reactivex.rxjava2:rxandroid:${Versions.rxAndroid}"
     const val autodispose = "com.uber.autodispose:autodispose:${Versions.autodispose}"
@@ -86,6 +87,10 @@ object ProjectDependencies {
     const val junitPlatformConsole = "org.junit.platform:junit-platform-console:${Versions.junitPlatform}"
     const val assertJ = "org.assertj:assertj-core:${Versions.assertJ}"
     const val mockitoKotlin = "com.nhaarman.mockitokotlin2:mockito-kotlin:${Versions.mockitoKotlin}"
+
+    // Testing
+    const val robolectric = "org.robolectric:robolectric:${Versions.robolectric}"
+    const val junit4 = "junit:junit:${Versions.junit4}"
 }
 
 object PluginDependencies {

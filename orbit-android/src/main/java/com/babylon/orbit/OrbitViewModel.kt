@@ -20,19 +20,14 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
 import com.uber.autodispose.android.lifecycle.autoDispose
 
-abstract class OrbitViewModel<STATE : Any, SIDE_EFFECT : Any>(
+open class OrbitViewModel<STATE : Any, SIDE_EFFECT : Any>(
     middleware: Middleware<STATE, SIDE_EFFECT>
-) : ViewModel() {
+) : ViewModel(), OrbitContainer<STATE, SIDE_EFFECT> by AndroidOrbitContainer(middleware) {
 
     constructor(
         initialState: STATE,
         init: OrbitsBuilder<STATE, SIDE_EFFECT>.() -> Unit
     ) : this(middleware(initialState, init))
-
-    private val container: AndroidOrbitContainer<STATE, SIDE_EFFECT> = AndroidOrbitContainer(middleware)
-
-    val currentState: STATE
-        get() = container.currentState
 
     /**
      * Designed to be called in onStart or onResume, depending on your use case.
@@ -46,20 +41,14 @@ abstract class OrbitViewModel<STATE : Any, SIDE_EFFECT : Any>(
         sideEffectConsumer: (SIDE_EFFECT) -> Unit = {}
     ) {
 
-        container.orbit
-            .autoDispose(lifecycleOwner)
+        orbit.autoDispose(lifecycleOwner)
             .subscribe(stateConsumer)
 
-        container.sideEffect
-            .autoDispose(lifecycleOwner)
+        sideEffect.autoDispose(lifecycleOwner)
             .subscribe(sideEffectConsumer)
     }
 
-    fun sendAction(action: Any) {
-        container.sendAction(action)
-    }
-
     override fun onCleared() {
-        container.disposeOrbit()
+        disposeOrbit()
     }
 }

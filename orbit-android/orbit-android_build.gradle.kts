@@ -68,4 +68,6 @@ dependencies {
     // Testing
     GroupedDependencies.spekTestsImplementation.forEach { testImplementation(it) }
     GroupedDependencies.spekTestsRuntime.forEach { testRuntimeOnly(it) }
+    testImplementation(ProjectDependencies.robolectric)
+    testImplementation(ProjectDependencies.junit4)
 }

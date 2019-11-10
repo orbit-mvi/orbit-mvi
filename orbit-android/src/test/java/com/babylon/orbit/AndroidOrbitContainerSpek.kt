@@ -29,7 +29,7 @@ class AndroidOrbitContainerSpek : Spek({
             lateinit var stateObserver: TestObserver<TestState>
             lateinit var sideEffectObserver: TestObserver<String>
 
-            Given("A middleware with no flows") {
+            Given("An android container with a simple middleware") {
                 middleware = createTestMiddleware {
                     perform("send side effect")
                         .on<Unit>()
