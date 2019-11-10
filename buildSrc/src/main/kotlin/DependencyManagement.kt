@@ -49,6 +49,7 @@ object Versions {
     const val mockitoKotlin = "2.1.0"
     const val robolectric = "4.3"
     const val junit4 = "4.12"
+    const val junitVintage = "5.5.2"
 }
 
 object ProjectDependencies {
@@ -91,6 +92,7 @@ object ProjectDependencies {
     // Testing
     const val robolectric = "org.robolectric:robolectric:${Versions.robolectric}"
     const val junit4 = "junit:junit:${Versions.junit4}"
+    const val junitVintage = "org.junit.vintage:junit-vintage-engine:${Versions.junitVintage}"
 }
 
 object PluginDependencies {

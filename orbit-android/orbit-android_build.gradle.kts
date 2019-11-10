@@ -50,6 +50,12 @@ tasks.withType(KotlinCompile::class.java).all {
         jvmTarget = "1.8"
     }
 }
+tasks.withType(Test::class.java) {
+    useJUnitPlatform()
+    testLogging {
+        events("passed", "skipped", "failed")
+    }
+}
 
 dependencies {
     implementation(project(":orbit"))
@@ -70,4 +76,5 @@ dependencies {
     GroupedDependencies.spekTestsRuntime.forEach { testRuntimeOnly(it) }
     testImplementation(ProjectDependencies.robolectric)
     testImplementation(ProjectDependencies.junit4)
+    testRuntimeOnly(ProjectDependencies.junitVintage)
 }
