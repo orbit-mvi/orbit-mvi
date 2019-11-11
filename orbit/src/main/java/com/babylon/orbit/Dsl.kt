@@ -1,3 +1,19 @@
+/*
+ * Copyright 2019 Babylon Partners Limited
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
 package com.babylon.orbit
 
 import io.reactivex.Observable
@@ -15,6 +31,12 @@ What do we want to log:
 @DslMarker
 annotation class OrbitDsl
 
+/**
+ * Convenience method for creating a [Middleware].
+ *
+ * @param initialState The initial state to set on your MVI system.
+ * @param init The DSL implementation describing your MVI flows.
+ */
 fun <STATE : Any, SIDE_EFFECT : Any> middleware(
     initialState: STATE,
     init: OrbitsBuilder<STATE, SIDE_EFFECT>.() -> Unit
@@ -45,6 +67,14 @@ open class OrbitsBuilder<STATE : Any, SIDE_EFFECT : Any>(private val initialStat
         config.apply { block() }
     }
 
+    /**
+     *  `perform` begins a new flow declaration. It needs to be followed by further transformations to
+     *  be useful.
+     *
+     *  The description provided here will be used in debug logging.
+     *
+     *  @param description The description for your flow. This needs to be unique within the same middleware.
+     */
     @Suppress("unused") // Used for the nice extension function highlight
     fun OrbitsBuilder<STATE, SIDE_EFFECT>.perform(description: String) = ActionFilter(description)
         .also {
@@ -54,9 +84,29 @@ open class OrbitsBuilder<STATE : Any, SIDE_EFFECT : Any>(private val initialStat
             descriptions.add(description)
         }
 
+    /**
+     * `on` sets up the flow to trigger only on actions of a certain type. Only actions of this type
+     * will be emitted downstream.
+     *
+     * Be careful not to use generic types in this filter! Due to type erasure
+     * e.g. `List<Int>` and `List<String>` resolve to the same class, potentially
+     * causing unintended events or crashes.
+     *
+     * @param ACTION The action type to filter on.
+     */
     inline fun <reified ACTION : Any> ActionFilter.on() =
         this@OrbitsBuilder.Transformer<ACTION>(description) { rawActions.ofType() }
 
+    /**
+     * `on` sets up the flow to trigger only on actions of certain types. Only actions of these types
+     * will be emitted downstream.
+     *
+     * Be careful not to use generic types in this filter! Due to type erasure
+     * e.g. `List<Int>` and `List<String>` resolve to the same class, potentially
+     * causing unintended events or crashes.
+     *
+     * @param classes The action types to filter on.
+     */
     @Suppress("unused") // Used for the nice extension function highlight
     fun ActionFilter.on(vararg classes: Class<*>) =
         this@OrbitsBuilder.Transformer(description) {
@@ -70,6 +120,17 @@ open class OrbitsBuilder<STATE : Any, SIDE_EFFECT : Any>(private val initialStat
         private val description: String,
         private val upstreamTransformer: OrbitContext<STATE, SIDE_EFFECT>.() -> Observable<EVENT>
     ) {
+
+        /**
+         * Transform allows you to apply a series of RxJava operators in order to transform the original
+         * to return some other type. Typically you would flatmap or compose the original with use cases
+         * in the form of observables or observable transformers.
+         *
+         * The first transformer you invoke switches the downstream of the original observable to an
+         * IO scheduler.
+         *
+         * @param transformer the lambda applying the transformation
+         */
         fun <T : Any> transform(transformer: TransformerReceiver<STATE, EVENT>.() -> Observable<T>) =
             this@OrbitsBuilder.Transformer(description) {
                 val newContext = switchContextIfNeeded()
@@ -86,6 +147,21 @@ open class OrbitsBuilder<STATE : Any, SIDE_EFFECT : Any>(private val initialStat
             }
                 .also { this@OrbitsBuilder.orbits[description] = it.upstreamTransformer }
 
+        /**
+         * Side effects allow you to deal with things like tracking, navigation etc.
+         *
+         * There is also a special type of side effects - ones that are meant for the view to listen
+         * to as one-off events that are awkward to represent as part of the state - typically things
+         * like navigation, showing transient views like toasts etc.
+         *
+         * These are delivered through the side effect relay available through [OrbitContainer.sideEffect]
+         * or OrbitViewModel.sideEffect.
+         *
+         * Side effects are passthrough transformers. This means that after applying
+         * a side effect, the upstream events are passed through unmodified.
+         *
+         * @param sideEffect the lambda applying the side effect
+         */
         fun sideEffect(sideEffect: SideEffectEventReceiver<STATE, EVENT, SIDE_EFFECT>.() -> Unit) =
             doOnNextTransformer { event ->
                 SideEffectEventReceiver(
@@ -95,6 +171,21 @@ open class OrbitsBuilder<STATE : Any, SIDE_EFFECT : Any>(private val initialStat
                 ).sideEffect()
             }
 
+        /**
+         * Loopbacks allow you to loop the upstream events back into the MVI system input. This allows
+         * you to effectively split your event stream into multiple ones that can apply different
+         * logic.
+         *
+         * It is recommended to put the event into a wrapper when doing so - for transparency as well
+         * as avoiding any type erasure related issues on the action filters.
+         *
+         * The provided lambda has to return the event you wish to loop back.
+         *
+         * Loopbacks are passthrough transformers. This means that after applying
+         * a loopback, the upstream events are passed through unmodified.
+         *
+         * @param mapper the lambda mapping the incoming event to the looped back event.
+         */
         fun <T : Any> loopBack(mapper: EventReceiver<STATE, EVENT>.() -> T) =
             doOnNextTransformer { event ->
                 inputSubject.onNext(
@@ -105,7 +196,15 @@ open class OrbitsBuilder<STATE : Any, SIDE_EFFECT : Any>(private val initialStat
                 )
             }
 
-        fun withReducer(reducer: EventReceiver<STATE, EVENT>.() -> STATE) =
+        /**
+         * Reducers reduce the current state and incoming events to produce a new state.
+         *
+         * Reducers are passthrough transformers. This means that after applying
+         * a reducer, the upstream events are passed through unmodified.
+         *
+         * @param reducer the lambda reducing the current state and incoming event to produce a new state
+         */
+        fun reduce(reducer: EventReceiver<STATE, EVENT>.() -> STATE) =
             doOnNextTransformer { event ->
                 reducerSubject.onNext { state ->
                     EventReceiver({ state }, event).reducer()
@@ -138,28 +237,58 @@ open class OrbitsBuilder<STATE : Any, SIDE_EFFECT : Any>(private val initialStat
     }
 }
 
+/**
+ * @property eventObservable The original observable to be transformed.
+ */
 @OrbitDsl
 class TransformerReceiver<STATE : Any, EVENT : Any>(
     private val stateProvider: () -> STATE,
     val eventObservable: Observable<EVENT>
 ) {
+    /**
+     * Returns the current state captured whenever this method is called. Successive calls to this
+     * method may yield different results each time as the state could be modified by another flow at
+     * any time.
+     */
     fun getCurrentState() = stateProvider()
 }
 
+/**
+ * @property event The incoming event.
+ */
 @OrbitDsl
 class EventReceiver<STATE : Any, EVENT : Any>(
     private val stateProvider: () -> STATE,
     val event: EVENT
 ) {
+    /**
+     * Returns the current state captured whenever this method is called. Successive calls to this
+     * method may yield different results each time as the state could be modified by another flow at
+     * any time.
+     *
+     * Within a reducer however, you can expect this to be constant.
+     */
     fun getCurrentState() = stateProvider()
 }
 
+/**
+ * @property event The incoming event.
+ */
 @OrbitDsl
 class SideEffectEventReceiver<STATE : Any, EVENT : Any, SIDE_EFFECT : Any>(
     private val stateProvider: () -> STATE,
     private val sideEffectRelay: Subject<SIDE_EFFECT>,
     val event: EVENT
 ) {
+    /**
+     * Returns the current state captured whenever this method is called. Successive calls to this
+     * method may yield different results each time as the state could be modified by another flow at
+     * any time.
+     */
     fun getCurrentState() = stateProvider()
+
+    /**
+     * Allows you to post a side effect to the side effect relay.
+     */
     fun post(sideEffect: SIDE_EFFECT) = sideEffectRelay.onNext(sideEffect)
 }

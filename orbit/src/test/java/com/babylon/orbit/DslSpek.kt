@@ -35,7 +35,7 @@ internal class DslSpek : Spek({
 
             perform("something")
                 .on<Int>()
-                .withReducer { getCurrentState().copy(id = getCurrentState().id + event) }
+                .reduce { getCurrentState().copy(id = getCurrentState().id + event) }
 
             perform("something else")
                 .on<Int>()
@@ -47,7 +47,7 @@ internal class DslSpek : Spek({
                 .transform { eventObservable.map { getCurrentState().id + it + 2 } }
                 .sideEffect { println("$event") }
                 .sideEffect { post("$event") }
-                .withReducer { TestState(getCurrentState().id + event) }
+                .reduce { TestState(getCurrentState().id + event) }
                 .transform { eventObservable.map { getCurrentState().id + it + 2 } }
         }
     }
@@ -107,7 +107,7 @@ internal class DslSpek : Spek({
                 middleware = createTestMiddleware {
                     perform("something")
                         .on<Int>()
-                        .withReducer { TestState(getCurrentState().id + event) }
+                        .reduce { TestState(getCurrentState().id + event) }
                 }
                 orbitContainer = BaseOrbitContainer(middleware)
             }
@@ -133,7 +133,7 @@ internal class DslSpek : Spek({
                     perform("something")
                         .on<Int>()
                         .transform { eventObservable.map { it * 2 } }
-                        .withReducer { TestState(getCurrentState().id + event) }
+                        .reduce { TestState(getCurrentState().id + event) }
                 }
                 orbitContainer = BaseOrbitContainer(middleware)
             }
@@ -160,7 +160,7 @@ internal class DslSpek : Spek({
                         .on<Int>()
                         .transform { eventObservable.map { it * 2 } }
                         .transform { eventObservable.map { it * 2 } }
-                        .withReducer { TestState(getCurrentState().id + event) }
+                        .reduce { TestState(getCurrentState().id + event) }
                 }
                 orbitContainer = BaseOrbitContainer(middleware)
             }
@@ -227,7 +227,7 @@ internal class DslSpek : Spek({
                     perform("something else")
                         .on<IntModified>()
                         .transform { eventObservable.map { it.value * 2 } }
-                        .withReducer { TestState(getCurrentState().id + event) }
+                        .reduce { TestState(getCurrentState().id + event) }
                 }
                 orbitContainer = BaseOrbitContainer(middleware)
             }
@@ -257,12 +257,12 @@ internal class DslSpek : Spek({
                     perform("something")
                         .on<Int>()
                         .transform { eventObservable.map { it * 2 } }
-                        .withReducer { myReducer(event) }
+                        .reduce { myReducer(event) }
 
                     perform("something else")
                         .on<Int>()
                         .transform { eventObservable.map { it + 2 } }
-                        .withReducer { TestState(event) }
+                        .reduce { TestState(event) }
                 }
                 orbitContainer = BaseOrbitContainer(middleware)
             }
@@ -292,15 +292,15 @@ internal class DslSpek : Spek({
                 middleware = createTestMiddleware(TestState(0)) {
                     perform("one")
                         .on<One>()
-                        .withReducer { TestState(1) }
+                        .reduce { TestState(1) }
 
                     perform("two")
                         .on<Two>()
-                        .withReducer { TestState(2) }
+                        .reduce { TestState(2) }
 
                     perform("three")
                         .on<Three>()
-                        .withReducer { TestState(3) }
+                        .reduce { TestState(3) }
                 }
                 orbitContainer = BaseOrbitContainer(middleware)
             }

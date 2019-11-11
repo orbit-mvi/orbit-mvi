@@ -83,7 +83,7 @@ internal class OrbitContainerSpek : Spek({
                 middleware = createTestMiddleware {
                     perform("increment id")
                         .on<Unit>()
-                        .withReducer { getCurrentState().copy(id = getCurrentState().id + 1) }
+                        .reduce { getCurrentState().copy(id = getCurrentState().id + 1) }
                 }
                 orbitContainer = BaseOrbitContainer(middleware)
             }
@@ -124,7 +124,7 @@ internal class OrbitContainerSpek : Spek({
                 middleware = createTestMiddleware {
                     perform("increment id")
                         .on<Unit>()
-                        .withReducer { getCurrentState().copy(id = getCurrentState().id + 1) }
+                        .reduce { getCurrentState().copy(id = getCurrentState().id + 1) }
                 }
                 orbitContainer = BaseOrbitContainer(middleware)
             }
@@ -205,7 +205,7 @@ internal class OrbitContainerSpek : Spek({
                         .on<Unit>()
                         .sideEffect { post("foo") }
                         .sideEffect { post("bar") }
-                        .withReducer { getCurrentState().copy(id = getCurrentState().id + 1) }
+                        .reduce { getCurrentState().copy(id = getCurrentState().id + 1) }
                 }
                 orbitContainer = BaseOrbitContainer(middleware)
             }
@@ -238,7 +238,7 @@ internal class OrbitContainerSpek : Spek({
                         .on<Unit>()
                         .sideEffect { post("foo") }
                         .sideEffect { post("bar") }
-                        .withReducer { getCurrentState().copy(id = getCurrentState().id + 1) }
+                        .reduce { getCurrentState().copy(id = getCurrentState().id + 1) }
                 }
                 orbitContainer = BaseOrbitContainer(middleware)
             }
@@ -304,7 +304,7 @@ internal class OrbitContainerSpek : Spek({
                         .on<Unit>()
                         .sideEffect { post("foo") }
                         .sideEffect { post("bar") }
-                        .withReducer { getCurrentState().copy(id = getCurrentState().id + 1) }
+                        .reduce { getCurrentState().copy(id = getCurrentState().id + 1) }
                 }
                 orbitContainer = BaseOrbitContainer(middleware)
             }
@@ -366,7 +366,7 @@ internal class OrbitContainerSpek : Spek({
                         .on<Unit>()
                         .sideEffect { post("foo") }
                         .sideEffect { post("bar") }
-                        .withReducer { getCurrentState().copy(id = getCurrentState().id + 1) }
+                        .reduce { getCurrentState().copy(id = getCurrentState().id + 1) }
                 }
                 orbitContainer = BaseOrbitContainer(middleware)
             }
@@ -450,7 +450,7 @@ internal class OrbitContainerSpek : Spek({
                         .on<Unit>()
                         .sideEffect { post("foo") }
                         .sideEffect { post("bar") }
-                        .withReducer { getCurrentState().copy(id = getCurrentState().id + 1) }
+                        .reduce { getCurrentState().copy(id = getCurrentState().id + 1) }
                 }
                 orbitContainer = BaseOrbitContainer(middleware)
             }

@@ -15,7 +15,7 @@ class TodoViewModel(
             TodoScreenAction.RetryAction::class.java
         )
         .transform { transformers.loadTodos(eventObservable) }
-        .withReducer { reducers.reduceLoadTodos(getCurrentState(), event) }
+        .reduce { reducers.reduceLoadTodos(getCurrentState(), event) }
 
     perform("track analytics for selected todo")
         .on<TodoScreenAction.TodoSelected>()
@@ -23,11 +23,11 @@ class TodoViewModel(
 
     perform("load the selected todo")
         .on<TodoScreenAction.TodoSelected>()
-        .withReducer { reducers.reduceLoadSelectedTodo(getCurrentState(), event) }
+        .reduce { reducers.reduceLoadSelectedTodo(getCurrentState(), event) }
 
     perform("dismiss the selected todo")
         .on<TodoScreenAction.TodoSelectedDismissed>()
-        .withReducer { reducers.reduceDismissSelectedTodo(getCurrentState()) }
+        .reduce { reducers.reduceDismissSelectedTodo(getCurrentState()) }
 
     perform("load the user profile switch for the user profile")
         .on<TodoScreenAction.TodoUserSelected>()
@@ -37,13 +37,13 @@ class TodoViewModel(
     perform("load the user profile is the switch is on")
         .on<UserProfileExtra>()
         .transform { transformers.loadUserProfile(eventObservable) }
-        .withReducer { reducers.reduceLoadUserProfile(getCurrentState(), event) }
+        .reduce { reducers.reduceLoadUserProfile(getCurrentState(), event) }
 
     perform("handle user profile switch is off")
         .on<UserProfileExtra>()
-        .withReducer { reducers.reduceLoadUserProfileSwitch(getCurrentState(), event) }
+        .reduce { reducers.reduceLoadUserProfileSwitch(getCurrentState(), event) }
 
     perform("dismiss the selected user")
         .on<TodoScreenAction.UserSelectedDismissed>()
-        .withReducer { reducers.reduceUserSelected(getCurrentState()) }
+        .reduce { reducers.reduceUserSelected(getCurrentState()) }
 })
