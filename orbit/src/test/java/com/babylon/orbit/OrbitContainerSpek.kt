@@ -17,6 +17,7 @@
 package com.babylon.orbit
 
 import io.reactivex.observers.TestObserver
+import io.reactivex.subjects.PublishSubject
 import org.assertj.core.api.Assertions.assertThat
 import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.gherkin.Feature
@@ -78,7 +79,7 @@ internal class OrbitContainerSpek : Spek({
             lateinit var testObserver1: TestObserver<TestState>
             lateinit var testObserver2: TestObserver<TestState>
 
-            Given("A middleware with no flows") {
+            Given("A middleware with a reducer") {
                 middleware = createTestMiddleware {
                     perform("increment id")
                         .on<Unit>()
@@ -119,7 +120,7 @@ internal class OrbitContainerSpek : Spek({
             lateinit var state1: TestState
             lateinit var state2: TestState
 
-            Given("A middleware with no flows") {
+            Given("A middleware with a reducer") {
                 middleware = createTestMiddleware {
                     perform("increment id")
                         .on<Unit>()
@@ -160,7 +161,7 @@ internal class OrbitContainerSpek : Spek({
             lateinit var testObserver1: TestObserver<String>
             lateinit var testObserver2: TestObserver<String>
 
-            Given("A middleware with no flows") {
+            Given("A middleware with side effect") {
                 middleware = createTestMiddleware {
                     perform("send side effect")
                         .on<Unit>()
@@ -198,7 +199,7 @@ internal class OrbitContainerSpek : Spek({
             lateinit var stateObserver: TestObserver<TestState>
             lateinit var sideEffectObserver: TestObserver<String>
 
-            Given("A middleware with no flows") {
+            Given("A middleware with side effects") {
                 middleware = createTestMiddleware {
                     perform("send side effect")
                         .on<Unit>()
@@ -231,7 +232,7 @@ internal class OrbitContainerSpek : Spek({
             lateinit var stateObserver: TestObserver<TestState>
             lateinit var sideEffectObserver: TestObserver<String>
 
-            Given("A middleware with no flows") {
+            Given("A middleware with side effects") {
                 middleware = createTestMiddleware {
                     perform("send side effect")
                         .on<Unit>()
@@ -285,14 +286,16 @@ internal class OrbitContainerSpek : Spek({
             }
         }
 
-        Scenario("If I connect, disconnect and reconnect the side effects behave correctly" +
-                " when explicitly set to true") {
+        Scenario(
+            "If I connect, disconnect and reconnect the side effects behave correctly" +
+                    " when explicitly set to true"
+        ) {
             lateinit var middleware: Middleware<TestState, String>
             lateinit var orbitContainer: BaseOrbitContainer<TestState, String>
             lateinit var stateObserver: TestObserver<TestState>
             lateinit var sideEffectObserver: TestObserver<String>
 
-            Given("A middleware with no flows") {
+            Given("A middleware with side effects") {
                 middleware = createTestMiddleware {
                     configuration {
                         sideEffectCachingEnabled = true
@@ -357,7 +360,7 @@ internal class OrbitContainerSpek : Spek({
             lateinit var sideEffectObserver1: TestObserver<String>
             lateinit var sideEffectObserver2: TestObserver<String>
 
-            Given("A middleware with no flows") {
+            Given("A middleware with side effects") {
                 middleware = createTestMiddleware {
                     perform("send side effect")
                         .on<Unit>()
@@ -397,7 +400,7 @@ internal class OrbitContainerSpek : Spek({
             lateinit var testObserver1: TestObserver<String>
             lateinit var testObserver2: TestObserver<String>
 
-            Given("A middleware with no flows") {
+            Given("A middleware with side effect") {
                 middleware = createTestMiddleware {
                     configuration {
                         sideEffectCachingEnabled = false
@@ -438,7 +441,7 @@ internal class OrbitContainerSpek : Spek({
             lateinit var stateObserver: TestObserver<TestState>
             lateinit var sideEffectObserver: TestObserver<String>
 
-            Given("A middleware with no flows") {
+            Given("A middleware with side effects") {
                 middleware = createTestMiddleware {
                     configuration {
                         sideEffectCachingEnabled = false
@@ -472,25 +475,24 @@ internal class OrbitContainerSpek : Spek({
     Feature("Container - Lifecycle") {
         Scenario("Lifecycle action sent on container creation") {
             lateinit var middleware: Middleware<TestState, String>
-            lateinit var orbitContainer: BaseOrbitContainer<TestState, String>
-            lateinit var testObserver: TestObserver<TestState>
+            val sideEffectSubject = PublishSubject.create<String>()
+            val sideEffectTestObserver = sideEffectSubject.test()
 
-            Given("A middleware with no flows") {
+            Given("A middleware with a side effect off a LifecycleEvent.Created") {
                 middleware = createTestMiddleware {
                     perform("check lifecycle action")
                         .on<LifecycleAction.Created>()
-                        .withReducer { getCurrentState().copy(id = getCurrentState().id + 1) }
+                        .sideEffect { sideEffectSubject.onNext("foo") }
                 }
-                orbitContainer = BaseOrbitContainer(middleware)
+                BaseOrbitContainer(middleware)
             }
 
             When("I connect to the middleware") {
-                testObserver = orbitContainer.orbit.test()
-                testObserver.awaitCount(1)
+                sideEffectTestObserver.awaitCount(1)
             }
 
-            Then("I get the modified state") {
-                testObserver.assertValueSequence(listOf(TestState(43)))
+            Then("The side effect is received") {
+                sideEffectTestObserver.assertValue("foo")
             }
         }
     }
