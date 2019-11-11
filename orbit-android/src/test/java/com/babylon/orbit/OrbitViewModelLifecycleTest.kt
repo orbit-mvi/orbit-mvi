@@ -35,12 +35,6 @@ class OrbitViewModelLifecycleTest {
 
     @Test
     fun `If I connect in onCreate I get disconnected in onDestroy`() {
-        RxAndroidPlugins.setInitMainThreadSchedulerHandler {
-            RxJavaPlugins.createNewThreadScheduler { Thread(it, "main") }
-        }
-        RxAndroidPlugins.setMainThreadSchedulerHandler {
-            RxJavaPlugins.createNewThreadScheduler { Thread(it, "main") }
-        }
         lateinit var orbitViewModel: OrbitViewModel<TestState, String>
         val lifecycle = LifecycleRegistry(mock())
         val lifecycleOwner = LifecycleOwner { lifecycle }
@@ -105,12 +99,6 @@ class OrbitViewModelLifecycleTest {
 
     @Test
     fun `If I connect in onStart I get disconnected in onStop`() {
-        RxAndroidPlugins.setInitMainThreadSchedulerHandler {
-            RxJavaPlugins.createNewThreadScheduler { Thread(it, "main") }
-        }
-        RxAndroidPlugins.setMainThreadSchedulerHandler {
-            RxJavaPlugins.createNewThreadScheduler { Thread(it, "main") }
-        }
         lateinit var orbitViewModel: OrbitViewModel<TestState, String>
         val lifecycle = LifecycleRegistry(mock())
         val lifecycleOwner = LifecycleOwner { lifecycle }
@@ -174,12 +162,6 @@ class OrbitViewModelLifecycleTest {
 
     @Test
     fun `If I connect in onResume I get disconnected in onPause`() {
-        RxAndroidPlugins.setInitMainThreadSchedulerHandler {
-            RxJavaPlugins.createNewThreadScheduler { Thread(it, "main") }
-        }
-        RxAndroidPlugins.setMainThreadSchedulerHandler {
-            RxJavaPlugins.createNewThreadScheduler { Thread(it, "main") }
-        }
         lateinit var orbitViewModel: OrbitViewModel<TestState, String>
         val lifecycle = LifecycleRegistry(mock())
         val lifecycleOwner = LifecycleOwner { lifecycle }
@@ -237,12 +219,6 @@ class OrbitViewModelLifecycleTest {
 
     @Test
     fun `Instance of view is not retained after disconnection`() {
-        RxAndroidPlugins.setInitMainThreadSchedulerHandler {
-            RxJavaPlugins.createNewThreadScheduler { Thread(it, "main") }
-        }
-        RxAndroidPlugins.setMainThreadSchedulerHandler {
-            RxJavaPlugins.createNewThreadScheduler { Thread(it, "main") }
-        }
         lateinit var orbitViewModel: OrbitViewModel<TestState, String>
         lateinit var weakConsumer: WeakReference<Consumer>
         val lifecycle = LifecycleRegistry(mock())

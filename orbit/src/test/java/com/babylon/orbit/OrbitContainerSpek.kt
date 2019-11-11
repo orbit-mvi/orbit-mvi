@@ -193,7 +193,7 @@ internal class OrbitContainerSpek : Spek({
         }
 
         // Is this the responsibility of this library?
-        Scenario("Side effects are cached while there is no connected observer ") {
+        Scenario("Side effects are cached while there is no connected observer") {
             lateinit var middleware: Middleware<TestState, String>
             lateinit var orbitContainer: BaseOrbitContainer<TestState, String>
             lateinit var stateObserver: TestObserver<TestState>
