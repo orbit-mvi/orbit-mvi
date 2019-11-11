@@ -13,6 +13,7 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
+import java.lang.ref.WeakReference
 
 @RunWith(RobolectricTestRunner::class)
 class OrbitViewModelLifecycleTest {
@@ -236,6 +237,69 @@ class OrbitViewModelLifecycleTest {
 
     @Test
     fun `Instance of view is not retained after disconnection`() {
-        // This would be a very useful test but not sure how to write this
+        RxAndroidPlugins.setInitMainThreadSchedulerHandler {
+            RxJavaPlugins.createNewThreadScheduler { Thread(it, "main") }
+        }
+        RxAndroidPlugins.setMainThreadSchedulerHandler {
+            RxJavaPlugins.createNewThreadScheduler { Thread(it, "main") }
+        }
+        lateinit var orbitViewModel: OrbitViewModel<TestState, String>
+        lateinit var weakConsumer: WeakReference<Consumer>
+        val lifecycle = LifecycleRegistry(mock())
+        val lifecycleOwner = LifecycleOwner { lifecycle }
+        val stateSubject = PublishSubject.create<TestState>()
+        val stateObserver = stateSubject.test()
+        val sideEffectSubject = PublishSubject.create<String>()
+
+        // Given A middleware with no flows
+        val middleware = createTestMiddleware {
+            perform("send side effect")
+                .on<Unit>()
+                .sideEffect { post("foobar") }
+                .withReducer { getCurrentState().copy(id = getCurrentState().id + 1) }
+        }
+        orbitViewModel = OrbitViewModel(middleware)
+
+        // When I connect to the view model in onStart
+        lifecycle.handleLifecycleEvent(Lifecycle.Event.ON_CREATE)
+        weakConsumer = WeakReference(Consumer(stateSubject, sideEffectSubject)).also {
+            orbitViewModel.connect(
+                lifecycleOwner,
+                it.get()!!::consumeState,
+                it.get()!!::consumeSideEffect
+            )
+        }
+
+        lifecycle.handleLifecycleEvent(Lifecycle.Event.ON_START)
+        stateObserver.awaitCount(1)
+
+        // Then I receive the initial state
+        assertThat(stateObserver.values()).containsExactly(middleware.initialState)
+
+        // When I transition through to stopped
+        lifecycle.handleLifecycleEvent(Lifecycle.Event.ON_RESUME)
+        lifecycle.handleLifecycleEvent(Lifecycle.Event.ON_PAUSE)
+        lifecycle.handleLifecycleEvent(Lifecycle.Event.ON_STOP)
+
+        // Then I expect the consumer to be cleared
+        var cleared = false
+        for (i in 0..15) {
+            System.gc()
+            Runtime.getRuntime().gc()
+            if (!cleared) {
+                cleared = weakConsumer.get() == null
+                Thread.sleep(1000)
+            } else break
+        }
+        assertThat(cleared).isTrue()
     }
+}
+
+internal class Consumer(
+    private val stateSubject: PublishSubject<TestState>,
+    private val sideEffectSubject: PublishSubject<String>
+) {
+    fun consumeState(state: TestState) = stateSubject.onNext(state)
+    fun consumeSideEffect(sideEffect: String) = sideEffectSubject.onNext(sideEffect)
+
 }
