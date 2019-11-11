@@ -486,6 +486,7 @@ internal class OrbitContainerSpek : Spek({
 
             When("I connect to the middleware") {
                 testObserver = orbitContainer.orbit.test()
+                testObserver.awaitCount(1)
             }
 
             Then("I get the modified state") {
