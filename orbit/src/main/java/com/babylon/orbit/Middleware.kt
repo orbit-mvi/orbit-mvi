@@ -33,4 +33,9 @@ data class OrbitContext<STATE : Any, SIDE_EFFECT : Any>(
 interface Middleware<STATE : Any, SIDE_EFFECT : Any> {
     val initialState: STATE
     val orbits: List<TransformerFunction<STATE, SIDE_EFFECT>>
+    val configuration: Config
+
+    data class Config(
+        val sideEffectCachingEnabled: Boolean = true
+    )
 }

@@ -259,6 +259,7 @@ class OrbitViewModelLifecycleTest {
 
         // Then I expect the consumer to be cleared
         var cleared = false
+        @Suppress("ExplicitGarbageCollectionCall")
         for (i in 0..15) {
             System.gc()
             Runtime.getRuntime().gc()
@@ -277,5 +278,4 @@ internal class Consumer(
 ) {
     fun consumeState(state: TestState) = stateSubject.onNext(state)
     fun consumeSideEffect(sideEffect: String) = sideEffectSubject.onNext(sideEffect)
-
 }

@@ -16,6 +16,7 @@
 
 package com.babylon.orbit
 
+import hu.akarnokd.rxjava2.subjects.UnicastWorkSubject
 import io.reactivex.Observable
 import io.reactivex.Scheduler
 import io.reactivex.disposables.CompositeDisposable
@@ -38,7 +39,15 @@ class BaseOrbitContainer<STATE : Any, SIDE_EFFECT : Any>(
     override var currentState: STATE = middleware.initialState
         private set
     override val orbit: ConnectableObservable<STATE>
-    override val sideEffect: Observable<SIDE_EFFECT> = sideEffectSubject.hide()
+    override val sideEffect: Observable<SIDE_EFFECT> =
+        if (middleware.configuration.sideEffectCachingEnabled) {
+            UnicastWorkSubject.create<SIDE_EFFECT>()
+                .also { sideEffectSubject.subscribe(it) }
+                .publish()
+                .refCount()
+        } else {
+            sideEffectSubject
+        }
 
     init {
         val scheduler = createSingleScheduler()

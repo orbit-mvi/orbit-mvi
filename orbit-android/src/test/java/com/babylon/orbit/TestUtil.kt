@@ -6,5 +6,3 @@ fun createTestMiddleware(
 ) = middleware<TestState, String>(initialState) {
     this.apply(block)
 }
-
-data class TestState(val id: Int)

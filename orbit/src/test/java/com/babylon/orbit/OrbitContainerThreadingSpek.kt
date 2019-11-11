@@ -68,7 +68,6 @@ internal class OrbitContainerThreadingSpek : Spek({
             Then("The side effect runs on the reducer thread") {
                 assertThat(sideEffectThreadName).isEqualTo("reducerThread")
             }
-
         }
 
         Scenario("Reducers execute on reducer thread") {
@@ -266,7 +265,6 @@ internal class OrbitContainerThreadingSpek : Spek({
                 orbitContainer.sendAction(5)
                 testObserver.awaitCount(3)
             }
-
 
             Then("The first reducer runs on the reducer thread") {
                 assertThat(firstReducerThreadName).isEqualTo("reducerThread")

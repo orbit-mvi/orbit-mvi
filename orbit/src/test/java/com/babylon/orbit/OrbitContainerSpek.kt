@@ -153,8 +153,8 @@ internal class OrbitContainerSpek : Spek({
         }
     }
 
-    Feature("Container - Side Effects") {
-        Scenario("Side effects are multicast to all current observers") {
+    Feature("Container - Cached Side Effects") {
+        Scenario("Side effects are multicast to all current observers by default") {
             lateinit var middleware: Middleware<TestState, String>
             lateinit var orbitContainer: BaseOrbitContainer<TestState, String>
             lateinit var testObserver1: TestObserver<String>
@@ -192,8 +192,7 @@ internal class OrbitContainerSpek : Spek({
             }
         }
 
-        // Is this the responsibility of this library?
-        Scenario("Side effects are cached while there is no connected observer") {
+        Scenario("Side effects are cached while there is no connected observer by default") {
             lateinit var middleware: Middleware<TestState, String>
             lateinit var orbitContainer: BaseOrbitContainer<TestState, String>
             lateinit var stateObserver: TestObserver<TestState>
@@ -218,7 +217,7 @@ internal class OrbitContainerSpek : Spek({
 
             And("I connect the side effect observer to the middleware") {
                 sideEffectObserver = orbitContainer.sideEffect.test()
-                sideEffectObserver.awaitCount(1)
+                sideEffectObserver.awaitCount(2)
             }
 
             Then("The observer gets the side effect") {
@@ -226,7 +225,131 @@ internal class OrbitContainerSpek : Spek({
             }
         }
 
-        Scenario("Cached side effects are guaranteed to be delivered to the first observer") {
+        Scenario("If I connect, disconnect and reconnect the side effects behave correctly by default") {
+            lateinit var middleware: Middleware<TestState, String>
+            lateinit var orbitContainer: BaseOrbitContainer<TestState, String>
+            lateinit var stateObserver: TestObserver<TestState>
+            lateinit var sideEffectObserver: TestObserver<String>
+
+            Given("A middleware with no flows") {
+                middleware = createTestMiddleware {
+                    perform("send side effect")
+                        .on<Unit>()
+                        .sideEffect { post("foo") }
+                        .sideEffect { post("bar") }
+                        .withReducer { getCurrentState().copy(id = getCurrentState().id + 1) }
+                }
+                orbitContainer = BaseOrbitContainer(middleware)
+            }
+
+            When("I send an event to the container") {
+                stateObserver = orbitContainer.orbit.test()
+                sideEffectObserver = orbitContainer.sideEffect.test()
+                orbitContainer.sendAction(Unit)
+                stateObserver.awaitCount(2)
+                sideEffectObserver.awaitCount(2)
+            }
+
+            Then("The observer gets the side effects") {
+                sideEffectObserver.assertValueSequence(listOf("foo", "bar"))
+            }
+
+            When("I disconnect") {
+                stateObserver.dispose()
+                sideEffectObserver.dispose()
+            }
+
+            And("I send an event to the container") {
+                orbitContainer.sendAction(Unit)
+            }
+
+            And("I resubscribe") {
+                stateObserver = orbitContainer.orbit.test()
+                sideEffectObserver = orbitContainer.sideEffect.test()
+                stateObserver.awaitCount(1)
+                sideEffectObserver.awaitCount(2)
+            }
+
+            Then("The new observer gets the side effects") {
+                sideEffectObserver.assertValueSequence(listOf("foo", "bar"))
+            }
+
+            When("I send another event") {
+                orbitContainer.sendAction(Unit)
+                stateObserver.awaitCount(2)
+                sideEffectObserver.awaitCount(4)
+            }
+
+            Then("The observer gets the side effects again") {
+                sideEffectObserver.assertValueSequence(listOf("foo", "bar", "foo", "bar"))
+            }
+        }
+
+        Scenario("If I connect, disconnect and reconnect the side effects behave correctly" +
+                " when explicitly set to true") {
+            lateinit var middleware: Middleware<TestState, String>
+            lateinit var orbitContainer: BaseOrbitContainer<TestState, String>
+            lateinit var stateObserver: TestObserver<TestState>
+            lateinit var sideEffectObserver: TestObserver<String>
+
+            Given("A middleware with no flows") {
+                middleware = createTestMiddleware {
+                    configuration {
+                        sideEffectCachingEnabled = true
+                    }
+                    perform("send side effect")
+                        .on<Unit>()
+                        .sideEffect { post("foo") }
+                        .sideEffect { post("bar") }
+                        .withReducer { getCurrentState().copy(id = getCurrentState().id + 1) }
+                }
+                orbitContainer = BaseOrbitContainer(middleware)
+            }
+
+            When("I send an event to the container") {
+                stateObserver = orbitContainer.orbit.test()
+                sideEffectObserver = orbitContainer.sideEffect.test()
+                orbitContainer.sendAction(Unit)
+                stateObserver.awaitCount(2)
+                sideEffectObserver.awaitCount(2)
+            }
+
+            Then("The observer gets the side effects") {
+                sideEffectObserver.assertValueSequence(listOf("foo", "bar"))
+            }
+
+            When("I disconnect") {
+                stateObserver.dispose()
+                sideEffectObserver.dispose()
+            }
+
+            And("I send an event to the container") {
+                orbitContainer.sendAction(Unit)
+            }
+
+            And("I resubscribe") {
+                stateObserver = orbitContainer.orbit.test()
+                sideEffectObserver = orbitContainer.sideEffect.test()
+                stateObserver.awaitCount(1)
+                sideEffectObserver.awaitCount(2)
+            }
+
+            Then("The new observer gets the side effects") {
+                sideEffectObserver.assertValueSequence(listOf("foo", "bar"))
+            }
+
+            When("I send another event") {
+                orbitContainer.sendAction(Unit)
+                stateObserver.awaitCount(2)
+                sideEffectObserver.awaitCount(4)
+            }
+
+            Then("The observer gets the side effects again") {
+                sideEffectObserver.assertValueSequence(listOf("foo", "bar", "foo", "bar"))
+            }
+        }
+
+        Scenario("Cached side effects are guaranteed to be delivered to the first observer by default") {
 
             lateinit var middleware: Middleware<TestState, String>
             lateinit var orbitContainer: BaseOrbitContainer<TestState, String>
@@ -263,6 +386,85 @@ internal class OrbitContainerSpek : Spek({
 
             And("The second observer is not guaranteed to get any side effects") {
                 assertThat(sideEffectObserver2.values()).doesNotContainSequence(sideEffectObserver1.values())
+            }
+        }
+    }
+
+    Feature("Container - uncached Side Effects") {
+        Scenario("Side effects are multicast to all current observers") {
+            lateinit var middleware: Middleware<TestState, String>
+            lateinit var orbitContainer: BaseOrbitContainer<TestState, String>
+            lateinit var testObserver1: TestObserver<String>
+            lateinit var testObserver2: TestObserver<String>
+
+            Given("A middleware with no flows") {
+                middleware = createTestMiddleware {
+                    configuration {
+                        sideEffectCachingEnabled = false
+                    }
+                    perform("send side effect")
+                        .on<Unit>()
+                        .sideEffect { post("foobar") }
+                }
+                orbitContainer = BaseOrbitContainer(middleware)
+            }
+
+            When("I connect observer 1 to the middleware") {
+                testObserver1 = orbitContainer.sideEffect.test()
+            }
+
+            And("I connect observer 2 to the middleware") {
+                testObserver2 = orbitContainer.sideEffect.test()
+            }
+
+            And("I send an event to the container") {
+                orbitContainer.sendAction(Unit)
+                testObserver1.awaitCount(1)
+                testObserver2.awaitCount(1)
+            }
+
+            Then("Observer 1 gets the side effect") {
+                testObserver1.assertValueSequence(listOf("foobar"))
+            }
+
+            And("Observer 2 gets the side effect") {
+                testObserver2.assertValueSequence(listOf("foobar"))
+            }
+        }
+
+        Scenario("Side effects are not cached while there is no connected observer") {
+            lateinit var middleware: Middleware<TestState, String>
+            lateinit var orbitContainer: BaseOrbitContainer<TestState, String>
+            lateinit var stateObserver: TestObserver<TestState>
+            lateinit var sideEffectObserver: TestObserver<String>
+
+            Given("A middleware with no flows") {
+                middleware = createTestMiddleware {
+                    configuration {
+                        sideEffectCachingEnabled = false
+                    }
+                    perform("send side effect")
+                        .on<Unit>()
+                        .sideEffect { post("foo") }
+                        .sideEffect { post("bar") }
+                        .withReducer { getCurrentState().copy(id = getCurrentState().id + 1) }
+                }
+                orbitContainer = BaseOrbitContainer(middleware)
+            }
+
+            When("I send an event to the container") {
+                stateObserver = orbitContainer.orbit.test()
+                orbitContainer.sendAction(Unit)
+                stateObserver.awaitCount(2)
+            }
+
+            And("I connect the side effect observer to the middleware") {
+                sideEffectObserver = orbitContainer.sideEffect.test()
+                sideEffectObserver.awaitCount(2)
+            }
+
+            Then("The observer does not get the side effects") {
+                sideEffectObserver.assertNoValues()
             }
         }
     }

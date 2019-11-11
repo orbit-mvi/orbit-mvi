@@ -5,7 +5,6 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LifecycleRegistry
 import com.nhaarman.mockitokotlin2.mock
 import io.reactivex.android.plugins.RxAndroidPlugins
-import io.reactivex.observers.TestObserver
 import io.reactivex.plugins.RxJavaPlugins
 import io.reactivex.subjects.PublishSubject
 import org.assertj.core.api.Assertions.assertThat
@@ -70,5 +69,4 @@ class OrbitViewModelThreadingTest {
         // And The side effect observer listens on the android main thread
         assertThat(sideEffectObserver.lastThread().name).isEqualTo("main")
     }
-
 }

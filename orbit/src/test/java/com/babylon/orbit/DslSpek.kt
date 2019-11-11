@@ -17,7 +17,6 @@
 package com.babylon.orbit
 
 import io.reactivex.observers.TestObserver
-import io.reactivex.plugins.RxJavaPlugins
 import io.reactivex.subjects.PublishSubject
 import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
@@ -25,10 +24,14 @@ import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.gherkin.Feature
 import java.util.concurrent.CountDownLatch
 
-internal class OrbitDSLSpek : Spek({
+internal class DslSpek : Spek({
 
     Feature("DSL - syntax") {
         createTestMiddleware {
+
+            configuration {
+                sideEffectCachingEnabled = true
+            }
 
             perform("something")
                 .on<Int>()
@@ -46,6 +49,50 @@ internal class OrbitDSLSpek : Spek({
                 .sideEffect { post("$event") }
                 .withReducer { TestState(getCurrentState().id + event) }
                 .transform { eventObservable.map { getCurrentState().id + it + 2 } }
+        }
+    }
+
+    Feature("DSL - configuration") {
+        Scenario("Set the caching to false and build the middleware") {
+            lateinit var middleware: Middleware<TestState, String>
+            var sideEffectCaching = true
+
+            Given("middleware configured to disable side effect caching") {
+                middleware = createTestMiddleware {
+                    configuration {
+                        sideEffectCachingEnabled = false
+                    }
+                }
+            }
+
+            When("I query the configuration for side effect caching") {
+                sideEffectCaching = middleware.configuration.sideEffectCachingEnabled
+            }
+
+            Then("Side effect caching should be disabled") {
+                assertThat(sideEffectCaching).isFalse()
+            }
+        }
+
+        Scenario("Set the caching to true and build the middleware") {
+            lateinit var middleware: Middleware<TestState, String>
+            var sideEffectCaching = false
+
+            Given("middleware configured to disable side effect caching") {
+                middleware = createTestMiddleware {
+                    configuration {
+                        sideEffectCachingEnabled = true
+                    }
+                }
+            }
+
+            When("I query the configuration for side effect caching") {
+                sideEffectCaching = middleware.configuration.sideEffectCachingEnabled
+            }
+
+            Then("Side effect caching should be enabled") {
+                assertThat(sideEffectCaching).isTrue()
+            }
         }
     }
 

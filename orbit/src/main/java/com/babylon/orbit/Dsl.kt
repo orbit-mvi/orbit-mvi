@@ -29,10 +29,21 @@ fun <STATE : Any, SIDE_EFFECT : Any> middleware(
 class ActionFilter(val description: String)
 
 @OrbitDsl
+class ConfigReceiver(
+    var sideEffectCachingEnabled: Boolean = true
+)
+
+@OrbitDsl
 open class OrbitsBuilder<STATE : Any, SIDE_EFFECT : Any>(private val initialState: STATE) {
     private val orbits =
         mutableMapOf<String, OrbitContext<STATE, SIDE_EFFECT>.() -> Observable<*>>()
     private val descriptions = mutableSetOf<String>()
+
+    private val config = ConfigReceiver()
+
+    fun configuration(block: ConfigReceiver.() -> Unit) {
+        config.apply { block() }
+    }
 
     @Suppress("unused") // Used for the nice extension function highlight
     fun OrbitsBuilder<STATE, SIDE_EFFECT>.perform(description: String) = ActionFilter(description)
@@ -118,12 +129,16 @@ open class OrbitsBuilder<STATE : Any, SIDE_EFFECT : Any>(private val initialStat
     }
 
     fun build() = object : Middleware<STATE, SIDE_EFFECT> {
+        override val configuration = Middleware.Config(
+            sideEffectCachingEnabled = config.sideEffectCachingEnabled
+        )
         override val initialState: STATE = this@OrbitsBuilder.initialState
         override val orbits: List<TransformerFunction<STATE, SIDE_EFFECT>> =
             this@OrbitsBuilder.orbits.values.toList()
     }
 }
 
+@OrbitDsl
 class TransformerReceiver<STATE : Any, EVENT : Any>(
     private val stateProvider: () -> STATE,
     val eventObservable: Observable<EVENT>
@@ -131,6 +146,7 @@ class TransformerReceiver<STATE : Any, EVENT : Any>(
     fun getCurrentState() = stateProvider()
 }
 
+@OrbitDsl
 class EventReceiver<STATE : Any, EVENT : Any>(
     private val stateProvider: () -> STATE,
     val event: EVENT
@@ -138,6 +154,7 @@ class EventReceiver<STATE : Any, EVENT : Any>(
     fun getCurrentState() = stateProvider()
 }
 
+@OrbitDsl
 class SideEffectEventReceiver<STATE : Any, EVENT : Any, SIDE_EFFECT : Any>(
     private val stateProvider: () -> STATE,
     private val sideEffectRelay: Subject<SIDE_EFFECT>,
