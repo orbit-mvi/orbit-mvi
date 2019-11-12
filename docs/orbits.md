@@ -59,7 +59,7 @@ and enable reuse.
 
 ``` kotlin
 .reduce {
-    state.copy(currentState.total + event.number)
+    state.copy(getCurrentState().total + event.number)
 }
 ```
 
@@ -72,7 +72,7 @@ transformations beforehand:
 ``` kotlin
 perform("addition")
     .on<AddAction>()
-    .reduce { state.copy(currentState.total + event.number) }
+    .reduce { state.copy(getCurrentState().total + event.number) }
 ```
 
 The reducers are passthrough transformers. This means that after applying
@@ -88,7 +88,7 @@ perform("add random number")
 
 perform("reduce add random number")
     .on<GetRandomNumberUseCaseStatus>()
-    .reduce { state.copy(currentState.total + event.number) }
+    .reduce { state.copy(getCurrentState().total + event.number) }
 ```
 
 Loopbacks allow you to create feedback loops where events coming from one orbit
@@ -124,7 +124,7 @@ OrbitViewModel<State, SideEffect>(State(), {
     perform("side effect straight on the incoming action")
         .on<SomeAction>()
         .sideEffect {
-            Timber.log(currentState)
+            Timber.log(getCurrentState())
             Timber.log(event)
         }
 
@@ -141,7 +141,7 @@ OrbitViewModel<State, SideEffect>(State(), {
 
     perform("post side effect straight on the incoming action")
         .on<NthAction>()
-        .sideEffect { post(SideEffect.Toast(currentState.toString())) }
+        .sideEffect { post(SideEffect.Toast(getCurrentState().toString())) }
         .sideEffect { post(SideEffect.Toast(event.toString())) }
         .sideEffect { post(SideEffect.Navigate(Screen.Home)) }
 })
@@ -165,7 +165,7 @@ For example:
 ``` kotlin
 perform("Toast the current state")
     .on<SomeAction>()
-    .sideEffect { post(SideEffect.Toast(currentState.toString())) }
+    .sideEffect { post(SideEffect.Toast(getCurrentState().toString())) }
 ```
 
 This property always captures the current state, and so calling this

@@ -19,41 +19,6 @@ package com.babylon.orbit
 import io.reactivex.Observable
 import io.reactivex.rxkotlin.ofType
 import io.reactivex.schedulers.Schedulers
-import io.reactivex.subjects.Subject
-
-/*
-What do we want to log:
-- which flow was triggered
-- by what action & state combination
-- any outcome (new state emitted, something looped back etc.)
- */
-
-@DslMarker
-annotation class OrbitDsl
-
-/**
- * Convenience method for creating a [Middleware].
- *
- * @param initialState The initial state to set on your MVI system.
- * @param init The DSL implementation describing your MVI flows.
- */
-fun <STATE : Any, SIDE_EFFECT : Any> middleware(
-    initialState: STATE,
-    init: OrbitsBuilder<STATE, SIDE_EFFECT>.() -> Unit
-): Middleware<STATE, SIDE_EFFECT> {
-
-    return OrbitsBuilder<STATE, SIDE_EFFECT>(initialState).apply {
-        init(this)
-    }.build()
-}
-
-@OrbitDsl
-class ActionFilter(val description: String)
-
-@OrbitDsl
-class ConfigReceiver(
-    var sideEffectCachingEnabled: Boolean = true
-)
 
 @OrbitDsl
 open class OrbitsBuilder<STATE : Any, SIDE_EFFECT : Any>(private val initialState: STATE) {
@@ -76,7 +41,9 @@ open class OrbitsBuilder<STATE : Any, SIDE_EFFECT : Any>(private val initialStat
      *  @param description The description for your flow. This needs to be unique within the same middleware.
      */
     @Suppress("unused") // Used for the nice extension function highlight
-    fun OrbitsBuilder<STATE, SIDE_EFFECT>.perform(description: String) = ActionFilter(description)
+    fun OrbitsBuilder<STATE, SIDE_EFFECT>.perform(description: String) = ActionFilter(
+        description
+    )
         .also {
             require(!descriptions.contains(description)) {
                 "Names used in perform must be unique! $description already exists!"
@@ -238,57 +205,17 @@ open class OrbitsBuilder<STATE : Any, SIDE_EFFECT : Any>(private val initialStat
 }
 
 /**
- * @property eventObservable The original observable to be transformed.
+ * Convenience method for creating a [Middleware].
+ *
+ * @param initialState The initial state to set on your MVI system.
+ * @param init The DSL implementation describing your MVI flows.
  */
-@OrbitDsl
-class TransformerReceiver<STATE : Any, EVENT : Any>(
-    private val stateProvider: () -> STATE,
-    val eventObservable: Observable<EVENT>
-) {
-    /**
-     * Returns the current state captured whenever this method is called. Successive calls to this
-     * method may yield different results each time as the state could be modified by another flow at
-     * any time.
-     */
-    fun getCurrentState() = stateProvider()
-}
+fun <STATE : Any, SIDE_EFFECT : Any> middleware(
+    initialState: STATE,
+    init: OrbitsBuilder<STATE, SIDE_EFFECT>.() -> Unit
+): Middleware<STATE, SIDE_EFFECT> {
 
-/**
- * @property event The incoming event.
- */
-@OrbitDsl
-class EventReceiver<STATE : Any, EVENT : Any>(
-    private val stateProvider: () -> STATE,
-    val event: EVENT
-) {
-    /**
-     * Returns the current state captured whenever this method is called. Successive calls to this
-     * method may yield different results each time as the state could be modified by another flow at
-     * any time.
-     *
-     * Within a reducer however, you can expect this to be constant.
-     */
-    fun getCurrentState() = stateProvider()
-}
-
-/**
- * @property event The incoming event.
- */
-@OrbitDsl
-class SideEffectEventReceiver<STATE : Any, EVENT : Any, SIDE_EFFECT : Any>(
-    private val stateProvider: () -> STATE,
-    private val sideEffectRelay: Subject<SIDE_EFFECT>,
-    val event: EVENT
-) {
-    /**
-     * Returns the current state captured whenever this method is called. Successive calls to this
-     * method may yield different results each time as the state could be modified by another flow at
-     * any time.
-     */
-    fun getCurrentState() = stateProvider()
-
-    /**
-     * Allows you to post a side effect to the side effect relay.
-     */
-    fun post(sideEffect: SIDE_EFFECT) = sideEffectRelay.onNext(sideEffect)
+    return OrbitsBuilder<STATE, SIDE_EFFECT>(initialState).apply {
+        init(this)
+    }.build()
 }

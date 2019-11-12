@@ -16,12 +16,16 @@
 
 package com.babylon.orbit
 
-interface Middleware<STATE : Any, SIDE_EFFECT : Any> {
-    val initialState: STATE
-    val orbits: List<TransformerFunction<STATE, SIDE_EFFECT>>
-    val configuration: Config
+import io.reactivex.Observable
+import io.reactivex.subjects.PublishSubject
 
-    data class Config(
-        val sideEffectCachingEnabled: Boolean = true
-    )
-}
+typealias TransformerFunction<STATE, SIDE_EFFECT> = OrbitContext<STATE, SIDE_EFFECT>.() -> (Observable<*>)
+
+data class OrbitContext<STATE : Any, SIDE_EFFECT : Any>(
+    val currentStateProvider: () -> STATE,
+    val rawActions: Observable<*>,
+    val inputSubject: PublishSubject<Any>,
+    val reducerSubject: PublishSubject<(STATE) -> STATE>,
+    val sideEffectSubject: PublishSubject<SIDE_EFFECT>,
+    val ioScheduled: Boolean
+)

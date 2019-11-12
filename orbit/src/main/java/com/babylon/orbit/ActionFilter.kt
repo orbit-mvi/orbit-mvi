@@ -16,12 +16,5 @@
 
 package com.babylon.orbit
 
-interface Middleware<STATE : Any, SIDE_EFFECT : Any> {
-    val initialState: STATE
-    val orbits: List<TransformerFunction<STATE, SIDE_EFFECT>>
-    val configuration: Config
-
-    data class Config(
-        val sideEffectCachingEnabled: Boolean = true
-    )
-}
+@OrbitDsl
+class ActionFilter(val description: String)

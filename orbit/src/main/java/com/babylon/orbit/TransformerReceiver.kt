@@ -16,12 +16,20 @@
 
 package com.babylon.orbit
 
-interface Middleware<STATE : Any, SIDE_EFFECT : Any> {
-    val initialState: STATE
-    val orbits: List<TransformerFunction<STATE, SIDE_EFFECT>>
-    val configuration: Config
+import io.reactivex.Observable
 
-    data class Config(
-        val sideEffectCachingEnabled: Boolean = true
-    )
+/**
+ * @property eventObservable The original observable to be transformed.
+ */
+@OrbitDsl
+class TransformerReceiver<STATE : Any, EVENT : Any>(
+    private val stateProvider: () -> STATE,
+    val eventObservable: Observable<EVENT>
+) {
+    /**
+     * Returns the current state captured whenever this method is called. Successive calls to this
+     * method may yield different results each time as the state could be modified by another flow at
+     * any time.
+     */
+    fun getCurrentState() = stateProvider()
 }
