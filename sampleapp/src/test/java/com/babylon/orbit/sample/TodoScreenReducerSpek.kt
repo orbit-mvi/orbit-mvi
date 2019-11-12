@@ -27,7 +27,7 @@ class TodoScreenReducerSpek : Spek({
                 todoScreenState = reducer.reduceLoadTodos(TodoScreenState(), event)
             }
 
-            Then("should apply the correct state") {
+            Then("should apply the correct currentState") {
                 assertThat(todoScreenState).isEqualTo(
                         TodoScreenState(screenState = ScreenState.Loading)
                 )
@@ -46,7 +46,7 @@ class TodoScreenReducerSpek : Spek({
                 todoScreenState = reducer.reduceLoadTodos(TodoScreenState(), event)
             }
 
-            Then("should apply the correct state") {
+            Then("should apply the correct currentState") {
                 assertThat(todoScreenState).isEqualTo(
                         TodoScreenState(screenState = ScreenState.Error)
                 )
@@ -65,7 +65,7 @@ class TodoScreenReducerSpek : Spek({
                 todoScreenState = reducer.reduceLoadTodos(TodoScreenState(), event)
             }
 
-            Then("should apply the correct state") {
+            Then("should apply the correct currentState") {
                 assertThat(todoScreenState).isEqualTo(
                         TodoScreenState(screenState = ScreenState.Ready, todoList = DUMMY_TODO_LIST)
                 )
@@ -85,18 +85,18 @@ class TodoScreenReducerSpek : Spek({
                 todoScreenState = reducer.reduceLoadSelectedTodo(TodoScreenState(), event)
             }
 
-            Then("should apply the correct state") {
+            Then("should apply the correct currentState") {
                 assertThat(todoScreenState).isEqualTo(
                         TodoScreenState(todoSelectedId = todoId)
                 )
             }
         }
 
-        Scenario("a state with a selected todo event") {
+        Scenario("a currentState with a selected todo event") {
             lateinit var todoScreenState: TodoScreenState
             val todoId = 2
 
-            Given("a state with a selected todo event") {
+            Given("a currentState with a selected todo event") {
                 todoScreenState = TodoScreenState(todoSelectedId = todoId)
             }
 
@@ -106,7 +106,7 @@ class TodoScreenReducerSpek : Spek({
                 )
             }
 
-            Then("should apply the correct state") {
+            Then("should apply the correct currentState") {
                 assertThat(todoScreenState).isEqualTo(TodoScreenState())
             }
         }

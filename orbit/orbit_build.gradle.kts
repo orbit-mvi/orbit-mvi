@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 /*
  * Copyright 2019 Babylon Partners Limited
  *
@@ -16,6 +14,8 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
  *  limitations under the License.
  */
 
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
     id("java-library")
     kotlin("jvm")
@@ -27,7 +27,6 @@ dependencies {
     implementation(kotlin("stdlib-jdk8"))
     implementation(ProjectDependencies.rxJava2)
     implementation(ProjectDependencies.rxJava2Extensions)
-    implementation(ProjectDependencies.rxRelay)
     implementation(ProjectDependencies.rxKotlin)
     implementation(ProjectDependencies.javaxInject)
 

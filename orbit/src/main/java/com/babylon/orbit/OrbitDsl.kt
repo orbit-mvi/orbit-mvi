@@ -14,18 +14,7 @@
  *  limitations under the License.
  */
 
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+package com.babylon.orbit
 
-plugins {
-    `kotlin-dsl`
-}
-
-repositories {
-    jcenter()
-}
-
-tasks.withType(KotlinCompile::class.java).all {
-    kotlinOptions {
-        jvmTarget = "1.8"
-    }
-}
+@DslMarker
+annotation class OrbitDsl

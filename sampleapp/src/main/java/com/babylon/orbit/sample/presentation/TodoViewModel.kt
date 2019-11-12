@@ -14,37 +14,36 @@ class TodoViewModel(
             LifecycleAction.Created::class.java,
             TodoScreenAction.RetryAction::class.java
         )
-        .transform { transformers.loadTodos(this) }
-        .withReducer { reducers.reduceLoadTodos(currentState, event) }
+        .transform { transformers.loadTodos(eventObservable) }
+        .reduce { reducers.reduceLoadTodos(getCurrentState(), event) }
 
     perform("track analytics for selected todo")
         .on<TodoScreenAction.TodoSelected>()
-        .sideEffect { sideEffects.trackSelectedTodo(action) }
-        .ignoringEvents()
+        .sideEffect { sideEffects.trackSelectedTodo(event) }
 
     perform("load the selected todo")
         .on<TodoScreenAction.TodoSelected>()
-        .withReducer { reducers.reduceLoadSelectedTodo(currentState, event) }
+        .reduce { reducers.reduceLoadSelectedTodo(getCurrentState(), event) }
 
     perform("dismiss the selected todo")
         .on<TodoScreenAction.TodoSelectedDismissed>()
-        .withReducer { reducers.reduceDismissSelectedTodo(currentState) }
+        .reduce { reducers.reduceDismissSelectedTodo(getCurrentState()) }
 
     perform("load the user profile switch for the user profile")
         .on<TodoScreenAction.TodoUserSelected>()
-        .transform { transformers.loadUserProfileSwitches(this) }
+        .transform { transformers.loadUserProfileSwitches(eventObservable) }
         .loopBack { event }
 
     perform("load the user profile is the switch is on")
         .on<UserProfileExtra>()
-        .transform { transformers.loadUserProfile(this) }
-        .withReducer { reducers.reduceLoadUserProfile(currentState, event) }
+        .transform { transformers.loadUserProfile(eventObservable) }
+        .reduce { reducers.reduceLoadUserProfile(getCurrentState(), event) }
 
     perform("handle user profile switch is off")
         .on<UserProfileExtra>()
-        .withReducer { reducers.reduceLoadUserProfileSwitch(currentState, event) }
+        .reduce { reducers.reduceLoadUserProfileSwitch(getCurrentState(), event) }
 
     perform("dismiss the selected user")
         .on<TodoScreenAction.UserSelectedDismissed>()
-        .withReducer { reducers.reduceUserSelected(currentState) }
+        .reduce { reducers.reduceUserSelected(getCurrentState()) }
 })

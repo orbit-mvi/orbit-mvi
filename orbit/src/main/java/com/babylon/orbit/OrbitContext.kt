@@ -14,18 +14,18 @@
  *  limitations under the License.
  */
 
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+package com.babylon.orbit
 
-plugins {
-    `kotlin-dsl`
-}
+import io.reactivex.Observable
+import io.reactivex.subjects.PublishSubject
 
-repositories {
-    jcenter()
-}
+typealias TransformerFunction<STATE, SIDE_EFFECT> = OrbitContext<STATE, SIDE_EFFECT>.() -> (Observable<*>)
 
-tasks.withType(KotlinCompile::class.java).all {
-    kotlinOptions {
-        jvmTarget = "1.8"
-    }
-}
+data class OrbitContext<STATE : Any, SIDE_EFFECT : Any>(
+    val currentStateProvider: () -> STATE,
+    val rawActions: Observable<*>,
+    val inputSubject: PublishSubject<Any>,
+    val reducerSubject: PublishSubject<(STATE) -> STATE>,
+    val sideEffectSubject: PublishSubject<SIDE_EFFECT>,
+    val ioScheduled: Boolean
+)

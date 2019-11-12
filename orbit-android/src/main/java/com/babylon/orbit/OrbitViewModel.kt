@@ -19,20 +19,26 @@ package com.babylon.orbit
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
 import com.uber.autodispose.android.lifecycle.autoDispose
+import io.reactivex.android.schedulers.AndroidSchedulers
 
-abstract class OrbitViewModel<STATE : Any, SIDE_EFFECT : Any>(
-    middleware: Middleware<STATE, SIDE_EFFECT>
+open class OrbitViewModel<STATE : Any, SIDE_EFFECT : Any>(
+    private val container: OrbitContainer<STATE, SIDE_EFFECT>
 ) : ViewModel() {
 
     constructor(
         initialState: STATE,
         init: OrbitsBuilder<STATE, SIDE_EFFECT>.() -> Unit
-    ) : this(middleware(initialState, init))
+    ) : this(BaseOrbitContainer(middleware(initialState, init)))
 
-    private val container: AndroidOrbitContainer<STATE, SIDE_EFFECT> = AndroidOrbitContainer(middleware)
+    constructor(middleware: Middleware<STATE, SIDE_EFFECT>) : this(BaseOrbitContainer(middleware))
 
-    val state: STATE
-        get() = container.state
+    val currentState: STATE
+        get() = container.currentState
+
+    fun sendAction(action: Any) = container.sendAction(action)
+
+    private val mainThreadOrbit = container.orbit.observeOn(AndroidSchedulers.mainThread())
+    private val mainThreadSideEffect = container.sideEffect.observeOn(AndroidSchedulers.mainThread())
 
     /**
      * Designed to be called in onStart or onResume, depending on your use case.
@@ -45,18 +51,13 @@ abstract class OrbitViewModel<STATE : Any, SIDE_EFFECT : Any>(
         stateConsumer: (STATE) -> Unit,
         sideEffectConsumer: (SIDE_EFFECT) -> Unit = {}
     ) {
-
-        container.orbit
+        mainThreadOrbit
             .autoDispose(lifecycleOwner)
             .subscribe(stateConsumer)
 
-        container.sideEffect
+        mainThreadSideEffect
             .autoDispose(lifecycleOwner)
             .subscribe(sideEffectConsumer)
-    }
-
-    fun sendAction(action: Any) {
-        container.sendAction(action)
     }
 
     override fun onCleared() {

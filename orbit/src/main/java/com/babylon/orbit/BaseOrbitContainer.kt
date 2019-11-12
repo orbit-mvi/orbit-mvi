@@ -16,43 +16,88 @@
 
 package com.babylon.orbit
 
+import hu.akarnokd.rxjava2.subjects.UnicastWorkSubject
 import io.reactivex.Observable
-import io.reactivex.Single
+import io.reactivex.Scheduler
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.observables.ConnectableObservable
 import io.reactivex.rxkotlin.plusAssign
+import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.PublishSubject
+import java.util.concurrent.Executors
 
 class BaseOrbitContainer<STATE : Any, SIDE_EFFECT : Any>(
     middleware: Middleware<STATE, SIDE_EFFECT>
 ) : OrbitContainer<STATE, SIDE_EFFECT> {
 
-    var state: Single<STATE>
-        private set
-
-    private val inputRelay: PublishSubject<Any> = PublishSubject.create()
-    override val orbit: ConnectableObservable<STATE>
-    override val sideEffect: Observable<SIDE_EFFECT> = middleware.sideEffect
-
+    private val inputSubject: PublishSubject<Any> = PublishSubject.create()
+    private val reducerSubject: PublishSubject<(STATE) -> STATE> = PublishSubject.create()
+    private val sideEffectSubject: PublishSubject<SIDE_EFFECT> = PublishSubject.create()
     private val disposables = CompositeDisposable()
 
+    @Volatile
+    override var currentState: STATE = middleware.initialState
+        private set
+    override val orbit: ConnectableObservable<STATE>
+    override val sideEffect: Observable<SIDE_EFFECT> =
+        if (middleware.configuration.sideEffectCachingEnabled) {
+            UnicastWorkSubject.create<SIDE_EFFECT>()
+                .also { sideEffectSubject.subscribe(it) }
+                .publish()
+                .refCount()
+        } else {
+            sideEffectSubject
+        }
+
     init {
-        state = Single.just(middleware.initialState)
-        orbit = inputRelay.doOnSubscribe { disposables += it }
+        val scheduler = createSingleScheduler()
+
+        disposables += inputSubject.doOnSubscribe { disposables += it }
             .startWith(LifecycleAction.Created)
-            .map { ActionState(state.blockingGet(), it) } // Attaches the current state to the event
-            .buildOrbit(middleware, inputRelay)
+            .observeOn(scheduler)
+            .publish { actions ->
+                with(
+                    OrbitContext(
+                        { currentState },
+                        actions,
+                        inputSubject,
+                        reducerSubject,
+                        sideEffectSubject,
+                        false
+                    )
+                ) {
+                    Observable.merge(
+                        middleware.orbits.map { transformer ->
+                            transformer()
+                        }
+                    )
+                }
+            }
+            .subscribe()
+
+        orbit = reducerSubject
+            .observeOn(scheduler)
+            .scan(middleware.initialState) { currentState, partialReducer ->
+                partialReducer(
+                    currentState
+                )
+            }
+            .doOnNext { currentState = it }
+            .distinctUntilChanged()
             .replay(1)
+
         orbit.connect { disposables += it }
-        state = orbit
-            .first(middleware.initialState)
     }
 
     override fun sendAction(action: Any) {
-        inputRelay.onNext(action)
+        inputSubject.onNext(action)
     }
 
     override fun disposeOrbit() {
         disposables.clear()
+    }
+
+    private fun createSingleScheduler(): Scheduler {
+        return Schedulers.from(Executors.newSingleThreadExecutor { Thread(it, "reducerThread") })
     }
 }

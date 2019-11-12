@@ -50,6 +50,12 @@ tasks.withType(KotlinCompile::class.java).all {
         jvmTarget = "1.8"
     }
 }
+tasks.withType(Test::class.java) {
+    useJUnitPlatform()
+    testLogging {
+        events("passed", "skipped", "failed")
+    }
+}
 
 dependencies {
     implementation(project(":orbit"))
@@ -60,9 +66,15 @@ dependencies {
     kapt(ProjectDependencies.androidLifecycleCompiler)
 
     implementation(ProjectDependencies.rxJava2)
-    implementation(ProjectDependencies.rxRelay)
     implementation(ProjectDependencies.rxKotlin)
     implementation(ProjectDependencies.rxAndroid)
     implementation(ProjectDependencies.autodispose)
     implementation(ProjectDependencies.autodisposeArchComponents)
+
+    // Testing
+    GroupedDependencies.spekTestsImplementation.forEach { testImplementation(it) }
+    GroupedDependencies.spekTestsRuntime.forEach { testRuntimeOnly(it) }
+    testImplementation(ProjectDependencies.robolectric)
+    testImplementation(ProjectDependencies.junit4)
+    testRuntimeOnly(ProjectDependencies.junitVintage)
 }

@@ -18,9 +18,10 @@ package com.babylon.orbit
 
 import io.reactivex.Observable
 
-interface OrbitContainer<STATE : Any, EVENT : Any> {
+interface OrbitContainer<STATE : Any, SIDE_EFFECT : Any> {
+    val currentState: STATE
     val orbit: Observable<STATE>
-    val sideEffect: Observable<EVENT>
+    val sideEffect: Observable<SIDE_EFFECT>
     fun sendAction(action: Any)
     fun disposeOrbit()
 }
