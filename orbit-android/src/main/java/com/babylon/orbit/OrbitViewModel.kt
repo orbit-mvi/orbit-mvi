@@ -16,10 +16,9 @@
 
 package com.babylon.orbit
 
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
+import com.babylon.orbit.internal.autoDispose
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
@@ -27,8 +26,6 @@ import io.reactivex.rxkotlin.plusAssign
 open class OrbitViewModel<STATE : Any, SIDE_EFFECT : Any>(
     private val container: OrbitContainer<STATE, SIDE_EFFECT>
 ) : ViewModel() {
-
-    private val disposables = CompositeDisposable()
 
     constructor(
         initialState: STATE,
@@ -56,35 +53,13 @@ open class OrbitViewModel<STATE : Any, SIDE_EFFECT : Any>(
         stateConsumer: (STATE) -> Unit,
         sideEffectConsumer: (SIDE_EFFECT) -> Unit = {}
     ) {
+        val disposables = CompositeDisposable()
         disposables += mainThreadOrbit.subscribe(stateConsumer)
         disposables += mainThreadSideEffect.subscribe(sideEffectConsumer)
-
-        val exitEvent = lifecycleOwner.lifecycle.currentState.correspondingExitEvent
-        lifecycleOwner.lifecycle.addObserver(object : LifecycleEventObserver {
-            override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
-                if (event == exitEvent) {
-                    disposables.clear()
-                    source.lifecycle.removeObserver(this)
-                }
-            }
-        })
+        disposables.autoDispose(lifecycleOwner)
     }
 
     override fun onCleared() {
-        disposables.dispose()
         container.disposeOrbit()
     }
-
-    private val Lifecycle.State.correspondingExitEvent: Lifecycle.Event
-        get() = when (this) {
-            Lifecycle.State.DESTROYED -> error("Lifecycle is already destroyed")
-            // in onCreate
-            Lifecycle.State.INITIALIZED -> Lifecycle.Event.ON_DESTROY
-            // in onStart
-            Lifecycle.State.CREATED -> Lifecycle.Event.ON_STOP
-            // in onResume
-            Lifecycle.State.STARTED -> Lifecycle.Event.ON_PAUSE
-            // between onResume and onPause
-            Lifecycle.State.RESUMED -> Lifecycle.Event.ON_PAUSE
-        }
 }
