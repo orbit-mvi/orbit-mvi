@@ -24,7 +24,7 @@ import org.spekframework.spek2.style.gherkin.Feature
 
 internal class OrbitContainerSpek : Spek({
     Feature("Container - State") {
-        Scenario("Initial state is always emitted") {
+        Scenario("Initial middleware state is always emitted for no custom seed") {
             lateinit var middleware: Middleware<TestState, String>
             lateinit var orbitContainer: BaseOrbitContainer<TestState, String>
             lateinit var testObserver: TestObserver<TestState>
@@ -39,7 +39,26 @@ internal class OrbitContainerSpek : Spek({
             }
 
             Then("emits the initial state") {
-                testObserver.assertValueSequence(listOf(middleware.initialState))
+                testObserver.assertValue(middleware.initialState)
+            }
+        }
+
+        Scenario("Seeded state is emitted for custom seed in container") {
+            lateinit var middleware: Middleware<TestState, String>
+            lateinit var orbitContainer: BaseOrbitContainer<TestState, String>
+            lateinit var testObserver: TestObserver<TestState>
+
+            Given("A middleware with no flows") {
+                middleware = createTestMiddleware {}
+                orbitContainer = BaseOrbitContainer(middleware, TestState(1234567890))
+            }
+
+            When("I connect to the middleware") {
+                testObserver = orbitContainer.orbit.test()
+            }
+
+            Then("emits the seeded state") {
+                testObserver.assertValue(TestState(1234567890))
             }
         }
 
@@ -473,6 +492,7 @@ internal class OrbitContainerSpek : Spek({
     }
 
     Feature("Container - Lifecycle") {
+
         Scenario("Lifecycle action sent on container creation") {
             lateinit var middleware: Middleware<TestState, String>
             val sideEffectSubject = PublishSubject.create<String>()
@@ -493,6 +513,29 @@ internal class OrbitContainerSpek : Spek({
 
             Then("The side effect is received") {
                 sideEffectTestObserver.assertValue("foo")
+            }
+        }
+
+        Scenario("Lifecycle action not sent on container creation for seeded container") {
+            lateinit var middleware: Middleware<TestState, String>
+            val sideEffectSubject = PublishSubject.create<String>()
+            val sideEffectTestObserver = sideEffectSubject.test()
+
+            Given("A seeded container with a side effect off a LifecycleEvent.Created") {
+                middleware = createTestMiddleware {
+                    perform("check lifecycle action")
+                        .on<LifecycleAction.Created>()
+                        .sideEffect { sideEffectSubject.onNext("foo") }
+                }
+                BaseOrbitContainer(middleware, TestState(123))
+            }
+
+            When("I connect to the middleware") {
+                sideEffectTestObserver.awaitCount(1)
+            }
+
+            Then("No side effect is received") {
+                sideEffectTestObserver.assertNoValues()
             }
         }
     }
