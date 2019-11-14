@@ -17,9 +17,6 @@
 package com.babylon.orbit
 
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.LifecycleRegistry
-import com.nhaarman.mockitokotlin2.mock
 import io.reactivex.android.plugins.RxAndroidPlugins
 import io.reactivex.plugins.RxJavaPlugins
 import io.reactivex.subjects.PublishSubject
@@ -50,8 +47,7 @@ class OrbitViewModelThreadingTest {
 
     @Test
     fun `Side effects and state updates are received on the android main thread`() {
-        val lifecycle = LifecycleRegistry(mock())
-        val lifecycleOwner = LifecycleOwner { lifecycle }
+        val lifecycleOwner = MockLifecycleOwner()
         val stateSubject = PublishSubject.create<TestState>()
         val stateObserver = stateSubject.test()
         val sideEffectSubject = PublishSubject.create<String>()
@@ -72,7 +68,7 @@ class OrbitViewModelThreadingTest {
             stateConsumer = { stateSubject.onNext(it) },
             sideEffectConsumer = { sideEffectSubject.onNext(it) }
         )
-        lifecycle.handleLifecycleEvent(Lifecycle.Event.ON_CREATE)
+        lifecycleOwner.dispatchEvent(Lifecycle.Event.ON_CREATE)
         stateObserver.awaitCount(1)
 
         // When I send an event to the container

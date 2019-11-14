@@ -22,10 +22,11 @@ import androidx.lifecycle.LifecycleOwner
 import io.reactivex.disposables.Disposable
 
 internal fun Disposable.autoDispose(lifecycleOwner: LifecycleOwner) {
-    val exitEvent = lifecycleOwner.lifecycle.currentState.correspondingExitEvent
+    val initialState = lifecycleOwner.lifecycle.currentState
+    val exitEvent = initialState.correspondingExitEvent
     lifecycleOwner.lifecycle.addObserver(object : LifecycleEventObserver {
         override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
-            if (event == exitEvent) {
+            if (event == exitEvent || !source.lifecycle.currentState.isAtLeast(initialState)) {
                 dispose()
                 source.lifecycle.removeObserver(this)
             }
