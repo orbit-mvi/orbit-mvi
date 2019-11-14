@@ -28,7 +28,7 @@ import java.util.concurrent.Executors
 
 class BaseOrbitContainer<STATE : Any, SIDE_EFFECT : Any>(
     middleware: Middleware<STATE, SIDE_EFFECT>,
-    stateSeed: STATE = middleware.initialState
+    initialState: STATE = middleware.initialState
 ) : OrbitContainer<STATE, SIDE_EFFECT> {
 
     private val inputSubject: PublishSubject<Any> = PublishSubject.create()
@@ -77,7 +77,7 @@ class BaseOrbitContainer<STATE : Any, SIDE_EFFECT : Any>(
 
         orbit = reducerSubject
             .observeOn(scheduler)
-            .scan(stateSeed) { currentState, partialReducer ->
+            .scan(initialState) { currentState, partialReducer ->
                 partialReducer(
                     currentState
                 )
@@ -88,7 +88,7 @@ class BaseOrbitContainer<STATE : Any, SIDE_EFFECT : Any>(
 
         orbit.connect { disposables += it }
 
-        if (stateSeed == middleware.initialState)
+        if (initialState == middleware.initialState)
             inputSubject.onNext(LifecycleAction.Created)
     }
 
