@@ -88,8 +88,7 @@ class BaseOrbitContainer<STATE : Any, SIDE_EFFECT : Any>(
 
         orbit.connect { disposables += it }
 
-        if (initialState == middleware.initialState)
-            inputSubject.onNext(LifecycleAction.Created)
+        if (initialState == middleware.initialState) inputSubject.onNext(LifecycleAction.Created)
     }
 
     override fun sendAction(action: Any) {
