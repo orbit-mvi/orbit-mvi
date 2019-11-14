@@ -27,7 +27,8 @@ import io.reactivex.subjects.PublishSubject
 import java.util.concurrent.Executors
 
 class BaseOrbitContainer<STATE : Any, SIDE_EFFECT : Any>(
-    middleware: Middleware<STATE, SIDE_EFFECT>
+    middleware: Middleware<STATE, SIDE_EFFECT>,
+    stateSeed: STATE = middleware.initialState
 ) : OrbitContainer<STATE, SIDE_EFFECT> {
 
     private val inputSubject: PublishSubject<Any> = PublishSubject.create()
@@ -53,7 +54,6 @@ class BaseOrbitContainer<STATE : Any, SIDE_EFFECT : Any>(
         val scheduler = createSingleScheduler()
 
         disposables += inputSubject.doOnSubscribe { disposables += it }
-            .startWith(LifecycleAction.Created)
             .observeOn(scheduler)
             .publish { actions ->
                 with(
@@ -77,7 +77,7 @@ class BaseOrbitContainer<STATE : Any, SIDE_EFFECT : Any>(
 
         orbit = reducerSubject
             .observeOn(scheduler)
-            .scan(middleware.initialState) { currentState, partialReducer ->
+            .scan(stateSeed) { currentState, partialReducer ->
                 partialReducer(
                     currentState
                 )
@@ -87,6 +87,9 @@ class BaseOrbitContainer<STATE : Any, SIDE_EFFECT : Any>(
             .replay(1)
 
         orbit.connect { disposables += it }
+
+        if (stateSeed == middleware.initialState)
+            inputSubject.onNext(LifecycleAction.Created)
     }
 
     override fun sendAction(action: Any) {
