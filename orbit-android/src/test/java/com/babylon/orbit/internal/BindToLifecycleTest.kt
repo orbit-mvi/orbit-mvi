@@ -7,14 +7,14 @@ import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.Test
 
-class AutoDisposeTest {
+class BindToLifecycleTest {
     @Test
     fun `not disposed until corresponding event`() {
         val lifecycleOwner = MockLifecycleOwner()
         val disposable = Disposables.empty()
 
         lifecycleOwner.currentState = Lifecycle.State.INITIALIZED
-        disposable.autoDispose(lifecycleOwner)
+        disposable.bindToLifecycle(lifecycleOwner)
 
         lifecycleOwner.dispatchEvent(Lifecycle.Event.ON_CREATE)
         lifecycleOwner.dispatchEvent(Lifecycle.Event.ON_START)
@@ -29,7 +29,7 @@ class AutoDisposeTest {
         val disposable = Disposables.empty()
 
         lifecycleOwner.currentState = Lifecycle.State.INITIALIZED
-        disposable.autoDispose(lifecycleOwner)
+        disposable.bindToLifecycle(lifecycleOwner)
 
         lifecycleOwner.dispatchEvent(Lifecycle.Event.ON_CREATE)
         assertThat(disposable.isDisposed).isFalse()
@@ -44,7 +44,7 @@ class AutoDisposeTest {
         val disposable = Disposables.empty()
 
         lifecycleOwner.currentState = Lifecycle.State.CREATED
-        disposable.autoDispose(lifecycleOwner)
+        disposable.bindToLifecycle(lifecycleOwner)
 
         lifecycleOwner.dispatchEvent(Lifecycle.Event.ON_START)
         assertThat(disposable.isDisposed).isFalse()
@@ -59,7 +59,7 @@ class AutoDisposeTest {
         val disposable = Disposables.empty()
 
         lifecycleOwner.currentState = Lifecycle.State.STARTED
-        disposable.autoDispose(lifecycleOwner)
+        disposable.bindToLifecycle(lifecycleOwner)
 
         lifecycleOwner.dispatchEvent(Lifecycle.Event.ON_RESUME)
         assertThat(disposable.isDisposed).isFalse()
@@ -74,7 +74,7 @@ class AutoDisposeTest {
         val disposable = Disposables.empty()
 
         lifecycleOwner.currentState = Lifecycle.State.RESUMED
-        disposable.autoDispose(lifecycleOwner)
+        disposable.bindToLifecycle(lifecycleOwner)
 
         lifecycleOwner.dispatchEvent(Lifecycle.Event.ON_PAUSE)
         assertThat(disposable.isDisposed).isTrue()
@@ -87,7 +87,7 @@ class AutoDisposeTest {
 
         lifecycleOwner.currentState = Lifecycle.State.DESTROYED
 
-        assertThatThrownBy { disposable.autoDispose(lifecycleOwner) }
+        assertThatThrownBy { disposable.bindToLifecycle(lifecycleOwner) }
             .isInstanceOf(IllegalStateException::class.java)
             .hasMessage("Lifecycle is already destroyed")
     }
@@ -98,7 +98,7 @@ class AutoDisposeTest {
         val disposable = Disposables.empty()
 
         lifecycleOwner.currentState = Lifecycle.State.CREATED
-        disposable.autoDispose(lifecycleOwner)
+        disposable.bindToLifecycle(lifecycleOwner)
 
         lifecycleOwner.dispatchEvent(Lifecycle.Event.ON_DESTROY)
         assertThat(disposable.isDisposed).isTrue()
@@ -110,7 +110,7 @@ class AutoDisposeTest {
         val disposable = Disposables.empty()
 
         lifecycleOwner.currentState = Lifecycle.State.INITIALIZED
-        disposable.autoDispose(lifecycleOwner)
+        disposable.bindToLifecycle(lifecycleOwner)
 
         lifecycleOwner.dispatchEvent(Lifecycle.Event.ON_CREATE)
         lifecycleOwner.dispatchEvent(Lifecycle.Event.ON_DESTROY)

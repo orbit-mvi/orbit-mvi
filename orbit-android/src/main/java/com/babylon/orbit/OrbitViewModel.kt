@@ -18,7 +18,7 @@ package com.babylon.orbit
 
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
-import com.babylon.orbit.internal.autoDispose
+import com.babylon.orbit.internal.bindToLifecycle
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
@@ -56,7 +56,7 @@ open class OrbitViewModel<STATE : Any, SIDE_EFFECT : Any>(
         val disposables = CompositeDisposable()
         disposables += mainThreadOrbit.subscribe(stateConsumer)
         disposables += mainThreadSideEffect.subscribe(sideEffectConsumer)
-        disposables.autoDispose(lifecycleOwner)
+        disposables.bindToLifecycle(lifecycleOwner)
     }
 
     override fun onCleared() {

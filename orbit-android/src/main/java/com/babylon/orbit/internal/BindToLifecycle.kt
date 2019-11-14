@@ -21,7 +21,7 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import io.reactivex.disposables.Disposable
 
-internal fun Disposable.autoDispose(lifecycleOwner: LifecycleOwner) {
+internal fun Disposable.bindToLifecycle(lifecycleOwner: LifecycleOwner) {
     val initialState = lifecycleOwner.lifecycle.currentState
     val exitEvent = initialState.correspondingExitEvent
     lifecycleOwner.lifecycle.addObserver(object : LifecycleEventObserver {
