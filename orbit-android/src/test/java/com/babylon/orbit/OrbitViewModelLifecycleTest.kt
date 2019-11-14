@@ -60,7 +60,7 @@ class OrbitViewModelLifecycleTest {
             perform("send side effect")
                 .on<Unit>()
                 .sideEffect { post("foobar") }
-                .reduce { getCurrentState().copy(id = getCurrentState().id + 1) }
+                .reduce { currentState.copy(id = currentState.id + 1) }
         }
         orbitViewModel = OrbitViewModel(middleware)
 
@@ -123,7 +123,7 @@ class OrbitViewModelLifecycleTest {
             perform("send side effect")
                 .on<Unit>()
                 .sideEffect { post("foobar") }
-                .reduce { getCurrentState().copy(id = getCurrentState().id + 1) }
+                .reduce { currentState.copy(id = currentState.id + 1) }
         }
         orbitViewModel = OrbitViewModel(middleware)
 
@@ -185,7 +185,7 @@ class OrbitViewModelLifecycleTest {
             perform("send side effect")
                 .on<Unit>()
                 .sideEffect { post("foobar") }
-                .reduce { getCurrentState().copy(id = getCurrentState().id + 1) }
+                .reduce { currentState.copy(id = currentState.id + 1) }
         }
         orbitViewModel = OrbitViewModel(middleware)
 
@@ -241,7 +241,7 @@ class OrbitViewModelLifecycleTest {
             perform("send side effect")
                 .on<Unit>()
                 .sideEffect { post("foobar") }
-                .reduce { getCurrentState().copy(id = getCurrentState().id + 1) }
+                .reduce { currentState.copy(id = currentState.id + 1) }
         }
         orbitViewModel = OrbitViewModel(middleware)
 

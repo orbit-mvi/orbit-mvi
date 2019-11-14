@@ -59,7 +59,7 @@ class OrbitViewModelThreadingTest {
                 .on<Unit>()
                 .sideEffect { post("foo") }
                 .sideEffect { post("bar") }
-                .reduce { getCurrentState().copy(id = getCurrentState().id + 1) }
+                .reduce { currentState.copy(id = currentState.id + 1) }
         }
         val orbitViewModel = OrbitViewModel(middleware)
 

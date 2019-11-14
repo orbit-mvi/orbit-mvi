@@ -27,9 +27,10 @@ class TransformerReceiver<STATE : Any, EVENT : Any>(
     val eventObservable: Observable<EVENT>
 ) {
     /**
-     * Returns the current state captured whenever this method is called. Successive calls to this
-     * method may yield different results each time as the state could be modified by another flow at
+     * Returns the current state captured whenever this field is accessed. Successive queries of this
+     * field may yield different results each time as the state could be modified by another flow at
      * any time.
      */
-    fun getCurrentState() = stateProvider()
+    val currentState
+        get() = stateProvider()
 }

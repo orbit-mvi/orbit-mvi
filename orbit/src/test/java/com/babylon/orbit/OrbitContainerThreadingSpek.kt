@@ -84,7 +84,7 @@ internal class OrbitContainerThreadingSpek : Spek({
                         .reduce {
                             reducerThreadName = Thread.currentThread().name
                             testSubject.onNext(event)
-                            getCurrentState()
+                            currentState
                         }
                 }
                 orbitContainer = BaseOrbitContainer(middleware)
@@ -243,7 +243,7 @@ internal class OrbitContainerThreadingSpek : Spek({
                         .reduce {
                             firstReducerThreadName = Thread.currentThread().name
                             testSubject.onNext(event)
-                            getCurrentState()
+                            currentState
                         }
                         .transform {
                             eventObservable.map { it * 2 }
@@ -255,7 +255,7 @@ internal class OrbitContainerThreadingSpek : Spek({
                         .reduce {
                             secondReducerThreadName = Thread.currentThread().name
                             testSubject.onNext(event)
-                            getCurrentState()
+                            currentState
                         }
                 }
                 orbitContainer = BaseOrbitContainer(middleware)

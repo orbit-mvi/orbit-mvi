@@ -8,7 +8,7 @@ the glue between small, distinct functions.
 perform("add random number")
     .on<AddRandomNumberButtonPressed>()
     .transform { eventObservable.compose(getRandomNumberUseCase) }
-    .reduce { getCurrentState().copy(getCurrentState().total + event.number) }
+    .reduce { currentState.copy(currentState.total + event.number) }
 ```
 
 We can break an orbit into its constituent parts to be able to understand it
@@ -37,6 +37,10 @@ Then we declare an action that this orbit will react to using the `on` keyword.
 We can also declare a list of actions if this orbit reacts to a few different
 actions.
 
+The type provided to `on` is out-projected so subclasses of the given type
+will also trigger this flow. For example, an `on<Number>()` will be triggered
+for `Int`, `Float`, etc.
+
 **NOTE**
 Be careful not to use generic types in these filters! Due to type erasure
 e.g. `List<Int>` and `List<String>` resolve to the same class, potentially
@@ -59,7 +63,7 @@ and enable reuse.
 
 ``` kotlin
 .reduce {
-    state.copy(getCurrentState().total + event.number)
+    state.copy(currentState.total + event.number)
 }
 ```
 
@@ -72,7 +76,7 @@ transformations beforehand:
 ``` kotlin
 perform("addition")
     .on<AddAction>()
-    .reduce { state.copy(getCurrentState().total + event.number) }
+    .reduce { state.copy(currentState.total + event.number) }
 ```
 
 The reducers are passthrough transformers. This means that after applying
@@ -88,7 +92,7 @@ perform("add random number")
 
 perform("reduce add random number")
     .on<GetRandomNumberUseCaseStatus>()
-    .reduce { state.copy(getCurrentState().total + event.number) }
+    .reduce { state.copy(currentState.total + event.number) }
 ```
 
 Loopbacks allow you to create feedback loops where events coming from one orbit
@@ -124,7 +128,7 @@ OrbitViewModel<State, SideEffect>(State(), {
     perform("side effect straight on the incoming action")
         .on<SomeAction>()
         .sideEffect {
-            Timber.log(getCurrentState())
+            Timber.log(currentState)
             Timber.log(event)
         }
 
@@ -141,7 +145,7 @@ OrbitViewModel<State, SideEffect>(State(), {
 
     perform("post side effect straight on the incoming action")
         .on<NthAction>()
-        .sideEffect { post(SideEffect.Toast(getCurrentState().toString())) }
+        .sideEffect { post(SideEffect.Toast(currentState.toString())) }
         .sideEffect { post(SideEffect.Toast(event.toString())) }
         .sideEffect { post(SideEffect.Navigate(Screen.Home)) }
 })
@@ -158,14 +162,14 @@ a side effect, the upstream events are passed through unmodified.
 
 It's fairly common to read the current state in order to perform some
 operation in your transformer, or side effect. You can capture the current
-state at any point within each DSL block by simply calling `getCurrentState()`
+state at any point within each DSL block by simply calling `currentState`
 
 For example:
 
 ``` kotlin
 perform("Toast the current state")
     .on<SomeAction>()
-    .sideEffect { post(SideEffect.Toast(getCurrentState().toString())) }
+    .sideEffect { post(SideEffect.Toast(currentState.toString())) }
 ```
 
 This property always captures the current state, and so calling this
@@ -193,12 +197,12 @@ perform("load patient prescriptions")
     .transform { eventObservable.compose(getCurrentPatientUseCase) }
     .reduce {
         when(event) {
-            is Status.Result -> getCurrentState().copy(
+            is Status.Result -> currentState.copy(
                 data = event.data,
                 loading = false
             )
-            is Status.Loading -> getCurrentState().copy(loading = true)
-            is Status.Error -> getCurrentState().copy(
+            is Status.Loading -> currentState.copy(loading = true)
+            is Status.Error -> currentState.copy(
                 error = event.throwable,
                 loading = true
             )
