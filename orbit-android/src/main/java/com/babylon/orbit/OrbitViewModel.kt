@@ -1,12 +1,12 @@
 /*
  * Copyright 2019 Babylon Partners Limited
- *  
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- *  
+ *
  *  http://www.apache.org/licenses/LICENSE-2.0
- *  
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -18,8 +18,10 @@ package com.babylon.orbit
 
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
-import com.uber.autodispose.android.lifecycle.autoDispose
+import com.babylon.orbit.internal.bindToLifecycle
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.rxkotlin.plusAssign
 
 open class OrbitViewModel<STATE : Any, SIDE_EFFECT : Any>(
     private val container: OrbitContainer<STATE, SIDE_EFFECT>
@@ -51,13 +53,10 @@ open class OrbitViewModel<STATE : Any, SIDE_EFFECT : Any>(
         stateConsumer: (STATE) -> Unit,
         sideEffectConsumer: (SIDE_EFFECT) -> Unit = {}
     ) {
-        mainThreadOrbit
-            .autoDispose(lifecycleOwner)
-            .subscribe(stateConsumer)
-
-        mainThreadSideEffect
-            .autoDispose(lifecycleOwner)
-            .subscribe(sideEffectConsumer)
+        val disposables = CompositeDisposable()
+        disposables += mainThreadOrbit.subscribe(stateConsumer)
+        disposables += mainThreadSideEffect.subscribe(sideEffectConsumer)
+        disposables.bindToLifecycle(lifecycleOwner)
     }
 
     override fun onCleared() {

@@ -18,7 +18,6 @@ This software uses the following open source works:
 - [RxAndroid](https://github.com/ReactiveX/RxAndroid)
 - [RxRelay](https://github.com/JakeWharton/RxRelay)
 - [RxBinding](https://github.com/JakeWharton/RxBinding)
-- [Autodispose](https://github.com/uber/AutoDispose)
 - [Timber](https://github.com/JakeWharton/timber)
 - [Gradle Versions plugin](https://github.com/ben-manes/gradle-versions-plugin)
 - [Spek](https://www.spekframework.org/)

@@ -17,9 +17,6 @@
 package com.babylon.orbit
 
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.LifecycleRegistry
-import com.nhaarman.mockitokotlin2.mock
 import io.reactivex.android.plugins.RxAndroidPlugins
 import io.reactivex.plugins.RxJavaPlugins
 import io.reactivex.subjects.PublishSubject
@@ -52,8 +49,7 @@ class OrbitViewModelLifecycleTest {
     @Test
     fun `If I connect in onCreate I get disconnected in onDestroy`() {
         lateinit var orbitViewModel: OrbitViewModel<TestState, String>
-        val lifecycle = LifecycleRegistry(mock())
-        val lifecycleOwner = LifecycleOwner { lifecycle }
+        val lifecycleOwner = MockLifecycleOwner()
         val stateSubject = PublishSubject.create<TestState>()
         val stateObserver = stateSubject.test()
         val sideEffectSubject = PublishSubject.create<String>()
@@ -73,16 +69,16 @@ class OrbitViewModelLifecycleTest {
             stateConsumer = { stateSubject.onNext(it) },
             sideEffectConsumer = { sideEffectSubject.onNext(it) }
         )
-        lifecycle.handleLifecycleEvent(Lifecycle.Event.ON_CREATE)
+        lifecycleOwner.dispatchEvent(Lifecycle.Event.ON_CREATE)
         stateObserver.awaitCount(1)
 
         // Then I receive the initial state
         assertThat(stateObserver.values()).containsExactly(middleware.initialState)
 
         // When I transition through to stopped
-        lifecycle.handleLifecycleEvent(Lifecycle.Event.ON_RESUME)
-        lifecycle.handleLifecycleEvent(Lifecycle.Event.ON_PAUSE)
-        lifecycle.handleLifecycleEvent(Lifecycle.Event.ON_STOP)
+        lifecycleOwner.dispatchEvent(Lifecycle.Event.ON_RESUME)
+        lifecycleOwner.dispatchEvent(Lifecycle.Event.ON_PAUSE)
+        lifecycleOwner.dispatchEvent(Lifecycle.Event.ON_STOP)
 
         // And I send an action to the container
         orbitViewModel.sendAction(Unit)
@@ -98,7 +94,7 @@ class OrbitViewModelLifecycleTest {
             .containsExactly("foobar")
 
         // When I transition through to destroyed
-        lifecycle.handleLifecycleEvent(Lifecycle.Event.ON_DESTROY)
+        lifecycleOwner.dispatchEvent(Lifecycle.Event.ON_DESTROY)
 
         // And I send an action to the container
         orbitViewModel.sendAction(Unit)
@@ -116,8 +112,7 @@ class OrbitViewModelLifecycleTest {
     @Test
     fun `If I connect in onStart I get disconnected in onStop`() {
         lateinit var orbitViewModel: OrbitViewModel<TestState, String>
-        val lifecycle = LifecycleRegistry(mock())
-        val lifecycleOwner = LifecycleOwner { lifecycle }
+        val lifecycleOwner = MockLifecycleOwner()
         val stateSubject = PublishSubject.create<TestState>()
         val stateObserver = stateSubject.test()
         val sideEffectSubject = PublishSubject.create<String>()
@@ -133,20 +128,20 @@ class OrbitViewModelLifecycleTest {
         orbitViewModel = OrbitViewModel(middleware)
 
         // When I connect to the view model in onStart
-        lifecycle.handleLifecycleEvent(Lifecycle.Event.ON_CREATE)
+        lifecycleOwner.dispatchEvent(Lifecycle.Event.ON_CREATE)
         orbitViewModel.connect(lifecycleOwner,
             stateConsumer = { stateSubject.onNext(it) },
             sideEffectConsumer = { sideEffectSubject.onNext(it) }
         )
-        lifecycle.handleLifecycleEvent(Lifecycle.Event.ON_START)
+        lifecycleOwner.dispatchEvent(Lifecycle.Event.ON_START)
         stateObserver.awaitCount(1)
 
         // Then I receive the initial state
         assertThat(stateObserver.values()).containsExactly(middleware.initialState)
 
         // When I transition through to paused
-        lifecycle.handleLifecycleEvent(Lifecycle.Event.ON_RESUME)
-        lifecycle.handleLifecycleEvent(Lifecycle.Event.ON_PAUSE)
+        lifecycleOwner.dispatchEvent(Lifecycle.Event.ON_RESUME)
+        lifecycleOwner.dispatchEvent(Lifecycle.Event.ON_PAUSE)
 
         // And I send an action to the container
         orbitViewModel.sendAction(Unit)
@@ -161,7 +156,7 @@ class OrbitViewModelLifecycleTest {
             .containsExactly("foobar")
 
         // When I transition through to stopped
-        lifecycle.handleLifecycleEvent(Lifecycle.Event.ON_STOP)
+        lifecycleOwner.dispatchEvent(Lifecycle.Event.ON_STOP)
 
         // And I send an action to the container
         orbitViewModel.sendAction(Unit)
@@ -179,8 +174,7 @@ class OrbitViewModelLifecycleTest {
     @Test
     fun `If I connect in onResume I get disconnected in onPause`() {
         lateinit var orbitViewModel: OrbitViewModel<TestState, String>
-        val lifecycle = LifecycleRegistry(mock())
-        val lifecycleOwner = LifecycleOwner { lifecycle }
+        val lifecycleOwner = MockLifecycleOwner()
         val stateSubject = PublishSubject.create<TestState>()
         val stateObserver = stateSubject.test()
         val sideEffectSubject = PublishSubject.create<String>()
@@ -196,13 +190,13 @@ class OrbitViewModelLifecycleTest {
         orbitViewModel = OrbitViewModel(middleware)
 
         // When I connect to the view model in onResume
-        lifecycle.handleLifecycleEvent(Lifecycle.Event.ON_CREATE)
-        lifecycle.handleLifecycleEvent(Lifecycle.Event.ON_START)
+        lifecycleOwner.dispatchEvent(Lifecycle.Event.ON_CREATE)
+        lifecycleOwner.dispatchEvent(Lifecycle.Event.ON_START)
         orbitViewModel.connect(lifecycleOwner,
             stateConsumer = { stateSubject.onNext(it) },
             sideEffectConsumer = { sideEffectSubject.onNext(it) }
         )
-        lifecycle.handleLifecycleEvent(Lifecycle.Event.ON_RESUME)
+        lifecycleOwner.dispatchEvent(Lifecycle.Event.ON_RESUME)
         stateObserver.awaitCount(1)
 
         // When I send an action to the container
@@ -218,7 +212,7 @@ class OrbitViewModelLifecycleTest {
             .containsExactly("foobar")
 
         // When I transition through to paused
-        lifecycle.handleLifecycleEvent(Lifecycle.Event.ON_PAUSE)
+        lifecycleOwner.dispatchEvent(Lifecycle.Event.ON_PAUSE)
 
         // And I send an action to the container
         orbitViewModel.sendAction(Unit)
@@ -237,8 +231,7 @@ class OrbitViewModelLifecycleTest {
     fun `Instance of view is not retained after disconnection`() {
         lateinit var orbitViewModel: OrbitViewModel<TestState, String>
         lateinit var weakConsumer: WeakReference<Consumer>
-        val lifecycle = LifecycleRegistry(mock())
-        val lifecycleOwner = LifecycleOwner { lifecycle }
+        val lifecycleOwner = MockLifecycleOwner()
         val stateSubject = PublishSubject.create<TestState>()
         val stateObserver = stateSubject.test()
         val sideEffectSubject = PublishSubject.create<String>()
@@ -253,7 +246,7 @@ class OrbitViewModelLifecycleTest {
         orbitViewModel = OrbitViewModel(middleware)
 
         // When I connect to the view model in onStart
-        lifecycle.handleLifecycleEvent(Lifecycle.Event.ON_CREATE)
+        lifecycleOwner.dispatchEvent(Lifecycle.Event.ON_CREATE)
         weakConsumer = WeakReference(Consumer(stateSubject, sideEffectSubject)).also {
             orbitViewModel.connect(
                 lifecycleOwner,
@@ -262,16 +255,16 @@ class OrbitViewModelLifecycleTest {
             )
         }
 
-        lifecycle.handleLifecycleEvent(Lifecycle.Event.ON_START)
+        lifecycleOwner.dispatchEvent(Lifecycle.Event.ON_START)
         stateObserver.awaitCount(1)
 
         // Then I receive the initial state
         assertThat(stateObserver.values()).containsExactly(middleware.initialState)
 
         // When I transition through to stopped
-        lifecycle.handleLifecycleEvent(Lifecycle.Event.ON_RESUME)
-        lifecycle.handleLifecycleEvent(Lifecycle.Event.ON_PAUSE)
-        lifecycle.handleLifecycleEvent(Lifecycle.Event.ON_STOP)
+        lifecycleOwner.dispatchEvent(Lifecycle.Event.ON_RESUME)
+        lifecycleOwner.dispatchEvent(Lifecycle.Event.ON_PAUSE)
+        lifecycleOwner.dispatchEvent(Lifecycle.Event.ON_STOP)
 
         // Then I expect the consumer to be cleared
         var cleared = false
