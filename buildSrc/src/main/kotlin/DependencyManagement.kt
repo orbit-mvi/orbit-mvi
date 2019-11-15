@@ -19,6 +19,7 @@ object Versions {
     const val gradleVersionsPlugin = "0.25.0"
     const val gradleAndroidPlugin = "3.5.0"
     const val markdownLintPlugin = "0.5.0"
+    const val jacocoAndroidPlugin = "0.1.4"
 
     const val kotlin = "1.3.50"
 
@@ -95,6 +96,7 @@ object ProjectDependencies {
 object PluginDependencies {
     const val android = "com.android.tools.build:gradle:${Versions.gradleAndroidPlugin}"
     const val kotlin = "org.jetbrains.kotlin:kotlin-gradle-plugin:${Versions.kotlin}"
+    const val jacocoAndroid = "com.dicedmelon.gradle:jacoco-android:${Versions.jacocoAndroidPlugin}"
 }
 
 object GroupedDependencies {
