@@ -52,3 +52,8 @@ jobs:
         BINTRAY_KEY: ${{ secrets.BINTRAY_KEY }}
       run: ./gradlew bintrayUpload
       if: startsWith(github.ref, 'refs/tags/')
+
+    - name: Upload coverage to Codecov  
+      uses: codecov/codecov-action@v1.0.3
+      with:
+        token: ${{secrets.CODECOV_TOKEN}}
