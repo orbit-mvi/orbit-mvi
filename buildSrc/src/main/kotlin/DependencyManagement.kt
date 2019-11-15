@@ -20,6 +20,7 @@ object Versions {
     const val gradleAndroidPlugin = "3.5.0"
     const val markdownLintPlugin = "0.5.0"
     const val jacocoAndroidPlugin = "0.1.4"
+    const val detektPlugin = "1.1.1"
 
     const val kotlin = "1.3.50"
 
@@ -77,6 +78,8 @@ object ProjectDependencies {
     const val groupie = "com.xwray:groupie:${Versions.groupie}"
     const val groupieKotlinAndroidExtensions = "com.xwray:groupie-kotlin-android-extensions:${Versions.groupie}"
 
+    const val detektFormatting = "io.gitlab.arturbosch.detekt:detekt-formatting:${Versions.detektPlugin}"
+
     // Debugging tools
     const val timber = "com.jakewharton.timber:timber:${Versions.timber}"
 
@@ -97,6 +100,7 @@ object PluginDependencies {
     const val android = "com.android.tools.build:gradle:${Versions.gradleAndroidPlugin}"
     const val kotlin = "org.jetbrains.kotlin:kotlin-gradle-plugin:${Versions.kotlin}"
     const val jacocoAndroid = "com.dicedmelon.gradle:jacoco-android:${Versions.jacocoAndroidPlugin}"
+    const val detekt = "io.gitlab.arturbosch.detekt:detekt-gradle-plugin:${Versions.detektPlugin}"
 }
 
 object GroupedDependencies {
