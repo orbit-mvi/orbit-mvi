@@ -22,7 +22,7 @@ buildscript {
         maven(url = "https://plugins.gradle.org/m2/")
     }
     dependencies {
-        classpath("io.gitlab.arturbosch.detekt:detekt-gradle-plugin:1.0.1")
+        classpath("io.gitlab.arturbosch.detekt:detekt-gradle-plugin:1.1.1")
     }
 }
 
@@ -57,5 +57,5 @@ tasks.named("detekt", Detekt::class.java).configure {
 }
 
 dependencies {
-    "detektPlugins"("io.gitlab.arturbosch.detekt:detekt-formatting:1.0.1")
+    "detektPlugins"("io.gitlab.arturbosch.detekt:detekt-formatting:1.1.1")
 }
