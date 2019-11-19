@@ -59,6 +59,9 @@ dependencies {
     implementation(ProjectDependencies.androidLifecycleComponents)
     kapt(ProjectDependencies.androidLifecycleCompiler)
 
+    implementation("androidx.lifecycle:lifecycle-viewmodel-savedstate:1.0.0-rc02")
+
+
     implementation(ProjectDependencies.rxJava2)
     implementation(ProjectDependencies.rxKotlin)
     implementation(ProjectDependencies.rxAndroid)

@@ -1,5 +1,6 @@
 package com.babylon.orbit.sample.di
 
+import androidx.lifecycle.SavedStateHandle
 import com.babylon.orbit.sample.domain.analytics.AnalyticsManager
 import com.babylon.orbit.sample.domain.analytics.AnalyticsManagerImpl
 import com.babylon.orbit.sample.domain.todo.GetTodoUseCase
@@ -39,5 +40,5 @@ val presentationModule = module {
 
     single { TodoScreenSideEffect(get()) }
 
-    viewModel { TodoViewModel(get(), get(), get()) }
+    viewModel(useState = true) { (handle: SavedStateHandle) -> TodoViewModel(handle, get(), get(), get()) }
 }

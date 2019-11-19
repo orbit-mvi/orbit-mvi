@@ -1,13 +1,15 @@
 package com.babylon.orbit.sample.presentation
 
+import androidx.lifecycle.SavedStateHandle
 import com.babylon.orbit.LifecycleAction
 import com.babylon.orbit.OrbitViewModel
 
 class TodoViewModel(
+    state: SavedStateHandle? = null,
     private val transformers: TodoScreenTransformer,
     private val reducers: TodoScreenReducer,
     private val sideEffects: TodoScreenSideEffect
-) : OrbitViewModel<TodoScreenState, Unit>(TodoScreenState(), {
+) : OrbitViewModel<TodoScreenState, Unit>(state, TodoScreenState(), {
 
     perform("load the todos")
         .on(

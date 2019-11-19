@@ -17,6 +17,7 @@
 package com.babylon.orbit
 
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import com.babylon.orbit.internal.bindToLifecycle
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -24,23 +25,41 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
 
 open class OrbitViewModel<STATE : Any, SIDE_EFFECT : Any>(
+    private val state: SavedStateHandle? = null,
     private val container: OrbitContainer<STATE, SIDE_EFFECT>
 ) : ViewModel() {
 
     constructor(
+        state: SavedStateHandle? = null,
         initialState: STATE,
         init: OrbitsBuilder<STATE, SIDE_EFFECT>.() -> Unit
-    ) : this(BaseOrbitContainer(middleware(initialState, init)))
+    ) : this(
+        state,
+        BaseOrbitContainer(
+            middleware(initialState, init),
+            state?.get<STATE>("state") ?: initialState
+        )
+    )
 
-    constructor(middleware: Middleware<STATE, SIDE_EFFECT>) : this(BaseOrbitContainer(middleware))
+    constructor(
+        state: SavedStateHandle? = null,
+        middleware: Middleware<STATE, SIDE_EFFECT>
+    ) : this(
+        state,
+        BaseOrbitContainer(middleware, state?.get<STATE>("state") ?: middleware.initialState)
+    )
 
     val currentState: STATE
         get() = container.currentState
 
     fun sendAction(action: Any) = container.sendAction(action)
 
-    private val mainThreadOrbit = container.orbit.observeOn(AndroidSchedulers.mainThread())
-    private val mainThreadSideEffect = container.sideEffect.observeOn(AndroidSchedulers.mainThread())
+    private val mainThreadOrbit =
+        container.orbit.observeOn(AndroidSchedulers.mainThread())
+            .doOnNext { state?.set("state", it) }
+
+    private val mainThreadSideEffect =
+        container.sideEffect.observeOn(AndroidSchedulers.mainThread())
 
     /**
      * Designed to be called in onStart or onResume, depending on your use case.
