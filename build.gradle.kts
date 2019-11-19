@@ -25,7 +25,6 @@ buildscript {
     dependencies {
         classpath(PluginDependencies.android)
         classpath(PluginDependencies.kotlin)
-        classpath(PluginDependencies.jacocoAndroid)
     }
 }
 
@@ -35,6 +34,7 @@ plugins {
 }
 
 apply(from = "gradle/scripts/detekt.gradle.kts")
+apply(from = "gradle/scripts/jacoco-combinedreport.gradle.kts")
 
 subprojects {
     repositories {

@@ -22,7 +22,7 @@ plugins {
 }
 
 apply(from = "$rootDir/gradle/scripts/bintray.gradle.kts")
-apply(from = "$rootDir/gradle/scripts/codecoverage.gradle.kts")
+apply(from = "$rootDir/gradle/scripts/jacoco.gradle.kts")
 
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
@@ -34,12 +34,6 @@ dependencies {
     // Testing
     GroupedDependencies.spekTestsImplementation.forEach { testImplementation(it) }
     GroupedDependencies.spekTestsRuntime.forEach { testRuntimeOnly(it) }
-}
-
-tasks.withType<Test> {
-    useJUnitPlatform {
-        includeEngines = setOf("spek2")
-    }
 }
 
 java {

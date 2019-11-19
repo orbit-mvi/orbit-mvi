@@ -29,11 +29,12 @@ buildscript {
 apply<JacocoAndroidPlugin>()
 
 configure<JacocoAndroidUnitTestReportExtension> {
+    html.enabled(false)
+    xml.enabled(false)
     csv.enabled(false)
-    html.enabled(true)
-    xml.enabled(true)
 }
 
 tasks.withType<Test>().configureEach {
+    extensions.getByType<JacocoTaskExtension>().isIncludeNoLocationClasses = true
     finalizedBy(tasks.named("jacocoTestReport"))
 }
