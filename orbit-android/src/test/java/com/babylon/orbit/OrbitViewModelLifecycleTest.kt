@@ -152,6 +152,7 @@ class OrbitViewModelLifecycleTest {
             .containsExactly(middleware.initialState, TestState(43))
 
         // And I receive the side effect
+        sideEffectObserver.awaitCount(1)
         assertThat(sideEffectObserver.values())
             .containsExactly("foobar")
 
