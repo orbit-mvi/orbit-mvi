@@ -23,6 +23,7 @@ plugins {
 }
 
 apply(from = "$rootDir/gradle/scripts/bintray.gradle.kts")
+apply(from = "$rootDir/gradle/scripts/codecoverage-android.gradle.kts")
 
 android {
     compileSdkVersion(29)

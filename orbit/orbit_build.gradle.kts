@@ -22,6 +22,7 @@ plugins {
 }
 
 apply(from = "$rootDir/gradle/scripts/bintray.gradle.kts")
+apply(from = "$rootDir/gradle/scripts/codecoverage.gradle.kts")
 
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
