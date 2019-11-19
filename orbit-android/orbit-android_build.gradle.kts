@@ -23,7 +23,7 @@ plugins {
 }
 
 apply(from = "$rootDir/gradle/scripts/bintray.gradle.kts")
-apply(from = "$rootDir/gradle/scripts/codecoverage-android.gradle.kts")
+apply(from = "$rootDir/gradle/scripts/jacoco-android.gradle.kts")
 
 android {
     compileSdkVersion(29)
@@ -37,10 +37,9 @@ android {
     buildTypes {
         getByName("release") {
             isMinifyEnabled = false
-            proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
         }
     }
-    compileOptions {
+    java {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
@@ -49,12 +48,6 @@ android {
 tasks.withType(KotlinCompile::class.java).all {
     kotlinOptions {
         jvmTarget = "1.8"
-    }
-}
-tasks.withType(Test::class.java) {
-    useJUnitPlatform()
-    testLogging {
-        events("passed", "skipped", "failed")
     }
 }
 
@@ -73,7 +66,6 @@ dependencies {
     // Testing
     GroupedDependencies.spekTestsImplementation.forEach { testImplementation(it) }
     GroupedDependencies.spekTestsRuntime.forEach { testRuntimeOnly(it) }
-    testImplementation(ProjectDependencies.robolectric)
     testImplementation(ProjectDependencies.junit4)
     testRuntimeOnly(ProjectDependencies.junitVintage)
 }

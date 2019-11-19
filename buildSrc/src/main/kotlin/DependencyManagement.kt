@@ -47,7 +47,6 @@ object Versions {
     const val junitPlatform = "1.5.2"
     const val assertJ = "3.14.0"
     const val mockitoKotlin = "2.1.0"
-    const val robolectric = "4.3.1"
     const val junit4 = "4.12"
     const val junitVintage = "5.5.2"
 }
@@ -90,7 +89,6 @@ object ProjectDependencies {
     const val mockitoKotlin = "com.nhaarman.mockitokotlin2:mockito-kotlin:${Versions.mockitoKotlin}"
 
     // Testing
-    const val robolectric = "org.robolectric:robolectric:${Versions.robolectric}"
     const val junit4 = "junit:junit:${Versions.junit4}"
     const val junitVintage = "org.junit.vintage:junit-vintage-engine:${Versions.junitVintage}"
 }
