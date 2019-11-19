@@ -9,7 +9,7 @@ This product includes software developed at [Babylon Health](http://www.babylonh
 This software uses the following open source works:
 
 - [Gradle Versions plugin](https://github.com/ben-manes/gradle-versions-plugin)
-- [Markdown lint for Gradle](https://github.com/appmattus/markdown-lint)
+- [Markdown Lint for Gradle](https://github.com/appmattus/markdown-lint)
 - [Kotlin](https://github.com/JetBrains/kotlin)
 - [Android](https://developer.android.com)
 - [Koin](https://insert-koin.io/)
@@ -21,5 +21,5 @@ This software uses the following open source works:
 - [Timber](https://github.com/JakeWharton/timber)
 - [Gradle Versions plugin](https://github.com/ben-manes/gradle-versions-plugin)
 - [Spek](https://www.spekframework.org/)
-- [Mockito kotlin](https://github.com/nhaarman/mockito-kotlin)
+- [Mockito Kotlin](https://github.com/nhaarman/mockito-kotlin)
 - [AssertK](https://github.com/willowtreeapps/assertk)
