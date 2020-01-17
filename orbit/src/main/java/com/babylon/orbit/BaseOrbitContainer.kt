@@ -28,7 +28,7 @@ import java.util.concurrent.Executors
 
 class BaseOrbitContainer<STATE : Any, SIDE_EFFECT : Any>(
     middleware: Middleware<STATE, SIDE_EFFECT>,
-    initialState: STATE = middleware.initialState
+    initialStateOverride: STATE? = null
 ) : OrbitContainer<STATE, SIDE_EFFECT> {
 
     private val inputSubject: PublishSubject<Any> = PublishSubject.create()
@@ -75,6 +75,7 @@ class BaseOrbitContainer<STATE : Any, SIDE_EFFECT : Any>(
             }
             .subscribe()
 
+        val initialState = initialStateOverride ?: middleware.initialState
         orbit = reducerSubject
             .observeOn(scheduler)
             .scan(initialState) { currentState, partialReducer ->
@@ -88,7 +89,8 @@ class BaseOrbitContainer<STATE : Any, SIDE_EFFECT : Any>(
 
         orbit.connect { disposables += it }
 
-        if (initialState == middleware.initialState) inputSubject.onNext(LifecycleAction.Created)
+        // only emit [LifecycleAction.Created] if we didn't override the initial state
+        if (initialStateOverride == null) inputSubject.onNext(LifecycleAction.Created)
     }
 
     override fun sendAction(action: Any) {

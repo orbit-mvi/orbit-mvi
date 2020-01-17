@@ -539,4 +539,53 @@ internal class OrbitContainerSpek : Spek({
             }
         }
     }
+
+    Feature("Container - Sending LifecycleAction.Created on creation") {
+        Scenario("When using middleware's initial value") {
+            lateinit var middleware: Middleware<TestState, String>
+            val sideEffectSubject = PublishSubject.create<String>()
+            val sideEffectTestObserver = sideEffectSubject.test()
+
+            Given("A non-seeded container with a side effect off a LifecycleEvent.Created") {
+                middleware = createTestMiddleware {
+                    perform("check lifecycle action")
+                        .on<LifecycleAction.Created>()
+                        .sideEffect { sideEffectSubject.onNext("foo") }
+                }
+                BaseOrbitContainer(middleware)
+            }
+
+            When("I connect to the middleware") {
+                sideEffectTestObserver.awaitCount(1)
+            }
+
+            Then("No side effect is received") {
+                sideEffectTestObserver.assertValue("foo")
+            }
+        }
+
+        Scenario("When overriding middleware's initial value") {
+            lateinit var middleware: Middleware<TestState, String>
+            val sideEffectSubject = PublishSubject.create<String>()
+            val sideEffectTestObserver = sideEffectSubject.test()
+
+            Given("A seeded container with a side effect off a LifecycleEvent.Created") {
+                middleware = createTestMiddleware {
+                    perform("check lifecycle action")
+                        .on<LifecycleAction.Created>()
+                        .sideEffect { sideEffectSubject.onNext("foo") }
+                }
+                BaseOrbitContainer(middleware, TestState(1234567890))
+            }
+
+            When("I connect to the middleware") {
+                sideEffectTestObserver.awaitCount(1)
+            }
+
+            Then("No side effect is received") {
+                sideEffectTestObserver.assertNoValues()
+            }
+        }
+
+    }
 })
