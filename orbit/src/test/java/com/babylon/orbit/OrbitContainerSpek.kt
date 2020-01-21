@@ -538,5 +538,28 @@ internal class OrbitContainerSpek : Spek({
                 sideEffectTestObserver.assertNoValues()
             }
         }
+
+        Scenario("Lifecycle action not sent on container creation for container seeded with same state as middleware's initial state") {
+            lateinit var middleware: Middleware<TestState, String>
+            val sideEffectSubject = PublishSubject.create<String>()
+            val sideEffectTestObserver = sideEffectSubject.test()
+
+            Given("A seeded container with a side effect off a LifecycleEvent.Created") {
+                middleware = createTestMiddleware(initialState = TestState(123)) {
+                    perform("check lifecycle action")
+                        .on<LifecycleAction.Created>()
+                        .sideEffect { sideEffectSubject.onNext("foo") }
+                }
+                BaseOrbitContainer(middleware, TestState(123))
+            }
+
+            When("I connect to the middleware") {
+                sideEffectTestObserver.awaitCount(1)
+            }
+
+            Then("No side effect is received") {
+                sideEffectTestObserver.assertNoValues()
+            }
+        }
     }
 })
