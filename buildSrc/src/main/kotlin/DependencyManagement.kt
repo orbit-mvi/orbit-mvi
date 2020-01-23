@@ -43,6 +43,8 @@ object Versions {
 
     const val groupie = "2.7.2"
 
+    const val gson = "2.8.2"
+
     // Testing
     const val spek = "2.0.9"
     const val junitPlatform = "1.6.0"
@@ -79,6 +81,8 @@ object ProjectDependencies {
 
     const val groupie = "com.xwray:groupie:${Versions.groupie}"
     const val groupieKotlinAndroidExtensions = "com.xwray:groupie-kotlin-android-extensions:${Versions.groupie}"
+
+    const val gson = "com.google.code.gson:gson:${Versions.gson}"
 
     const val detektFormatting = "io.gitlab.arturbosch.detekt:detekt-formatting:${Versions.detektPlugin}"
 

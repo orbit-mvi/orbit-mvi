@@ -1,0 +1,10 @@
+<resources>
+
+    <style name="FlatCard" parent="Widget.MaterialComponents.CardView">
+        <item name="strokeWidth">1dp</item>
+        <item name="strokeColor">@color/card_stroke_color</item>
+        <item name="cardElevation">0dp</item>
+        <item name="cardCornerRadius">12dp</item>
+    </style>
+
+</resources>

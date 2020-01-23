@@ -17,11 +17,13 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    id("com.android.application")
+    id("com.android.library")
     kotlin("android")
-    kotlin("kapt")
     id("kotlin-android-extensions")
 }
+
+apply(from = "$rootDir/gradle/scripts/bintray.gradle.kts")
+apply(from = "$rootDir/gradle/scripts/jacoco-android.gradle.kts")
 
 android {
     compileSdkVersion(29)
@@ -30,16 +32,14 @@ android {
         targetSdkVersion(29)
         versionCode = 1
         versionName = "1.0"
-        applicationId = "com.babylon.orbit.sample"
         testInstrumentationRunner = "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
         getByName("release") {
             isMinifyEnabled = false
-            proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
         }
     }
-    compileOptions {
+    java {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
@@ -52,34 +52,37 @@ tasks.withType(KotlinCompile::class.java).all {
 }
 
 dependencies {
+    // Orbit
     implementation(project(":orbit"))
-    implementation(project(":orbit-launcher"))
     implementation(project(":orbit-android"))
+
+    // JDK
     implementation(kotlin("stdlib-jdk8"))
 
-    implementation(ProjectDependencies.androidLifecycleComponents)
-    implementation(ProjectDependencies.androidLifecycleSavedState)
-    implementation(ProjectDependencies.androidAppCompat)
-    implementation(ProjectDependencies.androidConstrainLayout)
-    kapt(ProjectDependencies.androidLifecycleCompiler)
-    implementation(ProjectDependencies.androidMaterial)
-    // Koin Android ViewModel features
-    implementation(ProjectDependencies.androidKoinViewModel)
-    implementation(ProjectDependencies.androidRxBindings)
+    // Kotlin
+    implementation(ProjectDependencies.kotlinReflect)
 
+    // Android
+    implementation(ProjectDependencies.androidLifecycleComponents)
+    implementation(ProjectDependencies.androidAppCompat)
+    implementation(ProjectDependencies.androidMaterial)
+
+    // Rx
     implementation(ProjectDependencies.rxJava2)
     implementation(ProjectDependencies.rxKotlin)
     implementation(ProjectDependencies.rxAndroid)
+    implementation(ProjectDependencies.androidRxBindings)
 
-    implementation(ProjectDependencies.timber)
-
+    // UI rendering
     implementation(ProjectDependencies.groupie)
     implementation(ProjectDependencies.groupieKotlinAndroidExtensions)
+
+    // Serialization
+    implementation(ProjectDependencies.gson)
 
     // Testing
     GroupedDependencies.spekTestsImplementation.forEach { testImplementation(it) }
     GroupedDependencies.spekTestsRuntime.forEach { testRuntimeOnly(it) }
-    testImplementation(ProjectDependencies.androidKoinTest)
     testImplementation(ProjectDependencies.junit4)
     testRuntimeOnly(ProjectDependencies.junitVintage)
 }

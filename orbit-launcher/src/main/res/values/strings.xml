@@ -1,0 +1,7 @@
+<resources>
+    <string name="orbit_launcher_app_name">Orbit Launcher</string>
+    <string name="channel_name">Orbit State Recorder</string>
+    <string name="channel_description">Orbit State Recorder</string>
+    <string name="clear">CLEAR</string>
+    <string name="save">SAVE</string>
+</resources>

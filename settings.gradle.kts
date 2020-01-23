@@ -17,6 +17,7 @@
 include(
     "orbit",
     "orbit-android",
+    "orbit-launcher",
     "sampleapp"
 )
 
