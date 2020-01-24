@@ -25,6 +25,7 @@ object Versions {
     const val kotlin = "1.3.61"
 
     const val androidLifecycles = "2.2.0"
+    const val androidLifecyclesSavedState = "1.0.0"
     const val androidAppCompat = "1.1.0"
     const val androidConstrainLayout = "1.1.3"
     const val androidMaterial = "1.1.0-rc02"
@@ -57,6 +58,7 @@ object ProjectDependencies {
     // Android libraries
     const val androidLifecycleComponents = "androidx.lifecycle:lifecycle-extensions:${Versions.androidLifecycles}"
     const val androidLifecycleCompiler = "androidx.lifecycle:lifecycle-compiler:${Versions.androidLifecycles}"
+    const val androidLifecycleSavedState = "androidx.lifecycle:lifecycle-viewmodel-savedstate:${Versions.androidLifecyclesSavedState}"
     const val androidAppCompat = "androidx.appcompat:appcompat:${Versions.androidAppCompat}"
     const val androidConstrainLayout = "androidx.constraintlayout:constraintlayout:${Versions.androidConstrainLayout}"
     const val androidMaterial = "com.google.android.material:material:${Versions.androidMaterial}"
