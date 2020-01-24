@@ -1,5 +1,3 @@
-failFast: false
-
 build:
   maxIssues: 0
 

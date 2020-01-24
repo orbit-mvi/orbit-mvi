@@ -17,38 +17,38 @@
 object Versions {
 
     const val gradleVersionsPlugin = "0.27.0"
-    const val gradleAndroidPlugin = "3.5.2"
+    const val gradleAndroidPlugin = "3.5.3"
     const val markdownLintPlugin = "0.6.0"
     const val jacocoAndroidPlugin = "0.1.4"
-    const val detektPlugin = "1.1.1"
+    const val detektPlugin = "1.4.0"
 
-    const val kotlin = "1.3.60"
+    const val kotlin = "1.3.61"
 
-    const val androidLifecycles = "2.1.0"
+    const val androidLifecycles = "2.2.0"
     const val androidAppCompat = "1.1.0"
     const val androidConstrainLayout = "1.1.3"
-    const val androidMaterial = "1.1.0-beta02"
+    const val androidMaterial = "1.1.0-rc02"
     const val androidKoin = "2.0.1"
-    const val androidRxBindings = "3.0.0"
+    const val androidRxBindings = "3.1.0"
 
     const val javaxInject = "1"
 
-    const val rxJava2 = "2.2.14"
+    const val rxJava2 = "2.2.17"
     const val rxJava2Extensions = "0.20.10"
     const val rxKotlin = "2.4.0"
     const val rxAndroid = "2.1.1"
 
     const val timber = "4.7.1"
 
-    const val groupie = "2.7.1"
+    const val groupie = "2.7.2"
 
     // Testing
-    const val spek = "2.0.8"
-    const val junitPlatform = "1.5.2"
+    const val spek = "2.0.9"
+    const val junitPlatform = "1.6.0"
     const val assertJ = "3.14.0"
     const val mockitoKotlin = "2.1.0"
-    const val junit4 = "4.12"
-    const val junitVintage = "5.5.2"
+    const val junit4 = "4.13"
+    const val junitVintage = "5.6.0"
 }
 
 object ProjectDependencies {
