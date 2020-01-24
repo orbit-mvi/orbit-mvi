@@ -50,6 +50,7 @@ class TodoActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
+
         viewModel.connect(this, ::render)
     }
 

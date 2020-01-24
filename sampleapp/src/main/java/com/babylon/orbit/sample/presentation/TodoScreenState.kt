@@ -11,7 +11,7 @@ data class TodoScreenState(
     val todoList: List<Todo>? = null,
     val todoSelectedId: Int? = null,
     val userProfile: UserProfile? = null
-): Parcelable
+) : Parcelable
 
 enum class ScreenState {
     Loading,

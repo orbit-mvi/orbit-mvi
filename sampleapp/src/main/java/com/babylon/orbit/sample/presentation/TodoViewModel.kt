@@ -5,11 +5,11 @@ import com.babylon.orbit.LifecycleAction
 import com.babylon.orbit.OrbitViewModel
 
 class TodoViewModel(
-    state: SavedStateHandle,
+    savedStateHandle: SavedStateHandle,
     private val transformers: TodoScreenTransformer,
     private val reducers: TodoScreenReducer,
     private val sideEffects: TodoScreenSideEffect
-) : OrbitViewModel<TodoScreenState, Unit>(state, TodoScreenState(), {
+) : OrbitViewModel<TodoScreenState, Unit>(TodoScreenState(), savedStateHandle, {
 
     perform("load the todos")
         .on(

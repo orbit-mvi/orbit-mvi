@@ -26,24 +26,29 @@ import io.reactivex.rxkotlin.plusAssign
 
 open class OrbitViewModel<STATE : Any, SIDE_EFFECT : Any>(
     private val container: OrbitContainer<STATE, SIDE_EFFECT>,
-    private val state: SavedStateHandle? = null
+    private val savedStateHandle: SavedStateHandle? = null
 ) : ViewModel() {
 
     constructor(
-        state: SavedStateHandle? = null,
         initialState: STATE,
+        savedStateHandle: SavedStateHandle? = null,
         init: OrbitsBuilder<STATE, SIDE_EFFECT>.() -> Unit
     ) : this(
-        BaseOrbitContainer(middleware(initialState, init), state?.get<STATE>("state")),
-        state
+        BaseOrbitContainer(middleware(initialState, init), savedStateHandle?.get<STATE>(STATE)),
+        savedStateHandle
     )
 
     constructor(
+        initialState: STATE,
+        init: OrbitsBuilder<STATE, SIDE_EFFECT>.() -> Unit
+    ) : this(BaseOrbitContainer(middleware(initialState, init)))
+
+    constructor(
         middleware: Middleware<STATE, SIDE_EFFECT>,
-        state: SavedStateHandle? = null
+        savedStateHandle: SavedStateHandle? = null
     ) : this(
-        BaseOrbitContainer(middleware, state?.get<STATE>("state")),
-        state
+        BaseOrbitContainer(middleware, savedStateHandle?.get<STATE>(STATE)),
+        savedStateHandle
     )
 
     val currentState: STATE
@@ -53,7 +58,7 @@ open class OrbitViewModel<STATE : Any, SIDE_EFFECT : Any>(
 
     private val mainThreadOrbit =
         container.orbit.observeOn(AndroidSchedulers.mainThread())
-            .doOnNext { state?.set("state", it) }
+            .doOnNext { savedStateHandle?.set("state", it) }
 
     private val mainThreadSideEffect =
         container.sideEffect.observeOn(AndroidSchedulers.mainThread())
@@ -66,8 +71,21 @@ open class OrbitViewModel<STATE : Any, SIDE_EFFECT : Any>(
      */
     fun connect(
         lifecycleOwner: LifecycleOwner,
+        stateConsumer: (STATE) -> Unit
+    ) {
+        connect(lifecycleOwner, stateConsumer, {})
+    }
+
+    /**
+     * Designed to be called in onStart or onResume, depending on your use case.
+     * DO NOT call in other lifecycle methods unless you know what you're doing!
+     * The subscriptions will be disposed in methods symmetric to the ones they were called in.
+     * For example onStart -> onStop, onResume -> onPause, onCreate -> onDestroy.
+     */
+    fun connect(
+        lifecycleOwner: LifecycleOwner,
         stateConsumer: (STATE) -> Unit,
-        sideEffectConsumer: (SIDE_EFFECT) -> Unit = {}
+        sideEffectConsumer: (SIDE_EFFECT) -> Unit
     ) {
         val disposables = CompositeDisposable()
         disposables += mainThreadOrbit.subscribe(stateConsumer)
@@ -77,5 +95,9 @@ open class OrbitViewModel<STATE : Any, SIDE_EFFECT : Any>(
 
     override fun onCleared() {
         container.disposeOrbit()
+    }
+
+    private companion object Key {
+        const val STATE = "state"
     }
 }
