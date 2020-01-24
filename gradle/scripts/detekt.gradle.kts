@@ -44,7 +44,7 @@ tasks.named("detekt", Detekt::class.java).configure {
 
     autoCorrect = true
     buildUponDefaultConfig = true
-    config = files("${rootProject.projectDir}/gradle/scripts/detekt.yml")
+    config.setFrom(files("${rootProject.projectDir}/gradle/scripts/detekt.yml"))
 
     reports {
         xml {
