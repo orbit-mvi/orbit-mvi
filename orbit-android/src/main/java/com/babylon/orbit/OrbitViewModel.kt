@@ -25,8 +25,8 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
 
 open class OrbitViewModel<STATE : Any, SIDE_EFFECT : Any>(
-    private val state: SavedStateHandle? = null,
-    private val container: OrbitContainer<STATE, SIDE_EFFECT>
+    private val container: OrbitContainer<STATE, SIDE_EFFECT>,
+    private val state: SavedStateHandle? = null
 ) : ViewModel() {
 
     constructor(
@@ -34,19 +34,16 @@ open class OrbitViewModel<STATE : Any, SIDE_EFFECT : Any>(
         initialState: STATE,
         init: OrbitsBuilder<STATE, SIDE_EFFECT>.() -> Unit
     ) : this(
-        state,
-        BaseOrbitContainer(
-            middleware(initialState, init),
-            state?.get<STATE>("state") ?: initialState
-        )
+        BaseOrbitContainer(middleware(initialState, init), state?.get<STATE>("state")),
+        state
     )
 
     constructor(
-        state: SavedStateHandle? = null,
-        middleware: Middleware<STATE, SIDE_EFFECT>
+        middleware: Middleware<STATE, SIDE_EFFECT>,
+        state: SavedStateHandle? = null
     ) : this(
-        state,
-        BaseOrbitContainer(middleware, state?.get<STATE>("state") ?: middleware.initialState)
+        BaseOrbitContainer(middleware, state?.get<STATE>("state")),
+        state
     )
 
     val currentState: STATE

@@ -63,6 +63,7 @@ object ProjectDependencies {
     const val androidConstrainLayout = "androidx.constraintlayout:constraintlayout:${Versions.androidConstrainLayout}"
     const val androidMaterial = "com.google.android.material:material:${Versions.androidMaterial}"
     const val androidKoinViewModel = "org.koin:koin-androidx-viewmodel:${Versions.androidKoin}"
+    const val androidKoinTest = "org.koin:koin-test:${Versions.androidKoin}"
     const val androidRxBindings = "com.jakewharton.rxbinding3:rxbinding-material:${Versions.androidRxBindings}"
 
     // Dagger dependency injection framework.

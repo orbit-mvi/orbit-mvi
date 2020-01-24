@@ -78,4 +78,7 @@ dependencies {
     // Testing
     GroupedDependencies.spekTestsImplementation.forEach { testImplementation(it) }
     GroupedDependencies.spekTestsRuntime.forEach { testRuntimeOnly(it) }
+    testImplementation(ProjectDependencies.androidKoinTest)
+    testImplementation(ProjectDependencies.junit4)
+    testRuntimeOnly(ProjectDependencies.junitVintage)
 }

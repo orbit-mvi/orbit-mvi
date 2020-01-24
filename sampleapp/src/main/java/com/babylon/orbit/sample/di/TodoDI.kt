@@ -40,5 +40,5 @@ val presentationModule = module {
 
     single { TodoScreenSideEffect(get()) }
 
-    viewModel(useState = true) { (handle: SavedStateHandle) -> TodoViewModel(handle, get(), get(), get()) }
+    viewModel { (handle: SavedStateHandle) -> TodoViewModel(handle, get(), get(), get()) }
 }
