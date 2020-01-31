@@ -50,7 +50,6 @@ class CheckKoinTest : KoinTest {
     fun `check module hierarchy`() {
         koinApplication {
             modules(listOf(domainModule, presentationModule))
-
         }
             .checkModules {
                 create<TodoViewModel> {
