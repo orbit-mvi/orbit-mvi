@@ -87,3 +87,33 @@ It is good practice to handle your errors at the transformer level. Currently
 Orbit has no error handling in place which means that any error will break the
 Orbit cycle and result in a defunct Orbit container. We are looking into
 ways to improve this.
+
+### Saving State
+
+Orbit supports automatic state saving on process death using the
+[Saved State module for ViewModel](https://developer.android.com/topic/libraries/architecture/viewmodel-savedstate
+
+There are two conditions to make this work:
+
+1. Your State can be put into an Android `Bundle`. Most commonly this will mean
+   you need to implement the `Parcelable` interface on your state object. 
+   Using kotlin's `@Parcelize`  is recommended for ease of use.
+1. You need to pass in a `SavedStateHandle` to your `OrbitViewModel` at
+   instantiation time. The easiest way to do this is via [Koin's support](https://doc.insert-koin.io/#/koin-android/viewmodel?id=viewmodel-and-state-bundle)
+   This can be set up using Dagger as well but this could mean creating your own
+   custom equivalent of `androidx.lifecycle.SavedStateViewModelFactory`
+  
+Example:
+
+``` kotlin
+val viewModelModule = module {
+    viewModel { (handle: SavedStateHandle) -> MyViewModel(handle) }
+}
+
+class MyViewModel(savedStateHandle: SavedStateHandle): OrbitViewModel<Int, Unit>(0, savedStateHandle, {
+            perform("Increment id")
+                .on<Unit>()
+                .reduce { currentState + 42 }
+        })
+```
+
