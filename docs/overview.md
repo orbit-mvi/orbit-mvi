@@ -99,11 +99,12 @@ There are two conditions to make this work:
    you need to implement the `Parcelable` interface on your state object.
    Using Kotlin's `@Parcelize`  is recommended for ease of use.
 1. You need to pass in a `SavedStateHandle` to your `OrbitViewModel` at
-   instantiation time. The easiest way to do this is via [Koin's support](https://doc.insert-koin.io/#/koin-android/viewmodel?id=viewmodel-and-state-bundle)
+   instantiation time. The easiest way to do this is via
+   [Koin's support](https://doc.insert-koin.io/#/koin-android/viewmodel?id=viewmodel-and-state-bundle).
    This can be set up using Dagger as well but this could mean creating your own
    custom equivalent of `androidx.lifecycle.SavedStateViewModelFactory`
   
-Example:
+Koin Example:
 
 ``` kotlin
 val viewModelModule = module {

@@ -21,16 +21,13 @@ import com.appmattus.kotlinfixture.kotlinFixture
 import io.reactivex.android.plugins.RxAndroidPlugins
 import io.reactivex.plugins.RxJavaPlugins
 import io.reactivex.subjects.PublishSubject
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
 
-class OrbitViewModelStateSavingTest {
+class OrbitViewModelStateReadingTest {
 
     private val fixture = kotlinFixture()
-
-    private val testRange = -65536..65536
 
     @Before
     fun before() {
@@ -48,61 +45,40 @@ class OrbitViewModelStateSavingTest {
     }
 
     @Test
-    fun `If I provide a saved state handle for a middleware initialised ViewModel my state gets saved`() {
-        val savedStateHandle = SavedStateHandle()
-        val initialState = fixture(testRange)
-        val addition = fixture(testRange)
+    fun `If I provide a saved state handle with a saved state for a middleware initialised ViewModel my state gets read`() {
+        val savedState = fixture<Int>()
+        val savedStateHandle = SavedStateHandle(mapOf("state" to savedState))
 
         // Given A simple middleware with a reducer
-        val middleware = middleware<Int, Unit>(initialState) {
-            perform("Increment id")
-                .on<Unit>()
-                .reduce { currentState + addition }
-        }
+        val middleware = middleware<Int, Unit>(fixture()) {}
 
-        testSavedState(
-            OrbitViewModel(middleware, savedStateHandle),
-            savedStateHandle,
-            initialState,
-            addition
-        )
+        testReadState(OrbitViewModel(middleware, savedStateHandle), savedState)
     }
 
     @Test
-    fun `If I provide a saved state handle for a self initialised ViewModel my state gets saved`() {
-        val savedStateHandle = SavedStateHandle()
-        val initialState = fixture(testRange)
-        val addition = fixture(testRange)
+    fun `If I provide a saved state handle with a saved state for a self initialised ViewModel my state gets read`() {
+        val savedState = fixture<Int>()
+        val savedStateHandle = SavedStateHandle(mapOf("state" to savedState))
 
         // Given A simple middleware with a reducer
-        val orbitViewModel = OrbitViewModel<Int, Unit>(initialState, savedStateHandle) {
-            perform("Increment id")
-                .on<Unit>()
-                .reduce { currentState + addition }
-        }
+        val orbitViewModel = OrbitViewModel<Int, Unit>(fixture(), savedStateHandle) {}
 
-        testSavedState(orbitViewModel, savedStateHandle, initialState, addition)
+        testReadState(orbitViewModel, savedState)
     }
 
-    private fun testSavedState(
+    private fun testReadState(
         orbitViewModel: OrbitViewModel<Int, *>,
-        savedStateHandle: SavedStateHandle,
-        initialState: Int,
-        addition: Int
+        expectedState: Int
     ) {
         val lifecycleOwner = MockLifecycleOwner()
         val stateSubject = PublishSubject.create<Int>()
         val stateObserver = stateSubject.test()
 
-        // Given I am connected to the view model
+        // When I connect to the view model
         orbitViewModel.connect(lifecycleOwner) { stateSubject.onNext(it) }
 
-        // When I post an action to the viewModel
-        orbitViewModel.sendAction(Unit)
-
-        // Then My new state is saved
-        stateObserver.awaitCount(2)
-        assertThat(savedStateHandle.get<Int?>("state"))
-            .isEqualTo(initialState + addition)
+        // Then My saved state is emitted
+        stateObserver.awaitCount(1)
+            .assertValue(expectedState)
     }
 }

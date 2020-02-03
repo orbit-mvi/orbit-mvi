@@ -68,5 +68,6 @@ dependencies {
     GroupedDependencies.spekTestsImplementation.forEach { testImplementation(it) }
     GroupedDependencies.spekTestsRuntime.forEach { testRuntimeOnly(it) }
     testImplementation(ProjectDependencies.junit4)
+    testImplementation(ProjectDependencies.kotlinFixture)
     testRuntimeOnly(ProjectDependencies.junitVintage)
 }

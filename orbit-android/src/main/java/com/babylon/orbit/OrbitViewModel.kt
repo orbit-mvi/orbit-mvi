@@ -37,18 +37,10 @@ import io.reactivex.rxkotlin.plusAssign
  * In order to make this work you need to be able to put your state into a bundle.
  */
 open class OrbitViewModel<STATE : Any, SIDE_EFFECT : Any>(
-    private val container: OrbitContainer<STATE, SIDE_EFFECT>,
-    private val savedStateHandle: SavedStateHandle? = null
+    private val container: OrbitContainer<STATE, SIDE_EFFECT>
 ) : ViewModel() {
 
-    constructor(
-        initialState: STATE,
-        savedStateHandle: SavedStateHandle,
-        init: OrbitsBuilder<STATE, SIDE_EFFECT>.() -> Unit
-    ) : this(
-        BaseOrbitContainer(middleware(initialState, init), savedStateHandle.get<STATE>(STATE)),
-        savedStateHandle
-    )
+    private var savedStateHandle: SavedStateHandle? = null
 
     constructor(
         initialState: STATE,
@@ -56,12 +48,19 @@ open class OrbitViewModel<STATE : Any, SIDE_EFFECT : Any>(
     ) : this(BaseOrbitContainer(middleware(initialState, init)))
 
     constructor(
+        initialState: STATE,
+        savedStateHandle: SavedStateHandle,
+        init: OrbitsBuilder<STATE, SIDE_EFFECT>.() -> Unit
+    ) : this(BaseOrbitContainer(middleware(initialState, init), savedStateHandle.get<STATE>(STATE))) {
+        this.savedStateHandle = savedStateHandle
+    }
+
+    constructor(
         middleware: Middleware<STATE, SIDE_EFFECT>,
         savedStateHandle: SavedStateHandle? = null
-    ) : this(
-        BaseOrbitContainer(middleware, savedStateHandle?.get<STATE>(STATE)),
-        savedStateHandle
-    )
+    ) : this(BaseOrbitContainer(middleware, savedStateHandle?.get<STATE>(STATE))) {
+        this.savedStateHandle = savedStateHandle
+    }
 
     /**
      * Reads the current state from the Orbit container.

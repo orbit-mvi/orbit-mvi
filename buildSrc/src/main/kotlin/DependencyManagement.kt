@@ -50,6 +50,7 @@ object Versions {
     const val mockitoKotlin = "2.1.0"
     const val junit4 = "4.13"
     const val junitVintage = "5.6.0"
+    const val kotlinFixture = "0.7.0"
 }
 
 object ProjectDependencies {
@@ -84,12 +85,13 @@ object ProjectDependencies {
     // Debugging tools
     const val timber = "com.jakewharton.timber:timber:${Versions.timber}"
 
-    // Spek test prerequisites
+    // Test prerequisites
     const val spekDsl = "org.spekframework.spek2:spek-dsl-jvm:${Versions.spek}"
     const val spekRunner = "org.spekframework.spek2:spek-runner-junit5:${Versions.spek}"
     const val junitPlatformConsole = "org.junit.platform:junit-platform-console:${Versions.junitPlatform}"
     const val assertJ = "org.assertj:assertj-core:${Versions.assertJ}"
     const val mockitoKotlin = "com.nhaarman.mockitokotlin2:mockito-kotlin:${Versions.mockitoKotlin}"
+    const val kotlinFixture = "com.appmattus.fixture:fixture:${Versions.kotlinFixture}"
 
     // Testing
     const val junit4 = "junit:junit:${Versions.junit4}"
