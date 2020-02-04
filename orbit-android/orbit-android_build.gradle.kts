@@ -57,6 +57,7 @@ dependencies {
     implementation(kotlin("stdlib-jdk8"))
 
     implementation(ProjectDependencies.androidLifecycleComponents)
+    implementation(ProjectDependencies.androidLifecycleSavedState)
     kapt(ProjectDependencies.androidLifecycleCompiler)
 
     implementation(ProjectDependencies.rxJava2)
@@ -67,5 +68,6 @@ dependencies {
     GroupedDependencies.spekTestsImplementation.forEach { testImplementation(it) }
     GroupedDependencies.spekTestsRuntime.forEach { testRuntimeOnly(it) }
     testImplementation(ProjectDependencies.junit4)
+    testImplementation(ProjectDependencies.kotlinFixture)
     testRuntimeOnly(ProjectDependencies.junitVintage)
 }

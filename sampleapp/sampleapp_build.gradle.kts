@@ -57,6 +57,7 @@ dependencies {
     implementation(kotlin("stdlib-jdk8"))
 
     implementation(ProjectDependencies.androidLifecycleComponents)
+    implementation(ProjectDependencies.androidLifecycleSavedState)
     implementation(ProjectDependencies.androidAppCompat)
     implementation(ProjectDependencies.androidConstrainLayout)
     kapt(ProjectDependencies.androidLifecycleCompiler)
@@ -77,4 +78,7 @@ dependencies {
     // Testing
     GroupedDependencies.spekTestsImplementation.forEach { testImplementation(it) }
     GroupedDependencies.spekTestsRuntime.forEach { testRuntimeOnly(it) }
+    testImplementation(ProjectDependencies.androidKoinTest)
+    testImplementation(ProjectDependencies.junit4)
+    testRuntimeOnly(ProjectDependencies.junitVintage)
 }
