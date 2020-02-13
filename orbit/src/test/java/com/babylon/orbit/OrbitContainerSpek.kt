@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Babylon Partners Limited
+ * Copyright 2020 Babylon Partners Limited
  *  
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,10 +17,14 @@
 package com.babylon.orbit
 
 import io.reactivex.observers.TestObserver
+import io.reactivex.plugins.RxJavaPlugins
 import io.reactivex.subjects.PublishSubject
 import org.assertj.core.api.Assertions.assertThat
 import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.gherkin.Feature
+import java.io.IOException
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.TimeUnit
 
 internal class OrbitContainerSpek : Spek({
     Feature("Container - State") {
@@ -412,7 +416,7 @@ internal class OrbitContainerSpek : Spek({
         }
     }
 
-    Feature("Container - uncached Side Effects") {
+    Feature("Container - non-cached Side Effects") {
         Scenario("Side effects are multicast to all current observers") {
             lateinit var middleware: Middleware<TestState, String>
             lateinit var orbitContainer: BaseOrbitContainer<TestState, String>
@@ -559,6 +563,94 @@ internal class OrbitContainerSpek : Spek({
 
             Then("No side effect is received") {
                 sideEffectTestObserver.assertNoValues()
+            }
+        }
+    }
+
+    Feature("Container - Error handling") {
+
+        data class TestCase(
+            val dslElement: String,
+            val crashingFlow: Middleware<TestState, String>
+        )
+
+        val testCases = listOf(
+            TestCase("transform", createTestMiddleware {
+                perform("crash on transform")
+                    .on<Unit>()
+                    .transform {
+                        eventObservable.map { throw IOException("foo") }
+                    }
+            }),
+            TestCase("reduce", createTestMiddleware {
+                perform("crash on reduce")
+                    .on<Unit>()
+                    .reduce {
+                        throw IOException("foo")
+                    }
+            }),
+            TestCase("side effect", createTestMiddleware {
+                perform("crash on side effect")
+                    .on<Unit>()
+                    .sideEffect {
+                        throw IOException("foo")
+                    }
+            }),
+            TestCase("loopBack", createTestMiddleware {
+                perform("crash on loopBack")
+                    .on<Unit>()
+                    .loopBack {
+                        throw IOException("foo")
+                    }
+            })
+        )
+
+        testCases.forEach { (dslElement, middleware) ->
+
+            Scenario("Unhandled errors in $dslElement are delegated to the uncaught exception handler") {
+                lateinit var orbitContainer: BaseOrbitContainer<TestState, String>
+                var undeliverableThrowable: Throwable? = null
+                lateinit var uncaughtThrowable: Throwable
+                val latch = CountDownLatch(1)
+
+                beforeScenario {
+                    RxJavaPlugins.setErrorHandler {
+                        undeliverableThrowable = it
+                        latch.countDown()
+                    }
+                }
+
+                afterScenario {
+                    RxJavaPlugins.reset()
+                }
+
+                Given("A container with a $dslElement throwing an exception when triggered") {
+                    orbitContainer = BaseOrbitContainer(middleware)
+                }
+
+                And("An uncaught exception handler") {
+                    Thread.setDefaultUncaughtExceptionHandler { _, throwable ->
+                        uncaughtThrowable = throwable
+                        latch.countDown()
+                    }
+                }
+
+                When("I send an action to it") {
+                    orbitContainer.sendAction(Unit)
+                }
+
+                Then("the exception is not caught by the RxJava undeliverable handler") {
+                    latch.await(1, TimeUnit.SECONDS)
+                    assertThat(undeliverableThrowable).isNull()
+                }
+
+                And("the exception is caught by the unhandled exception handler") {
+                    assertThat(uncaughtThrowable)
+                        .isInstanceOf(OrbitException::class.java)
+                        .hasMessage("Errors should be handled within your flows.")
+                        .hasCauseInstanceOf(IOException::class.java)
+                        .hasRootCauseMessage("foo")
+                }
             }
         }
     }

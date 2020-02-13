@@ -83,10 +83,12 @@ receive events from.
 
 ### Error handling
 
-It is good practice to handle your errors at the transformer level. Currently
-Orbit has no error handling in place which means that any error will break the
-Orbit cycle and result in a defunct Orbit container. We are looking into
-ways to improve this.
+It is required to handle all of your errors at the flow level. Orbit  
+assumes no exceptions will be thrown or emitted by your streams.
+
+Orbit has no error handling in place because your system could end up in
+an undefined state. All unhandled errors are directed to the unhandled
+exception handler and cause crashes.
 
 ### Saving State
 
