@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Babylon Partners Limited
+ * Copyright 2020 Babylon Partners Limited
  *  
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package com.babylon.orbit
 
+import io.reactivex.Observable
 import io.reactivex.observers.TestObserver
 import io.reactivex.subjects.PublishSubject
 import org.assertj.core.api.Assertions
@@ -23,6 +24,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.gherkin.Feature
 import java.util.concurrent.CountDownLatch
+import kotlin.random.Random
 
 internal class DslSpek : Spek({
 
@@ -49,6 +51,31 @@ internal class DslSpek : Spek({
                 .sideEffect { post("$event") }
                 .reduce { TestState(currentState.id + event) }
                 .transform { eventObservable.map { currentState.id + it + 2 } }
+        }
+
+        Scenario("trying to build flows with the same description throw an exception") {
+            lateinit var flows: OrbitsBuilder<TestState, String>.() -> Unit
+            lateinit var throwable: Throwable
+
+            Given("Flows with duplicate flow descriptions") {
+                flows = {
+                    perform("something")
+                        .on<Int>()
+
+                    perform("something")
+                        .on<String>()
+                }
+            }
+
+            When("we try to build a middleware using them") {
+                throwable = Assertions.catchThrowable { createTestMiddleware(block = flows) }
+            }
+
+            Then("it throws an exception") {
+                assertThat(throwable)
+                    .isInstanceOf(IllegalArgumentException::class.java)
+                    .hasMessageContaining("something")
+            }
         }
     }
 
@@ -96,7 +123,68 @@ internal class DslSpek : Spek({
         }
     }
 
-    Feature("DSL - tests") {
+    Feature("DSL - side effects") {
+        Scenario("posting side effects") {
+            lateinit var middleware: Middleware<TestState, String>
+            lateinit var orbitContainer: BaseOrbitContainer<TestState, String>
+            lateinit var sideEffects: TestObserver<String>
+
+            Given("A middleware with a single post side effect as the first transformer") {
+                middleware = createTestMiddleware(TestState(1)) {
+                    perform("something")
+                        .on<Int>()
+                        .sideEffect { post("${currentState.id + event}") }
+                }
+                orbitContainer = BaseOrbitContainer(middleware)
+            }
+
+            When("sending actions") {
+                sideEffects = orbitContainer.sideEffect.test()
+
+                orbitContainer.sendAction(5)
+
+                sideEffects.awaitCount(1)
+            }
+
+            Then("posts a correct series of side effects") {
+                sideEffects.assertValueSequence(listOf("6"))
+            }
+        }
+
+        Scenario("non-posting side effects") {
+            lateinit var middleware: Middleware<TestState, String>
+            lateinit var orbitContainer: BaseOrbitContainer<TestState, String>
+            lateinit var sideEffects: TestObserver<String>
+            val testSideEffectRelay = PublishSubject.create<String>()
+            val testSideEffectObserver = testSideEffectRelay.test()
+
+            Given("A middleware with a single side effect as the first transformer") {
+                middleware = createTestMiddleware(TestState(1)) {
+                    perform("something")
+                        .on<Int>()
+                        .sideEffect { testSideEffectRelay.onNext("${currentState.id + event}") }
+                }
+                orbitContainer = BaseOrbitContainer(middleware)
+            }
+
+            When("sending actions") {
+                sideEffects = orbitContainer.sideEffect.test()
+
+                orbitContainer.sendAction(5)
+
+                testSideEffectObserver.awaitCount(1)
+            }
+
+            Then("it posts no side effects") {
+                sideEffects.assertNoValues()
+            }
+
+            And("the side effect is executed") {
+                testSideEffectObserver.assertValue("6")
+            }
+        }
+    }
+    Feature("DSL - transformers and reducers") {
 
         Scenario("a flow that reduces an action") {
             lateinit var middleware: Middleware<TestState, String>
@@ -328,88 +416,115 @@ internal class DslSpek : Spek({
             }
         }
 
-        Scenario("posting side effects") {
+        Scenario("All reductions get processed in order") {
             lateinit var middleware: Middleware<TestState, String>
             lateinit var orbitContainer: BaseOrbitContainer<TestState, String>
-            lateinit var sideEffects: TestObserver<String>
+            lateinit var testObserver: TestObserver<TestState>
 
-            Given("A middleware with a single post side effect as the first transformer") {
-                middleware = createTestMiddleware(TestState(1)) {
-                    perform("something")
+            Given("A connected middleware with a reducer") {
+                middleware = createTestMiddleware(TestState(0)) {
+                    perform("increment id")
                         .on<Int>()
-                        .sideEffect { post("${currentState.id + event}") }
+                        .reduce { currentState.copy(id = event) }
                 }
                 orbitContainer = BaseOrbitContainer(middleware)
+                testObserver = orbitContainer.orbit.test()
             }
 
-            When("sending actions") {
-                sideEffects = orbitContainer.sideEffect.test()
-
-                orbitContainer.sendAction(5)
-
-                sideEffects.awaitCount(1)
+            When("I send a series of events to the middleware") {
+                for (i in 1..99) {
+                    orbitContainer.sendAction(i)
+                }
             }
 
-            Then("posts a correct series of side effects") {
-                sideEffects.assertValueSequence(listOf("6"))
+            Then("I expect a correct sequence of reduced states") {
+                testObserver.awaitCount(100)
+                testObserver.assertValueSequence((0..99).map { TestState(it) })
             }
         }
 
-        Scenario("non-posting side effects") {
+        Scenario("No reductions from transformers get lost") {
             lateinit var middleware: Middleware<TestState, String>
             lateinit var orbitContainer: BaseOrbitContainer<TestState, String>
-            lateinit var sideEffects: TestObserver<String>
-            val testSideEffectRelay = PublishSubject.create<String>()
-            val testSideEffectObserver = testSideEffectRelay.test()
+            lateinit var testObserver: TestObserver<TestState>
 
-            Given("A middleware with a single side effect as the first transformer") {
-                middleware = createTestMiddleware(TestState(1)) {
-                    perform("something")
+            Given("A connected middleware with a reducer") {
+                val random = Random
+                middleware = createTestMiddleware(TestState(0)) {
+                    perform("increment id")
                         .on<Int>()
-                        .sideEffect { testSideEffectRelay.onNext("${currentState.id + event}") }
+                        .transform {
+                            eventObservable.doOnNext {
+                                // do nothing, but force this to run on a separate thread
+                            }
+                        }
+                        .reduce {
+                            Thread.sleep(random.nextLong(20)) // simulate variable time to process
+                            currentState.copy(id = event)
+                        }
                 }
                 orbitContainer = BaseOrbitContainer(middleware)
+                testObserver = orbitContainer.orbit.test()
             }
 
-            When("sending actions") {
-                sideEffects = orbitContainer.sideEffect.test()
-
-                orbitContainer.sendAction(5)
-
-                testSideEffectObserver.awaitCount(1)
+            When("I send a series of events to the middleware") {
+                for (i in 1..99) {
+                    orbitContainer.sendAction(i)
+                }
             }
 
-            Then("it posts no side effects") {
-                sideEffects.assertNoValues()
-            }
-
-            And("the side effect is executed") {
-                testSideEffectObserver.assertValue("6")
+            Then("I expect a correct sequence of reduced states") {
+                testObserver.awaitCount(100)
+                testObserver.assertValueSequence((0..99).map { TestState(it) })
             }
         }
 
-        Scenario("trying to build flows with the same description throw an exception") {
-            lateinit var flows: OrbitsBuilder<TestState, String>.() -> Unit
-            lateinit var throwable: Throwable
+        Scenario("No reductions from chained transformers and reducers get lost") {
+            // This test verifies chaining
+            lateinit var middleware: Middleware<TestState, String>
+            lateinit var orbitContainer: BaseOrbitContainer<TestState, String>
+            lateinit var testObserver: TestObserver<TestState>
 
-            Given("Flows with duplicate flow descriptions") {
-                flows = {
-                    perform("something")
+            Given("A connected middleware with a reducer") {
+                val random = Random
+                middleware = createTestMiddleware(TestState(0)) {
+                    perform("increment id")
                         .on<Int>()
-
-                    perform("something")
-                        .on<String>()
+                        .transform {
+                            eventObservable.flatMap {
+                                Observable.fromArray(*(0..99).toList().toTypedArray())
+                            }
+                        }
+                        .reduce {
+                            Thread.sleep(random.nextLong(20)) // simulate variable time to process
+                            currentState.copy(id = event)
+                        }
+                        .transform {
+                            eventObservable.flatMapIterable {
+                                listOf(it * 111, it * 1111)
+                            }
+                        }
+                        .reduce {
+                            currentState.copy(id = event)
+                        }
                 }
+                orbitContainer = BaseOrbitContainer(middleware)
+                testObserver = orbitContainer.orbit.test()
             }
 
-            When("we try to build a middleware using them") {
-                throwable = Assertions.catchThrowable { createTestMiddleware(block = flows) }
+            When("I send a series of events to the middleware") {
+                orbitContainer.sendAction(0)
             }
 
-            Then("it throws an exception") {
-                assertThat(throwable)
-                    .isInstanceOf(IllegalArgumentException::class.java)
-                    .hasMessageContaining("something")
+            Then("I expect a correct sequence of reduced states") {
+                testObserver.awaitCount(300)
+                assertThat(testObserver.values()).containsAll((0..99).flatMap {
+                    listOf(
+                        TestState(it),
+                        TestState(it * 111),
+                        TestState(it * 1111)
+                    )
+                })
             }
         }
     }

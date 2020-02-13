@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Babylon Partners Limited
+ * Copyright 2020 Babylon Partners Limited
  *  
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import io.reactivex.Scheduler
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.observables.ConnectableObservable
 import io.reactivex.rxkotlin.plusAssign
+import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.PublishSubject
 import java.util.concurrent.Executors
@@ -73,7 +74,9 @@ class BaseOrbitContainer<STATE : Any, SIDE_EFFECT : Any>(
                     )
                 }
             }
-            .subscribe()
+            .subscribeBy (
+                onError = { handleThrowable(it) }
+            )
 
         val initialState = initialStateOverride ?: middleware.initialState
         orbit = reducerSubject
@@ -85,12 +88,25 @@ class BaseOrbitContainer<STATE : Any, SIDE_EFFECT : Any>(
             }
             .doOnNext { currentState = it }
             .distinctUntilChanged()
+            .onErrorResumeNext { throwable: Throwable ->
+                handleThrowable(throwable)
+                Observable.empty<STATE>()
+            }
             .replay(1)
 
         orbit.connect { disposables += it }
 
         // only emit [LifecycleAction.Created] if we didn't override the initial state
         if (initialStateOverride == null) inputSubject.onNext(LifecycleAction.Created)
+    }
+
+    private fun handleThrowable(throwable: Throwable) {
+        val orbitException = OrbitException(throwable)
+        orbitException.stackTrace = orbitException.stackTrace
+            .takeWhile { it.className.startsWith("com.babylon.orbit") }
+            .toTypedArray()
+        Thread.currentThread().uncaughtExceptionHandler
+            .uncaughtException(Thread.currentThread(), orbitException)
     }
 
     override fun sendAction(action: Any) {
