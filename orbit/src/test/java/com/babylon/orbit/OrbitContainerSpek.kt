@@ -647,7 +647,7 @@ internal class OrbitContainerSpek : Spek({
                 And("the exception is caught by the unhandled exception handler") {
                     assertThat(uncaughtThrowable)
                         .isInstanceOf(OrbitException::class.java)
-                        .hasMessage("Errors should be handled within your transformer chain!")
+                        .hasMessage("Errors should be handled within your flows.")
                         .hasCauseInstanceOf(IOException::class.java)
                         .hasRootCauseMessage("foo")
                 }
