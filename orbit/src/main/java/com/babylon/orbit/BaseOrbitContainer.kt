@@ -74,7 +74,7 @@ class BaseOrbitContainer<STATE : Any, SIDE_EFFECT : Any>(
                     )
                 }
             }
-            .subscribeBy (
+            .subscribeBy(
                 onError = { handleThrowable(it) }
             )
 

@@ -603,9 +603,9 @@ internal class OrbitContainerSpek : Spek({
                         throw IOException("foo")
                     }
             })
-            )
+        )
 
-        testCases.forEach {(dslElement, middleware) ->
+        testCases.forEach { (dslElement, middleware) ->
 
             Scenario("Unhandled errors in $dslElement are delegated to the uncaught exception handler") {
                 lateinit var orbitContainer: BaseOrbitContainer<TestState, String>

@@ -16,7 +16,7 @@
 
 package com.babylon.orbit
 
-class OrbitException(throwable: Throwable): RuntimeException(
+class OrbitException(throwable: Throwable) : RuntimeException(
     "Errors should be handled within your flows.",
     throwable
 )
