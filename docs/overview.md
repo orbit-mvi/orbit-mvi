@@ -107,10 +107,15 @@ There are two conditions to make this work:
 Koin Example:
 
 ``` kotlin
+// Koin module
 val viewModelModule = module {
     viewModel { (handle: SavedStateHandle) -> MyViewModel(handle) }
 }
 
+// Activity
+private val viewModel by stateViewModel<TodoViewModel>()
+
+// ViewModel
 class MyViewModel(
     savedStateHandle: SavedStateHandle
 ): OrbitViewModel<Int, Unit>(0, savedStateHandle, {
