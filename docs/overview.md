@@ -107,15 +107,15 @@ There are two conditions to make this work:
 Koin Example:
 
 ``` kotlin
-// Koin module
+// Declare the ViewModel with a saved state handle in your Koin module
 val viewModelModule = module {
     viewModel { (handle: SavedStateHandle) -> MyViewModel(handle) }
 }
 
-// Activity
+// Inject as a stateViewModel in your Activity or Fragment 
 private val viewModel by stateViewModel<TodoViewModel>()
 
-// ViewModel
+// Pass the SavedStateHandle to the OrbitViewModel base class
 class MyViewModel(
     savedStateHandle: SavedStateHandle
 ): OrbitViewModel<Int, Unit>(0, savedStateHandle, {
