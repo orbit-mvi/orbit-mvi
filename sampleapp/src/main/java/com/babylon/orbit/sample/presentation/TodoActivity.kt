@@ -15,12 +15,11 @@ import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.GroupieViewHolder
 import com.xwray.groupie.Section
 import kotlinx.android.synthetic.main.activity_main.*
-import org.koin.androidx.viewmodel.ext.android.viewModel
-import org.koin.core.parameter.parametersOf
+import org.koin.androidx.viewmodel.ext.android.stateViewModel
 
 class TodoActivity : AppCompatActivity() {
 
-    private val viewModel by viewModel<TodoViewModel> { parametersOf(Bundle()) }
+    private val viewModel by stateViewModel<TodoViewModel>()
 
     private var todoDialog: AppCompatDialog? = null
     private var userProfileDialog: AppCompatDialog? = null

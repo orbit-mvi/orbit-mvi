@@ -29,7 +29,7 @@ object Versions {
     const val androidAppCompat = "1.1.0"
     const val androidConstrainLayout = "1.1.3"
     const val androidMaterial = "1.1.0-rc02"
-    const val androidKoin = "2.1.0-alpha-10"
+    const val androidKoin = "2.1.0-beta-1"
     const val androidRxBindings = "3.1.0"
 
     const val javaxInject = "1"
