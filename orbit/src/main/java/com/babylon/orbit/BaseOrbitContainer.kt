@@ -25,6 +25,7 @@ import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.PublishSubject
+import java.util.*
 import java.util.concurrent.Executors
 
 class BaseOrbitContainer<STATE : Any, SIDE_EFFECT : Any>(
@@ -33,13 +34,20 @@ class BaseOrbitContainer<STATE : Any, SIDE_EFFECT : Any>(
 ) : OrbitContainer<STATE, SIDE_EFFECT> {
 
     private val inputSubject: PublishSubject<Any> = PublishSubject.create()
-    private val reducerSubject: PublishSubject<(STATE) -> STATE> = PublishSubject.create()
+    private val reducerSubject: PublishSubject<PartialReducer<STATE>> = PublishSubject.create()
+    private val reducerReturnSubject: PublishSubject<Reduction<STATE>> = PublishSubject.create()
     private val sideEffectSubject: PublishSubject<SIDE_EFFECT> = PublishSubject.create()
     private val disposables = CompositeDisposable()
 
+
+    override val currentState: STATE
+        get() = reduction.state
+
     @Volatile
-    override var currentState: STATE = middleware.initialState
-        private set
+    private var reduction = Reduction(
+        UUID.randomUUID(),
+        initialStateOverride ?: middleware.initialState
+    )
     override val orbit: ConnectableObservable<STATE>
     override val sideEffect: Observable<SIDE_EFFECT> =
         if (middleware.configuration.sideEffectCachingEnabled) {
@@ -63,6 +71,7 @@ class BaseOrbitContainer<STATE : Any, SIDE_EFFECT : Any>(
                         actions,
                         inputSubject,
                         reducerSubject,
+                        reducerReturnSubject,
                         sideEffectSubject,
                         false
                     )
@@ -78,15 +87,16 @@ class BaseOrbitContainer<STATE : Any, SIDE_EFFECT : Any>(
                 onError = { handleThrowable(it) }
             )
 
-        val initialState = initialStateOverride ?: middleware.initialState
         orbit = reducerSubject
             .observeOn(scheduler)
-            .scan(initialState) { currentState, partialReducer ->
-                partialReducer(
-                    currentState
+            .scan(reduction) { currentReturnReduction, partialReducer ->
+                Reduction(
+                    uuid = partialReducer.uuid,
+                    state = partialReducer.reduce(currentReturnReduction.state)
                 )
             }
-            .doOnNext { currentState = it }
+            .doOnNext { reducerReturnSubject.onNext(it) }
+            .map { it.state }
             .distinctUntilChanged()
             .onErrorResumeNext { throwable: Throwable ->
                 handleThrowable(throwable)

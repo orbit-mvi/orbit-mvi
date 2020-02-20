@@ -17,8 +17,10 @@
 package com.babylon.orbit
 
 import io.reactivex.Observable
+import io.reactivex.Single
 import io.reactivex.rxkotlin.ofType
 import io.reactivex.schedulers.Schedulers
+import java.util.*
 
 @OrbitDsl
 open class OrbitsBuilder<STATE : Any, SIDE_EFFECT : Any>(private val initialState: STATE) {
@@ -166,17 +168,34 @@ open class OrbitsBuilder<STATE : Any, SIDE_EFFECT : Any>(private val initialStat
         /**
          * Reducers reduce the current state and incoming events to produce a new state.
          *
-         * Reducers are passthrough transformers. This means that after applying
-         * a reducer, the upstream events are passed through unmodified.
+         * Downstream transformers await for the state to be reduced and are then passed the new state.
          *
          * @param reducer the lambda reducing the current state and incoming event to produce a new state
          */
         fun reduce(reducer: EventReceiver<STATE, EVENT>.() -> STATE) =
-            doOnNextTransformer { event ->
-                reducerSubject.onNext { state ->
-                    EventReceiver({ state }, event).reducer()
-                }
-            }
+            this@OrbitsBuilder.Transformer(
+                description
+            ) {
+
+                upstreamTransformer()
+                    .flatMapSingle { event ->
+                        Single.defer<STATE> {
+                            val uuid = UUID.randomUUID()
+                            reductionSubject
+                                .observeOn(Schedulers.io())
+                                .filter { it.uuid == uuid }
+                                .map { it.state }
+                                .firstOrError()
+                                .doOnSubscribe {
+                                    partialReducerSubject.onNext(
+                                        PartialReducer(uuid) { state ->
+                                            EventReceiver({ state }, event).reducer()
+                                        }
+                                    )
+                                }
+                        }
+                    }
+            }.also { this@OrbitsBuilder.orbits[description] = it.upstreamTransformer }
 
         private fun doOnNextTransformer(func: OrbitContext<STATE, SIDE_EFFECT>.(EVENT) -> Unit) =
             this@OrbitsBuilder.Transformer(

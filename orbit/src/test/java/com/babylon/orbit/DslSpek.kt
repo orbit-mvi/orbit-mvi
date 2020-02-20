@@ -50,7 +50,7 @@ internal class DslSpek : Spek({
                 .sideEffect { println("$event") }
                 .sideEffect { post("$event") }
                 .reduce { TestState(currentState.id + event) }
-                .transform { eventObservable.map { currentState.id + it + 2 } }
+                .transform { eventObservable.map { it.id + 2 } }
         }
 
         Scenario("trying to build flows with the same description throw an exception") {
@@ -501,7 +501,7 @@ internal class DslSpek : Spek({
                         }
                         .transform {
                             eventObservable.flatMapIterable {
-                                listOf(it * 111, it * 1111)
+                                listOf(it.id * 111, it.id * 1111)
                             }
                         }
                         .reduce {
