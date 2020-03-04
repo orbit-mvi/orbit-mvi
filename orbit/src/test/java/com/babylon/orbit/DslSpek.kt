@@ -269,7 +269,7 @@ internal class DslSpek : Spek({
                 repeat(100) {
                     expectedStates.add(TestState(42 + (it + 1) * 2))
                 }
-                assertThat(listOfStates).isEqualTo(expectedStates)
+                assertThat(listOfStates).containsExactlyElementsOf(expectedStates)
             }
         }
 
@@ -307,7 +307,7 @@ internal class DslSpek : Spek({
                 repeat(100) {
                     expectedStates.add(TestState(42 + (it + 1) * 2))
                 }
-                assertThat(listOfStates).isEqualTo(expectedStates)
+                assertThat(listOfStates).containsExactlyElementsOf(expectedStates)
             }
         }
 
@@ -337,13 +337,13 @@ internal class DslSpek : Spek({
                 }
             }
 
-            Then("The states captured by the transformer are correct") {
+            Then("The states captured by the loopback are correct") {
                 testObserver.awaitCount(100)
                 val expectedStates = mutableListOf<TestState>()
                 repeat(100) {
                     expectedStates.add(TestState(42 + (it + 1) * 2))
                 }
-                assertThat(listOfStates).isEqualTo(expectedStates)
+                assertThat(listOfStates).containsExactlyElementsOf(expectedStates)
             }
         }
 
