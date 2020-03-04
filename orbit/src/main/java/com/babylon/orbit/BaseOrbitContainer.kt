@@ -19,13 +19,13 @@ package com.babylon.orbit
 import hu.akarnokd.rxjava2.subjects.UnicastWorkSubject
 import io.reactivex.Observable
 import io.reactivex.Scheduler
+import io.reactivex.Single
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.observables.ConnectableObservable
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
+import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
-import java.util.*
 import java.util.concurrent.Executors
 
 class BaseOrbitContainer<STATE : Any, SIDE_EFFECT : Any>(
@@ -34,21 +34,14 @@ class BaseOrbitContainer<STATE : Any, SIDE_EFFECT : Any>(
 ) : OrbitContainer<STATE, SIDE_EFFECT> {
 
     private val inputSubject: PublishSubject<Any> = PublishSubject.create()
-    private val reducerSubject: PublishSubject<PartialReducer<STATE>> = PublishSubject.create()
-    private val reducerReturnSubject: PublishSubject<Reduction<STATE>> = PublishSubject.create()
+    private val reducerSubject: BehaviorSubject<STATE> = BehaviorSubject.createDefault(initialStateOverride ?: middleware.initialState)
     private val sideEffectSubject: PublishSubject<SIDE_EFFECT> = PublishSubject.create()
     private val disposables = CompositeDisposable()
+    private val scheduler = createSingleScheduler()
 
-
+    override val orbit: Observable<STATE> = reducerSubject.distinctUntilChanged()
     override val currentState: STATE
-        get() = reduction.state
-
-    @Volatile
-    private var reduction = Reduction(
-        UUID.randomUUID(),
-        initialStateOverride ?: middleware.initialState
-    )
-    override val orbit: ConnectableObservable<STATE>
+        get() = orbit.blockingFirst()
     override val sideEffect: Observable<SIDE_EFFECT> =
         if (middleware.configuration.sideEffectCachingEnabled) {
             UnicastWorkSubject.create<SIDE_EFFECT>()
@@ -60,8 +53,6 @@ class BaseOrbitContainer<STATE : Any, SIDE_EFFECT : Any>(
         }
 
     init {
-        val scheduler = createSingleScheduler()
-
         disposables += inputSubject.doOnSubscribe { disposables += it }
             .observeOn(scheduler)
             .publish { actions ->
@@ -70,10 +61,8 @@ class BaseOrbitContainer<STATE : Any, SIDE_EFFECT : Any>(
                         { currentState },
                         actions,
                         inputSubject,
-                        reducerSubject,
-                        reducerReturnSubject,
-                        sideEffectSubject,
-                        false
+                        ::reduce,
+                        sideEffectSubject
                     )
                 ) {
                     Observable.merge(
@@ -87,27 +76,19 @@ class BaseOrbitContainer<STATE : Any, SIDE_EFFECT : Any>(
                 onError = { handleThrowable(it) }
             )
 
-        orbit = reducerSubject
-            .observeOn(scheduler)
-            .scan(reduction) { currentReturnReduction, partialReducer ->
-                Reduction(
-                    uuid = partialReducer.uuid,
-                    state = partialReducer.reduce(currentReturnReduction.state)
-                )
-            }
-            .doOnNext { reducerReturnSubject.onNext(it) }
-            .map { it.state }
-            .distinctUntilChanged()
-            .onErrorResumeNext { throwable: Throwable ->
-                handleThrowable(throwable)
-                Observable.empty<STATE>()
-            }
-            .replay(1)
-
-        orbit.connect { disposables += it }
-
         // only emit [LifecycleAction.Created] if we didn't override the initial state
         if (initialStateOverride == null) inputSubject.onNext(LifecycleAction.Created)
+    }
+    private fun reduce(partialReducer: (STATE) -> STATE): Single<STATE> {
+        return Single.fromCallable {
+            reducerSubject.onNext(partialReducer(currentState))
+            currentState
+        }
+            .subscribeOn(scheduler)
+            .onErrorResumeNext { throwable: Throwable ->
+                handleThrowable(throwable)
+                Single.error(throwable)
+            }
     }
 
     private fun handleThrowable(throwable: Throwable) {

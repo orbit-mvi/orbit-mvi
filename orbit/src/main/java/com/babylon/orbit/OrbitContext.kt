@@ -17,8 +17,8 @@
 package com.babylon.orbit
 
 import io.reactivex.Observable
+import io.reactivex.Single
 import io.reactivex.subjects.PublishSubject
-import java.util.*
 
 typealias TransformerFunction<STATE, SIDE_EFFECT> = OrbitContext<STATE, SIDE_EFFECT>.() -> (Observable<*>)
 
@@ -26,18 +26,6 @@ data class OrbitContext<STATE : Any, SIDE_EFFECT : Any>(
     val currentStateProvider: () -> STATE,
     val rawActions: Observable<*>,
     val inputSubject: PublishSubject<Any>,
-    val partialReducerSubject: PublishSubject<PartialReducer<STATE>>,
-    val reductionSubject: PublishSubject<Reduction<STATE>>,
-    val sideEffectSubject: PublishSubject<SIDE_EFFECT>,
-    val ioScheduled: Boolean
-)
-
-data class PartialReducer<STATE : Any>(
-    val uuid: UUID,
-    val reduce: (STATE) -> STATE
-)
-
-data class Reduction<STATE : Any>(
-    val uuid: UUID,
-    val state: STATE
+    val reduce: ((STATE) -> STATE) -> Single<STATE>,
+    val sideEffectSubject: PublishSubject<SIDE_EFFECT>
 )

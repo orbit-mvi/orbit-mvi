@@ -17,10 +17,8 @@
 package com.babylon.orbit
 
 import io.reactivex.Observable
-import io.reactivex.Single
 import io.reactivex.rxkotlin.ofType
 import io.reactivex.schedulers.Schedulers
-import java.util.*
 
 @OrbitDsl
 open class OrbitsBuilder<STATE : Any, SIDE_EFFECT : Any>(private val initialState: STATE) {
@@ -102,17 +100,10 @@ open class OrbitsBuilder<STATE : Any, SIDE_EFFECT : Any>(private val initialStat
          */
         fun <T : Any> transform(transformer: TransformerReceiver<STATE, EVENT>.() -> Observable<T>) =
             this@OrbitsBuilder.Transformer(description) {
-                val newContext = switchContextIfNeeded()
-                val upstream = if (this != newContext) {
+                TransformerReceiver(
+                    currentStateProvider,
                     upstreamTransformer().observeOn(Schedulers.io())
-                } else upstreamTransformer()
-
-                with(newContext) {
-                    TransformerReceiver(
-                        currentStateProvider,
-                        upstream
-                    ).transformer()
-                }
+                ).transformer()
             }
                 .also { this@OrbitsBuilder.orbits[description] = it.upstreamTransformer }
 
@@ -176,25 +167,16 @@ open class OrbitsBuilder<STATE : Any, SIDE_EFFECT : Any>(private val initialStat
             this@OrbitsBuilder.Transformer(
                 description
             ) {
-
                 upstreamTransformer()
                     .flatMapSingle { event ->
-                        Single.defer<STATE> {
-                            val uuid = UUID.randomUUID()
-                            reductionSubject
-                                .observeOn(Schedulers.io())
-                                .filter { it.uuid == uuid }
-                                .map { it.state }
-                                .firstOrError()
-                                .doOnSubscribe {
-                                    partialReducerSubject.onNext(
-                                        PartialReducer(uuid) { state ->
-                                            EventReceiver({ state }, event).reducer()
-                                        }
-                                    )
-                                }
+                        reduce { state ->
+                            EventReceiver(
+                                { state },
+                                event
+                            ).reducer()
                         }
                     }
+                    .observeOn(Schedulers.io())
             }.also { this@OrbitsBuilder.orbits[description] = it.upstreamTransformer }
 
         private fun doOnNextTransformer(func: OrbitContext<STATE, SIDE_EFFECT>.(EVENT) -> Unit) =
@@ -206,11 +188,6 @@ open class OrbitsBuilder<STATE : Any, SIDE_EFFECT : Any>(private val initialStat
                         func(it)
                     }
             }.also { this@OrbitsBuilder.orbits[description] = it.upstreamTransformer }
-
-        private fun OrbitContext<STATE, SIDE_EFFECT>.switchContextIfNeeded(): OrbitContext<STATE, SIDE_EFFECT> {
-            return if (ioScheduled) this
-            else copy(ioScheduled = true)
-        }
     }
 
     fun build() = object : Middleware<STATE, SIDE_EFFECT> {

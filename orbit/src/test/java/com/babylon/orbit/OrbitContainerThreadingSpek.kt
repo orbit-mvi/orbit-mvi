@@ -279,7 +279,7 @@ internal class OrbitContainerThreadingSpek : Spek({
             }
         }
 
-        Scenario("The downstream side effect of a reducer execute on reducer thread") {
+        Scenario("The downstream side effect of a reducer executes on IO thread") {
             lateinit var middleware: Middleware<TestState, String>
             lateinit var orbitContainer: BaseOrbitContainer<TestState, String>
             val testSubject = PublishSubject.create<Int>()
