@@ -79,8 +79,24 @@ perform("addition")
     .reduce { state.copy(currentState.total + event.number) }
 ```
 
-The reducers are passthrough transformers. This means that after applying
-a reducer, the upstream events are passed through unmodified.
+Operators downstream of a reducer will receive the reduced state as the
+event after the reduction completes.
+
+*Important:*
+In order to access the reduced state, use `event` rather than `currentState`
+
+For example:
+
+``` kotlin
+perform("addition")
+    .on<AddAction>()
+    .reduce { state.copy(currentState.total + event.number) }
+    .sideEffect {
+        currentState <-- reads the current state from the orbit container
+                         (might not equal the one coming from the reducer)
+        event <-- is the reduced state coming from the above reducer
+    }
+```
 
 ## Loopbacks
 
@@ -172,9 +188,10 @@ perform("Toast the current state")
     .sideEffect { post(SideEffect.Toast(currentState.toString())) }
 ```
 
-This property always captures the current state, and so calling this
-multiple times within the same DSL block could result in receiving different
-values each time as the state gets updated externally.
+This property always reads the current state from the orbit container,
+so calling this multiple times within the same DSL block could result
+in receiving different values each time as the state gets updated
+externally.
 
 The only place where we can consider the current state to be non-volatile
 is within a reducer.
@@ -184,7 +201,6 @@ is within a reducer.
 You can chain as many operators as you want along the way. Remember that
 the three passthrough transformer functions are:
 
-1. reducers
 1. side effects
 1. loopbacks
 
@@ -210,7 +226,8 @@ perform("load patient prescriptions")
      }
     .transform {
         // Run only if previous use case was successful
-        eventObservable.ofType<Status.Result>()
+        eventObservable
+            .filter { event.data != null }
             .compose(getPatientPrescriptionsUseCase)
     }
     .reduce { ... }

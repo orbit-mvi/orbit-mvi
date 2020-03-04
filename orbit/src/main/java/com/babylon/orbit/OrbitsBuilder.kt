@@ -159,7 +159,8 @@ open class OrbitsBuilder<STATE : Any, SIDE_EFFECT : Any>(private val initialStat
         /**
          * Reducers reduce the current state and incoming events to produce a new state.
          *
-         * Downstream transformers await for the state to be reduced and are then passed the new state.
+         * Downstream transformers await for the state to be reduced and are then passed the new state
+         * as the incoming event.
          *
          * @param reducer the lambda reducing the current state and incoming event to produce a new state
          */

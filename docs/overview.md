@@ -114,7 +114,7 @@ val viewModelModule = module {
     viewModel { (handle: SavedStateHandle) -> MyViewModel(handle) }
 }
 
-// Inject as a stateViewModel in your Activity or Fragment 
+// Inject as a stateViewModel in your Activity or Fragment
 private val viewModel by stateViewModel<TodoViewModel>()
 
 // Pass the SavedStateHandle to the OrbitViewModel base class
