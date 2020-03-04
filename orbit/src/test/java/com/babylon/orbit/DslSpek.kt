@@ -240,8 +240,8 @@ internal class DslSpek : Spek({
         Scenario("side effects downstream of a reducer get the reduced state") {
             lateinit var middleware: Middleware<TestState, String>
             lateinit var orbitContainer: BaseOrbitContainer<TestState, String>
-            lateinit var testObserver: TestObserver<TestState>
-            val listOfStates = mutableListOf<TestState>()
+            val testRelay = PublishSubject.create<TestState>()
+            val testObserver = testRelay.test()
 
             Given("A middleware with a transformer and reducer") {
                 middleware = createTestMiddleware {
@@ -250,14 +250,13 @@ internal class DslSpek : Spek({
                         .transform { eventObservable.map { it * 2 } }
                         .reduce { TestState(currentState.id + event) }
                         .sideEffect {
-                            listOfStates.add(event)
+                            testRelay.onNext(event)
                         }
                 }
                 orbitContainer = BaseOrbitContainer(middleware)
             }
 
             When("sending an action") {
-                testObserver = orbitContainer.orbit.test()
                 repeat((1..100).count()) {
                     orbitContainer.sendAction(1)
                 }
@@ -269,15 +268,15 @@ internal class DslSpek : Spek({
                 repeat(100) {
                     expectedStates.add(TestState(42 + (it + 1) * 2))
                 }
-                assertThat(listOfStates).containsExactlyElementsOf(expectedStates)
+                testObserver.assertValueSequence(expectedStates)
             }
         }
 
         Scenario("transformers downstream of a reducer get the reduced state") {
             lateinit var middleware: Middleware<TestState, String>
             lateinit var orbitContainer: BaseOrbitContainer<TestState, String>
-            lateinit var testObserver: TestObserver<TestState>
-            val listOfStates = mutableListOf<TestState>()
+            val testRelay = PublishSubject.create<TestState>()
+            val testObserver = testRelay.test()
 
             Given("A middleware with a transformer and reducer") {
                 middleware = createTestMiddleware {
@@ -287,7 +286,7 @@ internal class DslSpek : Spek({
                         .reduce { TestState(currentState.id + event) }
                         .transform {
                             eventObservable.doOnNext {
-                                listOfStates.add(it)
+                                testRelay.onNext(it)
                             }
                         }
                 }
@@ -295,27 +294,26 @@ internal class DslSpek : Spek({
             }
 
             When("sending an action") {
-                testObserver = orbitContainer.orbit.test()
                 repeat((1..100).count()) {
                     orbitContainer.sendAction(1)
                 }
             }
 
-            Then("The states captured by the transformer are correct") {
+            Then("The states captured by the side effect are correct") {
                 testObserver.awaitCount(100)
                 val expectedStates = mutableListOf<TestState>()
                 repeat(100) {
                     expectedStates.add(TestState(42 + (it + 1) * 2))
                 }
-                assertThat(listOfStates).containsExactlyElementsOf(expectedStates)
+                testObserver.assertValueSequence(expectedStates)
             }
         }
 
         Scenario("loopbacks downstream of a reducer get the reduced state") {
             lateinit var middleware: Middleware<TestState, String>
             lateinit var orbitContainer: BaseOrbitContainer<TestState, String>
-            lateinit var testObserver: TestObserver<TestState>
-            val listOfStates = mutableListOf<TestState>()
+            val testRelay = PublishSubject.create<TestState>()
+            val testObserver = testRelay.test()
 
             Given("A middleware with a transformer and reducer") {
                 middleware = createTestMiddleware {
@@ -324,26 +322,25 @@ internal class DslSpek : Spek({
                         .transform { eventObservable.map { it * 2 } }
                         .reduce { TestState(currentState.id + event) }
                         .loopBack {
-                            listOfStates.add(event)
+                            testRelay.onNext(event)
                         }
                 }
                 orbitContainer = BaseOrbitContainer(middleware)
             }
 
             When("sending an action") {
-                testObserver = orbitContainer.orbit.test()
                 repeat((1..100).count()) {
                     orbitContainer.sendAction(1)
                 }
             }
 
-            Then("The states captured by the loopback are correct") {
+            Then("The states captured by the side effect are correct") {
                 testObserver.awaitCount(100)
                 val expectedStates = mutableListOf<TestState>()
                 repeat(100) {
                     expectedStates.add(TestState(42 + (it + 1) * 2))
                 }
-                assertThat(listOfStates).containsExactlyElementsOf(expectedStates)
+                testObserver.assertValueSequence(expectedStates)
             }
         }
 

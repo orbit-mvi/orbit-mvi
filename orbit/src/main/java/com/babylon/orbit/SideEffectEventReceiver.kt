@@ -17,9 +17,16 @@
 package com.babylon.orbit
 
 import io.reactivex.subjects.Subject
-
 /**
- * @property event The incoming event.
+ * @property event will be the result of the upstream operator
+ *
+ * If the upstream is:
+ *
+ * - `on` - `event` will be the action coming into the flow
+ * - `transform` - `event` will be the emission from the transformed observable
+ * - `reduce` - `event` will be the reduced state
+ * - `sideEffect` - `event` will be whatever the operator further upstream emits
+ * - `loopBack` - `event` will be whatever the operator further upstream emits
  */
 @OrbitDsl
 class SideEffectEventReceiver<STATE : Any, EVENT : Any, SIDE_EFFECT : Any>(
