@@ -100,17 +100,10 @@ open class OrbitsBuilder<STATE : Any, SIDE_EFFECT : Any>(private val initialStat
          */
         fun <T : Any> transform(transformer: TransformerReceiver<STATE, EVENT>.() -> Observable<T>) =
             this@OrbitsBuilder.Transformer(description) {
-                val newContext = switchContextIfNeeded()
-                val upstream = if (this != newContext) {
+                TransformerReceiver(
+                    currentStateProvider,
                     upstreamTransformer().observeOn(Schedulers.io())
-                } else upstreamTransformer()
-
-                with(newContext) {
-                    TransformerReceiver(
-                        currentStateProvider,
-                        upstream
-                    ).transformer()
-                }
+                ).transformer()
             }
                 .also { this@OrbitsBuilder.orbits[description] = it.upstreamTransformer }
 
@@ -166,17 +159,26 @@ open class OrbitsBuilder<STATE : Any, SIDE_EFFECT : Any>(private val initialStat
         /**
          * Reducers reduce the current state and incoming events to produce a new state.
          *
-         * Reducers are passthrough transformers. This means that after applying
-         * a reducer, the upstream events are passed through unmodified.
+         * Downstream transformers await for the state to be reduced and are then passed the new state
+         * as the incoming event.
          *
          * @param reducer the lambda reducing the current state and incoming event to produce a new state
          */
         fun reduce(reducer: EventReceiver<STATE, EVENT>.() -> STATE) =
-            doOnNextTransformer { event ->
-                reducerSubject.onNext { state ->
-                    EventReceiver({ state }, event).reducer()
-                }
-            }
+            this@OrbitsBuilder.Transformer(
+                description
+            ) {
+                upstreamTransformer()
+                    .flatMapSingle { event ->
+                        reduce { state ->
+                            EventReceiver(
+                                { state },
+                                event
+                            ).reducer()
+                        }
+                    }
+                    .observeOn(Schedulers.io())
+            }.also { this@OrbitsBuilder.orbits[description] = it.upstreamTransformer }
 
         private fun doOnNextTransformer(func: OrbitContext<STATE, SIDE_EFFECT>.(EVENT) -> Unit) =
             this@OrbitsBuilder.Transformer(
@@ -187,11 +189,6 @@ open class OrbitsBuilder<STATE : Any, SIDE_EFFECT : Any>(private val initialStat
                         func(it)
                     }
             }.also { this@OrbitsBuilder.orbits[description] = it.upstreamTransformer }
-
-        private fun OrbitContext<STATE, SIDE_EFFECT>.switchContextIfNeeded(): OrbitContext<STATE, SIDE_EFFECT> {
-            return if (ioScheduled) this
-            else copy(ioScheduled = true)
-        }
     }
 
     fun build() = object : Middleware<STATE, SIDE_EFFECT> {

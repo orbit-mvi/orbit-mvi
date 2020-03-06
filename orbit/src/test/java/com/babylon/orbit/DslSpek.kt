@@ -50,7 +50,7 @@ internal class DslSpek : Spek({
                 .sideEffect { println("$event") }
                 .sideEffect { post("$event") }
                 .reduce { TestState(currentState.id + event) }
-                .transform { eventObservable.map { currentState.id + it + 2 } }
+                .transform { eventObservable.map { it.id + 2 } }
         }
 
         Scenario("trying to build flows with the same description throw an exception") {
@@ -237,6 +237,113 @@ internal class DslSpek : Spek({
             }
         }
 
+        Scenario("side effects downstream of a reducer get the reduced state") {
+            lateinit var middleware: Middleware<TestState, String>
+            lateinit var orbitContainer: BaseOrbitContainer<TestState, String>
+            val testRelay = PublishSubject.create<TestState>()
+            val testObserver = testRelay.test()
+
+            Given("A middleware with a transformer and reducer") {
+                middleware = createTestMiddleware {
+                    perform("something")
+                        .on<Int>()
+                        .transform { eventObservable.map { it * 2 } }
+                        .reduce { TestState(currentState.id + event) }
+                        .sideEffect {
+                            testRelay.onNext(event)
+                        }
+                }
+                orbitContainer = BaseOrbitContainer(middleware)
+            }
+
+            When("sending an action") {
+                repeat((1..100).count()) {
+                    orbitContainer.sendAction(1)
+                }
+            }
+
+            Then("The states captured by the side effect are correct") {
+                testObserver.awaitCount(100)
+                val expectedStates = mutableListOf<TestState>()
+                repeat(100) {
+                    expectedStates.add(TestState(42 + (it + 1) * 2))
+                }
+                testObserver.assertValueSequence(expectedStates)
+            }
+        }
+
+        Scenario("transformers downstream of a reducer get the reduced state") {
+            lateinit var middleware: Middleware<TestState, String>
+            lateinit var orbitContainer: BaseOrbitContainer<TestState, String>
+            val testRelay = PublishSubject.create<TestState>()
+            val testObserver = testRelay.test()
+
+            Given("A middleware with a transformer and reducer") {
+                middleware = createTestMiddleware {
+                    perform("something")
+                        .on<Int>()
+                        .transform { eventObservable.map { it * 2 } }
+                        .reduce { TestState(currentState.id + event) }
+                        .transform {
+                            eventObservable.doOnNext {
+                                testRelay.onNext(it)
+                            }
+                        }
+                }
+                orbitContainer = BaseOrbitContainer(middleware)
+            }
+
+            When("sending an action") {
+                repeat((1..100).count()) {
+                    orbitContainer.sendAction(1)
+                }
+            }
+
+            Then("The states captured by the side effect are correct") {
+                testObserver.awaitCount(100)
+                val expectedStates = mutableListOf<TestState>()
+                repeat(100) {
+                    expectedStates.add(TestState(42 + (it + 1) * 2))
+                }
+                testObserver.assertValueSequence(expectedStates)
+            }
+        }
+
+        Scenario("loopbacks downstream of a reducer get the reduced state") {
+            lateinit var middleware: Middleware<TestState, String>
+            lateinit var orbitContainer: BaseOrbitContainer<TestState, String>
+            val testRelay = PublishSubject.create<TestState>()
+            val testObserver = testRelay.test()
+
+            Given("A middleware with a transformer and reducer") {
+                middleware = createTestMiddleware {
+                    perform("something")
+                        .on<Int>()
+                        .transform { eventObservable.map { it * 2 } }
+                        .reduce { TestState(currentState.id + event) }
+                        .loopBack {
+                            testRelay.onNext(event)
+                        }
+                }
+                orbitContainer = BaseOrbitContainer(middleware)
+            }
+
+            When("sending an action") {
+                repeat((1..100).count()) {
+                    orbitContainer.sendAction(1)
+                }
+            }
+
+            Then("The states captured by the side effect are correct") {
+                testObserver.awaitCount(100)
+                val expectedStates = mutableListOf<TestState>()
+                repeat(100) {
+                    expectedStates.add(TestState(42 + (it + 1) * 2))
+                }
+                testObserver.assertValueSequence(expectedStates)
+            }
+        }
+
         Scenario("a flow with two transformers and a reducer") {
             lateinit var middleware: Middleware<TestState, String>
             lateinit var orbitContainer: BaseOrbitContainer<TestState, String>
@@ -365,7 +472,7 @@ internal class DslSpek : Spek({
                 testObserver.assertValueSet(listOf(TestState(42), TestState(10), TestState(7)))
             }
         }
-        Scenario("a flow with three transformers with reducers") {
+        Scenario("three flows with reducers reduce sequentially") {
 
             class One
             class Two
@@ -501,7 +608,7 @@ internal class DslSpek : Spek({
                         }
                         .transform {
                             eventObservable.flatMapIterable {
-                                listOf(it * 111, it * 1111)
+                                listOf(it.id * 111, it.id * 1111)
                             }
                         }
                         .reduce {

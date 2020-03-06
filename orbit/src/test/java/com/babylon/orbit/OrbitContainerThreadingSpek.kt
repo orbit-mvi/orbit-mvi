@@ -246,7 +246,7 @@ internal class OrbitContainerThreadingSpek : Spek({
                             currentState
                         }
                         .transform {
-                            eventObservable.map { it * 2 }
+                            eventObservable.map { it.id * 2 }
                                 .doOnNext {
                                     firstransformThreadName = Thread.currentThread().name
                                     testSubject.onNext(it)
@@ -272,6 +272,67 @@ internal class OrbitContainerThreadingSpek : Spek({
 
             And("The first transformer runs on the IO thread") {
                 assertThat(firstransformThreadName).isEqualTo("IO")
+            }
+
+            And("The second reducer runs on the reducer thread") {
+                assertThat(secondReducerThreadName).isEqualTo("reducerThread")
+            }
+        }
+
+        Scenario("The downstream side effect of a reducer executes on IO thread") {
+            lateinit var middleware: Middleware<TestState, String>
+            lateinit var orbitContainer: BaseOrbitContainer<TestState, String>
+            val testSubject = PublishSubject.create<Int>()
+            val testObserver = testSubject.test()
+            lateinit var transformThreadName: String
+            lateinit var firstReducerThreadName: String
+            lateinit var secondReducerThreadName: String
+            lateinit var sideEffectThreadName: String
+
+            Given("A middleware with a mix of reducers and transformers") {
+                middleware = createTestMiddleware {
+                    perform("something")
+                        .on<Int>()
+                        .transform {
+                            eventObservable.map { currentState.id * 2 }
+                                .doOnNext {
+                                    transformThreadName = Thread.currentThread().name
+                                    testSubject.onNext(it)
+                                }
+                        }
+                        .reduce {
+                            firstReducerThreadName = Thread.currentThread().name
+                            testSubject.onNext(event)
+                            currentState.copy(currentState.id + 1)
+                        }
+                        .sideEffect {
+                            sideEffectThreadName = Thread.currentThread().name
+                            testSubject.onNext(event.id)
+                        }
+                        .reduce {
+                            secondReducerThreadName = Thread.currentThread().name
+                            testSubject.onNext(event.id)
+                            currentState.copy(currentState.id + 1)
+                        }
+                }
+                orbitContainer = BaseOrbitContainer(middleware)
+            }
+
+            When("sending an action") {
+                orbitContainer.sendAction(5)
+                testObserver.awaitCount(3)
+            }
+
+            Then("The transformer runs on the io thread") {
+                assertThat(transformThreadName).isEqualTo("IO")
+            }
+
+            And("The first reducer runs on the reducer thread") {
+                assertThat(firstReducerThreadName).isEqualTo("reducerThread")
+            }
+
+            And("The side effect runs on the IO thread") {
+                assertThat(sideEffectThreadName).isEqualTo("IO")
             }
 
             And("The second reducer runs on the reducer thread") {
