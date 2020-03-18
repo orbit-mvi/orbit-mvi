@@ -17,8 +17,6 @@
 package com.babylon.orbit
 
 import io.reactivex.Observable
-import io.reactivex.observers.BaseTestConsumer.TestWaitStrategy
-import io.reactivex.observers.TestObserver
 import io.reactivex.subjects.PublishSubject
 import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
