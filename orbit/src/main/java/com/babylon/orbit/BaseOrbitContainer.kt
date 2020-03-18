@@ -37,7 +37,7 @@ class BaseOrbitContainer<STATE : Any, SIDE_EFFECT : Any>(
     private val reducerSubject: BehaviorSubject<STATE> = BehaviorSubject.createDefault(initialStateOverride ?: middleware.initialState)
     private val sideEffectSubject: PublishSubject<SIDE_EFFECT> = PublishSubject.create()
     private val disposables = CompositeDisposable()
-    private val scheduler = createSingleScheduler()
+    private val scheduler = orbitScheduler(middleware.configuration)
 
     override val orbit: Observable<STATE> = reducerSubject.distinctUntilChanged()
     override val currentState: STATE
@@ -62,11 +62,12 @@ class BaseOrbitContainer<STATE : Any, SIDE_EFFECT : Any>(
                         actions,
                         inputSubject,
                         ::reduce,
-                        sideEffectSubject
+                        sideEffectSubject,
+                        backgroundScheduler(middleware.configuration)
                     )
                 ) {
                     Observable.merge(
-                        middleware.orbits.map { transformer ->
+                        middleware.orbits.values.map { transformer ->
                             transformer()
                         }
                     )
@@ -108,7 +109,19 @@ class BaseOrbitContainer<STATE : Any, SIDE_EFFECT : Any>(
         disposables.clear()
     }
 
-    private fun createSingleScheduler(): Scheduler {
-        return Schedulers.from(Executors.newSingleThreadExecutor { Thread(it, "reducerThread") })
+    private fun backgroundScheduler(configuration: Middleware.Config): Scheduler {
+        return if (configuration.testMode) {
+            Schedulers.trampoline()
+        } else {
+            Schedulers.io()
+        }
+    }
+
+    private fun orbitScheduler(configuration: Middleware.Config): Scheduler {
+        return if (configuration.testMode) {
+            Schedulers.trampoline()
+        } else {
+            Schedulers.from(Executors.newSingleThreadExecutor { Thread(it, "reducerThread") })
+        }
     }
 }

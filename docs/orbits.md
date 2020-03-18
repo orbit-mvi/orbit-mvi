@@ -79,24 +79,12 @@ perform("addition")
     .reduce { state.copy(currentState.total + event.number) }
 ```
 
-Operators downstream of a reducer will receive the reduced state as the
-event after the reduction completes.
+Reducers are passthrough transformers. This means that after applying
+a reducer, the upstream events are passed through unmodified.
 
-*Important:*
-In order to access the reduced state, use `event` rather than `currentState`
-
-For example:
-
-``` kotlin
-perform("addition")
-    .on<AddAction>()
-    .reduce { state.copy(currentState.total + event.number) }
-    .sideEffect {
-        currentState <-- reads the current state from the orbit container
-                         (might not equal the one coming from the reducer)
-        event <-- is the reduced state coming from the above reducer
-    }
-```
+However, operators downstream of a reducer can expect to be called only
+after the upstream reduction has completed, so a call to `currentState`
+will yield the recently reduced state.
 
 ## Loopbacks
 
@@ -115,7 +103,7 @@ Loopbacks allow you to create feedback loops where events coming from one orbit
 can create new actions that feed into the system. These are useful to represent
 a cascade of events.
 
-The loopbacks are passthrough transformers. This means that after applying
+Loopbacks are passthrough transformers. This means that after applying
 a loopback, the upstream events are passed through unmodified.
 
 ## Side effects
@@ -201,6 +189,7 @@ is within a reducer.
 You can chain as many operators as you want along the way. Remember that
 the three passthrough transformer functions are:
 
+1. reducers
 1. side effects
 1. loopbacks
 

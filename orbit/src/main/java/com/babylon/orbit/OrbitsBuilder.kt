@@ -18,7 +18,6 @@ package com.babylon.orbit
 
 import io.reactivex.Observable
 import io.reactivex.rxkotlin.ofType
-import io.reactivex.schedulers.Schedulers
 
 @OrbitDsl
 open class OrbitsBuilder<STATE : Any, SIDE_EFFECT : Any>(private val initialState: STATE) {
@@ -102,7 +101,7 @@ open class OrbitsBuilder<STATE : Any, SIDE_EFFECT : Any>(private val initialStat
             this@OrbitsBuilder.Transformer(description) {
                 TransformerReceiver(
                     currentStateProvider,
-                    upstreamTransformer().observeOn(Schedulers.io())
+                    upstreamTransformer().observeOn(backgroundScheduler)
                 ).transformer()
             }
                 .also { this@OrbitsBuilder.orbits[description] = it.upstreamTransformer }
@@ -159,8 +158,10 @@ open class OrbitsBuilder<STATE : Any, SIDE_EFFECT : Any>(private val initialStat
         /**
          * Reducers reduce the current state and incoming events to produce a new state.
          *
-         * Downstream transformers await for the state to be reduced and are then passed the new state
-         * as the incoming event.
+         * Downstream transformers await for the state to be reduced.
+         *
+         * Loopbacks are passthrough transformers. This means that after applying
+         * a loopback, the upstream events are passed through unmodified.
          *
          * @param reducer the lambda reducing the current state and incoming event to produce a new state
          */
@@ -175,9 +176,9 @@ open class OrbitsBuilder<STATE : Any, SIDE_EFFECT : Any>(private val initialStat
                                 { state },
                                 event
                             ).reducer()
-                        }
+                        }.map { event } // To be removed to make reducers emit the state
                     }
-                    .observeOn(Schedulers.io())
+                    .observeOn(backgroundScheduler)
             }.also { this@OrbitsBuilder.orbits[description] = it.upstreamTransformer }
 
         private fun doOnNextTransformer(func: OrbitContext<STATE, SIDE_EFFECT>.(EVENT) -> Unit) =
@@ -196,8 +197,8 @@ open class OrbitsBuilder<STATE : Any, SIDE_EFFECT : Any>(private val initialStat
             sideEffectCachingEnabled = config.sideEffectCachingEnabled
         )
         override val initialState: STATE = this@OrbitsBuilder.initialState
-        override val orbits: List<TransformerFunction<STATE, SIDE_EFFECT>> =
-            this@OrbitsBuilder.orbits.values.toList()
+        override val orbits: Map<String, TransformerFunction<STATE, SIDE_EFFECT>> =
+            this@OrbitsBuilder.orbits
     }
 }
 

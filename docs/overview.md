@@ -126,3 +126,74 @@ class MyViewModel(
             .reduce { currentState + 42 }
 })
 ```
+
+### Unit testing
+
+To test your middleware flows:
+
+1. Configure the middleware for testing
+1. Host the middleware in a `BaseOrbitContainer`
+1. Use RxJava's `TestObserver`s to assert the emitted values
+
+``` kotlin
+// Given a middleware with two flows
+data class TestState(val id: Int)
+val middleware: Middleware<TestState, String> = middleware(TestState(42)) {
+    perform("flow one")
+        .on<Int>()
+        .reduce {
+            currentState.copy(id = currentState.id + 11)
+        }
+    perform("flow two")
+        .on<Int>()
+        .reduce {
+            currentState.copy(id = currentState.id + 3)
+        }
+}
+val orbitContainer = BaseOrbitContainer(middleware.test())
+val testObserver = orbitContainer.orbit.test()
+
+// When I send 5 to the middleware
+orbitContainer.sendAction(5)
+
+// I expect three states to be emitted
+testObserver.assertValuesOnly(TestState(42), TestState(53), TestState(56))
+})
+```
+
+The execution will block on sending actions to the container. If you have
+multiple flows reacting to the same action the flows will be executed in a top
+to bottom order. This ensures that there is a stable order for the emissions.
+
+#### Isolating flows for testing
+
+When you have multiple flows reacting to the same action or loopbacks this
+creates dependencies between separate flows. In order to separate them for
+testing you can specify the flow you wish to isolate when putting the
+middleware in test mode.
+
+``` kotlin
+// Given a middleware with two flows but isolated to only the first
+data class TestState(val id: Int)
+val middleware: Middleware<TestState, String> = middleware(TestState(42)) {
+    perform("flow one")
+        .on<Int>()
+        .reduce {
+            currentState.copy(id = currentState.id + 11)
+        }
+    perform("flow two")
+        .on<Int>()
+        .reduce {
+            currentState.copy(id = currentState.id + 3)
+        }
+}
+val orbitContainer = BaseOrbitContainer(middleware.test("flow one"))
+val testObserver = orbitContainer.orbit.test()
+
+// When I send 5 to the middleware
+orbitContainer.sendAction(5)
+
+// I expect two states to be emitted
+testObserver.assertValuesOnly(TestState(42), TestState(53))
+})
+```
