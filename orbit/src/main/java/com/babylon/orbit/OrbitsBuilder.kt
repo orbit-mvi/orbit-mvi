@@ -174,7 +174,7 @@ open class OrbitsBuilder<STATE : Any, SIDE_EFFECT : Any>(private val initialStat
                                 { state },
                                 event
                             ).reducer()
-                        }
+                        }.map { event } // To be removed to make reducers emit the state
                     }
                     .observeOn(backgroundScheduler)
             }.also { this@OrbitsBuilder.orbits[description] = it.upstreamTransformer }

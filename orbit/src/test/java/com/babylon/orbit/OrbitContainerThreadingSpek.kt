@@ -246,7 +246,7 @@ internal class OrbitContainerThreadingSpek : Spek({
                             currentState
                         }
                         .transform {
-                            eventObservable.map { it.id * 2 }
+                            eventObservable.map { it * 2 }
                                 .doOnNext {
                                     firstransformThreadName = Thread.currentThread().name
                                     testSubject.onNext(it)
@@ -307,11 +307,11 @@ internal class OrbitContainerThreadingSpek : Spek({
                         }
                         .sideEffect {
                             sideEffectThreadName = Thread.currentThread().name
-                            testSubject.onNext(event.id)
+                            testSubject.onNext(event)
                         }
                         .reduce {
                             secondReducerThreadName = Thread.currentThread().name
-                            testSubject.onNext(event.id)
+                            testSubject.onNext(event)
                             currentState.copy(currentState.id + 1)
                         }
                 }

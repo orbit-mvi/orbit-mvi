@@ -29,6 +29,5 @@ data class OrbitContext<STATE : Any, SIDE_EFFECT : Any>(
     val inputSubject: PublishSubject<Any>,
     val reduce: ((STATE) -> STATE) -> Single<STATE>,
     val sideEffectSubject: PublishSubject<SIDE_EFFECT>,
-    val backgroundScheduler: Scheduler,
-    val ioScheduled: Boolean
+    val backgroundScheduler: Scheduler
 )
