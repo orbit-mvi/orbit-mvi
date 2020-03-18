@@ -23,7 +23,7 @@ package com.babylon.orbit
  *
  * - `on` - `event` will be the action coming into the flow
  * - `transform` - `event` will be the emission from the transformed observable
- * - `reduce` - `event` will be the reduced state
+ * - `reduce` - `event` will be the  whatever the operator further upstream emits
  * - `sideEffect` - `event` will be whatever the operator further upstream emits
  * - `loopBack` - `event` will be whatever the operator further upstream emits
  */
