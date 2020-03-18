@@ -339,5 +339,74 @@ internal class OrbitContainerThreadingSpek : Spek({
                 assertThat(secondReducerThreadName).isEqualTo("reducerThread")
             }
         }
+
+        Scenario("Middleware in test mode executes actions in a blocking way") {
+            lateinit var middleware: Middleware<TestState, String>
+            lateinit var orbitContainer: BaseOrbitContainer<TestState, String>
+            val testSubject = PublishSubject.create<Int>()
+            val testObserver = testSubject.test()
+            lateinit var firstReducerThreadName: String
+            lateinit var firstransformThreadName: String
+            lateinit var secondReducerThreadName: String
+            var firstSideEffectTriggered = false
+            var secondSideEffectTriggered = false
+            lateinit var expectedThreadName: String
+
+            Given("A test middleware with a mix of operators") {
+                middleware = createTestMiddleware {
+                    perform("something")
+                        .on<Int>()
+                        .reduce {
+                            firstReducerThreadName = Thread.currentThread().name
+                            testSubject.onNext(event)
+                            currentState
+                        }
+                        .transform {
+                            eventObservable.map { it * 2 }
+                                .doOnNext {
+                                    firstransformThreadName = Thread.currentThread().name
+                                    testSubject.onNext(it)
+                                }
+                        }
+                        .sideEffect {
+                            firstSideEffectTriggered = true
+                        }
+                        .reduce {
+                            secondReducerThreadName = Thread.currentThread().name
+                            testSubject.onNext(event)
+                            currentState
+                        }
+                        .sideEffect {
+                            secondSideEffectTriggered = true
+                        }
+                }
+                orbitContainer = BaseOrbitContainer(middleware.test())
+            }
+
+            When("sending an action") {
+                expectedThreadName = Thread.currentThread().name
+                orbitContainer.sendAction(5)
+//                testObserver.awaitCount(3)
+            }
+
+            Then("Three states are emitted") {
+                assertThat(testObserver.valueCount()).isEqualTo(3)
+            }
+            And("The first reducer runs on the test thread") {
+                assertThat(firstReducerThreadName).isEqualTo(expectedThreadName)
+            }
+            And("The first transformer runs on the test thread") {
+                assertThat(firstransformThreadName).isEqualTo(expectedThreadName)
+            }
+            And("The second reducer runs on the test thread") {
+                assertThat(secondReducerThreadName).isEqualTo(expectedThreadName)
+            }
+            And("The first side effectis triggered") {
+                assertThat(firstSideEffectTriggered).isTrue()
+            }
+            And("The second side effectis triggered") {
+                assertThat(secondSideEffectTriggered).isTrue()
+            }
+        }
     }
 })

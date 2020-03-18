@@ -635,4 +635,61 @@ internal class DslSpek : Spek({
             }
         }
     }
+
+    Feature("Middleware in test mode") {
+        Scenario("Middleware in test mode allows you to isolate flows") {
+            lateinit var middleware: Middleware<TestState, String>
+            lateinit var orbitContainer: BaseOrbitContainer<TestState, String>
+            lateinit var testObserver: TestObserver<TestState>
+
+            Given("A test middleware isolated to flow one") {
+                middleware = createTestMiddleware {
+                    perform("flow one")
+                        .on<Int>()
+                        .reduce {
+                            currentState.copy(id = currentState.id + 11)
+                        }
+                    perform("flow two")
+                        .on<Int>()
+                        .reduce {
+                            currentState.copy(id = currentState.id + 3)
+                        }
+                }
+                orbitContainer = BaseOrbitContainer(middleware.test())
+                testObserver = orbitContainer.orbit.test()
+            }
+
+            When("sending an action") {
+                orbitContainer.sendAction(5)
+            }
+
+            Then("Only two states are emitted") {
+                testObserver.assertValuesOnly(TestState(42), TestState(53))
+            }
+        }
+    }
+//
+//    // Given a middleware with two flows
+//    data class TestState(val id: Int)
+//    val middleware: Middleware<TestState, String> = middleware(TestState(42)) {
+//        perform("flow one")
+//            .on<Int>()
+//            .reduce {
+//                currentState.copy(id = currentState.id + 11)
+//            }
+//        perform("flow two")
+//            .on<Int>()
+//            .reduce {
+//                currentState.copy(id = currentState.id + 3)
+//            }
+//    }
+//    val orbitContainer = BaseOrbitContainer(middleware.test("flow one"))
+//    val testObserver = orbitContainer.orbit.test()
+//
+//    // When I send 5 to the middleware
+//    orbitContainer.sendAction(5)
+//    testObserver.awaitCount(3)
+//
+//    // I expect three states to be emitted
+//    testObserver.assertValuesOnly(TestState(42), TestState(53), TestState(56))
 })

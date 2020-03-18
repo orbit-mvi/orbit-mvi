@@ -17,6 +17,7 @@
 package com.babylon.orbit
 
 import io.reactivex.Observable
+import io.reactivex.Scheduler
 import io.reactivex.Single
 import io.reactivex.subjects.PublishSubject
 
@@ -27,5 +28,7 @@ data class OrbitContext<STATE : Any, SIDE_EFFECT : Any>(
     val rawActions: Observable<*>,
     val inputSubject: PublishSubject<Any>,
     val reduce: ((STATE) -> STATE) -> Single<STATE>,
-    val sideEffectSubject: PublishSubject<SIDE_EFFECT>
+    val sideEffectSubject: PublishSubject<SIDE_EFFECT>,
+    val backgroundScheduler: Scheduler,
+    val ioScheduled: Boolean
 )

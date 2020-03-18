@@ -18,7 +18,6 @@ package com.babylon.orbit
 
 import io.reactivex.Observable
 import io.reactivex.rxkotlin.ofType
-import io.reactivex.schedulers.Schedulers
 
 @OrbitDsl
 open class OrbitsBuilder<STATE : Any, SIDE_EFFECT : Any>(private val initialState: STATE) {
@@ -102,7 +101,7 @@ open class OrbitsBuilder<STATE : Any, SIDE_EFFECT : Any>(private val initialStat
             this@OrbitsBuilder.Transformer(description) {
                 TransformerReceiver(
                     currentStateProvider,
-                    upstreamTransformer().observeOn(Schedulers.io())
+                    upstreamTransformer().observeOn(backgroundScheduler)
                 ).transformer()
             }
                 .also { this@OrbitsBuilder.orbits[description] = it.upstreamTransformer }
@@ -177,7 +176,7 @@ open class OrbitsBuilder<STATE : Any, SIDE_EFFECT : Any>(private val initialStat
                             ).reducer()
                         }
                     }
-                    .observeOn(Schedulers.io())
+                    .observeOn(backgroundScheduler)
             }.also { this@OrbitsBuilder.orbits[description] = it.upstreamTransformer }
 
         private fun doOnNextTransformer(func: OrbitContext<STATE, SIDE_EFFECT>.(EVENT) -> Unit) =
@@ -196,8 +195,8 @@ open class OrbitsBuilder<STATE : Any, SIDE_EFFECT : Any>(private val initialStat
             sideEffectCachingEnabled = config.sideEffectCachingEnabled
         )
         override val initialState: STATE = this@OrbitsBuilder.initialState
-        override val orbits: List<TransformerFunction<STATE, SIDE_EFFECT>> =
-            this@OrbitsBuilder.orbits.values.toList()
+        override val orbits: Map<String, TransformerFunction<STATE, SIDE_EFFECT>> =
+            this@OrbitsBuilder.orbits
     }
 }
 

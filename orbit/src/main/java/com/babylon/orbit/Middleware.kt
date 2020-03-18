@@ -18,10 +18,33 @@ package com.babylon.orbit
 
 interface Middleware<STATE : Any, SIDE_EFFECT : Any> {
     val initialState: STATE
-    val orbits: List<TransformerFunction<STATE, SIDE_EFFECT>>
+    val orbits: Map<String, TransformerFunction<STATE, SIDE_EFFECT>>
     val configuration: Config
 
     data class Config(
-        val sideEffectCachingEnabled: Boolean = true
+        val sideEffectCachingEnabled: Boolean = true,
+        val testMode: Boolean = false
     )
+
+    fun test(): Middleware<STATE, SIDE_EFFECT> {
+        return object : Middleware<STATE, SIDE_EFFECT> {
+            override val initialState: STATE
+                get() = this@Middleware.initialState
+            override val orbits: Map<String, TransformerFunction<STATE, SIDE_EFFECT>>
+                get() = this@Middleware.orbits
+            override val configuration: Config
+                get() = this@Middleware.configuration.copy(testMode = true)
+        }
+    }
+
+    fun test(flow: String): Middleware<STATE, SIDE_EFFECT> {
+        return object : Middleware<STATE, SIDE_EFFECT> {
+            override val initialState: STATE
+                get() = this@Middleware.initialState
+            override val orbits: Map<String, TransformerFunction<STATE, SIDE_EFFECT>>
+                get() = this@Middleware.orbits.filter { it.key == flow }
+            override val configuration: Config
+                get() = this@Middleware.configuration.copy(testMode = true)
+        }
+    }
 }
