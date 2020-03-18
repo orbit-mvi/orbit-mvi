@@ -604,7 +604,7 @@ internal class DslSpek : Spek({
                             }
                         }
                         .reduce {
-                            Thread.sleep(random.nextLong(20)) // simulate variable time to process
+                            Thread.sleep(random.nextLong(10)) // simulate variable time to process
                             currentState.copy(id = event)
                         }
                         .transform {
@@ -624,8 +624,8 @@ internal class DslSpek : Spek({
                 orbitContainer.sendAction(0)
             }
 
-            Then("I expect a correct sequence of reduced states") {
-                testObserver.awaitCount(300, TestWaitStrategy.SLEEP_10MS, 10000)
+            Then("I expect a correct sequence of reduced states", 20000L) {
+                testObserver.awaitCount(300)
                 assertThat(testObserver.values()).containsAll((0..99).flatMap {
                     listOf(
                         TestState(it),
