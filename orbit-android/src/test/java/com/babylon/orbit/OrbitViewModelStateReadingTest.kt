@@ -21,27 +21,31 @@ import com.appmattus.kotlinfixture.kotlinFixture
 import io.reactivex.android.plugins.RxAndroidPlugins
 import io.reactivex.plugins.RxJavaPlugins
 import io.reactivex.subjects.PublishSubject
-import org.junit.After
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.Test
 
 class OrbitViewModelStateReadingTest {
 
     private val fixture = kotlinFixture()
 
-    @Before
-    fun before() {
-        RxAndroidPlugins.setInitMainThreadSchedulerHandler {
-            RxJavaPlugins.createNewThreadScheduler { Thread(it, "main") }
+    companion object {
+        @BeforeAll
+        @JvmStatic
+        fun before() {
+            RxAndroidPlugins.setInitMainThreadSchedulerHandler {
+                RxJavaPlugins.createNewThreadScheduler { Thread(it, "main") }
+            }
+            RxAndroidPlugins.setMainThreadSchedulerHandler {
+                RxJavaPlugins.createNewThreadScheduler { Thread(it, "main") }
+            }
         }
-        RxAndroidPlugins.setMainThreadSchedulerHandler {
-            RxJavaPlugins.createNewThreadScheduler { Thread(it, "main") }
-        }
-    }
 
-    @After
-    fun after() {
-        RxJavaPlugins.reset()
+        @AfterAll
+        @JvmStatic
+        fun after() {
+            RxJavaPlugins.reset()
+        }
     }
 
     @Test

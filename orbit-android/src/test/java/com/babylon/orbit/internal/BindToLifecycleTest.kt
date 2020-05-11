@@ -5,7 +5,7 @@ import com.babylon.orbit.MockLifecycleOwner
 import io.reactivex.disposables.Disposables
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class BindToLifecycleTest {
     @Test

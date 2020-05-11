@@ -65,9 +65,7 @@ dependencies {
     implementation(ProjectDependencies.rxAndroid)
 
     // Testing
-    GroupedDependencies.spekTestsImplementation.forEach { testImplementation(it) }
-    GroupedDependencies.spekTestsRuntime.forEach { testRuntimeOnly(it) }
-    testImplementation(ProjectDependencies.junit4)
+    GroupedDependencies.testsImplementation.forEach { testImplementation(it) }
+    GroupedDependencies.testsRuntime.forEach { testRuntimeOnly(it) }
     testImplementation(ProjectDependencies.kotlinFixture)
-    testRuntimeOnly(ProjectDependencies.junitVintage)
 }

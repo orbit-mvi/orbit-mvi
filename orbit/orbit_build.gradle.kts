@@ -32,8 +32,8 @@ dependencies {
     implementation(ProjectDependencies.javaxInject)
 
     // Testing
-    GroupedDependencies.spekTestsImplementation.forEach { testImplementation(it) }
-    GroupedDependencies.spekTestsRuntime.forEach { testRuntimeOnly(it) }
+    GroupedDependencies.testsImplementation.forEach { testImplementation(it) }
+    GroupedDependencies.testsRuntime.forEach { testRuntimeOnly(it) }
 }
 
 java {
