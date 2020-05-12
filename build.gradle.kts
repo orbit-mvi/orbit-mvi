@@ -27,7 +27,7 @@ buildscript {
     dependencies {
         classpath(PluginDependencies.android)
         classpath(PluginDependencies.kotlin)
-        classpath("com.novoda:bintray-release:${Versions.novodaBintrayRelease}")
+        classpath(PluginDependencies.novodaBintray)
     }
 }
 
