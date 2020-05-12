@@ -22,7 +22,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath("com.novoda:bintray-release:0.9.1")
+        classpath(PluginDependencies.novodaBintray)
     }
 }
 

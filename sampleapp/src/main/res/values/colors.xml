@@ -4,7 +4,5 @@
     <color name="colorPrimaryDark">#117C79</color>
     <color name="colorAccent">#F45DA9</color>
 
-    <color name="colorSuccess">#ACD373</color>
-    <color name="colorFailure">#DB4432</color>
     <color name="cardStrokeColor">#d7dadc</color>
 </resources>

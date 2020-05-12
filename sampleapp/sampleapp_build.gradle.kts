@@ -63,22 +63,18 @@ dependencies {
     kapt(ProjectDependencies.androidLifecycleCompiler)
     implementation(ProjectDependencies.androidMaterial)
     // Koin Android ViewModel features
-    implementation(ProjectDependencies.androidKoinViewModel)
+    implementation(ProjectDependencies.koinViewModel)
     implementation(ProjectDependencies.androidRxBindings)
 
     implementation(ProjectDependencies.rxJava2)
     implementation(ProjectDependencies.rxKotlin)
     implementation(ProjectDependencies.rxAndroid)
 
-    implementation(ProjectDependencies.timber)
-
     implementation(ProjectDependencies.groupie)
     implementation(ProjectDependencies.groupieKotlinAndroidExtensions)
 
     // Testing
-    GroupedDependencies.spekTestsImplementation.forEach { testImplementation(it) }
-    GroupedDependencies.spekTestsRuntime.forEach { testRuntimeOnly(it) }
-    testImplementation(ProjectDependencies.androidKoinTest)
-    testImplementation(ProjectDependencies.junit4)
-    testRuntimeOnly(ProjectDependencies.junitVintage)
+    GroupedDependencies.testsImplementation.forEach { testImplementation(it) }
+    GroupedDependencies.testsRuntime.forEach { testRuntimeOnly(it) }
+    testImplementation(ProjectDependencies.koinTest)
 }

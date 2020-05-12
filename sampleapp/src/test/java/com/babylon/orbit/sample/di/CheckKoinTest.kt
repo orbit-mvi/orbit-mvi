@@ -21,9 +21,9 @@ import com.babylon.orbit.sample.presentation.TodoViewModel
 import com.nhaarman.mockitokotlin2.mock
 import io.reactivex.android.plugins.RxAndroidPlugins
 import io.reactivex.plugins.RxJavaPlugins
-import org.junit.After
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.Test
 import org.koin.core.parameter.parametersOf
 import org.koin.dsl.koinApplication
 import org.koin.test.KoinTest
@@ -31,19 +31,23 @@ import org.koin.test.check.checkModules
 
 class CheckKoinTest : KoinTest {
 
-    @Before
-    fun before() {
-        RxAndroidPlugins.setInitMainThreadSchedulerHandler {
-            RxJavaPlugins.createNewThreadScheduler { Thread(it, "main") }
+    companion object {
+        @BeforeAll
+        @JvmStatic
+        fun before() {
+            RxAndroidPlugins.setInitMainThreadSchedulerHandler {
+                RxJavaPlugins.createNewThreadScheduler { Thread(it, "main") }
+            }
+            RxAndroidPlugins.setMainThreadSchedulerHandler {
+                RxJavaPlugins.createNewThreadScheduler { Thread(it, "main") }
+            }
         }
-        RxAndroidPlugins.setMainThreadSchedulerHandler {
-            RxJavaPlugins.createNewThreadScheduler { Thread(it, "main") }
-        }
-    }
 
-    @After
-    fun after() {
-        RxJavaPlugins.reset()
+        @AfterAll
+        @JvmStatic
+        fun after() {
+            RxJavaPlugins.reset()
+        }
     }
 
     @Test
