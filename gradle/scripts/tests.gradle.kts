@@ -17,7 +17,7 @@
 tasks.withType<Test> {
     @Suppress("UnstableApiUsage")
     useJUnitPlatform {
-        includeEngines = setOf("junit-vintage", "spek2")
+        includeEngines = setOf("junit-jupiter", "spek2")
     }
 
     testLogging {
