@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Babylon Partners Limited
+ * Copyright 2020 Babylon Partners Limited
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -14,17 +14,6 @@
  *  limitations under the License.
  */
 
-include(
-    "orbit",
-    "orbit-android",
-    "orbit-2-core",
-    "orbit-2-test",
-    "sampleapp"
-)
+package com.babylon.orbit2
 
-// Will rename every module's build.gradle file to use its name instead of `build`.
-// E.g. `app/build.gradle` will become `app/app_build.gradle`
-// The root build.gradle file remains untouched
-rootProject.children.forEach { project ->
-    project.buildFileName = "${project.name}_build.gradle.kts"
-}
+class Builder<S : Any, SE : Any, E : Any>(val stack: List<Operator<S, *>> = emptyList())

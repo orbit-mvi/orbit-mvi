@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Babylon Partners Limited
+ * Copyright 2020 Babylon Partners Limited
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -14,13 +14,9 @@
  *  limitations under the License.
  */
 
-tasks.withType<Test> {
-    @Suppress("UnstableApiUsage")
-    useJUnitPlatform {
-        includeEngines = setOf("junit-jupiter", "spek2")
-    }
+package com.babylon.orbit2
 
-    testLogging {
-        events("passed", "skipped", "failed")
-    }
+interface Context<S : Any, E : Any> {
+    val state: S
+    val event: E
 }

@@ -17,6 +17,7 @@
 import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 import com.novoda.gradle.release.PublishExtension
 import com.novoda.gradle.release.ReleasePlugin
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 buildscript {
     repositories {
@@ -39,20 +40,11 @@ plugins {
 apply(from = "gradle/scripts/detekt.gradle.kts")
 apply(from = "gradle/scripts/jacoco-combinedreport.gradle.kts")
 
-subprojects {
-    repositories {
-        google()
-        jcenter()
-    }
-
-    apply(from = "$rootDir/gradle/scripts/tests.gradle.kts")
-}
-
 task("clean", type = Delete::class) {
     delete(rootProject.buildDir)
 }
 
-tasks.named<DependencyUpdatesTask>("dependencyUpdates") {
+tasks.withType<DependencyUpdatesTask> {
     resolutionStrategy {
         componentSelection {
             all {
@@ -76,11 +68,39 @@ tasks.named<DependencyUpdatesTask>("dependencyUpdates") {
     }
 }
 
-subprojects.forEach { project ->
-    project.plugins.withId("org.jetbrains.kotlin.jvm") {
+subprojects {
+    repositories {
+        google()
+        jcenter()
+    }
+
+    tasks.withType<Test> {
+        @Suppress("UnstableApiUsage")
+        useJUnitPlatform {
+            includeEngines(
+                "junit-jupiter",
+                "spek2"
+            )
+        }
+        testLogging {
+            events("passed", "skipped", "failed")
+        }
+    }
+    tasks.withType<KotlinCompile>().all {
+        kotlinOptions {
+            jvmTarget = "1.8"
+        }
+    }
+    plugins.withType<JavaBasePlugin>() {
+        configure<JavaPluginExtension> {
+            sourceCompatibility = JavaVersion.VERSION_1_8
+            targetCompatibility = JavaVersion.VERSION_1_8
+        }
+    }
+    plugins.withId("org.jetbrains.kotlin.jvm") {
         configurePub(project)
     }
-    project.plugins.withId("org.jetbrains.kotlin.android") {
+    plugins.withId("org.jetbrains.kotlin.android") {
         configurePub(project)
     }
 }
