@@ -21,7 +21,6 @@ plugins {
     kotlin("jvm")
 }
 
-apply(from = "$rootDir/gradle/scripts/bintray.gradle.kts")
 apply(from = "$rootDir/gradle/scripts/jacoco.gradle.kts")
 
 dependencies {
