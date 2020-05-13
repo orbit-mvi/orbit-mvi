@@ -17,7 +17,8 @@
 include(
     "orbit",
     "orbit-android",
-    "sampleapp"
+    "sampleapp",
+    "orbit-state-generator"
 )
 
 // Will rename every module's build.gradle file to use its name instead of `build`.

@@ -51,6 +51,7 @@ object Versions {
     const val junit4 = "4.13"
     const val junitVintage = "5.6.0"
     const val kotlinFixture = "0.7.0"
+    const val gson = "2.8.6"
 }
 
 object ProjectDependencies {
@@ -81,6 +82,8 @@ object ProjectDependencies {
     const val groupieKotlinAndroidExtensions = "com.xwray:groupie-kotlin-android-extensions:${Versions.groupie}"
 
     const val detektFormatting = "io.gitlab.arturbosch.detekt:detekt-formatting:${Versions.detektPlugin}"
+
+    const val gson =  "com.google.code.gson:gson:${Versions.gson}"
 
     // Debugging tools
     const val timber = "com.jakewharton.timber:timber:${Versions.timber}"
