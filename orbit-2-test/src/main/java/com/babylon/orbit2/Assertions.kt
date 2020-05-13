@@ -21,18 +21,15 @@ import kotlin.test.fail
 
 
 /**
- * Helper function for asserting orbit state sequences. It applies the reductions specified in `nextState` in a cumulative way, based on
- * successive states.
+ * Helper function for asserting orbit state sequences. It applies the reductions specified in
+ * `nextState` in a cumulative way, based on successive states.
  *
  * Fails assertions:
  *
  * - When more or less states have been emitted than expected
- * - In ordered mode (default), if an emitted state does not satisfy its corresponding expected assertion-reduction.
- * - In unordered mode, if an emitted state cannot be produced based on the previous using any of the assertion-reductions
+ * - If an emitted state does not satisfy its corresponding expected assertions.
  *
- * It is recommended to always use the ordered mode unless we cannot guarantee the order in which the states are emitted.
- *
- * Once an assertion-reduction is satisfied it is removed from further consideration.
+ * Once an assertion is satisfied it is removed from further consideration.
  */
 internal tailrec fun <T : Any> assertStatesInOrder(
     values: List<T>,
@@ -106,13 +103,6 @@ private fun <T : Any> failLessStatesReceivedThanExpected(
         "Failed assertions at indices ${satisfiedAssertions until (satisfiedAssertions + assertions.size)}, " +
                 "expected states but never received:\n$expectedStates"
     )
-}
-
-private fun <T : Any> failNoStatesReceived(
-    assertions: List<T.() -> T>,
-    previousState: T
-) {
-    fail("Expected ${assertions.size} states but none were emitted")
 }
 
 private fun <T : Any> failMoreStatesThanExpected(
