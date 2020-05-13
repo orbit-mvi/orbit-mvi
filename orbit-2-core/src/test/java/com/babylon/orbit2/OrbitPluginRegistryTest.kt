@@ -58,7 +58,6 @@ internal class OrbitPluginRegistryTest {
         )
     }
 
-
     private object TestPlugin : OrbitPlugin {
         override fun <S : Any, E : Any, SE : Any> apply(
             containerContext: OrbitPlugin.ContainerContext<S, SE>,
@@ -68,6 +67,5 @@ internal class OrbitPluginRegistryTest {
         ): Flow<Any> {
             return flow
         }
-
     }
 }

@@ -49,7 +49,6 @@ class OrbitAssertionsTest {
             )
     }
 
-
     @Test
     fun `PASS - No states, no assertions`() {
         // Given Empty state list"

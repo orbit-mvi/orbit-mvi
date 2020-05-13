@@ -60,8 +60,7 @@ internal class StateConnectionTest {
     @Test
     fun `current state is set to the initial state after instantiation`() {
         val initialState = fixture<TestState>()
-        val middleware =
-            Middleware(initialState)
+        val middleware = Middleware(initialState)
 
         assertThat(middleware.container.currentState).isEqualTo(initialState)
     }
@@ -69,8 +68,7 @@ internal class StateConnectionTest {
     @Test
     fun `current state is up to date after modification`() {
         val initialState = fixture<TestState>()
-        val middleware =
-            Middleware(initialState)
+        val middleware = Middleware(initialState)
         val action = fixture<Int>()
         val testStateObserver = middleware.container.orbit.test()
 

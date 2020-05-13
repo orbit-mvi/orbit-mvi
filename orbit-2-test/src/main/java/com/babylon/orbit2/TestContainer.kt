@@ -19,7 +19,7 @@ package com.babylon.orbit2
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 
-internal class TestContainer<STATE : Any, SIDE_EFFECT : Any>(
+class TestContainer<STATE : Any, SIDE_EFFECT : Any>(
     initialState: STATE,
     private val isolateFlow: Boolean
 ) : RealContainer<STATE, SIDE_EFFECT>(

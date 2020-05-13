@@ -28,7 +28,7 @@ internal class BaseDslBehaviourTest {
     fun `reducer produces new states`() {
         val action = fixture<Int>()
 
-        BaseDSLMiddleware()
+        BaseDslMiddleware()
             .given(initialState)
             .whenever {
                 reducer(action)
@@ -44,7 +44,7 @@ internal class BaseDslBehaviourTest {
     fun `transformer maps values`() {
         val action = fixture<Int>()
 
-        BaseDSLMiddleware()
+        BaseDslMiddleware()
             .given(initialState)
             .whenever {
                 transformer(action)
@@ -60,7 +60,7 @@ internal class BaseDslBehaviourTest {
     fun `posting side effects emit side effects`() {
         val action = fixture<Int>()
 
-        BaseDSLMiddleware()
+        BaseDslMiddleware()
             .given(initialState)
             .whenever {
                 postingSideEffect(action)
@@ -74,7 +74,7 @@ internal class BaseDslBehaviourTest {
     fun `side effect does not post anything if post is not called`() {
         val action = fixture<Int>()
 
-        BaseDSLMiddleware()
+        BaseDslMiddleware()
             .given(initialState)
             .whenever {
                 sideEffect(action)
@@ -84,8 +84,7 @@ internal class BaseDslBehaviourTest {
 
     private data class TestState(val id: Int)
 
-    private class BaseDSLMiddleware :
-        Host<TestState, String> {
+    private class BaseDslMiddleware : Host<TestState, String> {
         override val container = Container.create<TestState, String>(
             TestState(42)
         )

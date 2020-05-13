@@ -19,7 +19,6 @@ package com.babylon.orbit2
 import kotlin.test.assertEquals
 import kotlin.test.fail
 
-
 /**
  * Helper function for asserting orbit state sequences. It applies the reductions specified in
  * `nextState` in a cumulative way, based on successive states.

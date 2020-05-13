@@ -17,6 +17,8 @@
 package com.babylon.orbit2
 
 import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.never
+import com.nhaarman.mockitokotlin2.verify
 import org.junit.jupiter.api.Test
 
 class OrbitTestingTest {
@@ -24,21 +26,29 @@ class OrbitTestingTest {
     fun `basic test`() {
 
         val mockDependency = mock<BogusDependency>()
-        val testSubject = MyClass(mockDependency)
+        val testSubject = TestMiddleware(mockDependency)
 
-        testSubject.something(true)
+        testSubject.given(State())
+            .whenever {
+                something(true)
+            }
+            .then {
+                states(
+                    { copy(verified = true) }
+                )
+                loopBack { somethingElse("true") }
+            }
+    }
 
-        val given = testSubject.given(State())
-        val when1 = given.whenever {
-            something(true)
-        }
-        when1.then {
-            states(
-                { copy(verified = true) }
-            )
+    @Test
+    fun `created is not invoked when setting up the class for testing`() {
 
-            loopBack { somethingElse("true") }
-        }
+        val mockDependency = mock<BogusDependency>()
+        val testSubject = TestMiddleware(mockDependency)
+
+        val spy = testSubject.testSpy(State(), true)
+
+        verify(spy, never()).created()
     }
 
     private data class State(val verified: Boolean = false)
@@ -47,7 +57,7 @@ class OrbitTestingTest {
         fun stub()
     }
 
-    private class MyClass(private val dependency: BogusDependency) : Host<State, Nothing> {
+    private class TestMiddleware(private val dependency: BogusDependency) : Host<State, Nothing> {
         override val container = Container.create<State, Nothing>(State()) {
             created()
         }

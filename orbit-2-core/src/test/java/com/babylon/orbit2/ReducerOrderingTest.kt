@@ -60,8 +60,7 @@ internal class ReducerOrderingTest {
     @Test
     fun `reductions are applied in sequence`() {
         runBlocking {
-            val middleware =
-                ThreeReducersMiddleware()
+            val middleware = ThreeReducersMiddleware()
             val testStateObserver = middleware.container.orbit.test()
             val expectedStates = mutableListOf(
                 TestState(
@@ -81,7 +80,6 @@ internal class ReducerOrderingTest {
                     2 -> middleware.three()
                     else -> throw IllegalStateException("misconfigured test")
                 }
-//                delay(30) // delay to circumvent conflation
             }
 
             testStateObserver.awaitCount(1120)
@@ -92,8 +90,7 @@ internal class ReducerOrderingTest {
 
     private data class TestState(val ids: List<Int> = emptyList())
 
-    private class ThreeReducersMiddleware :
-        Host<TestState, String> {
+    private class ThreeReducersMiddleware : Host<TestState, String> {
         override val container = Container.create<TestState, String>(
             TestState()
         )

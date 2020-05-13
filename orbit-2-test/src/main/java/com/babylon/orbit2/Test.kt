@@ -16,41 +16,29 @@
 
 package com.babylon.orbit2
 
-import com.nhaarman.mockitokotlin2.doAnswer
 import com.nhaarman.mockitokotlin2.spy
-import com.nhaarman.mockitokotlin2.whenever
 
-/*
-Things to verify:
-1. Sequence of states
-2. Sequence of side effects
-3. "loopbacks"
-4. Invocations on dependencies (mocks)
-5. No other interactions
- */
-
-fun <STATE : Any, SIDE_EFFECT : Any, T : Host<STATE, SIDE_EFFECT>> T.testSpy(
+inline fun <STATE : Any, SIDE_EFFECT : Any, reified T : Host<STATE, SIDE_EFFECT>> T.testSpy(
     initialState: STATE,
     isolateFlow: Boolean
 ): T {
-    val spy = spy(this)
-    val container = TestContainer<STATE, SIDE_EFFECT>(
-        initialState,
-        isolateFlow
-    )
-    doAnswer { container }.whenever(spy).container
-    return spy
+    return spy(this) {
+        on { container }.thenReturn(
+            TestContainer(
+                initialState,
+                isolateFlow
+            )
+        )
+    }
 }
 
-fun <HOST : Host<STATE, SIDE_EFFECT>, STATE : Any, SIDE_EFFECT : Any>
-        HOST.given(
-            initialState: STATE,
-            isolateFlow: Boolean = false
-        ) =
+inline fun <reified HOST : Host<STATE, SIDE_EFFECT>, STATE : Any, SIDE_EFFECT : Any> HOST.given(
+    initialState: STATE,
+    isolateFlow: Boolean = true
+) =
     OrbitGiven(
         testSpy(initialState, isolateFlow),
         initialState
     )
 
 fun <T : Any> Stream<T>.test() = TestStreamObserver(this)
-

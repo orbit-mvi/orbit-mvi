@@ -23,6 +23,16 @@ import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.verifyNoMoreInteractions
 import kotlin.test.assertEquals
 
+/**
+ * This class applies the given [OrbitVerification] assertions after an [invocation] on
+ * the host starting with a given initial state as defined in [OrbitGiven].
+ *
+ * The assertions that are run include:
+ * 1. Sequence of states
+ * 2. Sequence of posted side effects
+ * 3. Loopbacks i.e. invocations of other flows
+ * 5. No other interactions - makes sure there are no unexpected side effects of a flow
+ */
 class OrbitInvocation<HOST : Host<STATE, SIDE_EFFECT>, STATE : Any, SIDE_EFFECT : Any>(
     private val host: HOST,
     private val initialState: STATE,

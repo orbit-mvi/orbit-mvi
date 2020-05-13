@@ -27,8 +27,7 @@ internal class ContainerLifecycleTest {
     @Test
     fun `onCreate is called once after connecting to the container`() {
         val initialState = fixture<TestState>()
-        val middleware =
-            Middleware(initialState)
+        val middleware = Middleware(initialState)
         val testStateObserver = middleware.container.orbit.test()
         val testSideEffectObserver = middleware.container.sideEffect.test()
 
@@ -41,8 +40,7 @@ internal class ContainerLifecycleTest {
 
     private data class TestState(val id: Int)
 
-    private class Middleware(initialState: TestState) :
-        Host<TestState, String> {
+    private class Middleware(initialState: TestState) : Host<TestState, String> {
         override val container = Container.create<TestState, String>(initialState) {
             onCreate()
         }

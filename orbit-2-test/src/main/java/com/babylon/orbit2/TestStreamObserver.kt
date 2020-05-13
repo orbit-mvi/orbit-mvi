@@ -34,9 +34,13 @@ class TestStreamObserver<T>(stream: Stream<T>) {
             if (System.currentTimeMillis() - start > timeout) {
                 break
             }
-            Thread.sleep(10)
+            Thread.sleep(AWAIT_TIMEOUT_MS)
         }
     }
 
     fun close(): Unit = closeable.close()
+
+    companion object {
+        const val AWAIT_TIMEOUT_MS = 10L
+    }
 }

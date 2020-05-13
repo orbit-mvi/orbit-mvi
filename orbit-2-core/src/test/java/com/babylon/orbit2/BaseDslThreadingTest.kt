@@ -32,9 +32,7 @@ internal class BaseDslThreadingTest {
     @Test
     fun `reducer executes on orbit dispatcher`() {
         val action = fixture<Int>()
-
-        val middleware =
-            BaseDSLMiddleware()
+        val middleware = BaseDslMiddleware()
         val testStreamObserver = middleware.container.orbit.test()
 
         middleware.reducer(action)
@@ -46,9 +44,7 @@ internal class BaseDslThreadingTest {
     @Test
     fun `transformer executes on orbit dispatcher`() {
         val action = fixture<Int>()
-
-        val middleware =
-            BaseDSLMiddleware()
+        val middleware = BaseDslMiddleware()
         val testStreamObserver = middleware.container.orbit.test()
 
         middleware.transformer(action)
@@ -60,9 +56,7 @@ internal class BaseDslThreadingTest {
     @Test
     fun `posting side effects executes on orbit dispatcher`() {
         val action = fixture<Int>()
-
-        val middleware =
-            BaseDSLMiddleware()
+        val middleware = BaseDslMiddleware()
         val testStreamObserver = middleware.container.sideEffect.test()
 
         middleware.postingSideEffect(action)
@@ -74,9 +68,7 @@ internal class BaseDslThreadingTest {
     @Test
     fun `side effect executes on orbit dispatcher`() {
         val action = fixture<Int>()
-
-        val middleware =
-            BaseDSLMiddleware()
+        val middleware = BaseDslMiddleware()
 
         middleware.sideEffect(action)
 
@@ -87,7 +79,7 @@ internal class BaseDslThreadingTest {
 
     private data class TestState(val id: Int)
 
-    private class BaseDSLMiddleware : Host<TestState, String> {
+    private class BaseDslMiddleware : Host<TestState, String> {
         override val container = Container.create<TestState, String>(
             TestState(42)
         )
