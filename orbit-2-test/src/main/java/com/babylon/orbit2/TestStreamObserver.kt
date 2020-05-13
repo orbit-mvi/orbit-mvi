@@ -16,9 +16,11 @@
 
 package com.babylon.orbit2
 
+import java.io.Closeable
+
 class TestStreamObserver<T>(stream: Stream<T>) {
     private val _values = mutableListOf<T>()
-    private val closeable: Stream.Closeable
+    private val closeable: Closeable
     val values: List<T>
         get() = _values
 

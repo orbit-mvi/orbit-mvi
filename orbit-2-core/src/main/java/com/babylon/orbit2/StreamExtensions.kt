@@ -31,21 +31,18 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import java.io.Closeable
 
 internal fun <T> Flow<T>.asStream(): Stream<T> {
     return object : Stream<T> {
-        override fun observe(lambda: (T) -> Unit): Stream.Closeable {
+        override fun observe(lambda: (T) -> Unit): Closeable {
             val scope = CoroutineScope(Dispatchers.Unconfined)
             scope.launch {
                 this@asStream.collect {
                     lambda(it)
                 }
             }
-            return object : Stream.Closeable {
-                override fun close() {
-                    scope.cancel()
-                }
-            }
+            return Closeable { scope.cancel() }
         }
     }
 }
@@ -65,7 +62,7 @@ internal fun <T> Channel<T>.asStream(originalScope: CoroutineScope): Stream<T> {
             }
         }
 
-        override fun observe(lambda: (T) -> Unit): Stream.Closeable {
+        override fun observe(lambda: (T) -> Unit): Closeable {
             val scope = CoroutineScope(Dispatchers.Unconfined)
             val receiveChannel = broadcastChannel.openSubscription()
             scope.launch {
@@ -73,11 +70,9 @@ internal fun <T> Channel<T>.asStream(originalScope: CoroutineScope): Stream<T> {
                     lambda(item)
                 }
             }
-            return object : Stream.Closeable {
-                override fun close() {
-                    receiveChannel.cancel()
-                    scope.cancel()
-                }
+            return Closeable {
+                receiveChannel.cancel()
+                scope.cancel()
             }
         }
     }
@@ -104,7 +99,7 @@ internal fun <T> Channel<T>.asCachingStream(originalScope: CoroutineScope): Stre
             }
         }
 
-        override fun observe(lambda: (T) -> Unit): Stream.Closeable {
+        override fun observe(lambda: (T) -> Unit): Closeable {
             val scope = CoroutineScope(Dispatchers.Unconfined)
             val receiveChannel = channel.openSubscription()
 
@@ -120,13 +115,11 @@ internal fun <T> Channel<T>.asCachingStream(originalScope: CoroutineScope): Stre
                     lambda(item)
                 }
             }
-            return object : Stream.Closeable {
-                override fun close() {
-                    runBlocking {
-                        bufferMutex.withLock {
-                            channels.remove(receiveChannel)
-                            receiveChannel.cancel()
-                        }
+            return Closeable {
+                runBlocking {
+                    bufferMutex.withLock {
+                        channels.remove(receiveChannel)
+                        receiveChannel.cancel()
                     }
                 }
             }

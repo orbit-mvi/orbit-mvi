@@ -16,6 +16,7 @@
 
 package com.babylon.orbit2
 
+import java.io.Closeable
 import java.util.concurrent.atomic.AtomicBoolean
 
 class LazyCreateContainerDecorator<STATE : Any, SIDE_EFFECT : Any>(
@@ -29,14 +30,14 @@ class LazyCreateContainerDecorator<STATE : Any, SIDE_EFFECT : Any>(
 
     override val orbit: Stream<STATE>
         get() = object : Stream<STATE> {
-            override fun observe(lambda: (STATE) -> Unit): Stream.Closeable {
+            override fun observe(lambda: (STATE) -> Unit): Closeable {
                 runOnCreate()
                 return actual.orbit.observe(lambda)
             }
         }
     override val sideEffect: Stream<SIDE_EFFECT>
         get() = object : Stream<SIDE_EFFECT> {
-            override fun observe(lambda: (SIDE_EFFECT) -> Unit): Stream.Closeable {
+            override fun observe(lambda: (SIDE_EFFECT) -> Unit): Closeable {
                 runOnCreate()
                 return actual.sideEffect.observe(lambda)
             }

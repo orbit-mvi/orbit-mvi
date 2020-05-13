@@ -16,10 +16,8 @@
 
 package com.babylon.orbit2
 
+import java.io.Closeable
+
 interface Stream<T> {
     fun observe(lambda: (T) -> Unit): Closeable
-
-    interface Closeable {
-        fun close()
-    }
 }
