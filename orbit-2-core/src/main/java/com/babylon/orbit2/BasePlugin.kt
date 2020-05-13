@@ -96,12 +96,3 @@ object BasePlugin : OrbitPlugin {
         }
     }
 }
-
-fun requirePlugin(plugin: OrbitPlugin, operatorName: String) {
-    require(Orbit.plugins.contains(plugin)) {
-        throw IllegalStateException(
-            "${plugin.javaClass.simpleName} required to use $operatorName! " +
-                    "Install plugins using Orbit.registerPlugins."
-        )
-    }
-}

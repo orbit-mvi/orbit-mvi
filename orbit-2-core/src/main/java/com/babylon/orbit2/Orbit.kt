@@ -18,15 +18,27 @@ package com.babylon.orbit2
 
 object Orbit {
 
-    internal var plugins: Set<OrbitPlugin> = setOf(
-        BasePlugin
-    )
-    private set
+    private val defaultPlugins = setOf(BasePlugin)
+    internal var plugins: Set<OrbitPlugin> = defaultPlugins
+        private set
 
     fun registerDslPlugins(vararg plugins: OrbitPlugin) {
         val pluginSet = mutableSetOf<OrbitPlugin>(BasePlugin)
         pluginSet.addAll(plugins)
 
         Orbit.plugins = pluginSet.toSet()
+    }
+
+    fun resetPlugins() {
+        plugins = defaultPlugins
+    }
+
+    fun requirePlugin(plugin: OrbitPlugin, componentName: String) {
+        require(plugins.contains(plugin)) {
+            throw IllegalStateException(
+                "${plugin.javaClass.simpleName} required to use $componentName! " +
+                        "Install plugins using Orbit.registerPlugins."
+            )
+        }
     }
 }
