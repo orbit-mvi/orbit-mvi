@@ -22,8 +22,6 @@ plugins {
     kotlin("kapt")
 }
 
-apply(from = "$rootDir/gradle/scripts/jacoco-android.gradle.kts")
-
 android {
     compileSdkVersion(29)
     defaultConfig {
@@ -37,16 +35,6 @@ android {
         getByName("release") {
             isMinifyEnabled = false
         }
-    }
-    java {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
-    }
-}
-
-tasks.withType<KotlinCompile>().configureEach {
-    kotlinOptions {
-        jvmTarget = "1.8"
     }
 }
 
