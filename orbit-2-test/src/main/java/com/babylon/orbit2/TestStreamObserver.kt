@@ -16,23 +16,18 @@
 
 package com.babylon.orbit2
 
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.Observer
+import java.io.Closeable
 
-fun <T> LiveData<T>.test(lifecycleOwner: LifecycleOwner) =
-    TestLiveDataObserver(lifecycleOwner, this)
-
-class TestLiveDataObserver<T>(lifecycleOwner: LifecycleOwner, private val liveData: LiveData<T>) {
+class TestStreamObserver<T>(stream: Stream<T>) {
     private val _values = mutableListOf<T>()
-    private val observer = Observer<T> {
-        _values.add(it)
-    }
+    private val closeable: Closeable
     val values: List<T>
         get() = _values
 
     init {
-        liveData.observe(lifecycleOwner, observer)
+        closeable = stream.observe {
+            _values.add(it)
+        }
     }
 
     fun awaitCount(count: Int, timeout: Long = 5000L) {
@@ -41,9 +36,13 @@ class TestLiveDataObserver<T>(lifecycleOwner: LifecycleOwner, private val liveDa
             if (System.currentTimeMillis() - start > timeout) {
                 break
             }
-            Thread.sleep(10)
+            Thread.sleep(AWAIT_TIMEOUT_MS)
         }
     }
 
-    fun close(): Unit = liveData.removeObserver(observer)
+    fun close(): Unit = closeable.close()
+
+    companion object {
+        const val AWAIT_TIMEOUT_MS = 10L
+    }
 }
