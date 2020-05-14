@@ -98,9 +98,11 @@ subprojects {
         }
     }
     plugins.withId("org.jetbrains.kotlin.jvm") {
+        apply(from = "$rootDir/gradle/scripts/jacoco.gradle.kts")
         configurePub(project)
     }
     plugins.withId("org.jetbrains.kotlin.android") {
+        apply(from = "$rootDir/gradle/scripts/jacoco-android.gradle.kts")
         configurePub(project)
     }
 }
