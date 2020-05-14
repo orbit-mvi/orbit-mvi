@@ -16,10 +16,6 @@
 
 package com.babylon.orbit2
 
-import io.reactivex.Completable
-import io.reactivex.Maybe
-import io.reactivex.Observable
-import io.reactivex.Single
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.flowOn
@@ -29,65 +25,6 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.rx2.asFlow
 import kotlinx.coroutines.rx2.await
 import kotlinx.coroutines.withContext
-
-internal class RxJava2Observable<S : Any, E : Any, E2 : Any>(val block: suspend Context<S, E>.() -> Observable<E2>) :
-    Operator<S, E>
-
-internal class RxJava2Single<S : Any, E : Any, E2 : Any>(val block: suspend Context<S, E>.() -> Single<E2>) :
-    Operator<S, E>
-
-internal class RxJava2Maybe<S : Any, E : Any, E2 : Any>(val block: suspend Context<S, E>.() -> Maybe<E2>) :
-    Operator<S, E>
-
-internal class RxJava2Completable<S : Any, E : Any>(val block: suspend Context<S, E>.() -> Completable) :
-    Operator<S, E>
-
-fun <S : Any, SE : Any, E : Any, E2 : Any> Builder<S, SE, E>.transformRx2Observable(
-    block: suspend Context<S, E>.() -> Observable<E2>
-): Builder<S, SE, E2> {
-    Orbit.requirePlugin(
-        RxJava2Plugin,
-        "transformRxJava2Observable"
-    )
-    return Builder(
-        stack + RxJava2Observable(
-            block
-        )
-    )
-}
-
-fun <S : Any, SE : Any, E : Any, E2 : Any> Builder<S, SE, E>.transformRx2Single(
-    block: suspend Context<S, E>.() -> Single<E2>
-): Builder<S, SE, E2> {
-    Orbit.requirePlugin(RxJava2Plugin, "transformRx2Single")
-    return Builder(
-        stack + RxJava2Single(
-            block
-        )
-    )
-}
-
-fun <S : Any, SE : Any, E : Any, E2 : Any> Builder<S, SE, E>.transformRx2Maybe(
-    block: suspend Context<S, E>.() -> Maybe<E2>
-): Builder<S, SE, E2> {
-    Orbit.requirePlugin(RxJava2Plugin, "transformRx2Maybe")
-    return Builder(
-        stack + RxJava2Maybe(
-            block
-        )
-    )
-}
-
-fun <S : Any, SE : Any, E : Any> Builder<S, SE, E>.transformRx2Completable(
-    block: suspend Context<S, E>.() -> Completable
-): Builder<S, SE, E> {
-    Orbit.requirePlugin(RxJava2Plugin, "transformRx2Completable")
-    return Builder(
-        stack + RxJava2Completable(
-            block
-        )
-    )
-}
 
 object RxJava2Plugin : OrbitPlugin {
     override fun <S : Any, E : Any, SE : Any> apply(
@@ -127,13 +64,3 @@ object RxJava2Plugin : OrbitPlugin {
         }
     }
 }
-
-fun <T> Stream<T>.asRxObservable() =
-    Observable.create<T> { emitter ->
-        val closeable = observe {
-            if (!emitter.isDisposed) {
-                emitter.onNext(it)
-            }
-        }
-        emitter.setCancellable { closeable.close() }
-    }

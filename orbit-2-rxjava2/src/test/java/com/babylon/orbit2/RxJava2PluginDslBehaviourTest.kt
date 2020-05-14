@@ -21,19 +21,23 @@ import io.reactivex.Completable
 import io.reactivex.Maybe
 import io.reactivex.Observable
 import io.reactivex.Single
-import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 
 internal class RxJava2PluginDslBehaviourTest {
     private val fixture = kotlinFixture()
     private val initialState = fixture<TestState>()
 
-    companion object {
-        @JvmStatic
-        @BeforeAll
-        fun beforeAll() {
-            Orbit.registerDslPlugins(RxJava2Plugin)
-        }
+    @BeforeEach
+    fun beforeEach() {
+        Orbit.registerDslPlugins(RxJava2Plugin)
+    }
+
+    @AfterEach
+    fun afterEach() {
+        Orbit.resetPlugins()
     }
 
     @Test
@@ -53,6 +57,25 @@ internal class RxJava2PluginDslBehaviourTest {
     }
 
     @Test
+    fun `single transformation crashes if plugin is not included`() {
+        val action = fixture<Int>()
+        Orbit.resetPlugins()
+
+        assertThrows<IllegalStateException> {
+            Middleware()
+                .given(initialState)
+                .whenever {
+                    single(action)
+                }
+                .then {
+                    states(
+                        { TestState(action + 5) }
+                    )
+                }
+        }
+    }
+
+    @Test
     fun `non empty maybe transformation flatmaps`() {
         val action = fixture<Int>()
 
@@ -69,6 +92,25 @@ internal class RxJava2PluginDslBehaviourTest {
     }
 
     @Test
+    fun `non empty maybe transformation crashes if plugin is not included`() {
+        val action = fixture<Int>()
+        Orbit.resetPlugins()
+
+        assertThrows<IllegalStateException> {
+            Middleware()
+                .given(initialState)
+                .whenever {
+                    maybe(action)
+                }
+                .then {
+                    states(
+                        { TestState(action + 5) }
+                    )
+                }
+        }
+    }
+
+    @Test
     fun `empty maybe transformation flatmaps`() {
         val action = fixture<Int>()
 
@@ -78,6 +120,21 @@ internal class RxJava2PluginDslBehaviourTest {
                 maybeNot(action)
             }
             .then {}
+    }
+
+    @Test
+    fun `empty maybe transformation crashes if plugin is not included`() {
+        val action = fixture<Int>()
+        Orbit.resetPlugins()
+
+        assertThrows<IllegalStateException> {
+            Middleware()
+                .given(initialState)
+                .whenever {
+                    maybeNot(action)
+                }
+                .then {}
+        }
     }
 
     @Test
@@ -97,6 +154,25 @@ internal class RxJava2PluginDslBehaviourTest {
     }
 
     @Test
+    fun `completable transformation crashes if plugin is not included`() {
+        val action = fixture<Int>()
+        Orbit.resetPlugins()
+
+        assertThrows<IllegalStateException> {
+            Middleware()
+                .given(initialState)
+                .whenever {
+                    completable(action)
+                }
+                .then {
+                    states(
+                        { TestState(action) }
+                    )
+                }
+        }
+    }
+
+    @Test
     fun `observable transformation flatmaps`() {
         val action = fixture<Int>()
 
@@ -113,6 +189,28 @@ internal class RxJava2PluginDslBehaviourTest {
                     { TestState(action + 3) }
                 )
             }
+    }
+
+    @Test
+    fun `observable transformation crashes if plugin is not included`() {
+        val action = fixture<Int>()
+        Orbit.resetPlugins()
+
+        assertThrows<IllegalStateException> {
+            Middleware()
+                .given(initialState)
+                .whenever {
+                    observable(action)
+                }
+                .then {
+                    states(
+                        { TestState(action) },
+                        { TestState(action + 1) },
+                        { TestState(action + 2) },
+                        { TestState(action + 3) }
+                    )
+                }
+        }
     }
 
     private data class TestState(val id: Int)
