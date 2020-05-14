@@ -22,12 +22,13 @@ plugins {
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
     implementation(ProjectDependencies.kotlinCoroutines)
-    implementation(ProjectDependencies.kotlinCoroutineExtensions)
+
+    implementation(project(":orbit-2-core"))
 
     // Testing
-    GroupedDependencies.testsImplementationJUnit5.forEach { testImplementation(it) }
-    testRuntimeOnly(ProjectDependencies.junitJupiterEngine)
     testImplementation(project(":orbit-2-test"))
+    GroupedDependencies.testsImplementationJUnit5.forEach { testImplementation(it) }
+    GroupedDependencies.testsRuntime.forEach { testRuntimeOnly(it) }
 }
 
 // Fix lack of source code when publishing pure Kotlin projects

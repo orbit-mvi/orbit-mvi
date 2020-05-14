@@ -16,10 +16,17 @@
 
 apply<JacocoPlugin>()
 
+configure<JacocoPluginExtension> {
+    toolVersion = Versions.jacoco
+}
+
 tasks.withType<JacocoReport> {
     reports {
         html.setEnabled(true)
+        dependsOn(tasks.withType<Test>())
     }
 }
 
-tasks.getByName("test").finalizedBy(tasks.getByName("jacocoTestReport"))
+tasks.withType<Test> {
+    finalizedBy(tasks.withType<JacocoReport>())
+}

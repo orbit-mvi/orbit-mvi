@@ -20,8 +20,6 @@ plugins {
     kotlin("kapt")
 }
 
-apply(from = "$rootDir/gradle/scripts/jacoco-android.gradle.kts")
-
 android {
     compileSdkVersion(29)
     defaultConfig {

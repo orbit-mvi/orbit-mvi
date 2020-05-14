@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Babylon Partners Limited
+ * Copyright 2020 Babylon Partners Limited
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -14,18 +14,18 @@
  *  limitations under the License.
  */
 
-include(
-    "orbit",
-    "orbit-android",
-    "orbit-2-core",
-    "orbit-2-coroutines",
-    "orbit-2-test",
-    "sampleapp"
-)
+package com.babylon.orbit2
 
-// Will rename every module's build.gradle file to use its name instead of `build`.
-// E.g. `app/build.gradle` will become `app/app_build.gradle`
-// The root build.gradle file remains untouched
-rootProject.children.forEach { project ->
-    project.buildFileName = "${project.name}_build.gradle.kts"
+import kotlinx.coroutines.flow.Flow
+
+internal class TransformFlow<S : Any, E : Any, E2 : Any>(val block: suspend Context<S, E>.() -> Flow<E2>) :
+    Operator<S, E>
+
+fun <S : Any, SE : Any, E : Any, E2 : Any> Builder<S, SE, E>.transformFlow(block: suspend Context<S, E>.() -> Flow<E2>): Builder<S, SE, E2> {
+    Orbit.requirePlugin(CoroutinePlugin, "transformFlow")
+    return Builder(
+        stack + TransformFlow(
+            block
+        )
+    )
 }

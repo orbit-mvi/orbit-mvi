@@ -53,6 +53,7 @@ object Versions {
     const val mockito = "2.23.0"
     const val junitRuntime = "5.6.2"
     const val kotlinFixture = "0.8.2"
+    const val jacoco = "0.8.5"
 }
 
 object ProjectDependencies {
