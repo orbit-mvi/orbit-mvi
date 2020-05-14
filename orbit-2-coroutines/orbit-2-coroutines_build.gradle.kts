@@ -14,8 +14,6 @@
  *  limitations under the License.
  */
 
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 plugins {
     id("java-library")
     kotlin("jvm")
@@ -29,7 +27,7 @@ dependencies {
 
     // Testing
     testImplementation(project(":orbit-2-test"))
-    GroupedDependencies.testsImplementation.forEach { testImplementation(it) }
+    GroupedDependencies.testsImplementationJUnit5.forEach { testImplementation(it) }
     GroupedDependencies.testsRuntime.forEach { testRuntimeOnly(it) }
 }
 
