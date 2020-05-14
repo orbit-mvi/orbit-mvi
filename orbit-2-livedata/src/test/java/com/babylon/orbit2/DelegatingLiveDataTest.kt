@@ -20,13 +20,14 @@ import androidx.lifecycle.Lifecycle
 import com.appmattus.kotlinfixture.kotlinFixture
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.EnumSource
 import java.io.Closeable
 
 @ExtendWith(InstantTaskExecutorExtension::class)
-internal class DelegatingLiveDataLifecycleTest {
+internal class DelegatingLiveDataTest {
     private val fixture = kotlinFixture()
     private val mockLifecycleOwner = MockLifecycleOwner().also {
         it.dispatchEvent(Lifecycle.Event.ON_CREATE)
@@ -117,5 +118,15 @@ internal class DelegatingLiveDataLifecycleTest {
 
         assertThat(observer.values).containsExactly(action)
         assertThat(stream.hasObservers()).isFalse()
+    }
+
+    @Test
+    fun `getting the value throws an unsupported exception`() {
+        val stream = TestStream<Int>()
+        val liveData = stream.asLiveData()
+
+        assertThrows<UnsupportedOperationException> {
+            liveData.value
+        }
     }
 }
