@@ -22,7 +22,7 @@ import io.reactivex.Maybe
 import io.reactivex.Observable
 import io.reactivex.Single
 import kotlinx.coroutines.asCoroutineDispatcher
-import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import java.util.concurrent.CountDownLatch
@@ -49,7 +49,7 @@ internal class RxJava2PluginDslThreadingTest {
         middleware.single(action)
 
         testStreamObserver.awaitCount(2)
-        Assertions.assertThat(middleware.threadName).startsWith("IO")
+        assertThat(middleware.threadName).startsWith("IO")
     }
 
     @Test
@@ -62,7 +62,7 @@ internal class RxJava2PluginDslThreadingTest {
         middleware.maybe(action)
 
         testStreamObserver.awaitCount(2)
-        Assertions.assertThat(middleware.threadName).startsWith("IO")
+        assertThat(middleware.threadName).startsWith("IO")
     }
 
     @Test
@@ -75,7 +75,7 @@ internal class RxJava2PluginDslThreadingTest {
         middleware.maybeNot(action)
 
         middleware.latch.await()
-        Assertions.assertThat(middleware.threadName).startsWith("IO")
+        assertThat(middleware.threadName).startsWith("IO")
     }
 
     @Test
@@ -88,7 +88,7 @@ internal class RxJava2PluginDslThreadingTest {
         middleware.completable(action)
 
         testStreamObserver.awaitCount(2)
-        Assertions.assertThat(middleware.threadName).startsWith("IO")
+        assertThat(middleware.threadName).startsWith("IO")
     }
 
     @Test
@@ -101,7 +101,7 @@ internal class RxJava2PluginDslThreadingTest {
         middleware.observable(action)
 
         testStreamObserver.awaitCount(5)
-        Assertions.assertThat(middleware.threadName).startsWith("IO")
+        assertThat(middleware.threadName).startsWith("IO")
     }
 
     private data class TestState(val id: Int)
