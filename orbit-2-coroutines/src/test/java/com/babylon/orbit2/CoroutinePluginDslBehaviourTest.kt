@@ -20,19 +20,23 @@ import com.appmattus.kotlinfixture.kotlinFixture
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.onEach
-import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 
 internal class CoroutinePluginDslBehaviourTest {
     private val fixture = kotlinFixture()
     private val initialState = fixture<TestState>()
 
-    companion object {
-        @JvmStatic
-        @BeforeAll
-        fun beforeAll() {
-            Orbit.registerDslPlugins(CoroutinePlugin)
-        }
+    @BeforeEach
+    fun beforeEach() {
+        Orbit.registerDslPlugins(CoroutinePlugin)
+    }
+
+    @AfterEach
+    fun afterEach() {
+        Orbit.resetPlugins()
     }
 
     @Test
@@ -52,6 +56,28 @@ internal class CoroutinePluginDslBehaviourTest {
     }
 
     @Test
+    fun `suspend transformation crashes if the plugin is not included`() {
+        val action = fixture<Int>()
+        Orbit.resetPlugins()
+
+        assertThrows<IllegalStateException> {
+            Middleware()
+                .given(initialState)
+                .whenever {
+                    flow(action)
+                }
+                .then {
+                    states(
+                        { TestState(action) },
+                        { TestState(action + 1) },
+                        { TestState(action + 2) },
+                        { TestState(action + 3) }
+                    )
+                }
+        }
+    }
+
+    @Test
     fun `flow transformation flatmaps`() {
         val action = fixture<Int>()
 
@@ -68,6 +94,29 @@ internal class CoroutinePluginDslBehaviourTest {
                     { TestState(action + 3) }
                 )
             }
+    }
+
+    @Test
+    fun `flow transformation crashes if the plugin is not included`() {
+        val action = fixture<Int>()
+        Orbit.resetPlugins()
+
+        assertThrows<IllegalStateException> {
+
+            Middleware()
+                .given(initialState)
+                .whenever {
+                    flow(action)
+                }
+                .then {
+                    states(
+                        { TestState(action) },
+                        { TestState(action + 1) },
+                        { TestState(action + 2) },
+                        { TestState(action + 3) }
+                    )
+                }
+        }
     }
 
     private data class TestState(val id: Int)

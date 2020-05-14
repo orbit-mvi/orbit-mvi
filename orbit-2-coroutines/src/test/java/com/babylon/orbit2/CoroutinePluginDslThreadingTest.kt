@@ -21,20 +21,23 @@ import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.onEach
-import org.assertj.core.api.Assertions
-import org.junit.jupiter.api.BeforeAll
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.util.concurrent.Executors
 
 internal class CoroutinePluginDslThreadingTest {
     private val fixture = kotlinFixture()
 
-    companion object {
-        @JvmStatic
-        @BeforeAll
-        fun beforeAll() {
-            Orbit.registerDslPlugins(CoroutinePlugin)
-        }
+    @BeforeEach
+    fun beforeEach() {
+        Orbit.registerDslPlugins(CoroutinePlugin)
+    }
+
+    @AfterEach
+    fun afterEach() {
+        Orbit.resetPlugins()
     }
 
     @Test
@@ -47,7 +50,7 @@ internal class CoroutinePluginDslThreadingTest {
         middleware.suspend(action)
 
         testStreamObserver.awaitCount(2)
-        Assertions.assertThat(middleware.threadName).startsWith("IO")
+        assertThat(middleware.threadName).startsWith("IO")
     }
 
     @Test
@@ -60,7 +63,7 @@ internal class CoroutinePluginDslThreadingTest {
         middleware.flow(action)
 
         testStreamObserver.awaitCount(5)
-        Assertions.assertThat(middleware.threadName).startsWith("IO")
+        assertThat(middleware.threadName).startsWith("IO")
     }
 
     private data class TestState(val id: Int)

@@ -22,30 +22,6 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 
-internal class TransformSuspend<S : Any, E : Any, E2 : Any>(val block: suspend Context<S, E>.() -> E2) :
-    Operator<S, E2>
-
-internal class TransformFlow<S : Any, E : Any, E2 : Any>(val block: suspend Context<S, E>.() -> Flow<E2>) :
-    Operator<S, E>
-
-fun <S : Any, SE : Any, E : Any, E2 : Any> Builder<S, SE, E>.transformSuspend(block: suspend Context<S, E>.() -> E2): Builder<S, SE, E2> {
-    Orbit.requirePlugin(CoroutinePlugin, "transformSuspend")
-    return Builder(
-        stack + TransformSuspend(
-            block
-        )
-    )
-}
-
-fun <S : Any, SE : Any, E : Any, E2 : Any> Builder<S, SE, E>.transformFlow(block: suspend Context<S, E>.() -> Flow<E2>): Builder<S, SE, E2> {
-    Orbit.requirePlugin(CoroutinePlugin, "transformFlow")
-    return Builder(
-        stack + TransformFlow(
-            block
-        )
-    )
-}
-
 object CoroutinePlugin : OrbitPlugin {
     override fun <S : Any, E : Any, SE : Any> apply(
         containerContext: OrbitPlugin.ContainerContext<S, SE>,
