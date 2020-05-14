@@ -2,7 +2,7 @@
 
 ## Orbit Android MVI
 
-Copyright &copy; 2019 Babylon Partners Limited.
+Copyright &copy; 2020 Babylon Partners Limited.
 
 This product includes software developed at [Babylon Health](http://www.babylonhealth.com/).
 

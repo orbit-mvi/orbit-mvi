@@ -29,6 +29,9 @@ jobs:
     - name: Lint
       run: ./gradlew lint
 
+    - name: Markdown lint
+      run: ./gradlew markdownlint
+
     - name: Unit tests
       run: ./gradlew jacocoTestReport
 

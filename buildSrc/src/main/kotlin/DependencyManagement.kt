@@ -142,7 +142,9 @@ object GroupedDependencies {
         ProjectDependencies.junitJupiterApi,
         ProjectDependencies.junitJupiterParams,
         ProjectDependencies.mockitoKotlin,
-        ProjectDependencies.mockitoInline
+        ProjectDependencies.mockitoInline,
+        ProjectDependencies.kotlinFixture,
+        ProjectDependencies.assertJ
     )
 
     val testsRuntime = listOf(

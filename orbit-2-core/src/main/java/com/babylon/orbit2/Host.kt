@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Babylon Partners Limited
+ * Copyright 2020 Babylon Partners Limited
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -14,12 +14,14 @@
  *  limitations under the License.
  */
 
-apply<JacocoPlugin>()
+package com.babylon.orbit2
 
-tasks.withType<JacocoReport> {
-    reports {
-        html.setEnabled(true)
-    }
+interface Host<STATE : Any, SIDE_EFFECT : Any> {
+    val container: Container<STATE, SIDE_EFFECT>
+
+    fun <EVENT : Any> orbit(event: EVENT, init: Builder<STATE, SIDE_EFFECT, EVENT>.() -> Builder<STATE, SIDE_EFFECT, *>) =
+        container.orbit(event, init)
+
+    fun orbit(init: Builder<STATE, SIDE_EFFECT, Unit>.() -> Builder<STATE, SIDE_EFFECT, *>) =
+        container.orbit(Unit, init)
 }
-
-tasks.getByName("test").finalizedBy(tasks.getByName("jacocoTestReport"))

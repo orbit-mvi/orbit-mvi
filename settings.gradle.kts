@@ -17,6 +17,8 @@
 include(
     "orbit",
     "orbit-android",
+    "orbit-2-core",
+    "orbit-2-test",
     "sampleapp"
 )
 

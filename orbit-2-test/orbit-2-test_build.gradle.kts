@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Babylon Partners Limited
+ * Copyright 2020 Babylon Partners Limited
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -23,10 +23,12 @@ apply(from = "$rootDir/gradle/scripts/jacoco.gradle.kts")
 
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
-    implementation(ProjectDependencies.rxJava2)
-    implementation(ProjectDependencies.rxJava2Extensions)
-    implementation(ProjectDependencies.rxKotlin)
-    implementation(ProjectDependencies.javaxInject)
+    implementation(ProjectDependencies.kotlinCoroutines)
+
+    implementation(project(":orbit-2-core"))
+
+    implementation(ProjectDependencies.mockitoKotlin)
+    implementation(ProjectDependencies.kotlinTest)
 
     // Testing
     GroupedDependencies.testsImplementation.forEach { testImplementation(it) }

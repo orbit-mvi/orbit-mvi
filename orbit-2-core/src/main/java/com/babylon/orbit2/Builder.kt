@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Babylon Partners Limited
+ * Copyright 2020 Babylon Partners Limited
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -14,12 +14,6 @@
  *  limitations under the License.
  */
 
-apply<JacocoPlugin>()
+package com.babylon.orbit2
 
-tasks.withType<JacocoReport> {
-    reports {
-        html.setEnabled(true)
-    }
-}
-
-tasks.getByName("test").finalizedBy(tasks.getByName("jacocoTestReport"))
+class Builder<S : Any, SE : Any, E : Any>(val stack: List<Operator<S, *>> = emptyList())
