@@ -114,7 +114,6 @@ subprojects {
             buildTypes {
                 getByName("release") {
                     isMinifyEnabled = false
-
                 }
             }
         }
