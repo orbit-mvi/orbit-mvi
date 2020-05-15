@@ -18,8 +18,9 @@ package com.babylon.orbit2
 
 import io.reactivex.Single
 
-internal class RxJava2Single<S : Any, E : Any, E2 : Any>(val block: suspend Context<S, E>.() -> Single<E2>) :
-    Operator<S, E>
+internal class RxJava2Single<S : Any, E : Any, E2 : Any>(
+    val block: suspend Context<S, E>.() -> Single<E2>
+) : Operator<S, E>
 
 fun <S : Any, SE : Any, E : Any, E2 : Any> Builder<S, SE, E>.transformRx2Single(
     block: suspend Context<S, E>.() -> Single<E2>

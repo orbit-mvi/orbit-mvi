@@ -18,8 +18,9 @@ package com.babylon.orbit2
 
 import io.reactivex.Maybe
 
-internal class RxJava2Maybe<S : Any, E : Any, E2 : Any>(val block: suspend Context<S, E>.() -> Maybe<E2>) :
-    Operator<S, E>
+internal class RxJava2Maybe<S : Any, E : Any, E2 : Any>(
+    val block: suspend Context<S, E>.() -> Maybe<E2>
+) : Operator<S, E>
 
 fun <S : Any, SE : Any, E : Any, E2 : Any> Builder<S, SE, E>.transformRx2Maybe(
     block: suspend Context<S, E>.() -> Maybe<E2>

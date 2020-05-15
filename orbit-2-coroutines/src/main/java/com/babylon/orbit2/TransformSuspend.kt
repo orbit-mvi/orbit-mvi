@@ -16,8 +16,9 @@
 
 package com.babylon.orbit2
 
-internal class TransformSuspend<S : Any, E : Any, E2 : Any>(val block: suspend Context<S, E>.() -> E2) :
-    Operator<S, E2>
+internal class TransformSuspend<S : Any, E : Any, E2 : Any>(
+    val block: suspend Context<S, E>.() -> E2
+) : Operator<S, E2>
 
 fun <S : Any, SE : Any, E : Any, E2 : Any> Builder<S, SE, E>.transformSuspend(block: suspend Context<S, E>.() -> E2): Builder<S, SE, E2> {
     Orbit.requirePlugin(CoroutinePlugin, "transformSuspend")

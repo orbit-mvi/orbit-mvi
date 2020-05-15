@@ -18,8 +18,9 @@ package com.babylon.orbit2
 
 import io.reactivex.Completable
 
-internal class RxJava2Completable<S : Any, E : Any>(val block: suspend Context<S, E>.() -> Completable) :
-    Operator<S, E>
+internal class RxJava2Completable<S : Any, E : Any>(
+    val block: suspend Context<S, E>.() -> Completable
+) : Operator<S, E>
 
 fun <S : Any, SE : Any, E : Any> Builder<S, SE, E>.transformRx2Completable(
     block: suspend Context<S, E>.() -> Completable
