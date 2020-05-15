@@ -20,7 +20,6 @@ import androidx.lifecycle.Lifecycle
 import com.appmattus.kotlinfixture.kotlinFixture
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.EnumSource
@@ -121,12 +120,17 @@ internal class DelegatingLiveDataTest {
     }
 
     @Test
-    fun `getting the value throws an unsupported exception`() {
+    fun `the current value cannot be retrieved and returns nulls instead`() {
         val stream = TestStream<Int>()
+        val action = fixture<Int>()
         val liveData = DelegatingLiveData(stream)
+        val observer = liveData.test(mockLifecycleOwner)
+        mockLifecycleOwner.dispatchEvent(Lifecycle.Event.ON_START)
+        mockLifecycleOwner.dispatchEvent(Lifecycle.Event.ON_RESUME)
 
-        assertThrows<UnsupportedOperationException> {
-            liveData.value
-        }
+        stream.post(action)
+
+        assertThat(observer.values).containsExactly(action)
+        assertThat(liveData.value).isNull()
     }
 }

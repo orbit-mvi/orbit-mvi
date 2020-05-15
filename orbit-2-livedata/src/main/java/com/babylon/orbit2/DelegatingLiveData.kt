@@ -23,10 +23,10 @@ import androidx.lifecycle.Observer
 import java.io.Closeable
 
 /**
- This class creates one LiveData per observer in order to defer to the behaviour of the [Stream]
- when it comes to caching values. This ensures that side effect caching is properly
- resolved while retaining the benefits of using LiveData in terms of main thread callbacks and
- automatic unsubscription.
+This class creates one LiveData per observer in order to defer to the behaviour of the [Stream]
+when it comes to caching values. This ensures that side effect caching is properly
+resolved while retaining the benefits of using LiveData in terms of main thread callbacks and
+automatic unsubscription.
  */
 internal class DelegatingLiveData<T>(private val stream: Stream<T>) : LiveData<T>() {
     private val closeables = mutableMapOf<Observer<in T>, LiveData<T>>()
@@ -45,11 +45,7 @@ internal class DelegatingLiveData<T>(private val stream: Stream<T>) : LiveData<T
         }
     }
 
-    override fun getValue(): T? {
-        throw UnsupportedOperationException(
-            "This operation is not supported."
-        )
-    }
+    override fun getValue(): T? = null
 
     override fun hasActiveObservers(): Boolean {
         return closeables.values.any { it.hasActiveObservers() }
