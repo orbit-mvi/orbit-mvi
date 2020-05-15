@@ -85,7 +85,6 @@ internal class CoroutinePluginBehaviourTest {
         @Test
         fun `suspend transformation crashes if the plugin is not included`() {
             val action = fixture<Int>()
-            Orbit.resetPlugins()
 
             assertThrows<IllegalStateException> {
                 Middleware()
@@ -93,21 +92,13 @@ internal class CoroutinePluginBehaviourTest {
                     .whenever {
                         flow(action)
                     }
-                    .then {
-                        states(
-                            { TestState(action) },
-                            { TestState(action + 1) },
-                            { TestState(action + 2) },
-                            { TestState(action + 3) }
-                        )
-                    }
+                    .then {}
             }
         }
 
         @Test
         fun `flow transformation crashes if the plugin is not included`() {
             val action = fixture<Int>()
-            Orbit.resetPlugins()
 
             assertThrows<IllegalStateException> {
 
@@ -116,14 +107,7 @@ internal class CoroutinePluginBehaviourTest {
                     .whenever {
                         flow(action)
                     }
-                    .then {
-                        states(
-                            { TestState(action) },
-                            { TestState(action + 1) },
-                            { TestState(action + 2) },
-                            { TestState(action + 3) }
-                        )
-                    }
+                    .then {}
             }
         }
     }

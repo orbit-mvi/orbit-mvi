@@ -130,7 +130,6 @@ internal class RxJava2PluginBehaviourTest {
         @Test
         fun `single transformation crashes if plugin is not included`() {
             val action = fixture<Int>()
-            Orbit.resetPlugins()
 
             assertThrows<IllegalStateException> {
                 Middleware()
@@ -138,18 +137,13 @@ internal class RxJava2PluginBehaviourTest {
                     .whenever {
                         single(action)
                     }
-                    .then {
-                        states(
-                            { TestState(action + 5) }
-                        )
-                    }
+                    .then {}
             }
         }
 
         @Test
         fun `non empty maybe transformation crashes if plugin is not included`() {
             val action = fixture<Int>()
-            Orbit.resetPlugins()
 
             assertThrows<IllegalStateException> {
                 Middleware()
@@ -157,18 +151,13 @@ internal class RxJava2PluginBehaviourTest {
                     .whenever {
                         maybe(action)
                     }
-                    .then {
-                        states(
-                            { TestState(action + 5) }
-                        )
-                    }
+                    .then {}
             }
         }
 
         @Test
         fun `empty maybe transformation crashes if plugin is not included`() {
             val action = fixture<Int>()
-            Orbit.resetPlugins()
 
             assertThrows<IllegalStateException> {
                 Middleware()
@@ -183,7 +172,6 @@ internal class RxJava2PluginBehaviourTest {
         @Test
         fun `completable transformation crashes if plugin is not included`() {
             val action = fixture<Int>()
-            Orbit.resetPlugins()
 
             assertThrows<IllegalStateException> {
                 Middleware()
@@ -191,18 +179,13 @@ internal class RxJava2PluginBehaviourTest {
                     .whenever {
                         completable(action)
                     }
-                    .then {
-                        states(
-                            { TestState(action) }
-                        )
-                    }
+                    .then {}
             }
         }
 
         @Test
         fun `observable transformation crashes if plugin is not included`() {
             val action = fixture<Int>()
-            Orbit.resetPlugins()
 
             assertThrows<IllegalStateException> {
                 Middleware()
@@ -210,14 +193,7 @@ internal class RxJava2PluginBehaviourTest {
                     .whenever {
                         observable(action)
                     }
-                    .then {
-                        states(
-                            { TestState(action) },
-                            { TestState(action + 1) },
-                            { TestState(action + 2) },
-                            { TestState(action + 3) }
-                        )
-                    }
+                    .then {}
             }
         }
     }
