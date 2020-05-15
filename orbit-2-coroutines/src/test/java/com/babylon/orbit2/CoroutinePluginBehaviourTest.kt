@@ -22,45 +22,47 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.onEach
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
-internal class CoroutinePluginDslBehaviourTest {
+internal class CoroutinePluginBehaviourTest {
     private val fixture = kotlinFixture()
     private val initialState = fixture<TestState>()
 
-    @BeforeEach
-    fun beforeEach() {
-        Orbit.registerDslPlugins(CoroutinePlugin)
-    }
+    @Nested
+    inner class DslBehaviourTests {
 
-    @AfterEach
-    fun afterEach() {
-        Orbit.resetPlugins()
-    }
+        @BeforeEach
+        fun beforeEach() {
+            Orbit.registerDslPlugins(CoroutinePlugin)
+        }
 
-    @Test
-    fun `suspend transformation maps`() {
-        val action = fixture<Int>()
+        @AfterEach
+        fun afterEach() {
+            Orbit.resetPlugins()
+        }
 
-        Middleware()
-            .given(initialState)
-            .whenever {
-                suspend(action)
-            }
-            .then {
-                states(
-                    { TestState(action + 5) }
-                )
-            }
-    }
+        @Test
+        fun `suspend transformation maps`() {
+            val action = fixture<Int>()
 
-    @Test
-    fun `suspend transformation crashes if the plugin is not included`() {
-        val action = fixture<Int>()
-        Orbit.resetPlugins()
+            Middleware()
+                .given(initialState)
+                .whenever {
+                    suspend(action)
+                }
+                .then {
+                    states(
+                        { TestState(action + 5) }
+                    )
+                }
+        }
 
-        assertThrows<IllegalStateException> {
+        @Test
+        fun `flow transformation flatmaps`() {
+            val action = fixture<Int>()
+
             Middleware()
                 .given(initialState)
                 .whenever {
@@ -77,45 +79,36 @@ internal class CoroutinePluginDslBehaviourTest {
         }
     }
 
-    @Test
-    fun `flow transformation flatmaps`() {
-        val action = fixture<Int>()
+    @Nested
+    inner class PluginRegistrationTests {
 
-        Middleware()
-            .given(initialState)
-            .whenever {
-                flow(action)
+        @Test
+        fun `suspend transformation crashes if the plugin is not included`() {
+            val action = fixture<Int>()
+
+            assertThrows<IllegalStateException> {
+                Middleware()
+                    .given(initialState)
+                    .whenever {
+                        flow(action)
+                    }
+                    .then {}
             }
-            .then {
-                states(
-                    { TestState(action) },
-                    { TestState(action + 1) },
-                    { TestState(action + 2) },
-                    { TestState(action + 3) }
-                )
+        }
+
+        @Test
+        fun `flow transformation crashes if the plugin is not included`() {
+            val action = fixture<Int>()
+
+            assertThrows<IllegalStateException> {
+
+                Middleware()
+                    .given(initialState)
+                    .whenever {
+                        flow(action)
+                    }
+                    .then {}
             }
-    }
-
-    @Test
-    fun `flow transformation crashes if the plugin is not included`() {
-        val action = fixture<Int>()
-        Orbit.resetPlugins()
-
-        assertThrows<IllegalStateException> {
-
-            Middleware()
-                .given(initialState)
-                .whenever {
-                    flow(action)
-                }
-                .then {
-                    states(
-                        { TestState(action) },
-                        { TestState(action + 1) },
-                        { TestState(action + 2) },
-                        { TestState(action + 3) }
-                    )
-                }
         }
     }
 

@@ -20,6 +20,7 @@ include(
     "orbit-2-core",
     "orbit-2-coroutines",
     "orbit-2-livedata",
+    "orbit-2-rxjava2",
     "orbit-2-savedstate",
     "orbit-2-test",
     "sampleapp"

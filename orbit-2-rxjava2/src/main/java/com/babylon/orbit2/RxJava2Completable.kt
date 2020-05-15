@@ -16,14 +16,18 @@
 
 package com.babylon.orbit2
 
-internal class TransformSuspend<S : Any, E : Any, E2 : Any>(
-    val block: suspend Context<S, E>.() -> E2
-) : Operator<S, E2>
+import io.reactivex.Completable
 
-fun <S : Any, SE : Any, E : Any, E2 : Any> Builder<S, SE, E>.transformSuspend(block: suspend Context<S, E>.() -> E2): Builder<S, SE, E2> {
-    Orbit.requirePlugin(CoroutinePlugin, "transformSuspend")
+internal class RxJava2Completable<S : Any, E : Any>(
+    val block: suspend Context<S, E>.() -> Completable
+) : Operator<S, E>
+
+fun <S : Any, SE : Any, E : Any> Builder<S, SE, E>.transformRx2Completable(
+    block: suspend Context<S, E>.() -> Completable
+): Builder<S, SE, E> {
+    Orbit.requirePlugin(RxJava2Plugin, "transformRx2Completable")
     return Builder(
-        stack + TransformSuspend(
+        stack + RxJava2Completable(
             block
         )
     )

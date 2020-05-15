@@ -16,14 +16,18 @@
 
 package com.babylon.orbit2
 
-internal class TransformSuspend<S : Any, E : Any, E2 : Any>(
-    val block: suspend Context<S, E>.() -> E2
-) : Operator<S, E2>
+import io.reactivex.Single
 
-fun <S : Any, SE : Any, E : Any, E2 : Any> Builder<S, SE, E>.transformSuspend(block: suspend Context<S, E>.() -> E2): Builder<S, SE, E2> {
-    Orbit.requirePlugin(CoroutinePlugin, "transformSuspend")
+internal class RxJava2Single<S : Any, E : Any, E2 : Any>(
+    val block: suspend Context<S, E>.() -> Single<E2>
+) : Operator<S, E>
+
+fun <S : Any, SE : Any, E : Any, E2 : Any> Builder<S, SE, E>.transformRx2Single(
+    block: suspend Context<S, E>.() -> Single<E2>
+): Builder<S, SE, E2> {
+    Orbit.requirePlugin(RxJava2Plugin, "transformRx2Single")
     return Builder(
-        stack + TransformSuspend(
+        stack + RxJava2Single(
             block
         )
     )
