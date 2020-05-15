@@ -59,11 +59,11 @@ internal class SideEffectLiveDataPluginTest {
         mockLifecycleOwner.dispatchEvent(Lifecycle.Event.ON_START)
 
         val testSideEffectObserver1 =
-            middleware.container.sideEffect.asLiveData().test(mockLifecycleOwner)
+            middleware.container.sideEffectLiveData.test(mockLifecycleOwner)
         val testSideEffectObserver2 =
-            middleware.container.sideEffect.asLiveData().test(mockLifecycleOwner)
+            middleware.container.sideEffectLiveData.test(mockLifecycleOwner)
         val testSideEffectObserver3 =
-            middleware.container.sideEffect.asLiveData().test(mockLifecycleOwner)
+            middleware.container.sideEffectLiveData.test(mockLifecycleOwner)
 
         middleware.someFlow(action)
         middleware.someFlow(action2)
@@ -91,7 +91,7 @@ internal class SideEffectLiveDataPluginTest {
         mockLifecycleOwner.dispatchEvent(Lifecycle.Event.ON_CREATE)
         mockLifecycleOwner.dispatchEvent(Lifecycle.Event.ON_START)
 
-        val liveData = middleware.container.sideEffect.asLiveData()
+        val liveData = middleware.container.sideEffectLiveData
 
         val testSideEffectObserver1 =
             liveData.test(mockLifecycleOwner)
@@ -134,7 +134,7 @@ internal class SideEffectLiveDataPluginTest {
         middleware.someFlow(action3)
 
         val testSideEffectObserver1 =
-            middleware.container.sideEffect.asLiveData().test(mockLifecycleOwner)
+            middleware.container.sideEffectLiveData.test(mockLifecycleOwner)
 
         testSideEffectObserver1.awaitCount(3)
 
@@ -148,7 +148,7 @@ internal class SideEffectLiveDataPluginTest {
         val action3 = fixture<Int>()
         val middleware = Middleware(false)
         val testSideEffectObserver1 =
-            middleware.container.sideEffect.asLiveData().test(mockLifecycleOwner)
+            middleware.container.sideEffectLiveData.test(mockLifecycleOwner)
 
         middleware.someFlow(action)
         middleware.someFlow(action2)
@@ -157,7 +157,7 @@ internal class SideEffectLiveDataPluginTest {
         testSideEffectObserver1.close()
 
         val testSideEffectObserver2 =
-            middleware.container.sideEffect.asLiveData().test(mockLifecycleOwner)
+            middleware.container.sideEffectLiveData.test(mockLifecycleOwner)
 
         testSideEffectObserver2.awaitCount(3, 10L)
 
@@ -174,7 +174,7 @@ internal class SideEffectLiveDataPluginTest {
         val action3 = fixture<Int>()
         val middleware = Middleware(caching)
 
-        val liveData = middleware.container.sideEffect.asLiveData()
+        val liveData = middleware.container.sideEffectLiveData
 
         val testSideEffectObserver1 = liveData.test(mockLifecycleOwner)
 
@@ -200,7 +200,7 @@ internal class SideEffectLiveDataPluginTest {
         val action3 = fixture<Int>()
         val middleware = Middleware(false)
 
-        val liveData = middleware.container.sideEffect.asLiveData()
+        val liveData = middleware.container.sideEffectLiveData
 
         val testSideEffectObserver1 = liveData.test(mockLifecycleOwner)
 
@@ -230,7 +230,7 @@ internal class SideEffectLiveDataPluginTest {
         val middleware = Middleware(caching)
 
         val testSideEffectObserver1 =
-            middleware.container.sideEffect.asLiveData().test(mockLifecycleOwner)
+            middleware.container.sideEffectLiveData.test(mockLifecycleOwner)
 
         middleware.someFlow(action)
 
@@ -241,7 +241,7 @@ internal class SideEffectLiveDataPluginTest {
         middleware.someFlow(action3)
 
         val testSideEffectObserver2 =
-            middleware.container.sideEffect.asLiveData().test(mockLifecycleOwner)
+            middleware.container.sideEffectLiveData.test(mockLifecycleOwner)
         testSideEffectObserver2.awaitCount(2)
 
         assertThat(testSideEffectObserver1.values).containsExactly(action)
@@ -256,7 +256,7 @@ internal class SideEffectLiveDataPluginTest {
         val middleware = Middleware(false)
 
         val testSideEffectObserver1 =
-            middleware.container.sideEffect.asLiveData().test(mockLifecycleOwner)
+            middleware.container.sideEffectLiveData.test(mockLifecycleOwner)
 
         middleware.someFlow(action)
 
@@ -264,7 +264,7 @@ internal class SideEffectLiveDataPluginTest {
         testSideEffectObserver1.close()
 
         val testSideEffectObserver2 =
-            middleware.container.sideEffect.asLiveData().test(mockLifecycleOwner)
+            middleware.container.sideEffectLiveData.test(mockLifecycleOwner)
 
         middleware.someFlow(action2)
         middleware.someFlow(action3)
@@ -282,7 +282,7 @@ internal class SideEffectLiveDataPluginTest {
         val middleware = Middleware(false)
 
         val testSideEffectObserver1 =
-            middleware.container.sideEffect.asLiveData().test(mockLifecycleOwner)
+            middleware.container.sideEffectLiveData.test(mockLifecycleOwner)
 
         middleware.someFlow(action)
         testSideEffectObserver1.awaitCount(1)
@@ -304,7 +304,7 @@ internal class SideEffectLiveDataPluginTest {
         val action2 = fixture<Int>()
         val action3 = fixture<Int>()
         val middleware = Middleware(caching)
-        val liveData = middleware.container.sideEffect.asLiveData()
+        val liveData = middleware.container.sideEffectLiveData
 
         val testSideEffectObserver1 = liveData.test(mockLifecycleOwner)
 

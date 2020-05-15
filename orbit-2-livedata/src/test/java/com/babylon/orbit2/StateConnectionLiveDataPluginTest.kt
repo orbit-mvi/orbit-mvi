@@ -36,7 +36,7 @@ internal class StateConnectionLiveDataPluginTest {
         val initialState = fixture<TestState>()
         val middleware = Middleware(initialState)
         val testStateObserver =
-            middleware.container.orbit.asLiveData().test(mockLifecycleOwner)
+            middleware.container.orbitLiveData.test(mockLifecycleOwner)
 
         testStateObserver.awaitCount(1)
 
@@ -48,13 +48,13 @@ internal class StateConnectionLiveDataPluginTest {
         val initialState = fixture<TestState>()
         val middleware = Middleware(initialState)
         val testStateObserver =
-            middleware.container.orbit.asLiveData().test(mockLifecycleOwner)
+            middleware.container.orbitLiveData.test(mockLifecycleOwner)
         val action = fixture<Int>()
         middleware.something(action)
         testStateObserver.awaitCount(2) // block until the state is updated
 
         val testStateObserver2 =
-            middleware.container.orbit.asLiveData().test(mockLifecycleOwner)
+            middleware.container.orbitLiveData.test(mockLifecycleOwner)
         testStateObserver2.awaitCount(1)
 
         assertThat(testStateObserver.values).containsExactly(
@@ -72,7 +72,7 @@ internal class StateConnectionLiveDataPluginTest {
     fun `latest state is emitted on connection to the same live data`() {
         val initialState = fixture<TestState>()
         val middleware = Middleware(initialState)
-        val liveData = middleware.container.orbit.asLiveData()
+        val liveData = middleware.container.orbitLiveData
         val testStateObserver = liveData.test(mockLifecycleOwner)
         val action = fixture<Int>()
         middleware.something(action)
@@ -108,7 +108,7 @@ internal class StateConnectionLiveDataPluginTest {
             Middleware(initialState)
         val action = fixture<Int>()
         val testStateObserver =
-            middleware.container.orbit.asLiveData().test(mockLifecycleOwner)
+            middleware.container.orbitLiveData.test(mockLifecycleOwner)
 
         middleware.something(action)
 

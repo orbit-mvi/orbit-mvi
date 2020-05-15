@@ -24,7 +24,7 @@ import java.io.Closeable
 
 /**
  This class creates one LiveData per observer in order to defer to the behaviour of the [Stream]
- when it comes to caching values. This ensures that state and side effect caching is properly
+ when it comes to caching values. This ensures that side effect caching is properly
  resolved while retaining the benefits of using LiveData in terms of main thread callbacks and
  automatic unsubscription.
  */
@@ -47,7 +47,7 @@ internal class DelegatingLiveData<T>(private val stream: Stream<T>) : LiveData<T
 
     override fun getValue(): T? {
         throw UnsupportedOperationException(
-            "This operation is not supported. Call Container.currentState instead."
+            "This operation is not supported."
         )
     }
 

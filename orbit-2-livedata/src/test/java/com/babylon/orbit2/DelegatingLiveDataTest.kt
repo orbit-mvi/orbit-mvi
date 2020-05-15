@@ -81,7 +81,7 @@ internal class DelegatingLiveDataTest {
         val stream = TestStream<Int>()
         val action = fixture<Int>()
         mockLifecycleOwner.currentState = testCase.state
-        val observer = stream.asLiveData().test(mockLifecycleOwner)
+        val observer = DelegatingLiveData(stream).test(mockLifecycleOwner)
 
         stream.post(action)
 
@@ -102,7 +102,7 @@ internal class DelegatingLiveDataTest {
         val action2 = fixture<Int>()
         val action3 = fixture<Int>()
 
-        val observer = stream.asLiveData().test(mockLifecycleOwner)
+        val observer = DelegatingLiveData(stream).test(mockLifecycleOwner)
 
         mockLifecycleOwner.dispatchEvent(Lifecycle.Event.ON_START)
         mockLifecycleOwner.dispatchEvent(Lifecycle.Event.ON_RESUME)
@@ -123,7 +123,7 @@ internal class DelegatingLiveDataTest {
     @Test
     fun `getting the value throws an unsupported exception`() {
         val stream = TestStream<Int>()
-        val liveData = stream.asLiveData()
+        val liveData = DelegatingLiveData(stream)
 
         assertThrows<UnsupportedOperationException> {
             liveData.value
