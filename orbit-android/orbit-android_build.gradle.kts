@@ -20,22 +20,6 @@ plugins {
     kotlin("kapt")
 }
 
-android {
-    compileSdkVersion(29)
-    defaultConfig {
-        minSdkVersion(21)
-        targetSdkVersion(29)
-        versionCode = 1
-        versionName = "1.0"
-        testInstrumentationRunner = "android.support.test.runner.AndroidJUnitRunner"
-    }
-    buildTypes {
-        getByName("release") {
-            isMinifyEnabled = false
-        }
-    }
-}
-
 dependencies {
     implementation(project(":orbit"))
 

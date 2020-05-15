@@ -30,7 +30,7 @@ apply<JacocoAndroidPlugin>()
 
 configure<JacocoAndroidUnitTestReportExtension> {
     html.enabled(false)
-    xml.enabled(false)
+    xml.enabled(true)
     csv.enabled(false)
 }
 
