@@ -22,7 +22,8 @@ configure<JacocoPluginExtension> {
 
 tasks.withType<JacocoReport> {
     reports {
-        html.setEnabled(true)
+        html.setEnabled(false)
+        xml.setEnabled(true)
         dependsOn(tasks.withType<Test>())
     }
 }
