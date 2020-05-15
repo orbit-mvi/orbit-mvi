@@ -38,7 +38,6 @@ plugins {
 }
 
 apply(from = "gradle/scripts/detekt.gradle.kts")
-apply(from = "gradle/scripts/jacoco-combinedreport.gradle.kts")
 
 task("clean", type = Delete::class) {
     delete(rootProject.buildDir)
@@ -101,9 +100,24 @@ subprojects {
         apply(from = "$rootDir/gradle/scripts/jacoco.gradle.kts")
         configurePub(project)
     }
-    plugins.withId("org.jetbrains.kotlin.android") {
+    plugins.withId("com.android.library") {
         apply(from = "$rootDir/gradle/scripts/jacoco-android.gradle.kts")
         configurePub(project)
+
+        configure<com.android.build.gradle.LibraryExtension> {
+            compileSdkVersion(29)
+            defaultConfig {
+                minSdkVersion(21)
+                targetSdkVersion(29)
+            }
+
+            buildTypes {
+                getByName("release") {
+                    isMinifyEnabled = false
+
+                }
+            }
+        }
     }
 }
 
