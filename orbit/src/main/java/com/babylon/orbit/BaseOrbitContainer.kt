@@ -38,6 +38,9 @@ class BaseOrbitContainer<STATE : Any, SIDE_EFFECT : Any>(
     private val sideEffectSubject: PublishSubject<SIDE_EFFECT> = PublishSubject.create()
     private val disposables = CompositeDisposable()
     private val scheduler = orbitScheduler(middleware.configuration)
+    private val executor by lazy {
+        Executors.newSingleThreadExecutor { Thread(it, "reducerThread") }
+    }
 
     override val orbit: Observable<STATE> = reducerSubject.distinctUntilChanged()
     override val currentState: STATE
@@ -107,6 +110,7 @@ class BaseOrbitContainer<STATE : Any, SIDE_EFFECT : Any>(
 
     override fun disposeOrbit() {
         disposables.clear()
+        executor.shutdown()
     }
 
     private fun backgroundScheduler(configuration: Middleware.Config): Scheduler {
@@ -121,7 +125,7 @@ class BaseOrbitContainer<STATE : Any, SIDE_EFFECT : Any>(
         return if (configuration.testMode) {
             Schedulers.trampoline()
         } else {
-            Schedulers.from(Executors.newSingleThreadExecutor { Thread(it, "reducerThread") })
+            Schedulers.from(executor)
         }
     }
 }
