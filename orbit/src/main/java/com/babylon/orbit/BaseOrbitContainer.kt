@@ -26,6 +26,7 @@ import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
+import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
 class BaseOrbitContainer<STATE : Any, SIDE_EFFECT : Any>(
@@ -34,10 +35,12 @@ class BaseOrbitContainer<STATE : Any, SIDE_EFFECT : Any>(
 ) : OrbitContainer<STATE, SIDE_EFFECT> {
 
     private val inputSubject: PublishSubject<Any> = PublishSubject.create()
-    private val reducerSubject: BehaviorSubject<STATE> = BehaviorSubject.createDefault(initialStateOverride ?: middleware.initialState)
+    private val reducerSubject: BehaviorSubject<STATE> =
+        BehaviorSubject.createDefault(initialStateOverride ?: middleware.initialState)
     private val sideEffectSubject: PublishSubject<SIDE_EFFECT> = PublishSubject.create()
     private val disposables = CompositeDisposable()
     private val scheduler = orbitScheduler(middleware.configuration)
+    private var executor: ExecutorService? = null
 
     override val orbit: Observable<STATE> = reducerSubject.distinctUntilChanged()
     override val currentState: STATE
@@ -80,6 +83,7 @@ class BaseOrbitContainer<STATE : Any, SIDE_EFFECT : Any>(
         // only emit [LifecycleAction.Created] if we didn't override the initial state
         if (initialStateOverride == null) inputSubject.onNext(LifecycleAction.Created)
     }
+
     private fun reduce(partialReducer: (STATE) -> STATE): Single<STATE> {
         return Single.fromCallable {
             reducerSubject.onNext(partialReducer(currentState))
@@ -107,6 +111,7 @@ class BaseOrbitContainer<STATE : Any, SIDE_EFFECT : Any>(
 
     override fun disposeOrbit() {
         disposables.clear()
+        executor?.shutdown()
     }
 
     private fun backgroundScheduler(configuration: Middleware.Config): Scheduler {
@@ -121,7 +126,12 @@ class BaseOrbitContainer<STATE : Any, SIDE_EFFECT : Any>(
         return if (configuration.testMode) {
             Schedulers.trampoline()
         } else {
-            Schedulers.from(Executors.newSingleThreadExecutor { Thread(it, "reducerThread") })
+            Executors.newSingleThreadExecutor {
+                Thread(it, "reducerThread")
+            }.let {
+                executor = it
+                Schedulers.from(it)
+            }
         }
     }
 }
