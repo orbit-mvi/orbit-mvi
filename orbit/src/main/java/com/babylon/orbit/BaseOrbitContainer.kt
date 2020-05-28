@@ -128,9 +128,8 @@ class BaseOrbitContainer<STATE : Any, SIDE_EFFECT : Any>(
         } else {
             Executors.newSingleThreadExecutor {
                 Thread(it, "reducerThread")
-            }.also {
-                executor = it
             }.let {
+                executor = it
                 Schedulers.from(it)
             }
         }
