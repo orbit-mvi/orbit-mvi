@@ -30,10 +30,10 @@ internal class Reduce<S : Any, E : Any>(val block: Context<S, E>.() -> Any) :
     Operator<S, E>
 
 data class SideEffectContext<S : Any, SE : Any, E : Any>(
-    override val state: S,
-    override val event: E,
-    private val postSideEffect: (SE) -> Unit
-) : Context<S, E> {
+    val state: S,
+    val event: E,
+    val postSideEffect: (SE) -> Unit
+) {
     fun post(event: SE) {
         postSideEffect(event)
     }
@@ -79,12 +79,14 @@ object BasePlugin : OrbitPlugin {
             }
             is SideEffect<*, *, *> -> flow.onEach {
                 with(operator as SideEffect<S, SE, E>) {
-                    val baseContext = context(it)
-                    SideEffectContext(
-                        baseContext.state,
-                        baseContext.event,
-                        containerContext.postSideEffect
-                    ).block()
+                    context(it).let {
+                        SideEffectContext(
+                            it.state,
+                            it.event,
+                            containerContext.postSideEffect
+                        )
+                    }
+                        .block()
                 }
             }
             is Reduce -> flow.onEach {

@@ -16,5 +16,4 @@
 
 package com.babylon.orbit2
 
-data class RealContext<S : Any, E : Any>(override val state: S, override val event: E) :
-    Context<S, E>
+data class Context<S : Any, E : Any>(val state: S, val event: E)

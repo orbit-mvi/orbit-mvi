@@ -102,7 +102,7 @@ open class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
                         pluginContext,
                         flow2,
                         operator as Operator<STATE, Any>
-                    ) { RealContext(currentState, it) }
+                    ) { Context(currentState, it) }
                 }
             }.collect()
     }
