@@ -26,21 +26,20 @@ internal class SavedStateContainerDecorator<STATE : Any, SIDE_EFFECT : Any>(
     override val currentState: STATE
         get() = actual.currentState
 
-    override val orbit: Stream<STATE>
+    override val stateStream: Stream<STATE>
         get() = object : Stream<STATE> {
             override fun observe(lambda: (STATE) -> Unit): Closeable {
-                return actual.orbit.observe {
+                return actual.stateStream.observe {
                     savedStateHandle[Container.SAVED_STATE_KEY] = it
                     lambda(it)
                 }
             }
         }
 
-    override val sideEffect: Stream<SIDE_EFFECT>
-        get() = actual.sideEffect
+    override val sideEffectStream: Stream<SIDE_EFFECT>
+        get() = actual.sideEffectStream
 
-    override fun <EVENT : Any> orbit(
-        event: EVENT,
-        init: Builder<STATE, SIDE_EFFECT, EVENT>.() -> Builder<STATE, SIDE_EFFECT, *>
-    ) = actual.orbit(event, init)
+    override fun orbit(
+        init: Builder<STATE, SIDE_EFFECT, Unit>.() -> Builder<STATE, SIDE_EFFECT, *>
+    ) = actual.orbit(init)
 }

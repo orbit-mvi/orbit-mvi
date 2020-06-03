@@ -89,30 +89,30 @@ internal class BaseDslBehaviourTest {
             TestState(42)
         )
 
-        fun reducer(action: Int) = orbit(action) {
+        fun reducer(action: Int) = orbit {
             reduce {
-                state.copy(id = event)
+                state.copy(id = action)
             }
         }
 
-        fun transformer(action: Int) = orbit(action) {
+        fun transformer(action: Int) = orbit {
             transform {
-                event + 5
+                action + 5
             }
                 .reduce {
                     state.copy(id = event)
                 }
         }
 
-        fun postingSideEffect(action: Int) = orbit(action) {
+        fun postingSideEffect(action: Int) = orbit {
             sideEffect {
-                post(event.toString())
+                post(action.toString())
             }
         }
 
-        fun sideEffect(action: Int) = orbit(action) {
+        fun sideEffect(action: Int) = orbit {
             sideEffect {
-                event.toString()
+                action.toString()
             }
         }
     }

@@ -117,19 +117,19 @@ internal class CoroutinePluginBehaviourTest {
     private class Middleware : Host<TestState, String> {
         override val container = Container.create<TestState, String>(TestState(42))
 
-        fun suspend(action: Int) = orbit(action) {
+        fun suspend(action: Int) = orbit {
             transformSuspend {
                 delay(50)
-                event + 5
+                action + 5
             }
                 .reduce {
                     state.copy(id = event)
                 }
         }
 
-        fun flow(action: Int) = orbit(action) {
+        fun flow(action: Int) = orbit {
             transformFlow {
-                flowOf(event, event + 1, event + 2, event + 3)
+                flowOf(action, action + 1, action + 2, action + 3)
                     .onEach { delay(50) }
             }
                 .reduce {

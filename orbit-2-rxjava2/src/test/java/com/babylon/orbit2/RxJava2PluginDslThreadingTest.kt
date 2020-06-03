@@ -47,7 +47,7 @@ internal class RxJava2PluginDslThreadingTest {
         val action = fixture<Int>()
 
         val middleware = Middleware()
-        val testStreamObserver = middleware.container.orbit.test()
+        val testStreamObserver = middleware.container.stateStream.test()
 
         middleware.single(action)
 
@@ -60,7 +60,7 @@ internal class RxJava2PluginDslThreadingTest {
         val action = fixture<Int>()
 
         val middleware = Middleware()
-        val testStreamObserver = middleware.container.orbit.test()
+        val testStreamObserver = middleware.container.stateStream.test()
 
         middleware.maybe(action)
 
@@ -73,7 +73,7 @@ internal class RxJava2PluginDslThreadingTest {
         val action = fixture<Int>()
 
         val middleware = Middleware()
-        val testStreamObserver = middleware.container.orbit.test()
+        val testStreamObserver = middleware.container.stateStream.test()
 
         middleware.maybeNot(action)
 
@@ -86,7 +86,7 @@ internal class RxJava2PluginDslThreadingTest {
         val action = fixture<Int>()
 
         val middleware = Middleware()
-        val testStreamObserver = middleware.container.orbit.test()
+        val testStreamObserver = middleware.container.stateStream.test()
 
         middleware.completable(action)
 
@@ -99,7 +99,7 @@ internal class RxJava2PluginDslThreadingTest {
         val action = fixture<Int>()
 
         val middleware = Middleware()
-        val testStreamObserver = middleware.container.orbit.test()
+        val testStreamObserver = middleware.container.stateStream.test()
 
         middleware.observable(action)
 
@@ -119,9 +119,9 @@ internal class RxJava2PluginDslThreadingTest {
         lateinit var threadName: String
         val latch = CountDownLatch(1)
 
-        fun single(action: Int) = orbit(action) {
+        fun single(action: Int) = orbit {
             transformRx2Single {
-                Single.just(event + 5)
+                Single.just(action + 5)
                     .doOnSubscribe { threadName = Thread.currentThread().name }
             }
                 .reduce {
@@ -129,9 +129,9 @@ internal class RxJava2PluginDslThreadingTest {
                 }
         }
 
-        fun maybe(action: Int) = orbit(action) {
+        fun maybe(action: Int) = orbit {
             transformRx2Maybe {
-                Maybe.just(event + 5)
+                Maybe.just(action + 5)
                     .doOnSubscribe { threadName = Thread.currentThread().name }
             }
                 .reduce {
@@ -139,7 +139,7 @@ internal class RxJava2PluginDslThreadingTest {
                 }
         }
 
-        fun maybeNot(action: Int) = orbit(action) {
+        fun maybeNot(action: Int) = orbit {
             transformRx2Maybe {
                 Maybe.empty<Int>()
                     .doOnSubscribe { threadName = Thread.currentThread().name }
@@ -150,19 +150,19 @@ internal class RxJava2PluginDslThreadingTest {
                 }
         }
 
-        fun completable(action: Int) = orbit(action) {
+        fun completable(action: Int) = orbit {
             transformRx2Completable {
                 Completable.complete()
                     .doOnSubscribe { threadName = Thread.currentThread().name }
             }
                 .reduce {
-                    state.copy(id = event)
+                    state.copy(id = action)
                 }
         }
 
-        fun observable(action: Int) = orbit(action) {
+        fun observable(action: Int) = orbit {
             transformRx2Observable {
-                Observable.just(event, event + 1, event + 2, event + 3)
+                Observable.just(action, action + 1, action + 2, action + 3)
                     .doOnSubscribe { threadName = Thread.currentThread().name }
             }
                 .reduce {

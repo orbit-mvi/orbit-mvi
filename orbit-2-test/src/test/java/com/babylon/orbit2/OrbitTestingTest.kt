@@ -67,9 +67,9 @@ class OrbitTestingTest {
             println("created!")
         }
 
-        fun something(action: Boolean): Unit = orbit(action) {
+        fun something(action: Boolean): Unit = orbit {
             transform {
-                event.toString()
+                action.toString()
             }
                 .reduce {
                     state.copy(verified = event.toBoolean())
@@ -82,9 +82,9 @@ class OrbitTestingTest {
                 }
         }
 
-        fun somethingElse(action: String) = orbit(action) {
+        fun somethingElse(action: String) = orbit {
             sideEffect {
-                println("something else $event")
+                println("something else $action")
             }
         }
     }

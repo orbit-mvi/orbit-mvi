@@ -40,8 +40,9 @@ class OrbitInvocation<HOST : Host<STATE, SIDE_EFFECT>, STATE : Any, SIDE_EFFECT 
 ) {
     fun then(block: OrbitVerification<HOST, STATE, SIDE_EFFECT>.() -> Unit) {
 
-        val orbitTestObserver = host.container.orbit.test()
-        val sideEffectTestObserver = host.container.sideEffect.test()
+        val orbitTestObserver = host.container.stateStream.test()
+        val sideEffectTestObserver = host.container.sideEffectStream.test()
+
         host.invocation()
 
         val verification = OrbitVerification<HOST, STATE, SIDE_EFFECT>()
@@ -67,10 +68,8 @@ class OrbitInvocation<HOST : Host<STATE, SIDE_EFFECT>, STATE : Any, SIDE_EFFECT 
         verify(
             host,
             atLeast(0)
-        ).orbit<Any>(
-            any(),
-            any()
-        )
+        ).orbit(any())
+
         verify(
             host,
             atLeast(0)

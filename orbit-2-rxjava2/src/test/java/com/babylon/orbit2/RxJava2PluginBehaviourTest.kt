@@ -203,25 +203,25 @@ internal class RxJava2PluginBehaviourTest {
     private class Middleware : Host<TestState, String> {
         override val container = Container.create<TestState, String>(TestState(42))
 
-        fun single(action: Int) = orbit(action) {
+        fun single(action: Int) = orbit {
             transformRx2Single {
-                Single.just(event + 5)
+                Single.just(action + 5)
             }
                 .reduce {
                     state.copy(id = event)
                 }
         }
 
-        fun maybe(action: Int) = orbit(action) {
+        fun maybe(action: Int) = orbit {
             transformRx2Maybe {
-                Maybe.just(event + 5)
+                Maybe.just(action + 5)
             }
                 .reduce {
                     state.copy(id = event)
                 }
         }
 
-        fun maybeNot(action: Int) = orbit(action) {
+        fun maybeNot(action: Int) = orbit {
             transformRx2Maybe {
                 Maybe.empty<Int>()
             }
@@ -230,18 +230,18 @@ internal class RxJava2PluginBehaviourTest {
                 }
         }
 
-        fun completable(action: Int) = orbit(action) {
+        fun completable(action: Int) = orbit {
             transformRx2Completable {
                 Completable.complete()
             }
                 .reduce {
-                    state.copy(id = event)
+                    state.copy(id = action)
                 }
         }
 
-        fun observable(action: Int) = orbit(action) {
+        fun observable(action: Int) = orbit {
             transformRx2Observable {
-                Observable.just(event, event + 1, event + 2, event + 3)
+                Observable.just(action, action + 1, action + 2, action + 3)
             }
                 .reduce {
                     state.copy(id = event)

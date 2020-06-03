@@ -30,17 +30,13 @@ class TestContainer<STATE : Any, SIDE_EFFECT : Any>(
 ) {
     private var dispatched = false
 
-    override fun <EVENT : Any> orbit(
-        event: EVENT,
-        init: Builder<STATE, SIDE_EFFECT, EVENT>.() -> Builder<STATE, SIDE_EFFECT, *>
+    override fun orbit(
+        init: Builder<STATE, SIDE_EFFECT, Unit>.() -> Builder<STATE, SIDE_EFFECT, *>
     ) {
         if (!isolateFlow || !dispatched) {
             dispatched = true
             runBlocking {
-                collectFlow(
-                    event,
-                    init
-                )
+                collectFlow(init)
             }
         }
     }

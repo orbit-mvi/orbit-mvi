@@ -18,11 +18,11 @@ package com.babylon.orbit2
 
 interface Container<STATE : Any, SIDE_EFFECT : Any> {
     val currentState: STATE
-    val orbit: Stream<STATE>
-    val sideEffect: Stream<SIDE_EFFECT>
-    fun <EVENT : Any> orbit(
-        event: EVENT,
-        init: Builder<STATE, SIDE_EFFECT, EVENT>.() -> Builder<STATE, SIDE_EFFECT, *>
+    val stateStream: Stream<STATE>
+    val sideEffectStream: Stream<SIDE_EFFECT>
+
+    fun orbit(
+        init: Builder<STATE, SIDE_EFFECT, Unit>.() -> Builder<STATE, SIDE_EFFECT, *>
     )
 
     companion object {

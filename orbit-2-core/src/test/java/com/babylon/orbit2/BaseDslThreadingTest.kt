@@ -33,7 +33,7 @@ internal class BaseDslThreadingTest {
     fun `reducer executes on orbit dispatcher`() {
         val action = fixture<Int>()
         val middleware = BaseDslMiddleware()
-        val testStreamObserver = middleware.container.orbit.test()
+        val testStreamObserver = middleware.container.stateStream.test()
 
         middleware.reducer(action)
 
@@ -45,7 +45,7 @@ internal class BaseDslThreadingTest {
     fun `transformer executes on orbit dispatcher`() {
         val action = fixture<Int>()
         val middleware = BaseDslMiddleware()
-        val testStreamObserver = middleware.container.orbit.test()
+        val testStreamObserver = middleware.container.stateStream.test()
 
         middleware.transformer(action)
 
@@ -57,7 +57,7 @@ internal class BaseDslThreadingTest {
     fun `posting side effects executes on orbit dispatcher`() {
         val action = fixture<Int>()
         val middleware = BaseDslMiddleware()
-        val testStreamObserver = middleware.container.sideEffect.test()
+        val testStreamObserver = middleware.container.sideEffectStream.test()
 
         middleware.postingSideEffect(action)
 
@@ -86,31 +86,31 @@ internal class BaseDslThreadingTest {
         lateinit var threadName: String
         val latch = CountDownLatch(1)
 
-        fun reducer(action: Int) = orbit(action) {
+        fun reducer(action: Int) = orbit {
             reduce {
                 threadName = Thread.currentThread().name
                 state.copy(id = action)
             }
         }
 
-        fun transformer(action: Int) = orbit(action) {
+        fun transformer(action: Int) = orbit {
             transform {
                 threadName = Thread.currentThread().name
-                event + 5
+                action + 5
             }
                 .reduce {
                     state.copy(id = event)
                 }
         }
 
-        fun postingSideEffect(action: Int) = orbit(action) {
+        fun postingSideEffect(action: Int) = orbit {
             sideEffect {
                 threadName = Thread.currentThread().name
                 post(event.toString())
             }
         }
 
-        fun sideEffect(action: Int) = orbit(action) {
+        fun sideEffect(action: Int) = orbit {
             sideEffect {
                 threadName = Thread.currentThread().name
                 latch.countDown()

@@ -47,9 +47,9 @@ internal class SideEffectTest {
         val action3 = fixture<Int>()
         val middleware = Middleware(caching)
 
-        val testSideEffectObserver1 = middleware.container.sideEffect.test()
-        val testSideEffectObserver2 = middleware.container.sideEffect.test()
-        val testSideEffectObserver3 = middleware.container.sideEffect.test()
+        val testSideEffectObserver1 = middleware.container.sideEffectStream.test()
+        val testSideEffectObserver2 = middleware.container.sideEffectStream.test()
+        val testSideEffectObserver3 = middleware.container.sideEffectStream.test()
 
         middleware.someFlow(action)
         middleware.someFlow(action2)
@@ -84,7 +84,7 @@ internal class SideEffectTest {
         middleware.someFlow(action2)
         middleware.someFlow(action3)
 
-        val testSideEffectObserver1 = middleware.container.sideEffect.test()
+        val testSideEffectObserver1 = middleware.container.sideEffectStream.test()
 
         testSideEffectObserver1.awaitCount(3)
 
@@ -97,7 +97,7 @@ internal class SideEffectTest {
         val action2 = fixture<Int>()
         val action3 = fixture<Int>()
         val middleware = Middleware(false)
-        val testSideEffectObserver1 = middleware.container.sideEffect.test()
+        val testSideEffectObserver1 = middleware.container.sideEffectStream.test()
 
         middleware.someFlow(action)
         middleware.someFlow(action2)
@@ -105,7 +105,7 @@ internal class SideEffectTest {
         testSideEffectObserver1.awaitCount(3)
         testSideEffectObserver1.close()
 
-        val testSideEffectObserver2 = middleware.container.sideEffect.test()
+        val testSideEffectObserver2 = middleware.container.sideEffectStream.test()
 
         testSideEffectObserver1.awaitCount(3, 10L)
 
@@ -120,7 +120,7 @@ internal class SideEffectTest {
         val action3 = fixture<Int>()
         val middleware = Middleware(caching)
 
-        val testSideEffectObserver1 = middleware.container.sideEffect.test()
+        val testSideEffectObserver1 = middleware.container.sideEffectStream.test()
 
         middleware.someFlow(action)
 
@@ -130,7 +130,7 @@ internal class SideEffectTest {
         middleware.someFlow(action2)
         middleware.someFlow(action3)
 
-        val testSideEffectObserver2 = middleware.container.sideEffect.test()
+        val testSideEffectObserver2 = middleware.container.sideEffectStream.test()
         testSideEffectObserver2.awaitCount(2)
 
         assertThat(testSideEffectObserver1.values).containsExactly(action)
@@ -147,7 +147,7 @@ internal class SideEffectTest {
         val action3 = fixture<Int>()
         val middleware = Middleware(caching)
 
-        val testSideEffectObserver1 = middleware.container.sideEffect.test()
+        val testSideEffectObserver1 = middleware.container.sideEffectStream.test()
 
         middleware.someFlow(action)
         middleware.someFlow(action2)
@@ -155,7 +155,7 @@ internal class SideEffectTest {
 
         testSideEffectObserver1.awaitCount(3)
 
-        val testSideEffectObserver2 = middleware.container.sideEffect.test()
+        val testSideEffectObserver2 = middleware.container.sideEffectStream.test()
 
         assertThat(testSideEffectObserver1.values).containsExactly(action, action2, action3)
         assertThat(testSideEffectObserver2.values).isEmpty()
@@ -168,9 +168,9 @@ internal class SideEffectTest {
                 else -> Container.create(Unit, Container.Settings(caching))
             }
 
-        fun someFlow(action: Int) = orbit(action) {
+        fun someFlow(action: Int) = orbit {
             sideEffect {
-                post(event)
+                post(action)
             }
         }
     }

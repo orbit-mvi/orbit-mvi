@@ -33,7 +33,7 @@ class SavedStatePluginWriteTest {
         val something = fixture<Int>()
         val savedStateHandle = SavedStateHandle()
         val middleware = Middleware(savedStateHandle, initialState)
-        val testStateObserver = middleware.container.orbit.test()
+        val testStateObserver = middleware.container.stateStream.test()
 
         middleware.something(something)
 
@@ -77,9 +77,9 @@ class SavedStatePluginWriteTest {
             savedStateHandle
         )
 
-        fun something(action: Int) = orbit(action) {
+        fun something(action: Int) = orbit {
             reduce {
-                state.copy(id = event)
+                state.copy(id = action)
             }
         }
     }
