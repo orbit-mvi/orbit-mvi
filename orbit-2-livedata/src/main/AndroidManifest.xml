@@ -16,4 +16,4 @@
   ~  limitations under the License.
   -->
 
-<manifest package="com.babylon.orbit2" />
+<manifest package="com.babylon.orbit2.livedata" />
