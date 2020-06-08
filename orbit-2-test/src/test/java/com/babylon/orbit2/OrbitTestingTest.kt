@@ -16,76 +16,392 @@
 
 package com.babylon.orbit2
 
+import com.appmattus.kotlinfixture.kotlinFixture
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.never
 import com.nhaarman.mockitokotlin2.verify
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 
 class OrbitTestingTest {
-    @Test
-    fun `basic test`() {
+    val fixture = kotlinFixture()
 
-        val mockDependency = mock<BogusDependency>()
-        val testSubject = TestMiddleware(mockDependency)
+    @Nested
+    inner class StateTests {
 
-        testSubject.given(State())
-            .whenever {
-                something(true)
-            }
-            .then {
+        @Test
+        fun `succeeds if emitted states match expected states`() {
+            val testSubject = StateTestMiddleware().test(State(), false)
+            val action = fixture<Int>()
+            val action2 = fixture<Int>()
+
+            testSubject.something(action)
+            testSubject.something(action2)
+
+            testSubject.assert {
                 states(
-                    { copy(verified = true) }
+                    { copy(count = action) },
+                    { copy(count = action2) }
                 )
-                loopBack { somethingElse("true") }
             }
+        }
+
+        @Test
+        fun `fails if more states emitted than expected`() {
+            val testSubject = StateTestMiddleware().test(State(), false)
+            val action = fixture<Int>()
+            val action2 = fixture<Int>()
+
+            testSubject.something(action)
+            testSubject.something(action2)
+
+            val throwable = assertThrows<AssertionError> {
+                testSubject.assert {
+                }
+            }
+
+            assertThat(throwable.message).contains(
+                "Expected 0 states but more were emitted:\n" +
+                        "[State(count=$action), State(count=$action2)]"
+            )
+        }
+
+        @Test
+        fun `fails if one more state expected than emitted`() {
+            val testSubject = StateTestMiddleware().test(State(), false)
+            val action = fixture<Int>()
+            val action2 = fixture<Int>()
+            val action3 = fixture<Int>()
+
+            testSubject.something(action)
+            testSubject.something(action2)
+
+            val throwable = assertThrows<AssertionError> {
+                testSubject.assert {
+                    states(
+                        { copy(count = action) },
+                        { copy(count = action2) },
+                        { copy(count = action3) }
+                    )
+                }
+            }
+
+            assertThat(throwable.message).contains(
+                "Failed assertions at indices 2..2, expected states but never received:\n" +
+                        "[State(count=$action3)]"
+            )
+        }
+
+        @Test
+        fun `fails if two more states expected than emitted`() {
+            val testSubject = StateTestMiddleware().test(State(), false)
+            val action = fixture<Int>()
+            val action2 = fixture<Int>()
+            val action3 = fixture<Int>()
+            val action4 = fixture<Int>()
+
+            testSubject.something(action)
+            testSubject.something(action2)
+
+            val throwable = assertThrows<AssertionError> {
+                testSubject.assert {
+                    states(
+                        { copy(count = action) },
+                        { copy(count = action2) },
+                        { copy(count = action3) },
+                        { copy(count = action4) }
+                    )
+                }
+            }
+
+            assertThat(throwable.message).contains(
+                "Failed assertions at indices 2..3, expected states but never received:\n" +
+                        "[State(count=$action3), State(count=$action4)]"
+            )
+        }
+
+        @Test
+        fun `fails if first emitted state does not match expected`() {
+            val testSubject = StateTestMiddleware().test(State())
+            val action = fixture<Int>()
+            val action2 = fixture<Int>()
+            val action3 = fixture<Int>()
+
+            testSubject.something(action)
+            testSubject.something(action2)
+
+            val throwable = assertThrows<AssertionError> {
+                testSubject.assert {
+                    states(
+                        { copy(count = action2) },
+                        { copy(count = action3) }
+                    )
+                }
+            }
+
+            assertThat(throwable.message).contains(
+                "Failed assertion at index 0. " +
+                        "Expected <State(count=$action2)>, actual <State(count=$action)>."
+            )
+        }
+
+        @Test
+        fun `fails if second emitted state does not match expected`() {
+            val testSubject = StateTestMiddleware().test(State())
+            val action = fixture<Int>()
+            val action2 = fixture<Int>()
+            val action3 = fixture<Int>()
+
+            testSubject.something(action)
+            testSubject.something(action2)
+
+            val throwable = assertThrows<AssertionError> {
+                testSubject.assert {
+                    states(
+                        { copy(count = action2) },
+                        { copy(count = action3) }
+                    )
+                }
+            }
+
+            assertThat(throwable.message).contains(
+                "Failed assertion at index 0. " +
+                        "Expected <State(count=$action2)>, actual <State(count=$action)>."
+            )
+        }
+
+        @Test
+        fun `fails if expected states are out of order`() {
+            val testSubject = StateTestMiddleware().test(State())
+            val action = fixture<Int>()
+            val action2 = fixture<Int>()
+
+            testSubject.something(action)
+            testSubject.something(action2)
+
+            val throwable = assertThrows<AssertionError> {
+                testSubject.assert {
+                    states(
+                        { copy(count = action2) },
+                        { copy(count = action) }
+                    )
+                }
+            }
+
+            assertThat(throwable.message).contains(
+                "Failed assertion at index 0. " +
+                        "Expected <State(count=$action2)>, actual <State(count=$action)>."
+            )
+        }
+
+        @Test
+        fun `succeeds with dropped assertions`() {
+            val testSubject = StateTestMiddleware().test(State(), false)
+            val action = fixture<Int>()
+            val action2 = fixture<Int>()
+            val action3 = fixture<Int>()
+
+            testSubject.something(action)
+            testSubject.something(action2)
+            testSubject.something(action3)
+
+            testSubject.assert {
+                states(
+                    { copy(count = action) },
+                    { copy(count = action2) },
+                    { copy(count = action2) },
+                    { copy(count = action3) }
+                )
+            }
+        }
+
+        @Test
+        fun `fails if dropped assertions mean extra states are observed`() {
+            val testSubject = StateTestMiddleware().test(State(), false)
+            val action = fixture<Int>()
+            val action2 = fixture<Int>()
+            val action3 = fixture<Int>()
+
+            testSubject.something(action)
+            testSubject.something(action2)
+
+            val throwable = assertThrows<AssertionError> {
+                testSubject.assert {
+                    states(
+                        { copy(count = 0) },
+                        { copy(count = action) }
+                    )
+
+                }
+            }
+
+            assertThat(throwable.message).contains(
+                "Expected 2 states but more were emitted:\n" +
+                        "[State(count=$action2)]\n\n" +
+                        "Caution: 1 assertions were dropped as they encountered a current state " +
+                        "which already satisfied them."
+            )
+        }
+
+        private inner class StateTestMiddleware() :
+            Host<State, Nothing> {
+            override val container = Container.create<State, Nothing>(State())
+
+            fun something(action: Int): Unit = orbit {
+                transform {
+                    action.toString()
+                }
+                    .reduce {
+                        state.copy(count = event.toInt())
+                    }
+            }
+        }
     }
 
-    @Test
-    fun `created is not invoked when setting up the class for testing`() {
+    @Nested
+    inner class SideEffectTests {
+        @Test
+        fun `succeeds if posted side effects match expected side effects`() {
+            val testSubject = SideEffectTestMiddleware().test(State(), false)
+            val sideEffects = fixture<List<Int>>()
 
-        val mockDependency = mock<BogusDependency>()
-        val testSubject = TestMiddleware(mockDependency)
+            sideEffects.forEach { testSubject.something(it) }
 
-        val spy = testSubject.testSpy(State(), true)
+            testSubject.assert {
+                postedSideEffects(sideEffects)
+            }
+        }
 
-        verify(spy, never()).created()
+        @Test
+        fun `fails if posted side effects do not match expected side effects`() {
+            val testSubject = SideEffectTestMiddleware().test(State(), false)
+            val sideEffects = fixture<List<Int>>()
+            val sideEffects2 = fixture<List<Int>>()
+
+            sideEffects.forEach { testSubject.something(it) }
+
+            val throwable = assertThrows<AssertionError> {
+                testSubject.assert {
+                    postedSideEffects(sideEffects2)
+                }
+            }
+
+            assertThat(throwable.message).contains(
+                "Expected <$sideEffects2>, actual <$sideEffects>."
+            )
+        }
+
+        @Test
+        fun `succeeds if loopbacks match`() {
+            val testSubject = SideEffectTestMiddleware().test(State(), false)
+            val sideEffects = fixture<List<Int>>()
+
+            sideEffects.forEach { testSubject.something(it) }
+
+            testSubject.assert {
+                postedSideEffects(sideEffects)
+
+                sideEffects.forEach {
+                    loopBack { somethingElse(it.toString()) }
+                }
+            }
+        }
+
+        @Test
+        fun `fails if loopbacks do not match`() {
+            val testSubject = SideEffectTestMiddleware().test(State(), false)
+            val sideEffects = fixture<List<Int>>()
+            val sideEffects2 = fixture<List<Int>>()
+
+            sideEffects.forEach { testSubject.something(it) }
+
+            assertThrows<AssertionError> {
+                testSubject.assert {
+                    postedSideEffects(sideEffects)
+
+                    sideEffects2.forEach {
+                        loopBack { somethingElse(it.toString()) }
+                    }
+                }
+            }
+        }
+
+        private inner class SideEffectTestMiddleware() :
+            Host<State, Int> {
+            override val container = Container.create<State, Int>(State())
+
+            fun something(action: Int): Unit = orbit {
+                sideEffect {
+                    post(action)
+                }
+                    .sideEffect { somethingElse(action.toString()) }
+            }
+
+            fun somethingElse(action: String) = orbit {
+                sideEffect {
+                    println(action)
+                }
+            }
+        }
     }
 
-    private data class State(val verified: Boolean = false)
+    @Nested
+    inner class GeneralTests {
+
+        @Test
+        fun `created is not invoked by default`() {
+
+            val mockDependency = mock<BogusDependency>()
+            val testSubject = GeneralTestMiddleware(mockDependency)
+
+            val spy = testSubject.test(State())
+
+            verify(spy, never()).created()
+        }
+
+        @Test
+        fun `first flow is isolated by default`() {
+
+            val mockDependency = mock<BogusDependency>()
+            val testSubject = GeneralTestMiddleware(mockDependency)
+
+            val spy = testSubject.test(State())
+
+            spy.something()
+
+            verify(mockDependency).something1()
+            verify(mockDependency, never()).something2()
+        }
+
+        private inner class GeneralTestMiddleware(private val dependency: BogusDependency) :
+            Host<State, Nothing> {
+            override val container = Container.create<State, Nothing>(State()) {
+                created()
+            }
+
+            fun created() {
+                dependency.create()
+                println("created!")
+            }
+
+            fun something() = orbit {
+                sideEffect { dependency.something1() }
+                    .sideEffect { somethingElse() }
+            }
+
+            fun somethingElse() = orbit {
+                sideEffect { dependency.something2() }
+            }
+        }
+    }
+
+    private data class State(val count: Int = 0)
 
     private interface BogusDependency {
-        fun stub()
-    }
-
-    private class TestMiddleware(private val dependency: BogusDependency) : Host<State, Nothing> {
-        override val container = Container.create<State, Nothing>(State()) {
-            created()
-        }
-
-        fun created() {
-            dependency.stub()
-            println("created!")
-        }
-
-        fun something(action: Boolean): Unit = orbit {
-            transform {
-                action.toString()
-            }
-                .reduce {
-                    state.copy(verified = event.toBoolean())
-                }
-                .sideEffect {
-                    println("${event::class}, $state")
-                }
-                .sideEffect {
-                    somethingElse(event)
-                }
-        }
-
-        fun somethingElse(action: String) = orbit {
-            sideEffect {
-                println("something else $action")
-            }
-        }
+        fun create()
+        fun something1()
+        fun something2()
     }
 }

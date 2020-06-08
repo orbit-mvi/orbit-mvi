@@ -17,28 +17,80 @@
 package com.babylon.orbit2
 
 import com.nhaarman.mockitokotlin2.spy
+import com.nhaarman.mockitokotlin2.times
+import com.nhaarman.mockitokotlin2.verify
+import org.mockito.Mockito
+import java.util.*
+import kotlin.test.assertEquals
 
-inline fun <STATE : Any, SIDE_EFFECT : Any, reified T : Host<STATE, SIDE_EFFECT>> T.testSpy(
+inline fun <STATE : Any, SIDE_EFFECT : Any, reified T : Host<STATE, SIDE_EFFECT>> T.test(
     initialState: STATE,
-    isolateFlow: Boolean
+    isolateFlow: Boolean = true
 ): T {
-    return spy(this) {
-        on { container }.thenReturn(
-            TestContainer(
-                initialState,
-                isolateFlow
-            )
-        )
+
+    val testContainer = TestContainer<STATE, SIDE_EFFECT>(
+        initialState,
+        isolateFlow
+    )
+
+    val spy = spy(this) {
+        on { container }.thenReturn(testContainer)
+    }
+
+    TestHarness.fixtures[spy] = TestFixtures(
+        initialState,
+        spy.container.stateStream.test(),
+        spy.container.sideEffectStream.test()
+    )
+
+    Mockito.clearInvocations(spy)
+
+    return spy
+}
+
+fun <STATE : Any, SIDE_EFFECT : Any, T : Host<STATE, SIDE_EFFECT>> T.assert(
+    block: OrbitVerification<T, STATE, SIDE_EFFECT>.() -> Unit
+) {
+    val verification = OrbitVerification<T, STATE, SIDE_EFFECT>()
+        .apply(block)
+
+    val testThings =
+        TestHarness.fixtures[this] as TestFixtures<STATE, SIDE_EFFECT>
+
+    // sanity check the initial state
+    assertEquals(
+        testThings.initialState,
+        testThings.stateObserver.values.firstOrNull()
+    )
+
+    assertStatesInOrder(
+        testThings.stateObserver.values.drop(1),
+        verification.expectedStateChanges,
+        testThings.initialState
+    )
+
+    assertEquals(
+        verification.expectedSideEffects,
+        testThings.sideEffectObserver.values
+    )
+
+    verification.expectedLoopBacks.forEach {
+        val f = it.invocation
+        verify(
+            this,
+            times(it.times)
+        ).f()
     }
 }
 
-inline fun <reified HOST : Host<STATE, SIDE_EFFECT>, STATE : Any, SIDE_EFFECT : Any> HOST.given(
-    initialState: STATE,
-    isolateFlow: Boolean = true
-) =
-    OrbitGiven(
-        testSpy(initialState, isolateFlow),
-        initialState
-    )
+class TestFixtures<STATE : Any, SIDE_EFFECT : Any>(
+    val initialState: STATE,
+    val stateObserver: TestStreamObserver<STATE>,
+    val sideEffectObserver: TestStreamObserver<SIDE_EFFECT>
+)
+
+object TestHarness {
+    val fixtures: MutableMap<Host<*, *>, TestFixtures<*, *>> = WeakHashMap()
+}
 
 fun <T : Any> Stream<T>.test() = TestStreamObserver(this)

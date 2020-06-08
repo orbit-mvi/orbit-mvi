@@ -29,6 +29,10 @@ class OrbitVerification<HOST : Host<STATE, SIDE_EFFECT>, STATE : Any, SIDE_EFFEC
         this.expectedSideEffects = expectedSideEffects.toList()
     }
 
+    fun postedSideEffects(expectedSideEffects: Iterable<SIDE_EFFECT>) {
+        this.expectedSideEffects = expectedSideEffects.toList()
+    }
+
     fun loopBack(times: Int = 1, block: HOST.() -> Unit) {
         this.expectedLoopBacks.add(
             Times(
