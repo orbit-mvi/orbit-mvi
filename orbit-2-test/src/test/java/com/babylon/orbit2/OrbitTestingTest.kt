@@ -233,7 +233,6 @@ class OrbitTestingTest {
                         { copy(count = 0) },
                         { copy(count = action) }
                     )
-
                 }
             }
 
@@ -245,7 +244,7 @@ class OrbitTestingTest {
             )
         }
 
-        private inner class StateTestMiddleware() :
+        private inner class StateTestMiddleware :
             Host<State, Nothing> {
             override val container = Container.create<State, Nothing>(State())
 
@@ -328,7 +327,7 @@ class OrbitTestingTest {
             }
         }
 
-        private inner class SideEffectTestMiddleware() :
+        private inner class SideEffectTestMiddleware :
             Host<State, Int> {
             override val container = Container.create<State, Int>(State())
 

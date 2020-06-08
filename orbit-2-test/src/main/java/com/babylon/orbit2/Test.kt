@@ -20,7 +20,7 @@ import com.nhaarman.mockitokotlin2.spy
 import com.nhaarman.mockitokotlin2.times
 import com.nhaarman.mockitokotlin2.verify
 import org.mockito.Mockito
-import java.util.*
+import java.util.WeakHashMap
 import kotlin.test.assertEquals
 
 inline fun <STATE : Any, SIDE_EFFECT : Any, reified T : Host<STATE, SIDE_EFFECT>> T.test(
