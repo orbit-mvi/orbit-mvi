@@ -27,59 +27,51 @@ internal class BaseDslBehaviourTest {
     @Test
     fun `reducer produces new states`() {
         val action = fixture<Int>()
+        val middleware = BaseDslMiddleware().test(initialState)
 
-        BaseDslMiddleware()
-            .given(initialState)
-            .whenever {
-                reducer(action)
-            }
-            .then {
-                states(
-                    { TestState(action) }
-                )
-            }
+        middleware.reducer(action)
+
+        middleware.assert {
+            states(
+                { TestState(action) }
+            )
+        }
     }
 
     @Test
     fun `transformer maps values`() {
         val action = fixture<Int>()
+        val middleware = BaseDslMiddleware().test(initialState)
 
-        BaseDslMiddleware()
-            .given(initialState)
-            .whenever {
-                transformer(action)
-            }
-            .then {
-                states(
-                    { TestState(action + 5) }
-                )
-            }
+        middleware.transformer(action)
+
+        middleware.assert {
+            states(
+                { TestState(action + 5) }
+            )
+        }
     }
 
     @Test
     fun `posting side effects emit side effects`() {
         val action = fixture<Int>()
+        val middleware = BaseDslMiddleware().test(initialState)
 
-        BaseDslMiddleware()
-            .given(initialState)
-            .whenever {
-                postingSideEffect(action)
-            }
-            .then {
-                postedSideEffects(action.toString())
-            }
+        middleware.postingSideEffect(action)
+
+        middleware.assert {
+            postedSideEffects(action.toString())
+        }
     }
 
     @Test
     fun `side effect does not post anything if post is not called`() {
         val action = fixture<Int>()
+        val middleware = BaseDslMiddleware().test(initialState)
 
-        BaseDslMiddleware()
-            .given(initialState)
-            .whenever {
-                sideEffect(action)
-            }
-            .then {}
+        middleware.sideEffect(action)
+
+        middleware.assert {}
     }
 
     private data class TestState(val id: Int)

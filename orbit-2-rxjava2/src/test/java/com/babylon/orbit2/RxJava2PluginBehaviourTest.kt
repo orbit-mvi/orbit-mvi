@@ -47,80 +47,68 @@ internal class RxJava2PluginBehaviourTest {
         @Test
         fun `single transformation flatmaps`() {
             val action = fixture<Int>()
+            val middleware = Middleware().test(initialState)
 
-            Middleware()
-                .given(initialState)
-                .whenever {
-                    single(action)
-                }
-                .then {
-                    states(
-                        { TestState(action + 5) }
-                    )
-                }
+            middleware.single(action)
+
+            middleware.assert {
+                states(
+                    { TestState(action + 5) }
+                )
+            }
         }
 
         @Test
         fun `non empty maybe transformation flatmaps`() {
             val action = fixture<Int>()
+            val middleware = Middleware().test(initialState)
 
-            Middleware()
-                .given(initialState)
-                .whenever {
-                    maybe(action)
-                }
-                .then {
-                    states(
-                        { TestState(action + 5) }
-                    )
-                }
+            middleware.maybe(action)
+
+            middleware.assert {
+                states(
+                    { TestState(action + 5) }
+                )
+            }
         }
 
         @Test
         fun `empty maybe transformation flatmaps`() {
             val action = fixture<Int>()
+            val middleware = Middleware().test(initialState)
 
-            Middleware()
-                .given(initialState)
-                .whenever {
-                    maybeNot(action)
-                }
-                .then {}
+            middleware.maybeNot(action)
         }
 
         @Test
         fun `completable transformation flatmaps`() {
             val action = fixture<Int>()
+            val middleware = Middleware().test(initialState)
 
-            Middleware()
-                .given(initialState)
-                .whenever {
-                    completable(action)
-                }
-                .then {
-                    states(
-                        { TestState(action) }
-                    )
-                }
+            middleware.completable(action)
+
+            middleware.assert {
+                states(
+                    { TestState(action) }
+                )
+            }
         }
 
         @Test
         fun `observable transformation flatmaps`() {
             val action = fixture<Int>()
+            val middleware = Middleware().test(initialState)
 
-            Middleware()
-                .given(initialState)
-                .whenever {
-                    observable(action)
-                }
-                .then {
-                    states(
-                        { TestState(action) },
-                        { TestState(action + 1) },
-                        { TestState(action + 2) },
-                        { TestState(action + 3) }
-                    )
-                }
+            middleware.observable(action)
+
+            middleware.assert {
+                states(
+                    { TestState(action) },
+                    { TestState(action + 1) },
+                    { TestState(action + 2) },
+                    { TestState(action + 3) }
+                )
+            }
         }
     }
 
@@ -130,70 +118,50 @@ internal class RxJava2PluginBehaviourTest {
         @Test
         fun `single transformation crashes if plugin is not included`() {
             val action = fixture<Int>()
+            val middleware = Middleware().test(initialState)
 
             assertThrows<IllegalStateException> {
-                Middleware()
-                    .given(initialState)
-                    .whenever {
-                        single(action)
-                    }
-                    .then {}
+                middleware.single(action)
             }
         }
 
         @Test
         fun `non empty maybe transformation crashes if plugin is not included`() {
             val action = fixture<Int>()
+            val middleware = Middleware().test(initialState)
 
             assertThrows<IllegalStateException> {
-                Middleware()
-                    .given(initialState)
-                    .whenever {
-                        maybe(action)
-                    }
-                    .then {}
+                middleware.maybe(action)
             }
         }
 
         @Test
         fun `empty maybe transformation crashes if plugin is not included`() {
             val action = fixture<Int>()
+            val middleware = Middleware().test(initialState)
 
             assertThrows<IllegalStateException> {
-                Middleware()
-                    .given(initialState)
-                    .whenever {
-                        maybeNot(action)
-                    }
-                    .then {}
+                middleware.maybeNot(action)
             }
         }
 
         @Test
         fun `completable transformation crashes if plugin is not included`() {
             val action = fixture<Int>()
+            val middleware = Middleware().test(initialState)
 
             assertThrows<IllegalStateException> {
-                Middleware()
-                    .given(initialState)
-                    .whenever {
-                        completable(action)
-                    }
-                    .then {}
+                middleware.completable(action)
             }
         }
 
         @Test
         fun `observable transformation crashes if plugin is not included`() {
             val action = fixture<Int>()
+            val middleware = Middleware().test(initialState)
 
             assertThrows<IllegalStateException> {
-                Middleware()
-                    .given(initialState)
-                    .whenever {
-                        observable(action)
-                    }
-                    .then {}
+                middleware.observable(action)
             }
         }
     }

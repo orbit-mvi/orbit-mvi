@@ -46,36 +46,32 @@ internal class CoroutinePluginBehaviourTest {
         @Test
         fun `suspend transformation maps`() {
             val action = fixture<Int>()
+            val middleware = Middleware().test(initialState)
 
-            Middleware()
-                .given(initialState)
-                .whenever {
-                    suspend(action)
-                }
-                .then {
-                    states(
-                        { TestState(action + 5) }
-                    )
-                }
+            middleware.suspend(action)
+
+            middleware.assert {
+                states(
+                    { TestState(action + 5) }
+                )
+            }
         }
 
         @Test
         fun `flow transformation flatmaps`() {
             val action = fixture<Int>()
+            val middleware = Middleware().test(initialState)
 
-            Middleware()
-                .given(initialState)
-                .whenever {
-                    flow(action)
-                }
-                .then {
-                    states(
-                        { TestState(action) },
-                        { TestState(action + 1) },
-                        { TestState(action + 2) },
-                        { TestState(action + 3) }
-                    )
-                }
+            middleware.flow(action)
+
+            middleware.assert {
+                states(
+                    { TestState(action) },
+                    { TestState(action + 1) },
+                    { TestState(action + 2) },
+                    { TestState(action + 3) }
+                )
+            }
         }
     }
 
@@ -85,29 +81,20 @@ internal class CoroutinePluginBehaviourTest {
         @Test
         fun `suspend transformation crashes if the plugin is not included`() {
             val action = fixture<Int>()
+            val middleware = Middleware().test(initialState)
 
             assertThrows<IllegalStateException> {
-                Middleware()
-                    .given(initialState)
-                    .whenever {
-                        flow(action)
-                    }
-                    .then {}
+                middleware.flow(action)
             }
         }
 
         @Test
         fun `flow transformation crashes if the plugin is not included`() {
             val action = fixture<Int>()
+            val middleware = Middleware().test(initialState)
 
             assertThrows<IllegalStateException> {
-
-                Middleware()
-                    .given(initialState)
-                    .whenever {
-                        flow(action)
-                    }
-                    .then {}
+                middleware.flow(action)
             }
         }
     }
