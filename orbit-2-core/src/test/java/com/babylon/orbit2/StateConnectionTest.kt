@@ -28,7 +28,7 @@ internal class StateConnectionTest {
     fun `initial state is emitted on connection`() {
         val initialState = fixture<TestState>()
         val middleware = Middleware(initialState)
-        val testStateObserver = middleware.container.orbit.test()
+        val testStateObserver = middleware.container.stateStream.test()
 
         testStateObserver.awaitCount(1)
 
@@ -39,15 +39,16 @@ internal class StateConnectionTest {
     fun `latest state is emitted on connection`() {
         val initialState = fixture<TestState>()
         val middleware = Middleware(initialState)
-        val testStateObserver = middleware.container.orbit.test()
+        val testStateObserver = middleware.container.stateStream.test()
         val action = fixture<Int>()
         middleware.something(action)
         testStateObserver.awaitCount(2) // block until the state is updated
 
-        val testStateObserver2 = middleware.container.orbit.test()
+        val testStateObserver2 = middleware.container.stateStream.test()
         testStateObserver2.awaitCount(1)
 
-        assertThat(testStateObserver.values).containsExactly(initialState,
+        assertThat(testStateObserver.values).containsExactly(
+            initialState,
             TestState(action)
         )
         assertThat(testStateObserver2.values).containsExactly(
@@ -70,7 +71,7 @@ internal class StateConnectionTest {
         val initialState = fixture<TestState>()
         val middleware = Middleware(initialState)
         val action = fixture<Int>()
-        val testStateObserver = middleware.container.orbit.test()
+        val testStateObserver = middleware.container.stateStream.test()
 
         middleware.something(action)
 
@@ -84,9 +85,9 @@ internal class StateConnectionTest {
     private class Middleware(initialState: TestState) : Host<TestState, String> {
         override val container = Container.create<TestState, String>(initialState)
 
-        fun something(action: Int) = orbit(action) {
+        fun something(action: Int) = orbit {
             reduce {
-                state.copy(id = event)
+                state.copy(id = action)
             }
         }
     }

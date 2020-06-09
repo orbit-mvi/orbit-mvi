@@ -49,25 +49,21 @@ open class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
     private val stateMutex = Mutex()
     private val sideEffectMutex = Mutex()
 
-    override val orbit: Stream<STATE> =
+    override val stateStream: Stream<STATE> =
         stateChannel.asFlow().distinctUntilChanged().replay(1) { it }.asStream()
 
-    override val sideEffect: Stream<SIDE_EFFECT> =
+    override val sideEffectStream: Stream<SIDE_EFFECT> =
         if (settings.sideEffectCaching) {
             sideEffectChannel.asCachingStream(scope)
         } else {
             sideEffectChannel.asStream(scope)
         }
 
-    override fun <EVENT : Any> orbit(
-        event: EVENT,
-        init: Builder<STATE, SIDE_EFFECT, EVENT>.() -> Builder<STATE, SIDE_EFFECT, *>
+    override fun orbit(
+        init: Builder<STATE, SIDE_EFFECT, Unit>.() -> Builder<STATE, SIDE_EFFECT, *>
     ) {
         scope.launch {
-            collectFlow(
-                event,
-                init
-            )
+            collectFlow(init)
         }
     }
 
@@ -91,18 +87,17 @@ open class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
     )
 
     @Suppress("UNCHECKED_CAST")
-    suspend fun <EVENT : Any> collectFlow(
-        event: EVENT,
-        init: Builder<STATE, SIDE_EFFECT, EVENT>.() -> Builder<STATE, SIDE_EFFECT, *>
+    suspend fun collectFlow(
+        init: Builder<STATE, SIDE_EFFECT, Unit>.() -> Builder<STATE, SIDE_EFFECT, *>
     ) {
-        Builder<STATE, SIDE_EFFECT, EVENT>()
-            .init().stack.fold(flowOf(event)) { flow: Flow<Any>, operator: Operator<STATE, *> ->
+        Builder<STATE, SIDE_EFFECT, Unit>()
+            .init().stack.fold(flowOf(Unit)) { flow: Flow<Any>, operator: Operator<STATE, *> ->
                 Orbit.plugins.fold(flow) { flow2: Flow<Any>, plugin: OrbitPlugin ->
                     plugin.apply(
                         pluginContext,
                         flow2,
                         operator as Operator<STATE, Any>
-                    ) { RealContext(currentState, it) }
+                    ) { Context(currentState, it) }
                 }
             }.collect()
     }

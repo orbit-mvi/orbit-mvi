@@ -45,7 +45,7 @@ internal class CoroutinePluginDslThreadingTest {
         val action = fixture<Int>()
 
         val middleware = Middleware()
-        val testStreamObserver = middleware.container.orbit.test()
+        val testStreamObserver = middleware.container.stateStream.test()
 
         middleware.suspend(action)
 
@@ -58,7 +58,7 @@ internal class CoroutinePluginDslThreadingTest {
         val action = fixture<Int>()
 
         val middleware = Middleware()
-        val testStreamObserver = middleware.container.orbit.test()
+        val testStreamObserver = middleware.container.stateStream.test()
 
         middleware.flow(action)
 
@@ -77,20 +77,20 @@ internal class CoroutinePluginDslThreadingTest {
         )
         lateinit var threadName: String
 
-        fun suspend(action: Int) = orbit(action) {
+        fun suspend(action: Int) = orbit {
             transformSuspend {
                 threadName = Thread.currentThread().name
                 delay(50)
-                event + 5
+                action + 5
             }
                 .reduce {
                     state.copy(id = event)
                 }
         }
 
-        fun flow(action: Int) = orbit(action) {
+        fun flow(action: Int) = orbit {
             transformFlow {
-                flowOf(event, event + 1, event + 2, event + 3)
+                flowOf(action, action + 1, action + 2, action + 3)
                     .onEach { delay(50) }
                     .onEach { threadName = Thread.currentThread().name }
             }

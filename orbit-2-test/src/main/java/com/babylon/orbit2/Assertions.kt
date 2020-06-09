@@ -34,7 +34,8 @@ internal tailrec fun <T : Any> assertStatesInOrder(
     values: List<T>,
     assertions: List<T.() -> T>,
     previousState: T,
-    satisfiedAssertions: Int = 0
+    satisfiedAssertions: Int = 0,
+    droppedAssertions: Int = 0
 ) {
     when {
         values.isEmpty() && assertions.isEmpty() -> {
@@ -43,6 +44,7 @@ internal tailrec fun <T : Any> assertStatesInOrder(
         values.isNotEmpty() && assertions.isEmpty() -> failMoreStatesThanExpected(
             assertions,
             satisfiedAssertions,
+            droppedAssertions,
             values
         )
         assertions.isNotEmpty() -> {
@@ -51,13 +53,14 @@ internal tailrec fun <T : Any> assertStatesInOrder(
 
             if (expectedState == previousState) {
                 // Assertion already satisfied by previous state, drop the assertion and continue the checks in case it was deduplicated by orbit
-                println("Expected assertion at index $satisfiedAssertions is satisfied because the object is already in that state")
+                println("Assertion at index $satisfiedAssertions is satisfied because the object is already in that state")
 
                 assertStatesInOrder(
                     values,
                     assertions.drop(1),
                     previousState,
-                    satisfiedAssertions + 1
+                    satisfiedAssertions + 1,
+                    droppedAssertions + 1
                 )
             } else {
                 val actualState = values.firstOrNull()
@@ -78,7 +81,8 @@ internal tailrec fun <T : Any> assertStatesInOrder(
                         values.drop(1),
                         assertions.drop(1),
                         actualState,
-                        satisfiedAssertions + 1
+                        satisfiedAssertions + 1,
+                        droppedAssertions
                     )
                 }
             }
@@ -107,8 +111,22 @@ private fun <T : Any> failLessStatesReceivedThanExpected(
 private fun <T : Any> failMoreStatesThanExpected(
     assertions: List<T.() -> T>,
     satisfiedAssertions: Int,
+    droppedAssertions: Int,
     values: List<T>
 ) {
-    // More states received than expected
-    fail("Expected ${assertions.size + satisfiedAssertions} states but more were emitted:\n$values")
+    if (droppedAssertions == 0) {
+        // More states received than expected
+        fail(
+            "Expected ${assertions.size + satisfiedAssertions} states" +
+                " but more were emitted:\n$values"
+        )
+    } else {
+        // More states received than expected, but some assertions were dropped
+        fail(
+            "Expected ${assertions.size + satisfiedAssertions} states" +
+                " but more were emitted:\n$values\n\n" +
+                    "Caution: $droppedAssertions assertions were dropped as they encountered a " +
+                    "current state which already satisfied them."
+        )
+    }
 }

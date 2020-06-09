@@ -29,7 +29,7 @@ internal class ReducerOrderingTest {
     fun `reductions are conflated`() {
         runBlocking {
             val middleware = ThreeReducersMiddleware()
-            val testStateObserver = middleware.container.orbit.test()
+            val testStateObserver = middleware.container.stateStream.test()
             val expectedStates = mutableListOf(
                 TestState(
                     emptyList()
@@ -61,7 +61,7 @@ internal class ReducerOrderingTest {
     fun `reductions are applied in sequence`() {
         runBlocking {
             val middleware = ThreeReducersMiddleware()
-            val testStateObserver = middleware.container.orbit.test()
+            val testStateObserver = middleware.container.stateStream.test()
             val expectedStates = mutableListOf(
                 TestState(
                     emptyList()

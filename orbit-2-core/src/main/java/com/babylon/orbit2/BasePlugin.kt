@@ -30,10 +30,10 @@ internal class Reduce<S : Any, E : Any>(val block: Context<S, E>.() -> Any) :
     Operator<S, E>
 
 data class SideEffectContext<S : Any, SE : Any, E : Any>(
-    override val state: S,
-    override val event: E,
-    private val postSideEffect: (SE) -> Unit
-) : Context<S, E> {
+    val state: S,
+    val event: E,
+    val postSideEffect: (SE) -> Unit
+) {
     fun post(event: SE) {
         postSideEffect(event)
     }
@@ -68,28 +68,32 @@ object BasePlugin : OrbitPlugin {
         containerContext: OrbitPlugin.ContainerContext<S, SE>,
         flow: Flow<E>,
         operator: Operator<S, E>,
-        context: (event: E) -> Context<S, E>
+        createContext: (event: E) -> Context<S, E>
     ): Flow<Any> {
+        @Suppress("UNCHECKED_CAST")
         return when (operator) {
             is Transform<*, *, *> -> flow.map {
-                @Suppress("UNCHECKED_CAST")
                 with(operator as Transform<S, E, Any>) {
-                    context(it).block()
+                    createContext(it).block()
                 }
             }
             is SideEffect<*, *, *> -> flow.onEach {
                 with(operator as SideEffect<S, SE, E>) {
-                    val baseContext = context(it)
-                    SideEffectContext(
-                        baseContext.state,
-                        baseContext.event,
-                        containerContext.postSideEffect
-                    ).block()
+                    createContext(it).let {
+                        SideEffectContext(
+                            it.state,
+                            it.event,
+                            containerContext.postSideEffect
+                        )
+                    }
+                        .block()
                 }
             }
             is Reduce -> flow.onEach {
                 with(operator) {
-                    containerContext.setState { context(it).block() as S }
+                    containerContext.setState {
+                        createContext(it).block() as S
+                    }
                 }
             }
             else -> flow

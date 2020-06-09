@@ -27,59 +27,51 @@ internal class BaseDslBehaviourTest {
     @Test
     fun `reducer produces new states`() {
         val action = fixture<Int>()
+        val middleware = BaseDslMiddleware().test(initialState)
 
-        BaseDslMiddleware()
-            .given(initialState)
-            .whenever {
-                reducer(action)
-            }
-            .then {
-                states(
-                    { TestState(action) }
-                )
-            }
+        middleware.reducer(action)
+
+        middleware.assert {
+            states(
+                { TestState(action) }
+            )
+        }
     }
 
     @Test
     fun `transformer maps values`() {
         val action = fixture<Int>()
+        val middleware = BaseDslMiddleware().test(initialState)
 
-        BaseDslMiddleware()
-            .given(initialState)
-            .whenever {
-                transformer(action)
-            }
-            .then {
-                states(
-                    { TestState(action + 5) }
-                )
-            }
+        middleware.transformer(action)
+
+        middleware.assert {
+            states(
+                { TestState(action + 5) }
+            )
+        }
     }
 
     @Test
     fun `posting side effects emit side effects`() {
         val action = fixture<Int>()
+        val middleware = BaseDslMiddleware().test(initialState)
 
-        BaseDslMiddleware()
-            .given(initialState)
-            .whenever {
-                postingSideEffect(action)
-            }
-            .then {
-                postedSideEffects(action.toString())
-            }
+        middleware.postingSideEffect(action)
+
+        middleware.assert {
+            postedSideEffects(action.toString())
+        }
     }
 
     @Test
     fun `side effect does not post anything if post is not called`() {
         val action = fixture<Int>()
+        val middleware = BaseDslMiddleware().test(initialState)
 
-        BaseDslMiddleware()
-            .given(initialState)
-            .whenever {
-                sideEffect(action)
-            }
-            .then {}
+        middleware.sideEffect(action)
+
+        middleware.assert {}
     }
 
     private data class TestState(val id: Int)
@@ -89,30 +81,30 @@ internal class BaseDslBehaviourTest {
             TestState(42)
         )
 
-        fun reducer(action: Int) = orbit(action) {
+        fun reducer(action: Int) = orbit {
             reduce {
-                state.copy(id = event)
+                state.copy(id = action)
             }
         }
 
-        fun transformer(action: Int) = orbit(action) {
+        fun transformer(action: Int) = orbit {
             transform {
-                event + 5
+                action + 5
             }
                 .reduce {
                     state.copy(id = event)
                 }
         }
 
-        fun postingSideEffect(action: Int) = orbit(action) {
+        fun postingSideEffect(action: Int) = orbit {
             sideEffect {
-                post(event.toString())
+                post(action.toString())
             }
         }
 
-        fun sideEffect(action: Int) = orbit(action) {
+        fun sideEffect(action: Int) = orbit {
             sideEffect {
-                event.toString()
+                action.toString()
             }
         }
     }

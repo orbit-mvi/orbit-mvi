@@ -327,9 +327,9 @@ internal class SideEffectLiveDataPluginTest {
                 else -> Container.create(Unit, Container.Settings(caching))
             }
 
-        fun someFlow(action: Int) = orbit(action) {
+        fun someFlow(action: Int) = orbit {
             sideEffect {
-                post(event)
+                post(action)
             }
         }
     }

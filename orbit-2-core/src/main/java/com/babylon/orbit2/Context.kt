@@ -16,7 +16,4 @@
 
 package com.babylon.orbit2
 
-interface Context<S : Any, E : Any> {
-    val state: S
-    val event: E
-}
+data class Context<S : Any, E : Any>(val state: S, val event: E)

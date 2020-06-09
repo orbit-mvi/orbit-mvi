@@ -122,9 +122,9 @@ internal class StateConnectionLiveDataPluginTest {
     private class Middleware(initialState: TestState) : Host<TestState, String> {
         override val container = Container.create<TestState, String>(initialState)
 
-        fun something(action: Int) = orbit(action) {
+        fun something(action: Int) = orbit {
             reduce {
-                state.copy(id = event)
+                state.copy(id = action)
             }
         }
     }

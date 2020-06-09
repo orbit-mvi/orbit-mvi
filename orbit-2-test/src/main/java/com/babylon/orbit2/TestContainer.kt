@@ -18,6 +18,7 @@ package com.babylon.orbit2
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
+import java.util.concurrent.atomic.AtomicBoolean
 
 class TestContainer<STATE : Any, SIDE_EFFECT : Any>(
     initialState: STATE,
@@ -28,19 +29,14 @@ class TestContainer<STATE : Any, SIDE_EFFECT : Any>(
     orbitDispatcher = Dispatchers.Unconfined,
     backgroundDispatcher = Dispatchers.Unconfined
 ) {
-    private var dispatched = false
+    private val dispatched = AtomicBoolean(false)
 
-    override fun <EVENT : Any> orbit(
-        event: EVENT,
-        init: Builder<STATE, SIDE_EFFECT, EVENT>.() -> Builder<STATE, SIDE_EFFECT, *>
+    override fun orbit(
+        init: Builder<STATE, SIDE_EFFECT, Unit>.() -> Builder<STATE, SIDE_EFFECT, *>
     ) {
-        if (!isolateFlow || !dispatched) {
-            dispatched = true
+        if (!isolateFlow || dispatched.compareAndSet(false, true)) {
             runBlocking {
-                collectFlow(
-                    event,
-                    init
-                )
+                collectFlow(init)
             }
         }
     }

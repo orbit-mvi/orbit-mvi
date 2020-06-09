@@ -28,8 +28,8 @@ internal class ContainerLifecycleTest {
     fun `onCreate is called once after connecting to the container`() {
         val initialState = fixture<TestState>()
         val middleware = Middleware(initialState)
-        val testStateObserver = middleware.container.orbit.test()
-        val testSideEffectObserver = middleware.container.sideEffect.test()
+        val testStateObserver = middleware.container.stateStream.test()
+        val testSideEffectObserver = middleware.container.sideEffectStream.test()
 
         testStateObserver.awaitCount(1)
         testSideEffectObserver.awaitCount(1)
