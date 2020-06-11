@@ -25,7 +25,6 @@ object Versions {
 
     const val kotlin = "1.3.72"
     const val coroutines = "1.3.5"
-    const val coroutineExtensions = "0.0.4"
 
     const val androidLifecycles = "2.2.0"
     const val androidLifecyclesSavedState = "2.2.0"
@@ -62,8 +61,6 @@ object ProjectDependencies {
         "org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versions.coroutines}"
     const val kotlinCoroutinesRx2 =
         "org.jetbrains.kotlinx:kotlinx-coroutines-rx2:${Versions.coroutines}"
-    const val kotlinCoroutineExtensions =
-        "com.github.akarnokd:kotlin-flow-extensions:${Versions.coroutineExtensions}"
     const val kotlinTest = "org.jetbrains.kotlin:kotlin-test:${Versions.kotlin}"
 
     // Android libraries

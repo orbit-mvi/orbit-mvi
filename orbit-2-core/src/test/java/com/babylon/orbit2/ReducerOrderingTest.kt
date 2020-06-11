@@ -16,46 +16,11 @@
 
 package com.babylon.orbit2
 
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 
 internal class ReducerOrderingTest {
-
-    @Test
-    @Disabled // Something broke this test at some point
-    fun `reductions are conflated`() {
-        runBlocking {
-            val middleware = ThreeReducersMiddleware()
-            val testStateObserver = middleware.container.stateStream.test()
-            val expectedStates = mutableListOf(
-                TestState(
-                    emptyList()
-                )
-            )
-
-            for (i in 0 until 19) {
-                val value = (i % 3)
-                expectedStates.add(
-                    expectedStates.last().copy(ids = expectedStates.last().ids + (value + 1))
-                )
-
-                when (value) {
-                    0 -> middleware.one()
-                    1 -> middleware.two()
-                    2 -> middleware.three()
-                    else -> throw IllegalStateException("misconfigured test")
-                }
-            }
-
-            delay(50) // delay to wait for reducers to complete
-
-            assertThat(testStateObserver.values.last()).isEqualTo(expectedStates.last())
-            assertThat(testStateObserver.values.count()).isLessThan(expectedStates.count())
-        }
-    }
 
     @Test
     fun `reductions are applied in sequence`() {

@@ -19,93 +19,79 @@ package com.babylon.orbit2
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.cancel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.BroadcastChannel
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.channels.broadcast
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
 import java.io.Closeable
+import java.util.concurrent.atomic.AtomicInteger
 
-internal fun <T> Flow<T>.asStream(): Stream<T> {
+@ExperimentalCoroutinesApi
+internal fun <T> BroadcastChannel<T>.asStateStream(initial: () -> T): Stream<T> {
     return object : Stream<T> {
         override fun observe(lambda: (T) -> Unit): Closeable {
-            val scope = CoroutineScope(Dispatchers.Unconfined)
-            scope.launch {
-                this@asStream.collect {
-                    lambda(it)
+            val sub = this@asStateStream.openSubscription()
+
+            CoroutineScope(Dispatchers.Unconfined).launch {
+                var lastState = initial()
+                lambda(lastState)
+
+                for (state in sub) {
+                    if (state != lastState) {
+                        lastState = state
+                        lambda(state)
+                    }
                 }
             }
-            return Closeable { scope.cancel() }
+            return Closeable { sub.cancel() }
         }
     }
 }
 
-internal fun <T> Channel<T>.asStream(originalScope: CoroutineScope): Stream<T> {
-    return object : Stream<T> {
-        private val broadcastChannel = originalScope.broadcast(
-            capacity = 1024,
-            start = CoroutineStart.DEFAULT
-        ) {
-            for (item in this@asStream) {
-                if (isActive) {
-                    send(item)
-                } else {
-                    break
-                }
-            }
-        }
+@ExperimentalCoroutinesApi
+internal fun <T> Channel<T>.asNonCachingStream(): Stream<T> {
+    val broadcastChannel = this.broadcast(start = CoroutineStart.DEFAULT)
 
+    return object : Stream<T> {
         override fun observe(lambda: (T) -> Unit): Closeable {
-            val scope = CoroutineScope(Dispatchers.Unconfined)
             val receiveChannel = broadcastChannel.openSubscription()
-            scope.launch {
+            CoroutineScope(Dispatchers.Unconfined).launch {
                 for (item in receiveChannel) {
                     lambda(item)
                 }
             }
             return Closeable {
                 receiveChannel.cancel()
-                scope.cancel()
             }
         }
     }
 }
 
+@ExperimentalCoroutinesApi
 internal fun <T> Channel<T>.asCachingStream(originalScope: CoroutineScope): Stream<T> {
     return object : Stream<T> {
-        private val channels = mutableSetOf<ReceiveChannel<T>>()
+        private val subCount = AtomicInteger(0)
         private val buffer = mutableListOf<T>()
-        private val bufferMutex = Mutex()
         private val channel = BroadcastChannel<T>(Channel.BUFFERED)
 
         init {
             originalScope.launch {
                 for (item in this@asCachingStream) {
-                    bufferMutex.withLock {
-                        if (channels.isEmpty()) {
-                            buffer.add(item)
-                        } else {
-                            channel.send(item)
-                        }
+                    if (subCount.get() == 0) {
+                        buffer.add(item)
+                    } else {
+                        channel.send(item)
                     }
                 }
             }
         }
 
         override fun observe(lambda: (T) -> Unit): Closeable {
-            val scope = CoroutineScope(Dispatchers.Unconfined)
             val receiveChannel = channel.openSubscription()
 
-            scope.launch {
-                bufferMutex.withLock {
-                    channels += receiveChannel
+            CoroutineScope(Dispatchers.Unconfined).launch {
+                if (subCount.compareAndSet(0, 1)) {
                     buffer.forEach { buffered ->
                         channel.send(buffered)
                     }
@@ -116,12 +102,8 @@ internal fun <T> Channel<T>.asCachingStream(originalScope: CoroutineScope): Stre
                 }
             }
             return Closeable {
-                runBlocking {
-                    bufferMutex.withLock {
-                        channels.remove(receiveChannel)
-                        receiveChannel.cancel()
-                    }
-                }
+                receiveChannel.cancel()
+                subCount.decrementAndGet()
             }
         }
     }

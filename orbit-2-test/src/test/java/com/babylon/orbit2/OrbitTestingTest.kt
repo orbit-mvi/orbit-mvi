@@ -222,7 +222,6 @@ class OrbitTestingTest {
             val testSubject = StateTestMiddleware().test(State(), false)
             val action = fixture<Int>()
             val action2 = fixture<Int>()
-            val action3 = fixture<Int>()
 
             testSubject.something(action)
             testSubject.something(action2)
