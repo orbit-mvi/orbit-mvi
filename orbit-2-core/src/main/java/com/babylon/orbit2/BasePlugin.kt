@@ -79,21 +79,21 @@ object BasePlugin : OrbitPlugin {
             }
             is SideEffect<*, *, *> -> flow.onEach {
                 with(operator as SideEffect<S, SE, E>) {
-                    createContext(it).let {
+                    createContext(it).let { context ->
                         SideEffectContext(
-                            it.state,
-                            it.event,
+                            context.state,
+                            context.event,
                             containerContext.postSideEffect
                         )
                     }
                         .block()
                 }
             }
-            is Reduce -> flow.onEach {
+            is Reduce -> flow.onEach { event ->
                 with(operator) {
-                    containerContext.setState {
-                        createContext(it).block() as S
-                    }
+                    containerContext.setState.send(
+                        createContext(event).block() as S
+                    )
                 }
             }
             else -> flow

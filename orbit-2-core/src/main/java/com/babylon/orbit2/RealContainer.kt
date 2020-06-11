@@ -16,24 +16,23 @@
 
 package com.babylon.orbit2
 
-import hu.akarnokd.kotlin.flow.replay
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import java.util.concurrent.Executors
 
+@ExperimentalCoroutinesApi
 @FlowPreview
 open class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
     initialState: STATE,
@@ -41,44 +40,16 @@ open class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
     orbitDispatcher: CoroutineDispatcher = DEFAULT_DISPATCHER,
     backgroundDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : Container<STATE, SIDE_EFFECT> {
-    override val currentState: STATE
-        get() = stateChannel.value
+    private val scope = CoroutineScope(orbitDispatcher)
     private val stateChannel = ConflatedBroadcastChannel(initialState)
     private val sideEffectChannel = Channel<SIDE_EFFECT>(Channel.RENDEZVOUS)
-    private val scope = CoroutineScope(orbitDispatcher)
-    private val stateMutex = Mutex()
     private val sideEffectMutex = Mutex()
-
-    override val stateStream: Stream<STATE> =
-        stateChannel.asFlow().distinctUntilChanged().replay(1) { it }.asStream()
-
-    override val sideEffectStream: Stream<SIDE_EFFECT> =
-        if (settings.sideEffectCaching) {
-            sideEffectChannel.asCachingStream(scope)
-        } else {
-            sideEffectChannel.asStream(scope)
-        }
-
-    override fun orbit(
-        init: Builder<STATE, SIDE_EFFECT, Unit>.() -> Builder<STATE, SIDE_EFFECT, *>
-    ) {
-        scope.launch {
-            collectFlow(init)
-        }
-    }
-
-    private val pluginContext = OrbitPlugin.ContainerContext<STATE, SIDE_EFFECT>(
+    private val pluginContext = OrbitPlugin.ContainerContext(
         backgroundDispatcher = backgroundDispatcher,
-        setState = {
-            scope.launch {
-                stateMutex.withLock {
-                    val reduced = it()
-                    stateChannel.send(reduced)
-                }
-            }.join()
-        },
+        setState = stateChannel,
         postSideEffect = { event: SIDE_EFFECT ->
             scope.launch {
+                // Ensure side effect ordering
                 sideEffectMutex.withLock {
                     sideEffectChannel.send(event)
                 }
@@ -86,10 +57,26 @@ open class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
         }
     )
 
+    override val currentState: STATE
+        get() = stateChannel.value
+
+    override val stateStream = stateChannel.asStateStream { currentState }
+
+    override val sideEffectStream: Stream<SIDE_EFFECT> =
+        if (settings.sideEffectCaching) {
+            sideEffectChannel.asCachingStream(scope)
+        } else {
+            sideEffectChannel.asNonCachingStream()
+        }
+
+    override fun orbit(init: Builder<STATE, SIDE_EFFECT, Unit>.() -> Builder<STATE, SIDE_EFFECT, *>) {
+        scope.launch {
+            collectFlow(init)
+        }
+    }
+
     @Suppress("UNCHECKED_CAST")
-    suspend fun collectFlow(
-        init: Builder<STATE, SIDE_EFFECT, Unit>.() -> Builder<STATE, SIDE_EFFECT, *>
-    ) {
+    suspend fun collectFlow(init: Builder<STATE, SIDE_EFFECT, Unit>.() -> Builder<STATE, SIDE_EFFECT, *>) {
         Builder<STATE, SIDE_EFFECT, Unit>()
             .init().stack.fold(flowOf(Unit)) { flow: Flow<Any>, operator: Operator<STATE, *> ->
                 Orbit.plugins.fold(flow) { flow2: Flow<Any>, plugin: OrbitPlugin ->

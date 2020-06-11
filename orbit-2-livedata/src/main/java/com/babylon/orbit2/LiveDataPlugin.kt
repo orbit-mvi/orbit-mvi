@@ -22,12 +22,12 @@ import java.io.Closeable
 val <STATE : Any, SIDE_EFFECT : Any> Container<STATE, SIDE_EFFECT>.sideEffectLiveData: LiveData<SIDE_EFFECT>
     get() = DelegatingLiveData(this.sideEffectStream)
 
-val <STATE : Any, SIDE_EFFECT : Any> Container<STATE, SIDE_EFFECT>.orbitLiveData: LiveData<STATE>
+val <STATE : Any, SIDE_EFFECT : Any> Container<STATE, SIDE_EFFECT>.stateLiveData: LiveData<STATE>
     get() = object : LiveData<STATE>(this.currentState) {
         private var closeable: Closeable? = null
 
         override fun onActive() {
-            closeable = this@orbitLiveData.stateStream.observe {
+            closeable = this@stateLiveData.stateStream.observe {
                 postValue(it)
             }
         }

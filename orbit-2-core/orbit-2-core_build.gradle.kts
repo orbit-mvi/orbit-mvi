@@ -22,7 +22,6 @@ plugins {
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
     implementation(ProjectDependencies.kotlinCoroutines)
-    implementation(ProjectDependencies.kotlinCoroutineExtensions)
 
     // Testing
     GroupedDependencies.testsImplementationJUnit5.forEach { testImplementation(it) }
