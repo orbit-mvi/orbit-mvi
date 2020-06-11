@@ -21,11 +21,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
-import kotlinx.coroutines.channels.actor
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flowOf
@@ -35,7 +33,6 @@ import kotlinx.coroutines.sync.withLock
 import java.util.concurrent.Executors
 
 @ExperimentalCoroutinesApi
-@ObsoleteCoroutinesApi
 @FlowPreview
 open class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
     initialState: STATE,
@@ -46,15 +43,10 @@ open class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
     private val scope = CoroutineScope(orbitDispatcher)
     private val stateChannel = ConflatedBroadcastChannel(initialState)
     private val sideEffectChannel = Channel<SIDE_EFFECT>(Channel.RENDEZVOUS)
-    private val internalReducerChannel = scope.actor<(STATE) -> STATE> {
-        for (reducer in this) {
-            stateChannel.send(reducer(currentState))
-        }
-    }
     private val sideEffectMutex = Mutex()
     private val pluginContext = OrbitPlugin.ContainerContext(
         backgroundDispatcher = backgroundDispatcher,
-        setState = internalReducerChannel,
+        setState = stateChannel,
         postSideEffect = { event: SIDE_EFFECT ->
             scope.launch {
                 // Ensure side effect ordering

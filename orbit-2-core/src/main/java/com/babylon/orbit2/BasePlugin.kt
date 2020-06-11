@@ -91,9 +91,9 @@ object BasePlugin : OrbitPlugin {
             }
             is Reduce -> flow.onEach { event ->
                 with(operator) {
-                    containerContext.setState.send {
-                        Context(it, event).block() as S
-                    }
+                    containerContext.setState.send(
+                        createContext(event).block() as S
+                    )
                 }
             }
             else -> flow

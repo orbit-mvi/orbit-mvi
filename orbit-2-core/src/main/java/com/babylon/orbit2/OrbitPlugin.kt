@@ -30,7 +30,7 @@ interface OrbitPlugin {
 
     class ContainerContext<S : Any, SE : Any>(
         val backgroundDispatcher: CoroutineDispatcher,
-        val setState: SendChannel<(S) -> S>,
+        val setState: SendChannel<S>,
         val postSideEffect: (SE) -> Unit
     )
 }
