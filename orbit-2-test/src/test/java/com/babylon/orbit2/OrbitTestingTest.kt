@@ -334,7 +334,7 @@ class OrbitTestingTest {
                 sideEffect {
                     post(action)
                 }
-                    .sideEffect { somethingElse(action.toString()) }
+                    .sideEffect { this@SideEffectTestMiddleware.somethingElse(action.toString()) }
             }
 
             fun somethingElse(action: String) = orbit {
@@ -385,12 +385,12 @@ class OrbitTestingTest {
             }
 
             fun something() = orbit {
-                sideEffect { dependency.something1() }
-                    .sideEffect { somethingElse() }
+                sideEffect { this@GeneralTestMiddleware.dependency.something1() }
+                    .sideEffect { this@GeneralTestMiddleware.somethingElse() }
             }
 
             fun somethingElse() = orbit {
-                sideEffect { dependency.something2() }
+                sideEffect { this@GeneralTestMiddleware.dependency.something2() }
             }
         }
     }
