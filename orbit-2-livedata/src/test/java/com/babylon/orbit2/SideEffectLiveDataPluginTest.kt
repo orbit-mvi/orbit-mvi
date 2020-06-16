@@ -57,6 +57,9 @@ internal class SideEffectLiveDataPluginTest {
         val mockLifecycleOwner = MockLifecycleOwner()
         mockLifecycleOwner.dispatchEvent(Lifecycle.Event.ON_CREATE)
         mockLifecycleOwner.dispatchEvent(Lifecycle.Event.ON_START)
+        middleware.container.sideEffectStream.observe {
+
+        }
 
         val testSideEffectObserver1 =
             middleware.container.sideEffectLiveData.test(mockLifecycleOwner)

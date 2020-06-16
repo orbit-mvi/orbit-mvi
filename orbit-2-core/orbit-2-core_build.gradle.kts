@@ -23,6 +23,8 @@ dependencies {
     implementation(kotlin("stdlib-jdk8"))
     implementation(ProjectDependencies.kotlinCoroutines)
 
+    compileOnly(ProjectDependencies.androidxAnnotation)
+
     // Testing
     GroupedDependencies.testsImplementationJUnit5.forEach { testImplementation(it) }
     testRuntimeOnly(ProjectDependencies.junitJupiterEngine)

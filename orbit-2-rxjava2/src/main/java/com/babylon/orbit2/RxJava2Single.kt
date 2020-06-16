@@ -25,7 +25,7 @@ internal class RxJava2Single<S : Any, E : Any, E2 : Any>(
 fun <S : Any, SE : Any, E : Any, E2 : Any> Builder<S, SE, E>.transformRx2Single(
     block: suspend Context<S, E>.() -> Single<E2>
 ): Builder<S, SE, E2> {
-    Orbit.requirePlugin(RxJava2Plugin, "transformRx2Single")
+    Orbit.requirePlugin(OrbitRxJava2Plugin, "transformRx2Single")
     return Builder(
         stack + RxJava2Single(
             block

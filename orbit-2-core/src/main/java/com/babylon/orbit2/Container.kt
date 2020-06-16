@@ -25,6 +25,7 @@ interface Container<STATE : Any, SIDE_EFFECT : Any> {
         init: Builder<STATE, SIDE_EFFECT, Unit>.() -> Builder<STATE, SIDE_EFFECT, *>
     )
 
+    @Suppress("EXPERIMENTAL_API_USAGE")
     companion object {
         fun <STATE : Any, SIDE_EFFECT : Any> create(
             initialState: STATE,

@@ -26,7 +26,7 @@ dependencies {
 
     implementation(project(":orbit-2-core"))
 
-    implementation(ProjectDependencies.androidLifecycleSavedState)
+    implementation(ProjectDependencies.androidxLifecycleSavedState)
 
     // Testing
     testImplementation(project(":orbit-2-test"))

@@ -26,22 +26,22 @@ object Versions {
     const val kotlin = "1.3.72"
     const val coroutines = "1.3.5"
 
-    const val androidLifecycles = "2.2.0"
-    const val androidLifecyclesSavedState = "2.2.0"
-    const val androidXTesting = "2.1.0"
-    const val androidAppCompat = "1.1.0"
-    const val androidConstrainLayout = "1.1.3"
+    const val androidxLifecycles = "2.2.0"
+    const val androidxLifecyclesSavedState = "2.2.0"
+    const val androidxAnnotation = "1.1.0"
+    const val androidxTesting = "2.1.0"
+    const val androidxAppCompat = "1.1.0"
+    const val androidxConstrainLayout = "1.1.3"
     const val androidMaterial = "1.1.0-rc02"
-    const val androidRxBindings = "3.1.0"
-
-    const val javaxInject = "1"
 
     const val rxJava2 = "2.2.19"
     const val rxJava2Extensions = "0.20.10"
     const val rxKotlin = "2.4.0"
     const val rxAndroid = "2.1.1"
+    const val androidRxBindings = "3.1.0"
 
     const val koin = "2.1.5"
+    const val javaxInject = "1"
     const val groupie = "2.8.0"
 
     // Testing
@@ -56,6 +56,7 @@ object Versions {
 }
 
 object ProjectDependencies {
+    // Kotlin
     const val kotlinReflect = "org.jetbrains.kotlin:kotlin-reflect:${Versions.kotlin}"
     const val kotlinCoroutines =
         "org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versions.coroutines}"
@@ -63,37 +64,37 @@ object ProjectDependencies {
         "org.jetbrains.kotlinx:kotlinx-coroutines-rx2:${Versions.coroutines}"
     const val kotlinTest = "org.jetbrains.kotlin:kotlin-test:${Versions.kotlin}"
 
-    // Android libraries
-    const val androidLifecycleComponents =
-        "androidx.lifecycle:lifecycle-extensions:${Versions.androidLifecycles}"
-    const val androidLifecycleCompiler =
-        "androidx.lifecycle:lifecycle-compiler:${Versions.androidLifecycles}"
-    const val androidLifecycleSavedState =
-        "androidx.lifecycle:lifecycle-viewmodel-savedstate:${Versions.androidLifecyclesSavedState}"
-    const val androidAppCompat = "androidx.appcompat:appcompat:${Versions.androidAppCompat}"
-    const val androidConstrainLayout =
-        "androidx.constraintlayout:constraintlayout:${Versions.androidConstrainLayout}"
+    // AndroidX
+    const val androidxAppCompat = "androidx.appcompat:appcompat:${Versions.androidxAppCompat}"
+    const val androidxAnnotation = "androidx.annotation:annotation:${Versions.androidxAnnotation}"
+    const val androidxConstrainLayout =
+        "androidx.constraintlayout:constraintlayout:${Versions.androidxConstrainLayout}"
+    const val androidxLifecycleComponents =
+        "androidx.lifecycle:lifecycle-extensions:${Versions.androidxLifecycles}"
+    const val androidxLifecycleCompiler =
+        "androidx.lifecycle:lifecycle-compiler:${Versions.androidxLifecycles}"
+    const val androidxLifecycleSavedState =
+        "androidx.lifecycle:lifecycle-viewmodel-savedstate:${Versions.androidxLifecyclesSavedState}"
     const val androidMaterial = "com.google.android.material:material:${Versions.androidMaterial}"
-    const val androidRxBindings =
-        "com.jakewharton.rxbinding3:rxbinding-material:${Versions.androidRxBindings}"
 
+    // Dependency injection
+    const val koinViewModel = "org.koin:koin-androidx-viewmodel:${Versions.koin}"
+    const val koinTest = "org.koin:koin-test:${Versions.koin}"
+    const val javaxInject = "javax.inject:javax.inject:${Versions.javaxInject}"
+
+    // UI
     const val groupie = "com.xwray:groupie:${Versions.groupie}"
     const val groupieKotlinAndroidExtensions =
         "com.xwray:groupie-kotlin-android-extensions:${Versions.groupie}"
 
-    const val koinViewModel = "org.koin:koin-androidx-viewmodel:${Versions.koin}"
-    const val koinTest = "org.koin:koin-test:${Versions.koin}"
-
-    // Dagger dependency injection framework.
-    // See https://google.github.io/dagger/ for more details.
-    const val javaxInject = "javax.inject:javax.inject:${Versions.javaxInject}"
-
-    // RxJava related libraries
+    // RxJava
     const val rxJava2 = "io.reactivex.rxjava2:rxjava:${Versions.rxJava2}"
     const val rxJava2Extensions =
         "com.github.akarnokd:rxjava2-extensions:${Versions.rxJava2Extensions}"
     const val rxKotlin = "io.reactivex.rxjava2:rxkotlin:${Versions.rxKotlin}"
     const val rxAndroid = "io.reactivex.rxjava2:rxandroid:${Versions.rxAndroid}"
+    const val androidRxBindings =
+        "com.jakewharton.rxbinding3:rxbinding-material:${Versions.androidRxBindings}"
 
     // Tools
     const val detektFormatting =
@@ -101,7 +102,7 @@ object ProjectDependencies {
 
     // Test prerequisites
     const val androidXTesting =
-        "androidx.arch.core:core-testing:${Versions.androidXTesting}"
+        "androidx.arch.core:core-testing:${Versions.androidxTesting}"
     const val spekDsl = "org.spekframework.spek2:spek-dsl-jvm:${Versions.spek}"
     const val spekRunner = "org.spekframework.spek2:spek-runner-junit5:${Versions.spek}"
     const val junitPlatformConsole =

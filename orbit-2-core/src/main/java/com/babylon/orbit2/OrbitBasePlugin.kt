@@ -32,7 +32,7 @@ internal class Reduce<S : Any, E : Any>(val block: Context<S, E>.() -> Any) :
 data class SideEffectContext<S : Any, SE : Any, E : Any>(
     val state: S,
     val event: E,
-    val postSideEffect: (SE) -> Unit
+    private val postSideEffect: (SE) -> Unit
 ) {
     fun post(event: SE) {
         postSideEffect(event)
@@ -63,7 +63,7 @@ fun <S : Any, SE : Any, E : Any> Builder<S, SE, E>.reduce(block: Context<S, E>.(
     )
 }
 
-object BasePlugin : OrbitPlugin {
+object OrbitBasePlugin : OrbitPlugin {
     override fun <S : Any, E : Any, SE : Any> apply(
         containerContext: OrbitPlugin.ContainerContext<S, SE>,
         flow: Flow<E>,

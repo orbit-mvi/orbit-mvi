@@ -27,7 +27,7 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
-internal class RxJava2PluginBehaviourTest {
+internal class OrbitRxJava2PluginBehaviourTest {
     private val fixture = kotlinFixture()
     private val initialState = fixture<TestState>()
 
@@ -36,7 +36,7 @@ internal class RxJava2PluginBehaviourTest {
 
         @BeforeEach
         fun beforeEach() {
-            Orbit.registerDslPlugins(RxJava2Plugin)
+            Orbit.registerDslPlugins(OrbitRxJava2Plugin)
         }
 
         @AfterEach
@@ -194,7 +194,7 @@ internal class RxJava2PluginBehaviourTest {
                 Maybe.empty<Int>()
             }
                 .reduce {
-                    state.copy(id = event)
+                    state.copy(id = action)
                 }
         }
 

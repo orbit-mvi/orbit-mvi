@@ -21,7 +21,7 @@ internal class TransformSuspend<S : Any, E : Any, E2 : Any>(
 ) : Operator<S, E2>
 
 fun <S : Any, SE : Any, E : Any, E2 : Any> Builder<S, SE, E>.transformSuspend(block: suspend Context<S, E>.() -> E2): Builder<S, SE, E2> {
-    Orbit.requirePlugin(CoroutinePlugin, "transformSuspend")
+    Orbit.requirePlugin(OrbitCoroutinePlugin, "transformSuspend")
     return Builder(
         stack + TransformSuspend(
             block

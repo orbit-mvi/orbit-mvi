@@ -27,12 +27,12 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.util.concurrent.Executors
 
-internal class CoroutinePluginDslThreadingTest {
+internal class OrbitCoroutinePluginDslThreadingTest {
     private val fixture = kotlinFixture()
 
     @BeforeEach
     fun beforeEach() {
-        Orbit.registerDslPlugins(CoroutinePlugin)
+        Orbit.registerDslPlugins(OrbitCoroutinePlugin)
     }
 
     @AfterEach
@@ -69,7 +69,8 @@ internal class CoroutinePluginDslThreadingTest {
     private data class TestState(val id: Int)
 
     private class Middleware : Host<TestState, String> {
-        override val container = RealContainer<TestState, String>(
+        @Suppress("EXPERIMENTAL_API_USAGE")
+        override val container: Container<TestState, String> = RealContainer(
             initialState = TestState(42),
             settings = Container.Settings(),
             backgroundDispatcher = Executors.newSingleThreadExecutor { Thread(it, "IO") }

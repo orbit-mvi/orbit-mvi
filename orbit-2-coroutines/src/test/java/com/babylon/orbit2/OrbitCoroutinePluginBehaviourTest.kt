@@ -26,7 +26,7 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
-internal class CoroutinePluginBehaviourTest {
+internal class OrbitCoroutinePluginBehaviourTest {
     private val fixture = kotlinFixture()
     private val initialState = fixture<TestState>()
 
@@ -35,7 +35,7 @@ internal class CoroutinePluginBehaviourTest {
 
         @BeforeEach
         fun beforeEach() {
-            Orbit.registerDslPlugins(CoroutinePlugin)
+            Orbit.registerDslPlugins(OrbitCoroutinePlugin)
         }
 
         @AfterEach

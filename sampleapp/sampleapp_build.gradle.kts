@@ -48,11 +48,11 @@ dependencies {
     implementation(project(":orbit-android"))
     implementation(kotlin("stdlib-jdk8"))
 
-    implementation(ProjectDependencies.androidLifecycleComponents)
-    implementation(ProjectDependencies.androidLifecycleSavedState)
-    implementation(ProjectDependencies.androidAppCompat)
-    implementation(ProjectDependencies.androidConstrainLayout)
-    kapt(ProjectDependencies.androidLifecycleCompiler)
+    implementation(ProjectDependencies.androidxLifecycleComponents)
+    implementation(ProjectDependencies.androidxLifecycleSavedState)
+    implementation(ProjectDependencies.androidxAppCompat)
+    implementation(ProjectDependencies.androidxConstrainLayout)
+    kapt(ProjectDependencies.androidxLifecycleCompiler)
     implementation(ProjectDependencies.androidMaterial)
     // Koin Android ViewModel features
     implementation(ProjectDependencies.koinViewModel)

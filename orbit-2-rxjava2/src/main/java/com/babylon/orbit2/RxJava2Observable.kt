@@ -26,7 +26,7 @@ fun <S : Any, SE : Any, E : Any, E2 : Any> Builder<S, SE, E>.transformRx2Observa
     block: suspend Context<S, E>.() -> Observable<E2>
 ): Builder<S, SE, E2> {
     Orbit.requirePlugin(
-        RxJava2Plugin,
+        OrbitRxJava2Plugin,
         "transformRxJava2Observable"
     )
     return Builder(
