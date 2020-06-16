@@ -20,6 +20,7 @@ internal class TransformSuspend<S : Any, E : Any, E2 : Any>(
     val block: suspend Context<S, E>.() -> E2
 ) : Operator<S, E2>
 
+@Orbit2Dsl
 fun <S : Any, SE : Any, E : Any, E2 : Any> Builder<S, SE, E>.transformSuspend(block: suspend Context<S, E>.() -> E2): Builder<S, SE, E2> {
     Orbit.requirePlugin(OrbitCoroutinePlugin, "transformSuspend")
     return Builder(

@@ -29,6 +29,7 @@ internal class SideEffect<S : Any, SE : Any, E : Any>(val block: SideEffectConte
 internal class Reduce<S : Any, E : Any>(val block: Context<S, E>.() -> Any) :
     Operator<S, E>
 
+@Orbit2Dsl
 data class SideEffectContext<S : Any, SE : Any, E : Any>(
     val state: S,
     val event: E,
@@ -39,6 +40,7 @@ data class SideEffectContext<S : Any, SE : Any, E : Any>(
     }
 }
 
+@Orbit2Dsl
 fun <S : Any, SE : Any, E : Any, E2 : Any> Builder<S, SE, E>.transform(block: Context<S, E>.() -> E2): Builder<S, SE, E2> {
     return Builder(
         stack + Transform(
@@ -47,6 +49,7 @@ fun <S : Any, SE : Any, E : Any, E2 : Any> Builder<S, SE, E>.transform(block: Co
     )
 }
 
+@Orbit2Dsl
 fun <S : Any, SE : Any, E : Any> Builder<S, SE, E>.sideEffect(block: SideEffectContext<S, SE, E>.() -> Unit): Builder<S, SE, E> {
     return Builder(
         stack + SideEffect(
@@ -55,6 +58,7 @@ fun <S : Any, SE : Any, E : Any> Builder<S, SE, E>.sideEffect(block: SideEffectC
     )
 }
 
+@Orbit2Dsl
 fun <S : Any, SE : Any, E : Any> Builder<S, SE, E>.reduce(block: Context<S, E>.() -> S): Builder<S, SE, E> {
     return Builder(
         stack + Reduce(

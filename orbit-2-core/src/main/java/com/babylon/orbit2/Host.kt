@@ -16,9 +16,11 @@
 
 package com.babylon.orbit2
 
+@Orbit2Dsl
 interface Host<STATE : Any, SIDE_EFFECT : Any> {
     val container: Container<STATE, SIDE_EFFECT>
 
+    @Orbit2Dsl
     fun orbit(init: Builder<STATE, SIDE_EFFECT, Unit>.() -> Builder<STATE, SIDE_EFFECT, *>) =
         container.orbit(init)
 }

@@ -122,7 +122,7 @@ internal class OrbitRxJava2PluginDslThreadingTest {
         fun single(action: Int) = orbit {
             transformRx2Single {
                 Single.just(action + 5)
-                    .doOnSubscribe { threadName = Thread.currentThread().name }
+                    .doOnSubscribe { this@Middleware.threadName = Thread.currentThread().name }
             }
                 .reduce {
                     state.copy(id = event)
@@ -132,7 +132,7 @@ internal class OrbitRxJava2PluginDslThreadingTest {
         fun maybe(action: Int) = orbit {
             transformRx2Maybe {
                 Maybe.just(action + 5)
-                    .doOnSubscribe { threadName = Thread.currentThread().name }
+                    .doOnSubscribe { this@Middleware.threadName = Thread.currentThread().name }
             }
                 .reduce {
                     state.copy(id = event)
@@ -142,8 +142,8 @@ internal class OrbitRxJava2PluginDslThreadingTest {
         fun maybeNot(action: Int) = orbit {
             transformRx2Maybe {
                 Maybe.empty<Int>()
-                    .doOnSubscribe { threadName = Thread.currentThread().name }
-                    .doOnSubscribe { latch.countDown() }
+                    .doOnSubscribe { this@Middleware.threadName = Thread.currentThread().name }
+                    .doOnSubscribe { this@Middleware.latch.countDown() }
             }
                 .reduce {
                     state.copy(id = action)
@@ -153,7 +153,7 @@ internal class OrbitRxJava2PluginDslThreadingTest {
         fun completable(action: Int) = orbit {
             transformRx2Completable {
                 Completable.complete()
-                    .doOnSubscribe { threadName = Thread.currentThread().name }
+                    .doOnSubscribe { this@Middleware.threadName = Thread.currentThread().name }
             }
                 .reduce {
                     state.copy(id = action)
@@ -163,7 +163,7 @@ internal class OrbitRxJava2PluginDslThreadingTest {
         fun observable(action: Int) = orbit {
             transformRx2Observable {
                 Observable.just(action, action + 1, action + 2, action + 3)
-                    .doOnSubscribe { threadName = Thread.currentThread().name }
+                    .doOnSubscribe { this@Middleware.threadName = Thread.currentThread().name }
             }
                 .reduce {
                     state.copy(id = event)
