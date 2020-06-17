@@ -25,9 +25,9 @@ dependencies {
 
     implementation(kotlin("stdlib-jdk8"))
 
-    implementation(ProjectDependencies.androidLifecycleComponents)
-    implementation(ProjectDependencies.androidLifecycleSavedState)
-    kapt(ProjectDependencies.androidLifecycleCompiler)
+    implementation(ProjectDependencies.androidxLifecycleComponents)
+    implementation(ProjectDependencies.androidxLifecycleSavedState)
+    kapt(ProjectDependencies.androidxLifecycleCompiler)
 
     implementation(ProjectDependencies.rxJava2)
     implementation(ProjectDependencies.rxKotlin)

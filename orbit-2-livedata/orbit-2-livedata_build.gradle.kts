@@ -25,7 +25,7 @@ dependencies {
 
     implementation(project(":orbit-2-core"))
 
-    implementation(ProjectDependencies.androidLifecycleComponents)
+    implementation(ProjectDependencies.androidxLifecycleComponents)
 
     // Testing
     testImplementation(project(":orbit-2-test"))

@@ -16,4 +16,5 @@
 
 package com.babylon.orbit2
 
+@Orbit2Dsl
 data class Context<S : Any, E : Any>(val state: S, val event: E)

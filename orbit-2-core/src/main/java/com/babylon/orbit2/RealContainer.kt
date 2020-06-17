@@ -19,8 +19,6 @@ package com.babylon.orbit2
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.flow.Flow
@@ -31,8 +29,7 @@ import kotlinx.coroutines.newSingleThreadContext
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
-@ExperimentalCoroutinesApi
-@FlowPreview
+@Suppress("EXPERIMENTAL_API_USAGE")
 open class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
     initialState: STATE,
     settings: Container.Settings,
@@ -89,6 +86,7 @@ open class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
     }
 
     companion object {
+        @Suppress("EXPERIMENTAL_API_USAGE")
         private val DEFAULT_DISPATCHER by lazy {
             newSingleThreadContext("orbit")
         }

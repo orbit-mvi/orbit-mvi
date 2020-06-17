@@ -22,25 +22,26 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 
-object CoroutinePlugin : OrbitPlugin {
+object OrbitCoroutinePlugin : OrbitPlugin {
+    @Suppress("UNCHECKED_CAST", "EXPERIMENTAL_API_USAGE")
     override fun <S : Any, E : Any, SE : Any> apply(
         containerContext: OrbitPlugin.ContainerContext<S, SE>,
         flow: Flow<E>,
         operator: Operator<S, E>,
-        context: (event: E) -> Context<S, E>
+        createContext: (event: E) -> Context<S, E>
     ): Flow<Any> {
         return when (operator) {
             is TransformSuspend<*, *, *> -> flow.map {
                 @Suppress("UNCHECKED_CAST")
                 with(operator as TransformSuspend<S, E, Any>) {
                     withContext(containerContext.backgroundDispatcher) {
-                        context(it).block()
+                        createContext(it).block()
                     }
                 }
             }
             is TransformFlow<*, *, *> -> flow.flatMapConcat {
                 with(operator as TransformFlow<S, E, Any>) {
-                    context(it).block().flowOn(containerContext.backgroundDispatcher)
+                    createContext(it).block().flowOn(containerContext.backgroundDispatcher)
                 }
             }
             else -> flow

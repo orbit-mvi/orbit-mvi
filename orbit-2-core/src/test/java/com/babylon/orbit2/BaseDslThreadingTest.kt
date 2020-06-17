@@ -106,7 +106,7 @@ internal class BaseDslThreadingTest {
         fun postingSideEffect(action: Int) = orbit {
             sideEffect {
                 threadName = Thread.currentThread().name
-                post(event.toString())
+                post(action.toString())
             }
         }
 
@@ -114,7 +114,7 @@ internal class BaseDslThreadingTest {
             sideEffect {
                 threadName = Thread.currentThread().name
                 latch.countDown()
-                event.toString()
+                action.toString()
             }
         }
     }

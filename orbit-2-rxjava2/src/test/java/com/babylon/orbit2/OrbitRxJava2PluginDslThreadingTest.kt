@@ -29,12 +29,12 @@ import org.junit.jupiter.api.Test
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.Executors
 
-internal class RxJava2PluginDslThreadingTest {
+internal class OrbitRxJava2PluginDslThreadingTest {
     private val fixture = kotlinFixture()
 
     @BeforeEach
     fun beforeEach() {
-        Orbit.registerDslPlugins(RxJava2Plugin)
+        Orbit.registerDslPlugins(OrbitRxJava2Plugin)
     }
 
     @AfterEach
@@ -73,7 +73,6 @@ internal class RxJava2PluginDslThreadingTest {
         val action = fixture<Int>()
 
         val middleware = Middleware()
-        val testStreamObserver = middleware.container.stateStream.test()
 
         middleware.maybeNot(action)
 
@@ -110,7 +109,8 @@ internal class RxJava2PluginDslThreadingTest {
     private data class TestState(val id: Int)
 
     private class Middleware : Host<TestState, String> {
-        override val container = RealContainer<TestState, String>(
+        @Suppress("EXPERIMENTAL_API_USAGE")
+        override val container: Container<TestState, String> = RealContainer(
             initialState = TestState(42),
             settings = Container.Settings(),
             backgroundDispatcher = Executors.newSingleThreadExecutor { Thread(it, "IO") }
@@ -146,7 +146,7 @@ internal class RxJava2PluginDslThreadingTest {
                     .doOnSubscribe { latch.countDown() }
             }
                 .reduce {
-                    state.copy(id = event)
+                    state.copy(id = action)
                 }
         }
 

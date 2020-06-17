@@ -16,8 +16,11 @@
 
 package com.babylon.orbit2
 
+import androidx.annotation.CheckResult
 import java.io.Closeable
 
 interface Stream<T> {
+
+    @CheckResult
     fun observe(lambda: (T) -> Unit): Closeable
 }

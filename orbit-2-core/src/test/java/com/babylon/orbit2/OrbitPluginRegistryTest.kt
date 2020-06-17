@@ -33,7 +33,7 @@ internal class OrbitPluginRegistryTest {
 
     @Test
     fun `base plugin is present by default`() {
-        assertThat(Orbit.plugins).containsExactly(BasePlugin)
+        assertThat(Orbit.plugins).containsExactly(OrbitBasePlugin)
     }
 
     @Test
@@ -41,7 +41,7 @@ internal class OrbitPluginRegistryTest {
 
         Orbit.registerDslPlugins(TestPlugin)
 
-        assertThat(Orbit.plugins).containsExactly(BasePlugin, TestPlugin)
+        assertThat(Orbit.plugins).containsExactly(OrbitBasePlugin, TestPlugin)
     }
 
     @Test

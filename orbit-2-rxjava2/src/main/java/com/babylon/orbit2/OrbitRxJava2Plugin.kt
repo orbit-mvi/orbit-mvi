@@ -26,37 +26,38 @@ import kotlinx.coroutines.rx2.asFlow
 import kotlinx.coroutines.rx2.await
 import kotlinx.coroutines.withContext
 
-object RxJava2Plugin : OrbitPlugin {
+object OrbitRxJava2Plugin : OrbitPlugin {
+    @Suppress("UNCHECKED_CAST", "EXPERIMENTAL_API_USAGE")
     override fun <S : Any, E : Any, SE : Any> apply(
         containerContext: OrbitPlugin.ContainerContext<S, SE>,
         flow: Flow<E>,
         operator: Operator<S, E>,
-        context: (event: E) -> Context<S, E>
+        createContext: (event: E) -> Context<S, E>
     ): Flow<Any> {
         return when (operator) {
             is RxJava2Observable<*, *, *> -> flow.flatMapConcat {
                 with(operator as RxJava2Observable<S, E, Any>) {
-                    context(it).block()
+                    createContext(it).block()
                 }.asFlow().flowOn(containerContext.backgroundDispatcher)
             }
             is RxJava2Single<*, *, *> -> flow.map {
                 with(operator as RxJava2Single<S, E, Any>) {
                     withContext(containerContext.backgroundDispatcher) {
-                        context(it).block().await()
+                        createContext(it).block().await()
                     }
                 }
             }
             is RxJava2Maybe<*, *, *> -> flow.mapNotNull {
                 with(operator as RxJava2Maybe<S, E, Any>) {
                     withContext(containerContext.backgroundDispatcher) {
-                        context(it).block().await()
+                        createContext(it).block().await()
                     }
                 }
             }
             is RxJava2Completable -> flow.onEach {
                 with(operator) {
                     withContext(containerContext.backgroundDispatcher) {
-                        context(it).block().await()
+                        createContext(it).block().await()
                     }
                 }
             }

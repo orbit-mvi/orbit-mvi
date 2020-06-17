@@ -18,12 +18,12 @@ package com.babylon.orbit2
 
 object Orbit {
 
-    private val defaultPlugins = setOf(BasePlugin)
+    private val defaultPlugins = setOf(OrbitBasePlugin)
     internal var plugins: Set<OrbitPlugin> = defaultPlugins
         private set
 
     fun registerDslPlugins(vararg plugins: OrbitPlugin) {
-        val pluginSet = mutableSetOf<OrbitPlugin>(BasePlugin)
+        val pluginSet = mutableSetOf<OrbitPlugin>(OrbitBasePlugin)
         pluginSet.addAll(plugins)
 
         Orbit.plugins = pluginSet.toSet()

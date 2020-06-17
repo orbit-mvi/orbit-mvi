@@ -88,6 +88,7 @@ subprojects {
     tasks.withType<KotlinCompile>().all {
         kotlinOptions {
             jvmTarget = "1.8"
+            allWarningsAsErrors = true
         }
     }
     plugins.withType<JavaBasePlugin>() {

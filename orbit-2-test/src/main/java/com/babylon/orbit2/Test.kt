@@ -28,6 +28,7 @@ inline fun <STATE : Any, SIDE_EFFECT : Any, reified T : Host<STATE, SIDE_EFFECT>
     isolateFlow: Boolean = true
 ): T {
 
+    @Suppress("EXPERIMENTAL_API_USAGE")
     val testContainer = TestContainer<STATE, SIDE_EFFECT>(
         initialState,
         isolateFlow
@@ -54,24 +55,25 @@ fun <STATE : Any, SIDE_EFFECT : Any, T : Host<STATE, SIDE_EFFECT>> T.assert(
     val verification = OrbitVerification<T, STATE, SIDE_EFFECT>()
         .apply(block)
 
-    val testThings =
+    @Suppress("UNCHECKED_CAST")
+    val testFixtures =
         TestHarness.fixtures[this] as TestFixtures<STATE, SIDE_EFFECT>
 
     // sanity check the initial state
     assertEquals(
-        testThings.initialState,
-        testThings.stateObserver.values.firstOrNull()
+        testFixtures.initialState,
+        testFixtures.stateObserver.values.firstOrNull()
     )
 
     assertStatesInOrder(
-        testThings.stateObserver.values.drop(1),
+        testFixtures.stateObserver.values.drop(1),
         verification.expectedStateChanges,
-        testThings.initialState
+        testFixtures.initialState
     )
 
     assertEquals(
         verification.expectedSideEffects,
-        testThings.sideEffectObserver.values
+        testFixtures.sideEffectObserver.values
     )
 
     verification.expectedLoopBacks.forEach {
