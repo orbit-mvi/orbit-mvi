@@ -19,6 +19,7 @@ package com.babylon.orbit2
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.withContext
 
 internal class Transform<S : Any, E : Any, E2 : Any>(val block: Context<S, E>.() -> E2) :
     Operator<S, E2>
@@ -78,7 +79,9 @@ object OrbitBasePlugin : OrbitPlugin {
         return when (operator) {
             is Transform<*, *, *> -> flow.map {
                 with(operator as Transform<S, E, Any>) {
-                    createContext(it).block()
+                    withContext(containerContext.backgroundDispatcher) {
+                        createContext(it).block()
+                    }
                 }
             }
             is SideEffect<*, *, *> -> flow.onEach {
