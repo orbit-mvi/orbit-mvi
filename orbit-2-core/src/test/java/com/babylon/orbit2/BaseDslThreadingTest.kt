@@ -88,14 +88,14 @@ internal class BaseDslThreadingTest {
 
         fun reducer(action: Int) = orbit {
             reduce {
-                this@BaseDslMiddleware.threadName = Thread.currentThread().name
+                threadName = Thread.currentThread().name
                 state.copy(id = action)
             }
         }
 
         fun transformer(action: Int) = orbit {
             transform {
-                this@BaseDslMiddleware.threadName = Thread.currentThread().name
+                threadName = Thread.currentThread().name
                 action + 5
             }
                 .reduce {
@@ -105,15 +105,15 @@ internal class BaseDslThreadingTest {
 
         fun postingSideEffect(action: Int) = orbit {
             sideEffect {
-                this@BaseDslMiddleware.threadName = Thread.currentThread().name
+                threadName = Thread.currentThread().name
                 post(action.toString())
             }
         }
 
         fun sideEffect(action: Int) = orbit {
             sideEffect {
-                this@BaseDslMiddleware.threadName = Thread.currentThread().name
-                this@BaseDslMiddleware.latch.countDown()
+                threadName = Thread.currentThread().name
+                latch.countDown()
                 action.toString()
             }
         }

@@ -17,15 +17,9 @@
 package com.babylon.orbit2
 
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import java.util.concurrent.atomic.AtomicBoolean
 
-@FlowPreview
-@ObsoleteCoroutinesApi
-@ExperimentalCoroutinesApi
 class TestContainer<STATE : Any, SIDE_EFFECT : Any>(
     initialState: STATE,
     private val isolateFlow: Boolean

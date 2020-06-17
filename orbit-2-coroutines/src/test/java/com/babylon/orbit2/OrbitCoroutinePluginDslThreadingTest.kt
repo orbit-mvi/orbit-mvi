@@ -80,7 +80,7 @@ internal class OrbitCoroutinePluginDslThreadingTest {
 
         fun suspend(action: Int) = orbit {
             transformSuspend {
-                this@Middleware.threadName = Thread.currentThread().name
+                threadName = Thread.currentThread().name
                 delay(50)
                 action + 5
             }
@@ -93,7 +93,7 @@ internal class OrbitCoroutinePluginDslThreadingTest {
             transformFlow {
                 flowOf(action, action + 1, action + 2, action + 3)
                     .onEach { delay(50) }
-                    .onEach { this@Middleware.threadName = Thread.currentThread().name }
+                    .onEach { threadName = Thread.currentThread().name }
             }
                 .reduce {
                     state.copy(id = event)

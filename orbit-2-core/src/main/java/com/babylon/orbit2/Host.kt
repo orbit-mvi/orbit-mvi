@@ -16,7 +16,6 @@
 
 package com.babylon.orbit2
 
-@Orbit2Dsl
 interface Host<STATE : Any, SIDE_EFFECT : Any> {
     val container: Container<STATE, SIDE_EFFECT>
 
