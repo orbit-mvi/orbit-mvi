@@ -17,6 +17,7 @@
 package com.babylon.orbit2
 
 import com.appmattus.kotlinfixture.kotlinFixture
+import kotlinx.coroutines.newSingleThreadContext
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.util.concurrent.CountDownLatch
@@ -24,7 +25,8 @@ import java.util.concurrent.CountDownLatch
 internal class BaseDslThreadingTest {
 
     companion object {
-        const val EXPECTED_THREAD_PREFIX = "orbit"
+        const val ORBIT_THREAD_PREFIX = "orbit"
+        const val BACKGROUND_THREAD_PREFIX = "IO"
     }
 
     private val fixture = kotlinFixture()
@@ -38,11 +40,11 @@ internal class BaseDslThreadingTest {
         middleware.reducer(action)
 
         testStreamObserver.awaitCount(2)
-        assertThat(middleware.threadName).startsWith(EXPECTED_THREAD_PREFIX)
+        assertThat(middleware.threadName).startsWith(ORBIT_THREAD_PREFIX)
     }
 
     @Test
-    fun `transformer executes on orbit dispatcher`() {
+    fun `transformer executes on background dispatcher`() {
         val action = fixture<Int>()
         val middleware = BaseDslMiddleware()
         val testStreamObserver = middleware.container.stateStream.test()
@@ -50,7 +52,7 @@ internal class BaseDslThreadingTest {
         middleware.transformer(action)
 
         testStreamObserver.awaitCount(2)
-        assertThat(middleware.threadName).startsWith(EXPECTED_THREAD_PREFIX)
+        assertThat(middleware.threadName).startsWith(BACKGROUND_THREAD_PREFIX)
     }
 
     @Test
@@ -62,7 +64,7 @@ internal class BaseDslThreadingTest {
         middleware.postingSideEffect(action)
 
         testStreamObserver.awaitCount(1)
-        assertThat(middleware.threadName).startsWith(EXPECTED_THREAD_PREFIX)
+        assertThat(middleware.threadName).startsWith(ORBIT_THREAD_PREFIX)
     }
 
     @Test
@@ -74,14 +76,18 @@ internal class BaseDslThreadingTest {
 
         middleware.latch.await()
 
-        assertThat(middleware.threadName).startsWith(EXPECTED_THREAD_PREFIX)
+        assertThat(middleware.threadName).startsWith(ORBIT_THREAD_PREFIX)
     }
 
     private data class TestState(val id: Int)
 
     private class BaseDslMiddleware : Host<TestState, String> {
-        override val container = Container.create<TestState, String>(
-            TestState(42)
+
+        @Suppress("EXPERIMENTAL_API_USAGE")
+        override val container = RealContainer<TestState, String>(
+            initialState = TestState(42),
+            settings = Container.Settings(),
+            backgroundDispatcher = newSingleThreadContext(BACKGROUND_THREAD_PREFIX)
         )
         lateinit var threadName: String
         val latch = CountDownLatch(1)

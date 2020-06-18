@@ -21,15 +21,19 @@ import io.reactivex.Completable
 import io.reactivex.Maybe
 import io.reactivex.Observable
 import io.reactivex.Single
-import kotlinx.coroutines.asCoroutineDispatcher
+import kotlinx.coroutines.newSingleThreadContext
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.util.concurrent.CountDownLatch
-import java.util.concurrent.Executors
 
 internal class OrbitRxJava2PluginDslThreadingTest {
+
+    companion object {
+        const val BACKGROUND_THREAD_PREFIX = "IO"
+    }
+
     private val fixture = kotlinFixture()
 
     @BeforeEach
@@ -52,7 +56,7 @@ internal class OrbitRxJava2PluginDslThreadingTest {
         middleware.single(action)
 
         testStreamObserver.awaitCount(2)
-        assertThat(middleware.threadName).startsWith("IO")
+        assertThat(middleware.threadName).startsWith(BACKGROUND_THREAD_PREFIX)
     }
 
     @Test
@@ -65,7 +69,7 @@ internal class OrbitRxJava2PluginDslThreadingTest {
         middleware.maybe(action)
 
         testStreamObserver.awaitCount(2)
-        assertThat(middleware.threadName).startsWith("IO")
+        assertThat(middleware.threadName).startsWith(BACKGROUND_THREAD_PREFIX)
     }
 
     @Test
@@ -77,7 +81,7 @@ internal class OrbitRxJava2PluginDslThreadingTest {
         middleware.maybeNot(action)
 
         middleware.latch.await()
-        assertThat(middleware.threadName).startsWith("IO")
+        assertThat(middleware.threadName).startsWith(BACKGROUND_THREAD_PREFIX)
     }
 
     @Test
@@ -90,7 +94,7 @@ internal class OrbitRxJava2PluginDslThreadingTest {
         middleware.completable(action)
 
         testStreamObserver.awaitCount(2)
-        assertThat(middleware.threadName).startsWith("IO")
+        assertThat(middleware.threadName).startsWith(BACKGROUND_THREAD_PREFIX)
     }
 
     @Test
@@ -103,7 +107,7 @@ internal class OrbitRxJava2PluginDslThreadingTest {
         middleware.observable(action)
 
         testStreamObserver.awaitCount(5)
-        assertThat(middleware.threadName).startsWith("IO")
+        assertThat(middleware.threadName).startsWith(BACKGROUND_THREAD_PREFIX)
     }
 
     private data class TestState(val id: Int)
@@ -113,8 +117,7 @@ internal class OrbitRxJava2PluginDslThreadingTest {
         override val container: Container<TestState, String> = RealContainer(
             initialState = TestState(42),
             settings = Container.Settings(),
-            backgroundDispatcher = Executors.newSingleThreadExecutor { Thread(it, "IO") }
-                .asCoroutineDispatcher()
+            backgroundDispatcher = newSingleThreadContext(BACKGROUND_THREAD_PREFIX)
         )
         lateinit var threadName: String
         val latch = CountDownLatch(1)

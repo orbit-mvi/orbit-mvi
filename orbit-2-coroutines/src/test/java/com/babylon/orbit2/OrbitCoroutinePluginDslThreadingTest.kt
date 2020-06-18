@@ -17,17 +17,21 @@
 package com.babylon.orbit2
 
 import com.appmattus.kotlinfixture.kotlinFixture
-import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.newSingleThreadContext
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import java.util.concurrent.Executors
 
 internal class OrbitCoroutinePluginDslThreadingTest {
+
+    companion object {
+        const val BACKGROUND_THREAD_PREFIX = "IO"
+    }
+
     private val fixture = kotlinFixture()
 
     @BeforeEach
@@ -50,7 +54,7 @@ internal class OrbitCoroutinePluginDslThreadingTest {
         middleware.suspend(action)
 
         testStreamObserver.awaitCount(2)
-        assertThat(middleware.threadName).startsWith("IO")
+        assertThat(middleware.threadName).startsWith(BACKGROUND_THREAD_PREFIX)
     }
 
     @Test
@@ -63,7 +67,7 @@ internal class OrbitCoroutinePluginDslThreadingTest {
         middleware.flow(action)
 
         testStreamObserver.awaitCount(5)
-        assertThat(middleware.threadName).startsWith("IO")
+        assertThat(middleware.threadName).startsWith(BACKGROUND_THREAD_PREFIX)
     }
 
     private data class TestState(val id: Int)
@@ -73,8 +77,7 @@ internal class OrbitCoroutinePluginDslThreadingTest {
         override val container: Container<TestState, String> = RealContainer(
             initialState = TestState(42),
             settings = Container.Settings(),
-            backgroundDispatcher = Executors.newSingleThreadExecutor { Thread(it, "IO") }
-                .asCoroutineDispatcher()
+            backgroundDispatcher = newSingleThreadContext(BACKGROUND_THREAD_PREFIX)
         )
         lateinit var threadName: String
 
