@@ -39,7 +39,7 @@ internal val Container.Companion.SAVED_STATE_KEY
  * executed in a lazy manner after the container has been interacted with in any way.
  * @return A [Container] implementation
  */
-fun <STATE : Parcelable, SIDE_EFFECT : Any> Container.Companion.create(
+fun <STATE : Parcelable, SIDE_EFFECT : Any> Container.Companion.createWithSavedState(
     initialState: STATE,
     savedStateHandle: SavedStateHandle,
     settings: Settings = Settings(),

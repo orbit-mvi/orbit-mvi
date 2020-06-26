@@ -16,6 +16,8 @@
 
 package com.babylon.orbit2
 
+import android.os.Parcel
+import android.os.Parcelable
 import androidx.lifecycle.SavedStateHandle
 import com.appmattus.kotlinfixture.kotlinFixture
 import org.assertj.core.api.Assertions.assertThat
@@ -46,13 +48,33 @@ class SavedStatePluginReadTest {
         assertThat(middleware.container.currentState).isEqualTo(initialState)
     }
 
-    private data class TestState(val id: Int)
+    private data class TestState(val id: Int) : Parcelable {
+        constructor(parcel: Parcel) : this(parcel.readInt())
+
+        override fun writeToParcel(parcel: Parcel, flags: Int) {
+            parcel.writeInt(id)
+        }
+
+        override fun describeContents(): Int {
+            return 0
+        }
+
+        companion object CREATOR : Parcelable.Creator<TestState> {
+            override fun createFromParcel(parcel: Parcel): TestState {
+                return TestState(parcel)
+            }
+
+            override fun newArray(size: Int): Array<TestState?> {
+                return arrayOfNulls(size)
+            }
+        }
+    }
 
     private inner class Middleware(
         savedStateHandle: SavedStateHandle,
         initialState: TestState
     ) : ContainerHost<TestState, Int> {
-        override val container: Container<TestState, Int> = Container.create(
+        override val container: Container<TestState, Int> = Container.createWithSavedState(
             initialState,
             savedStateHandle
         )

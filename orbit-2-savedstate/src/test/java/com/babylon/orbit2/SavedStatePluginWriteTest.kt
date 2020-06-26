@@ -72,7 +72,7 @@ class SavedStatePluginWriteTest {
         savedStateHandle: SavedStateHandle,
         initialState: TestState
     ) : ContainerHost<TestState, Int> {
-        override val container: Container<TestState, Int> = Container.create(
+        override val container: Container<TestState, Int> = Container.createWithSavedState(
             initialState,
             savedStateHandle
         )
