@@ -19,6 +19,14 @@ package com.babylon.orbit2
 import androidx.annotation.CheckResult
 import java.io.Closeable
 
+/**
+ * Represents a stream of values.
+ *
+ * Observing happens on the thread where [observe] is called.
+ *
+ * The subscription can be closed using the returned [Closeable]. It is the user's responsibility
+ * to manage the lifecycle of the subscription.
+ */
 interface Stream<T> {
 
     @CheckResult

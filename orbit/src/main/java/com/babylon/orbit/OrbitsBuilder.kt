@@ -160,8 +160,8 @@ open class OrbitsBuilder<STATE : Any, SIDE_EFFECT : Any>(private val initialStat
          *
          * Downstream transformers await for the state to be reduced.
          *
-         * Loopbacks are passthrough transformers. This means that after applying
-         * a loopback, the upstream events are passed through unmodified.
+         * Reducers are passthrough transformers. This means that after applying
+         * a reducer, the upstream events are passed through unmodified.
          *
          * @param reducer the lambda reducing the current state and incoming event to produce a new state
          */

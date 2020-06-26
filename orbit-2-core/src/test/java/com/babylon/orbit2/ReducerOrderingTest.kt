@@ -55,7 +55,7 @@ internal class ReducerOrderingTest {
 
     private data class TestState(val ids: List<Int> = emptyList())
 
-    private class ThreeReducersMiddleware : Host<TestState, String> {
+    private class ThreeReducersMiddleware : ContainerHost<TestState, String> {
         override val container = Container.create<TestState, String>(
             TestState()
         )

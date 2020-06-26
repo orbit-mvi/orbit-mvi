@@ -16,17 +16,49 @@
 
 package com.babylon.orbit2
 
+/**
+ * The heart of the Orbit MVI system. Represents an MVI container with its input and outputs.
+ * You can manipulate the container through the [orbit] function
+ */
 interface Container<STATE : Any, SIDE_EFFECT : Any> {
+    /**
+     * The container's current state.
+     */
     val currentState: STATE
+
+    /**
+     * A [Stream] of state updates. Emits the latest state upon subscription and serves only distinct
+     * values (only changed states are emitted) by default.
+     */
     val stateStream: Stream<STATE>
+
+    /**
+     * A [Stream] of one-off side effects. Depending on the [Settings] this container has been
+     * instantiated with, can support side effect caching when there are no listeners (default)
+     */
     val sideEffectStream: Stream<SIDE_EFFECT>
 
+    /**
+     * Builds and executes an orbit flow using the [Builder] and
+     * associated DSL functions.
+     *
+     * @param init lambda returning the operator chain that represents the flow
+     */
     fun orbit(
         init: Builder<STATE, SIDE_EFFECT, Unit>.() -> Builder<STATE, SIDE_EFFECT, *>
     )
 
     @Suppress("EXPERIMENTAL_API_USAGE")
     companion object {
+        /**
+         * Helps create a concrete container in a standard way.
+         *
+         * @param initialState The initial state of the container.
+         * @param settings The [Settings] to set the container up with.
+         * @param onCreate The lambda to execute when the container is created. By default it is
+         * executed in a lazy manner after the container has been interacted with in any way.
+         * @return Default [Container] implementation
+         */
         fun <STATE : Any, SIDE_EFFECT : Any> create(
             initialState: STATE,
             settings: Settings = Settings(),
@@ -42,6 +74,12 @@ interface Container<STATE : Any, SIDE_EFFECT : Any> {
             }
     }
 
+    /**
+     * Represents additional settings to create the container with.
+     *
+     * @property sideEffectCaching Whether side effect caching should be turned on or off.
+     * On by default.
+     */
     class Settings(
         val sideEffectCaching: Boolean = true
     )

@@ -27,7 +27,7 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
-internal class OrbitRxJava2PluginBehaviourTest {
+internal class RxJava2DslPluginBehaviourTest {
     private val fixture = kotlinFixture()
     private val initialState = fixture<TestState>()
 
@@ -36,12 +36,12 @@ internal class OrbitRxJava2PluginBehaviourTest {
 
         @BeforeEach
         fun beforeEach() {
-            Orbit.registerDslPlugins(OrbitRxJava2Plugin)
+            OrbitDslPlugins.register(RxJava2DslPlugin)
         }
 
         @AfterEach
         fun afterEach() {
-            Orbit.resetPlugins()
+            OrbitDslPlugins.reset()
         }
 
         @Test
@@ -168,7 +168,7 @@ internal class OrbitRxJava2PluginBehaviourTest {
 
     private data class TestState(val id: Int)
 
-    private class Middleware : Host<TestState, String> {
+    private class Middleware : ContainerHost<TestState, String> {
         override val container = Container.create<TestState, String>(TestState(42))
 
         fun single(action: Int) = orbit {

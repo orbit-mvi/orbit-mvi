@@ -20,9 +20,17 @@ internal class TransformSuspend<S : Any, E : Any, E2 : Any>(
     val block: suspend Context<S, E>.() -> E2
 ) : Operator<S, E2>
 
+/**
+ * The suspend transformer maps the incoming state and event into a new event using a suspending
+ * lambda.
+ *
+ * The transformer executes on an `IO` dispatcher by default.
+ *
+ * @param block the suspending lambda returning a new event given the current state and event
+ */
 @Orbit2Dsl
 fun <S : Any, SE : Any, E : Any, E2 : Any> Builder<S, SE, E>.transformSuspend(block: suspend Context<S, E>.() -> E2): Builder<S, SE, E2> {
-    Orbit.requirePlugin(OrbitCoroutinePlugin, "transformSuspend")
+    OrbitDslPlugins.requirePlugin(CoroutineDslPlugin, "transformSuspend")
     return Builder(
         stack + TransformSuspend(
             block

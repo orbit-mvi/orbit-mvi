@@ -76,7 +76,7 @@ internal class BaseDslBehaviourTest {
 
     private data class TestState(val id: Int)
 
-    private class BaseDslMiddleware : Host<TestState, String> {
+    private class BaseDslMiddleware : ContainerHost<TestState, String> {
         override val container = Container.create<TestState, String>(
             TestState(42)
         )

@@ -51,7 +51,7 @@ class SavedStatePluginReadTest {
     private inner class Middleware(
         savedStateHandle: SavedStateHandle,
         initialState: TestState
-    ) : Host<TestState, Int> {
+    ) : ContainerHost<TestState, Int> {
         override val container: Container<TestState, Int> = Container.create(
             initialState,
             savedStateHandle

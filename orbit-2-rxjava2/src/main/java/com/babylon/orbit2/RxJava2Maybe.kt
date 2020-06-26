@@ -22,11 +22,19 @@ internal class RxJava2Maybe<S : Any, E : Any, E2 : Any>(
     val block: suspend Context<S, E>.() -> Maybe<E2>
 ) : Operator<S, E>
 
+/**
+ * The maybe transformer flat maps incoming [Context] for every event into a [Maybe] of
+ * another type.
+ *
+ * The transformer executes on an `IO` dispatcher by default.
+ *
+ * @param block the lambda returning a new [Maybe] given the current state and event
+ */
 @Orbit2Dsl
 fun <S : Any, SE : Any, E : Any, E2 : Any> Builder<S, SE, E>.transformRx2Maybe(
     block: suspend Context<S, E>.() -> Maybe<E2>
 ): Builder<S, SE, E2> {
-    Orbit.requirePlugin(OrbitRxJava2Plugin, "transformRx2Maybe")
+    OrbitDslPlugins.requirePlugin(RxJava2DslPlugin, "transformRx2Maybe")
     return Builder(
         stack + RxJava2Maybe(
             block

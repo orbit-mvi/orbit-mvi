@@ -244,7 +244,7 @@ class OrbitTestingTest {
         }
 
         private inner class StateTestMiddleware :
-            Host<State, Nothing> {
+            ContainerHost<State, Nothing> {
             override val container = Container.create<State, Nothing>(State())
 
             fun something(action: Int): Unit = orbit {
@@ -327,7 +327,7 @@ class OrbitTestingTest {
         }
 
         private inner class SideEffectTestMiddleware :
-            Host<State, Int> {
+            ContainerHost<State, Int> {
             override val container = Container.create<State, Int>(State())
 
             fun something(action: Int): Unit = orbit {
@@ -374,7 +374,7 @@ class OrbitTestingTest {
         }
 
         private inner class GeneralTestMiddleware(private val dependency: BogusDependency) :
-            Host<State, Nothing> {
+            ContainerHost<State, Nothing> {
             override val container = Container.create<State, Nothing>(State()) {
                 created()
             }
