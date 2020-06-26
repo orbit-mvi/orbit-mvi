@@ -19,7 +19,7 @@ package com.babylon.orbit2
 import io.reactivex.Observable
 
 /**
- * Consume a [Stream] as an RxJava [Observable].
+ * Consume a [Stream] as an RxJava 2 [Observable].
  */
 fun <T> Stream<T>.asRxObservable() =
     Observable.create<T> { emitter ->

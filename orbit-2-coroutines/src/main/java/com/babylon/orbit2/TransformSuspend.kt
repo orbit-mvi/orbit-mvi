@@ -16,6 +16,8 @@
 
 package com.babylon.orbit2
 
+import kotlinx.coroutines.Dispatchers
+
 internal class TransformSuspend<S : Any, E : Any, E2 : Any>(
     val block: suspend Context<S, E>.() -> E2
 ) : Operator<S, E2>
@@ -24,7 +26,7 @@ internal class TransformSuspend<S : Any, E : Any, E2 : Any>(
  * The suspend transformer maps the incoming state and event into a new event using a suspending
  * lambda.
  *
- * The transformer executes on an `IO` dispatcher by default.
+ * The transformer executes on [Dispatchers.IO] by default.
  *
  * @param block the suspending lambda returning a new event given the current state and event
  */

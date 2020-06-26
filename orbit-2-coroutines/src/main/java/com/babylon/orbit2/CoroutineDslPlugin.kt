@@ -23,7 +23,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 
 /**
- * Orbit plugin providing kotlin coroutine DSL operators:
+ * Orbit plugin providing Kotlin coroutine DSL operators:
  *
  * * [transformSuspend]
  * * [transformFlow]

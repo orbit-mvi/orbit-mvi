@@ -57,7 +57,7 @@ class TestStreamObserver<T>(stream: Stream<T>) {
      */
     fun close(): Unit = closeable.close()
 
-    private companion object {
-        const val AWAIT_TIMEOUT_MS = 10L
+    companion object {
+        private const val AWAIT_TIMEOUT_MS = 10L
     }
 }

@@ -27,8 +27,8 @@ internal val Container.Companion.SAVED_STATE_KEY
 /**
  * Allows you to used the Android ViewModel's saved state support.
  *
- * Provide a [SavedStateHandle] in order for the state to be automatically saved as you use the
- * container. *This requires your state to be [Parcelable].*
+ * Provide a [SavedStateHandle] in order for your [Parcelable] state to be automatically saved as
+ * you use the container.
  *
  *
  * @param initialState The initial state of the container.
@@ -37,9 +37,9 @@ internal val Container.Companion.SAVED_STATE_KEY
  * @param settings The [Settings] to set the container up with.
  * @param onCreate The lambda to execute when the container is created. By default it is
  * executed in a lazy manner after the container has been interacted with in any way.
- * @return Default [Container] implementation
+ * @return A [Container] implementation
  */
-fun <STATE : Any, SIDE_EFFECT : Any> Container.Companion.create(
+fun <STATE : Parcelable, SIDE_EFFECT : Any> Container.Companion.create(
     initialState: STATE,
     savedStateHandle: SavedStateHandle,
     settings: Settings = Settings(),

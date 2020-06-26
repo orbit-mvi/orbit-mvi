@@ -19,6 +19,10 @@ package com.babylon.orbit2
 /**
  * The heart of the Orbit MVI system. Represents an MVI container with its input and outputs.
  * You can manipulate the container through the [orbit] function
+ *
+ * @param STATE The container's state type.
+ * @param SIDE_EFFECT The type of side effects posted by this container. Can be [Nothing] if this
+ * container never posts side effects.
  */
 interface Container<STATE : Any, SIDE_EFFECT : Any> {
     /**
@@ -33,8 +37,9 @@ interface Container<STATE : Any, SIDE_EFFECT : Any> {
     val stateStream: Stream<STATE>
 
     /**
-     * A [Stream] of one-off side effects. Depending on the [Settings] this container has been
-     * instantiated with, can support side effect caching when there are no listeners (default)
+     * A [Stream] of one-off side effects posted from [Builder.sideEffect].
+     * Depending on the [Settings] this container has been instantiated with, can support
+     * side effect caching when there are no listeners (default).
      */
     val sideEffectStream: Stream<SIDE_EFFECT>
 
@@ -56,8 +61,8 @@ interface Container<STATE : Any, SIDE_EFFECT : Any> {
          * @param initialState The initial state of the container.
          * @param settings The [Settings] to set the container up with.
          * @param onCreate The lambda to execute when the container is created. By default it is
-         * executed in a lazy manner after the container has been interacted with in any way.
-         * @return Default [Container] implementation
+         * executed in a lazy manner when the container is first interacted with in any way.
+         * @return A [Container] implementation
          */
         fun <STATE : Any, SIDE_EFFECT : Any> create(
             initialState: STATE,
@@ -77,7 +82,8 @@ interface Container<STATE : Any, SIDE_EFFECT : Any> {
     /**
      * Represents additional settings to create the container with.
      *
-     * @property sideEffectCaching Whether side effect caching should be turned on or off.
+     * @property sideEffectCaching When true the side effects are cached when there are no
+     * subscribers, to be emitted later upon first subscription.
      * On by default.
      */
     class Settings(

@@ -16,6 +16,7 @@
 
 package com.babylon.orbit2
 
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 
 internal class TransformFlow<S : Any, E : Any, E2 : Any>(
@@ -25,7 +26,7 @@ internal class TransformFlow<S : Any, E : Any, E2 : Any>(
 /**
  * The flow transformer flat maps incoming [Context] for every event into coroutine flows.
  *
- * The transformer executes on an `IO` dispatcher by default.
+ * The transformer executes on [Dispatchers.IO] by default.
  *
  * @param block the suspending lambda returning a new flow of events given the current state and
  * event

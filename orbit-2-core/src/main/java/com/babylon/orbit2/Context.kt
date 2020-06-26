@@ -23,4 +23,4 @@ package com.babylon.orbit2
  * @property event The current event being processed
  */
 @Orbit2Dsl
-data class Context<S : Any, E : Any>(val state: S, val event: E)
+data class Context<STATE : Any, SIDE_EFFECT : Any>(val state: STATE, val event: SIDE_EFFECT)
