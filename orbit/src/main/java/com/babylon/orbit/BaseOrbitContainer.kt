@@ -30,7 +30,7 @@ import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
 class BaseOrbitContainer<STATE : Any, SIDE_EFFECT : Any>(
-    middleware: Middleware<STATE, SIDE_EFFECT>,
+    private val middleware: Middleware<STATE, SIDE_EFFECT>,
     initialStateOverride: STATE? = null
 ) : OrbitContainer<STATE, SIDE_EFFECT> {
 
