@@ -23,7 +23,18 @@ import org.mockito.Mockito
 import java.util.WeakHashMap
 import kotlin.test.assertEquals
 
-inline fun <STATE : Any, SIDE_EFFECT : Any, reified T : Host<STATE, SIDE_EFFECT>> T.test(
+/**
+ *  Switches your [ContainerHost] into test mode. Allows you to isolate the flow to the next one
+ *  called (default) i.e. method calls on the container beyond the first will be registered but not
+ *  actually execute. This allows you to assert any loopbacks using [OrbitVerification.loopBack]
+ *  while keeping your test isolated to the flow you are testing, thus avoiding overly complex
+ *  tests with many states/side effects being emitted.
+ *
+ * @param initialState The state to initialize the test container with
+ * @param isolateFlow Whether the flow should be isolated.
+ * @return Your [ContainerHost] in test mode.
+ */
+inline fun <STATE : Any, SIDE_EFFECT : Any, reified T : ContainerHost<STATE, SIDE_EFFECT>> T.test(
     initialState: STATE,
     isolateFlow: Boolean = true
 ): T {
@@ -38,7 +49,7 @@ inline fun <STATE : Any, SIDE_EFFECT : Any, reified T : Host<STATE, SIDE_EFFECT>
         on { container }.thenReturn(testContainer)
     }
 
-    TestHarness.fixtures[spy] = TestFixtures(
+    TestHarness.FIXTURES[spy] = TestFixtures(
         initialState,
         spy.container.stateStream.test(),
         spy.container.sideEffectStream.test()
@@ -49,15 +60,29 @@ inline fun <STATE : Any, SIDE_EFFECT : Any, reified T : Host<STATE, SIDE_EFFECT>
     return spy
 }
 
-fun <STATE : Any, SIDE_EFFECT : Any, T : Host<STATE, SIDE_EFFECT>> T.assert(
+/**
+ * Perform assertions on your [ContainerHost].
+ *
+ * Specifying all expected states and posted side effects is obligatory, i.e. you cannot do just a
+ * partial assertion. Loopback tests are optional.
+ *
+ * @param block The block containing assertions for your [ContainerHost].
+ */
+fun <STATE : Any, SIDE_EFFECT : Any, T : ContainerHost<STATE, SIDE_EFFECT>> T.assert(
     block: OrbitVerification<T, STATE, SIDE_EFFECT>.() -> Unit
 ) {
+    val mockingDetails = Mockito.mockingDetails(this)
+    if (!mockingDetails.isSpy) {
+        throw IllegalArgumentException(
+            "The container is not in test mode! Please call [ContainerHost.test()] first!"
+        )
+    }
     val verification = OrbitVerification<T, STATE, SIDE_EFFECT>()
         .apply(block)
 
     @Suppress("UNCHECKED_CAST")
     val testFixtures =
-        TestHarness.fixtures[this] as TestFixtures<STATE, SIDE_EFFECT>
+        TestHarness.FIXTURES[this] as TestFixtures<STATE, SIDE_EFFECT>
 
     // sanity check the initial state
     assertEquals(
@@ -92,7 +117,10 @@ class TestFixtures<STATE : Any, SIDE_EFFECT : Any>(
 )
 
 object TestHarness {
-    val fixtures: MutableMap<Host<*, *>, TestFixtures<*, *>> = WeakHashMap()
+    val FIXTURES: MutableMap<ContainerHost<*, *>, TestFixtures<*, *>> = WeakHashMap()
 }
 
+/**
+ * Allows you to put a [Stream] into test mode.
+ */
 fun <T : Any> Stream<T>.test() = TestStreamObserver(this)

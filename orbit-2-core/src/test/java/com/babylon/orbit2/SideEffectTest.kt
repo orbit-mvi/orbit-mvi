@@ -161,7 +161,7 @@ internal class SideEffectTest {
         assertThat(testSideEffectObserver2.values).isEmpty()
     }
 
-    private class Middleware(caching: Boolean? = null) : Host<Unit, Int> {
+    private class Middleware(caching: Boolean? = null) : ContainerHost<Unit, Int> {
         override val container: Container<Unit, Int> =
             when (caching) {
                 null -> Container.create(Unit) // making sure defaults are tested

@@ -26,7 +26,7 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
-internal class OrbitCoroutinePluginDslThreadingTest {
+internal class CoroutineDslPluginDslThreadingTest {
 
     companion object {
         const val BACKGROUND_THREAD_PREFIX = "IO"
@@ -36,12 +36,12 @@ internal class OrbitCoroutinePluginDslThreadingTest {
 
     @BeforeEach
     fun beforeEach() {
-        Orbit.registerDslPlugins(OrbitCoroutinePlugin)
+        OrbitDslPlugins.register(CoroutineDslPlugin)
     }
 
     @AfterEach
     fun afterEach() {
-        Orbit.resetPlugins()
+        OrbitDslPlugins.reset()
     }
 
     @Test
@@ -72,7 +72,7 @@ internal class OrbitCoroutinePluginDslThreadingTest {
 
     private data class TestState(val id: Int)
 
-    private class Middleware : Host<TestState, String> {
+    private class Middleware : ContainerHost<TestState, String> {
         @Suppress("EXPERIMENTAL_API_USAGE")
         override val container: Container<TestState, String> = RealContainer(
             initialState = TestState(42),

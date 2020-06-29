@@ -26,10 +26,18 @@ import kotlinx.coroutines.rx2.asFlow
 import kotlinx.coroutines.rx2.await
 import kotlinx.coroutines.withContext
 
-object OrbitRxJava2Plugin : OrbitPlugin {
+/**
+ * Orbit plugin providing RxJava 2 DSL operators:
+ *
+ * * [transformRx2Observable]
+ * * [transformRx2Single]
+ * * [transformRx2Maybe]
+ * * [transformRx2Completable]
+ */
+object RxJava2DslPlugin : OrbitDslPlugin {
     @Suppress("UNCHECKED_CAST", "EXPERIMENTAL_API_USAGE")
     override fun <S : Any, E : Any, SE : Any> apply(
-        containerContext: OrbitPlugin.ContainerContext<S, SE>,
+        containerContext: OrbitDslPlugin.ContainerContext<S, SE>,
         flow: Flow<E>,
         operator: Operator<S, E>,
         createContext: (event: E) -> Context<S, E>

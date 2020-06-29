@@ -19,15 +19,23 @@ package com.babylon.orbit2
 import io.reactivex.Observable
 
 internal class RxJava2Observable<S : Any, E : Any, E2 : Any>(
-    val block: suspend Context<S, E>.() -> Observable<E2>
+    val block: Context<S, E>.() -> Observable<E2>
 ) : Operator<S, E>
 
+/**
+ * The observable transformer flat maps incoming [Context] for every event into an [Observable] of
+ * another type.
+ *
+ * The transformer executes on an `IO` dispatcher by default.
+ *
+ * @param block the lambda returning a new observable of events given the current state and event
+ */
 @Orbit2Dsl
 fun <S : Any, SE : Any, E : Any, E2 : Any> Builder<S, SE, E>.transformRx2Observable(
-    block: suspend Context<S, E>.() -> Observable<E2>
+    block: Context<S, E>.() -> Observable<E2>
 ): Builder<S, SE, E2> {
-    Orbit.requirePlugin(
-        OrbitRxJava2Plugin,
+    OrbitDslPlugins.requirePlugin(
+        RxJava2DslPlugin,
         "transformRxJava2Observable"
     )
     return Builder(

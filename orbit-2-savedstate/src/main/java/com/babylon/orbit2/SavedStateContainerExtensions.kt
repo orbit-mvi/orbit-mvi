@@ -16,15 +16,33 @@
 
 package com.babylon.orbit2
 
+import android.os.Parcelable
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.ViewModel
+import com.babylon.orbit2.Container.Settings
 
 internal val Container.Companion.SAVED_STATE_KEY
     get() = "state"
 
-fun <STATE : Any, SIDE_EFFECT : Any> Container.Companion.create(
+/**
+ * Allows you to used the Android ViewModel's saved state support.
+ *
+ * Provide a [SavedStateHandle] in order for your [Parcelable] state to be automatically saved as
+ * you use the container.
+ *
+ *
+ * @param initialState The initial state of the container.
+ * @param savedStateHandle The [SavedStateHandle] corresponding to this host. Typically retrieved
+ * from the containing [ViewModel]
+ * @param settings The [Settings] to set the container up with.
+ * @param onCreate The lambda to execute when the container is created. By default it is
+ * executed in a lazy manner after the container has been interacted with in any way.
+ * @return A [Container] implementation
+ */
+fun <STATE : Parcelable, SIDE_EFFECT : Any> Container.Companion.createWithSavedState(
     initialState: STATE,
     savedStateHandle: SavedStateHandle,
-    settings: Container.Settings = Container.Settings(),
+    settings: Settings = Settings(),
     onCreate: (() -> Unit)? = null
 ): Container<STATE, SIDE_EFFECT> {
     val savedState: STATE? = savedStateHandle[SAVED_STATE_KEY]

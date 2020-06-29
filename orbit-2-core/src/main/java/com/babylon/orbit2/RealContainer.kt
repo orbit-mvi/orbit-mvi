@@ -40,7 +40,7 @@ open class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
     private val stateChannel = ConflatedBroadcastChannel(initialState)
     private val sideEffectChannel = Channel<SIDE_EFFECT>(Channel.RENDEZVOUS)
     private val sideEffectMutex = Mutex()
-    private val pluginContext = OrbitPlugin.ContainerContext(
+    private val pluginContext = OrbitDslPlugin.ContainerContext(
         backgroundDispatcher = backgroundDispatcher,
         setState = stateChannel,
         postSideEffect = { event: SIDE_EFFECT ->
@@ -75,7 +75,7 @@ open class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
     suspend fun collectFlow(init: Builder<STATE, SIDE_EFFECT, Unit>.() -> Builder<STATE, SIDE_EFFECT, *>) {
         Builder<STATE, SIDE_EFFECT, Unit>()
             .init().stack.fold(flowOf(Unit)) { flow: Flow<Any>, operator: Operator<STATE, *> ->
-                Orbit.plugins.fold(flow) { flow2: Flow<Any>, plugin: OrbitPlugin ->
+                OrbitDslPlugins.plugins.fold(flow) { flow2: Flow<Any>, plugin: OrbitDslPlugin ->
                     plugin.apply(
                         pluginContext,
                         flow2,
@@ -86,6 +86,8 @@ open class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
     }
 
     companion object {
+        // To be replaced by the new API when it hits:
+        // https://github.com/Kotlin/kotlinx.coroutines/issues/261
         @Suppress("EXPERIMENTAL_API_USAGE")
         private val DEFAULT_DISPATCHER by lazy {
             newSingleThreadContext("orbit")

@@ -23,25 +23,25 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
-internal class OrbitPluginRegistryTest {
+internal class OrbitDslPluginsTest {
     val fixture = kotlinFixture()
 
     @AfterEach
     fun afterEach() {
-        Orbit.resetPlugins()
+        OrbitDslPlugins.reset()
     }
 
     @Test
     fun `base plugin is present by default`() {
-        assertThat(Orbit.plugins).containsExactly(OrbitBasePlugin)
+        assertThat(OrbitDslPlugins.plugins).containsExactly(BaseDslPlugin)
     }
 
     @Test
     fun `base plugin is present after another plugin has been added`() {
 
-        Orbit.registerDslPlugins(TestPlugin)
+        OrbitDslPlugins.register(TestPlugin)
 
-        assertThat(Orbit.plugins).containsExactly(OrbitBasePlugin, TestPlugin)
+        assertThat(OrbitDslPlugins.plugins).containsExactly(BaseDslPlugin, TestPlugin)
     }
 
     @Test
@@ -49,7 +49,7 @@ internal class OrbitPluginRegistryTest {
         val component = fixture<String>()
 
         val throwable = assertThrows<IllegalStateException> {
-            Orbit.requirePlugin(TestPlugin, component)
+            OrbitDslPlugins.requirePlugin(TestPlugin, component)
         }
 
         assertThat(throwable.message).isEqualTo(
@@ -58,9 +58,9 @@ internal class OrbitPluginRegistryTest {
         )
     }
 
-    private object TestPlugin : OrbitPlugin {
+    private object TestPlugin : OrbitDslPlugin {
         override fun <S : Any, E : Any, SE : Any> apply(
-            containerContext: OrbitPlugin.ContainerContext<S, SE>,
+            containerContext: OrbitDslPlugin.ContainerContext<S, SE>,
             flow: Flow<E>,
             operator: Operator<S, E>,
             createContext: (event: E) -> Context<S, E>

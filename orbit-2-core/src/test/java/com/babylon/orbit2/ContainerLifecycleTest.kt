@@ -40,7 +40,7 @@ internal class ContainerLifecycleTest {
 
     private data class TestState(val id: Int)
 
-    private class Middleware(initialState: TestState) : Host<TestState, String> {
+    private class Middleware(initialState: TestState) : ContainerHost<TestState, String> {
         override val container = Container.create<TestState, String>(initialState) {
             onCreate()
         }

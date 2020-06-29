@@ -16,23 +16,70 @@
 
 package com.babylon.orbit2
 
-class OrbitVerification<HOST : Host<STATE, SIDE_EFFECT>, STATE : Any, SIDE_EFFECT : Any> {
+class OrbitVerification<HOST : ContainerHost<STATE, SIDE_EFFECT>, STATE : Any, SIDE_EFFECT : Any> {
     internal var expectedSideEffects = emptyList<SIDE_EFFECT>()
     internal var expectedStateChanges = emptyList<STATE.() -> STATE>()
     internal var expectedLoopBacks = mutableListOf<Times<HOST, STATE, SIDE_EFFECT>>()
 
+    /**
+     * Assert that the expected sequence of state changes has been emitted.
+     *
+     * The initial state is asserted automatically, only assert further states.
+     *
+     * Every assertion is a lambda with the previous state as the receiver. It is therefore
+     * recommended to use `copy` to make your tests more concise and readable.
+     *
+     * We are more interested in how the state _changed_ from the previous one, rather than what
+     * it currently is.
+     *
+     * ``` kotlin
+     * testSubject.assert {
+     *     states(
+     *         { copy(count = 2) },
+     *         { copy(count = 4) },
+     *         { copy(finished = true) }
+     *     )
+     * }
+     * ```
+     *
+     * @param expectedStateChanges A list of expected state _changes_. Each lambda has the
+     * previous state as the receiver.
+     */
     fun states(vararg expectedStateChanges: STATE.() -> STATE) {
         this.expectedStateChanges = expectedStateChanges.toList()
     }
 
+    /**
+     * Assert that the expected side effects have been posted.
+     *
+     * @param expectedSideEffects Expected side effects.
+     */
     fun postedSideEffects(vararg expectedSideEffects: SIDE_EFFECT) {
         this.expectedSideEffects = expectedSideEffects.toList()
     }
 
+    /**
+     * Assert that the expected side effects have been posted.
+     *
+     * @param expectedSideEffects Expected side effects.
+     */
     fun postedSideEffects(expectedSideEffects: Iterable<SIDE_EFFECT>) {
         this.expectedSideEffects = expectedSideEffects.toList()
     }
 
+    /**
+     * Assert whether other public functions of your host have been called as part of the
+     * execution.
+     *
+     * ``` kotlin
+     * testSubject.assert {
+     *     loopBack { someFunction(123) }
+     * }
+     * ```
+     *
+     * @param times The number of times the function has been called
+     * @param block The function call
+     */
     fun loopBack(times: Int = 1, block: HOST.() -> Unit) {
         this.expectedLoopBacks.add(
             Times(
@@ -42,7 +89,7 @@ class OrbitVerification<HOST : Host<STATE, SIDE_EFFECT>, STATE : Any, SIDE_EFFEC
         )
     }
 
-    data class Times<HOST : Host<STATE, SIDE_EFFECT>, STATE : Any, SIDE_EFFECT : Any>(
+    internal data class Times<HOST : ContainerHost<STATE, SIDE_EFFECT>, STATE : Any, SIDE_EFFECT : Any>(
         val times: Int = 1,
         val invocation: HOST.() -> Unit
     )

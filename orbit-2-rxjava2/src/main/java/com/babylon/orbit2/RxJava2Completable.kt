@@ -22,11 +22,19 @@ internal class RxJava2Completable<S : Any, E : Any>(
     val block: suspend Context<S, E>.() -> Completable
 ) : Operator<S, E>
 
+/**
+ * The maybe transformer flat maps incoming [Context] for every event into a [Completable] of
+ * another type.
+ *
+ * The transformer executes on an `IO` dispatcher by default.
+ *
+ * @param block the lambda returning a new [Completable] given the current state and event
+ */
 @Orbit2Dsl
 fun <S : Any, SE : Any, E : Any> Builder<S, SE, E>.transformRx2Completable(
     block: suspend Context<S, E>.() -> Completable
 ): Builder<S, SE, E> {
-    Orbit.requirePlugin(OrbitRxJava2Plugin, "transformRx2Completable")
+    OrbitDslPlugins.requirePlugin(RxJava2DslPlugin, "transformRx2Completable")
     return Builder(
         stack + RxJava2Completable(
             block

@@ -19,14 +19,22 @@ package com.babylon.orbit2
 import io.reactivex.Single
 
 internal class RxJava2Single<S : Any, E : Any, E2 : Any>(
-    val block: suspend Context<S, E>.() -> Single<E2>
+    val block: Context<S, E>.() -> Single<E2>
 ) : Operator<S, E>
 
+/**
+ * The observable transformer flat maps incoming [Context] for every event into a [Single] of
+ * another type.
+ *
+ * The transformer executes on an `IO` dispatcher by default.
+ *
+ * @param block the lambda returning a new [Single] given the current state and event
+ */
 @Orbit2Dsl
 fun <S : Any, SE : Any, E : Any, E2 : Any> Builder<S, SE, E>.transformRx2Single(
-    block: suspend Context<S, E>.() -> Single<E2>
+    block: Context<S, E>.() -> Single<E2>
 ): Builder<S, SE, E2> {
-    Orbit.requirePlugin(OrbitRxJava2Plugin, "transformRx2Single")
+    OrbitDslPlugins.requirePlugin(RxJava2DslPlugin, "transformRx2Single")
     return Builder(
         stack + RxJava2Single(
             block

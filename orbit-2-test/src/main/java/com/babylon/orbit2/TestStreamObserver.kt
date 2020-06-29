@@ -18,6 +18,11 @@ package com.babylon.orbit2
 
 import java.io.Closeable
 
+/**
+ * Allows you to record all observed values of a stream for easy testing.
+ *
+ * @param stream The stream to observe.
+ */
 class TestStreamObserver<T>(stream: Stream<T>) {
     private val _values = mutableListOf<T>()
     private val closeable: Closeable
@@ -30,6 +35,12 @@ class TestStreamObserver<T>(stream: Stream<T>) {
         }
     }
 
+    /**
+     * Awaits until the specified count of elements has been received or the timeout is hit.
+     *
+     * @param count The awaited element count.
+     * @param timeout How long to wait for in milliseconds
+     */
     fun awaitCount(count: Int, timeout: Long = 5000L) {
         val start = System.currentTimeMillis()
         while (values.count() < count) {
@@ -40,9 +51,13 @@ class TestStreamObserver<T>(stream: Stream<T>) {
         }
     }
 
+    /**
+     * Closes the subscription on the underlying stream. No further values will be received after
+     * this call.
+     */
     fun close(): Unit = closeable.close()
 
     companion object {
-        const val AWAIT_TIMEOUT_MS = 10L
+        private const val AWAIT_TIMEOUT_MS = 10L
     }
 }

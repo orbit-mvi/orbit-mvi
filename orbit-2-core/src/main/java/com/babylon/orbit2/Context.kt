@@ -16,5 +16,11 @@
 
 package com.babylon.orbit2
 
+/**
+ * Represents the current context in which an [Operator] is executing.
+ *
+ * @property state The current state captured at the point when the operator is executed
+ * @property event The current event being processed
+ */
 @Orbit2Dsl
-data class Context<S : Any, E : Any>(val state: S, val event: E)
+data class Context<STATE : Any, SIDE_EFFECT : Any>(val state: STATE, val event: SIDE_EFFECT)

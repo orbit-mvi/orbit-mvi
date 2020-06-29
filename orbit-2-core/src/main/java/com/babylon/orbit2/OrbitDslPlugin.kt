@@ -20,7 +20,10 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.channels.SendChannel
 import kotlinx.coroutines.flow.Flow
 
-interface OrbitPlugin {
+/**
+ * Extend this interface to create your own DSL plugin.
+ */
+interface OrbitDslPlugin {
     fun <S : Any, E : Any, SE : Any> apply(
         containerContext: ContainerContext<S, SE>,
         flow: Flow<E>,

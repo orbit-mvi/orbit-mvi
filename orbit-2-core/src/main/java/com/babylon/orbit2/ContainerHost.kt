@@ -16,9 +16,29 @@
 
 package com.babylon.orbit2
 
-interface Host<STATE : Any, SIDE_EFFECT : Any> {
+/**
+ * Apply this interface to anything you want to become an orbit container host.
+ * Typically this will be an Android ViewModel but it can be applied to simple presenters etc.
+ *
+ */
+interface ContainerHost<STATE : Any, SIDE_EFFECT : Any> {
+    /**
+     * The orbit [Container] instance.
+     *
+     * Use the [Container.create] factory functions to easily obtain a [Container].
+     *
+     * ```
+     * override val container = Container.create<MyState, MySideEffect>(initialState)
+     * ```
+     */
     val container: Container<STATE, SIDE_EFFECT>
 
+    /**
+     * Build and execute an orbit flow on [container] using the [Builder] and
+     * associated DSL functions.
+     *
+     * @param init lambda returning the operator chain that represents the flow
+     */
     @Orbit2Dsl
     fun orbit(init: Builder<STATE, SIDE_EFFECT, Unit>.() -> Builder<STATE, SIDE_EFFECT, *>) =
         container.orbit(init)

@@ -25,7 +25,7 @@ import kotlin.system.measureTimeMillis
 internal class BenchmarkTest {
 
     @Test
-    fun `benchmark`() {
+    fun benchmark() {
         val middleware = BenchmarkMiddleware()
         val testStreamObserver = middleware.container.stateStream.test()
         val x = 100_000
@@ -51,7 +51,7 @@ internal class BenchmarkTest {
 
     private data class TestState(val id: Int)
 
-    private class BenchmarkMiddleware : Host<TestState, String> {
+    private class BenchmarkMiddleware : ContainerHost<TestState, String> {
         override val container = Container.create<TestState, String>(TestState(42))
 
         fun reducer(action: Int) = orbit {

@@ -22,10 +22,16 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 
-object OrbitCoroutinePlugin : OrbitPlugin {
+/**
+ * Orbit plugin providing Kotlin coroutine DSL operators:
+ *
+ * * [transformSuspend]
+ * * [transformFlow]
+ */
+object CoroutineDslPlugin : OrbitDslPlugin {
     @Suppress("UNCHECKED_CAST", "EXPERIMENTAL_API_USAGE")
     override fun <S : Any, E : Any, SE : Any> apply(
-        containerContext: OrbitPlugin.ContainerContext<S, SE>,
+        containerContext: OrbitDslPlugin.ContainerContext<S, SE>,
         flow: Flow<E>,
         operator: Operator<S, E>,
         createContext: (event: E) -> Context<S, E>

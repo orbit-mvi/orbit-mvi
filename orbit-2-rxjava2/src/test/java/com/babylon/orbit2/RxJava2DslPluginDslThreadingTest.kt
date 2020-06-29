@@ -28,7 +28,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.util.concurrent.CountDownLatch
 
-internal class OrbitRxJava2PluginDslThreadingTest {
+internal class RxJava2DslPluginDslThreadingTest {
 
     companion object {
         const val BACKGROUND_THREAD_PREFIX = "IO"
@@ -38,12 +38,12 @@ internal class OrbitRxJava2PluginDslThreadingTest {
 
     @BeforeEach
     fun beforeEach() {
-        Orbit.registerDslPlugins(OrbitRxJava2Plugin)
+        OrbitDslPlugins.register(RxJava2DslPlugin)
     }
 
     @AfterEach
     fun afterEach() {
-        Orbit.resetPlugins()
+        OrbitDslPlugins.reset()
     }
 
     @Test
@@ -112,7 +112,7 @@ internal class OrbitRxJava2PluginDslThreadingTest {
 
     private data class TestState(val id: Int)
 
-    private class Middleware : Host<TestState, String> {
+    private class Middleware : ContainerHost<TestState, String> {
         @Suppress("EXPERIMENTAL_API_USAGE")
         override val container: Container<TestState, String> = RealContainer(
             initialState = TestState(42),

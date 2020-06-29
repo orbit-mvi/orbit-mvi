@@ -16,15 +16,24 @@
 
 package com.babylon.orbit2
 
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 
 internal class TransformFlow<S : Any, E : Any, E2 : Any>(
     val block: suspend Context<S, E>.() -> Flow<E2>
 ) : Operator<S, E>
 
+/**
+ * The flow transformer flat maps incoming [Context] for every event into coroutine flows.
+ *
+ * The transformer executes on [Dispatchers.IO] by default.
+ *
+ * @param block the suspending lambda returning a new flow of events given the current state and
+ * event
+ */
 @Orbit2Dsl
 fun <S : Any, SE : Any, E : Any, E2 : Any> Builder<S, SE, E>.transformFlow(block: suspend Context<S, E>.() -> Flow<E2>): Builder<S, SE, E2> {
-    Orbit.requirePlugin(OrbitCoroutinePlugin, "transformFlow")
+    OrbitDslPlugins.requirePlugin(CoroutineDslPlugin, "transformFlow")
     return Builder(
         stack + TransformFlow(
             block
