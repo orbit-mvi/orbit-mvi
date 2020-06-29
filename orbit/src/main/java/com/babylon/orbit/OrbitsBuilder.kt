@@ -22,7 +22,7 @@ import io.reactivex.rxkotlin.ofType
 @OrbitDsl
 open class OrbitsBuilder<STATE : Any, SIDE_EFFECT : Any>(private val initialState: STATE) {
     private val orbits =
-        mutableMapOf<String, OrbitContext<STATE, SIDE_EFFECT>.() -> Observable<*>>()
+        mutableMapOf<String, List<OrbitContext<STATE, SIDE_EFFECT>.() -> Observable<*>>>()
     private val descriptions = mutableSetOf<String>()
 
     private val config = ConfigReceiver()
@@ -86,6 +86,11 @@ open class OrbitsBuilder<STATE : Any, SIDE_EFFECT : Any>(private val initialStat
         private val description: String,
         private val upstreamTransformer: OrbitContext<STATE, SIDE_EFFECT>.() -> Observable<EVENT>
     ) {
+        init {
+            this@OrbitsBuilder.orbits[description] =
+                (this@OrbitsBuilder.orbits[description] ?: emptyList<OrbitContext<STATE, SIDE_EFFECT>.() -> Observable<*>>()) +
+                    upstreamTransformer
+        }
 
         /**
          * Transform allows you to apply a series of RxJava operators in order to transform the original
@@ -104,7 +109,6 @@ open class OrbitsBuilder<STATE : Any, SIDE_EFFECT : Any>(private val initialStat
                     upstreamTransformer().observeOn(backgroundScheduler)
                 ).transformer()
             }
-                .also { this@OrbitsBuilder.orbits[description] = it.upstreamTransformer }
 
         /**
          * Side effects allow you to deal with things like tracking, navigation etc.
@@ -179,7 +183,7 @@ open class OrbitsBuilder<STATE : Any, SIDE_EFFECT : Any>(private val initialStat
                         }.map { event } // To be removed to make reducers emit the state
                     }
                     .observeOn(backgroundScheduler)
-            }.also { this@OrbitsBuilder.orbits[description] = it.upstreamTransformer }
+            }
 
         private fun doOnNextTransformer(func: OrbitContext<STATE, SIDE_EFFECT>.(EVENT) -> Unit) =
             this@OrbitsBuilder.Transformer(
@@ -189,7 +193,7 @@ open class OrbitsBuilder<STATE : Any, SIDE_EFFECT : Any>(private val initialStat
                     .doOnNext {
                         func(it)
                     }
-            }.also { this@OrbitsBuilder.orbits[description] = it.upstreamTransformer }
+            }
     }
 
     fun build() = object : Middleware<STATE, SIDE_EFFECT> {
@@ -197,7 +201,7 @@ open class OrbitsBuilder<STATE : Any, SIDE_EFFECT : Any>(private val initialStat
             sideEffectCachingEnabled = config.sideEffectCachingEnabled
         )
         override val initialState: STATE = this@OrbitsBuilder.initialState
-        override val orbits: Map<String, TransformerFunction<STATE, SIDE_EFFECT>> =
+        override val orbits: Map<String, List<TransformerFunction<STATE, SIDE_EFFECT>>> =
             this@OrbitsBuilder.orbits
     }
 }
