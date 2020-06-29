@@ -55,23 +55,23 @@ class BaseOrbitContainer<STATE : Any, SIDE_EFFECT : Any>(
             sideEffectSubject
         }
 
+    private fun getContext(actions: Observable<Any>) = OrbitContext(
+        { currentState },
+        actions,
+        inputSubject,
+        ::reduce,
+        sideEffectSubject,
+        backgroundScheduler(middleware.configuration)
+    )
+
     init {
         disposables += inputSubject.doOnSubscribe { disposables += it }
             .observeOn(scheduler)
             .publish { actions ->
-                with(
-                    OrbitContext(
-                        { currentState },
-                        actions,
-                        inputSubject,
-                        ::reduce,
-                        sideEffectSubject,
-                        backgroundScheduler(middleware.configuration)
-                    )
-                ) {
+                with(getContext(actions)) {
                     Observable.merge(
-                        middleware.orbits.values.map { transformer ->
-                            transformer()
+                        middleware.orbits.values.map { transformers ->
+                            transformers.last()()
                         }
                     )
                 }

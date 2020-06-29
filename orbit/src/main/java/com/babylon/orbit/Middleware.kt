@@ -18,7 +18,7 @@ package com.babylon.orbit
 
 interface Middleware<STATE : Any, SIDE_EFFECT : Any> {
     val initialState: STATE
-    val orbits: Map<String, TransformerFunction<STATE, SIDE_EFFECT>>
+    val orbits: Map<String, List<TransformerFunction<STATE, SIDE_EFFECT>>>
     val configuration: Config
 
     data class Config(
@@ -30,7 +30,7 @@ interface Middleware<STATE : Any, SIDE_EFFECT : Any> {
         return object : Middleware<STATE, SIDE_EFFECT> {
             override val initialState: STATE
                 get() = this@Middleware.initialState
-            override val orbits: Map<String, TransformerFunction<STATE, SIDE_EFFECT>>
+            override val orbits: Map<String, List<TransformerFunction<STATE, SIDE_EFFECT>>>
                 get() = this@Middleware.orbits
             override val configuration: Config
                 get() = this@Middleware.configuration.copy(testMode = true)
@@ -41,7 +41,7 @@ interface Middleware<STATE : Any, SIDE_EFFECT : Any> {
         return object : Middleware<STATE, SIDE_EFFECT> {
             override val initialState: STATE
                 get() = this@Middleware.initialState
-            override val orbits: Map<String, TransformerFunction<STATE, SIDE_EFFECT>>
+            override val orbits: Map<String, List<TransformerFunction<STATE, SIDE_EFFECT>>>
                 get() = this@Middleware.orbits.filter { it.key == flow }
             override val configuration: Config
                 get() = this@Middleware.configuration.copy(testMode = true)
