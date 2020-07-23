@@ -37,7 +37,7 @@ plugins {
 
 apply(from = "gradle/scripts/detekt.gradle.kts")
 
-task("clean", type = Delete::class) {
+tasks.register<Delete>("clean") {
     delete(rootProject.buildDir)
 }
 
