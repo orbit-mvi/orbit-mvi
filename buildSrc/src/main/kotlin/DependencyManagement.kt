@@ -17,11 +17,10 @@
 object Versions {
 
     const val gradleVersionsPlugin = "0.29.0"
-    const val gradleAndroidPlugin = "3.6.3"
+    const val gradleAndroidPlugin = "4.0.1"
     const val markdownLintPlugin = "0.6.0"
-    const val jacocoAndroidPlugin = "0.1.4"
     const val detektPlugin = "1.10.0"
-    const val novodaBintrayRelease = "0.9.2"
+    const val bintray = "1.8.5"
 
     const val kotlin = "1.3.72"
     const val coroutines = "1.3.8"
@@ -120,7 +119,7 @@ object PluginDependencies {
     const val android = "com.android.tools.build:gradle:${Versions.gradleAndroidPlugin}"
     const val kotlin = "org.jetbrains.kotlin:kotlin-gradle-plugin:${Versions.kotlin}"
     const val detekt = "io.gitlab.arturbosch.detekt:detekt-gradle-plugin:${Versions.detektPlugin}"
-    const val novodaBintray = "com.novoda:bintray-release:${Versions.novodaBintrayRelease}"
+    const val bintray = "com.jfrog.bintray.gradle:gradle-bintray-plugin:${Versions.bintray}"
 }
 
 object GroupedDependencies {

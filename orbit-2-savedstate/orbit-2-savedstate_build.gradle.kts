@@ -33,3 +33,8 @@ dependencies {
     GroupedDependencies.testsImplementation.forEach { testImplementation(it) }
     GroupedDependencies.testsRuntime.forEach { testRuntimeOnly(it) }
 }
+
+tasks.register<Jar>("sourcesJar") {
+    archiveClassifier.set("sources")
+    from(android.sourceSets["main"].java.srcDirs)
+}

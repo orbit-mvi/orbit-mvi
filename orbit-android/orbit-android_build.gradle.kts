@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Babylon Partners Limited
+ * Copyright 2020 Babylon Partners Limited
  *  
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -37,4 +37,9 @@ dependencies {
     GroupedDependencies.testsImplementation.forEach { testImplementation(it) }
     GroupedDependencies.testsRuntime.forEach { testRuntimeOnly(it) }
     testImplementation(ProjectDependencies.kotlinFixture)
+}
+
+tasks.register<Jar>("sourcesJar") {
+    archiveClassifier.set("sources")
+    from(android.sourceSets["main"].java.srcDirs)
 }
