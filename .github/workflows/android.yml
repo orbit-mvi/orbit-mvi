@@ -33,7 +33,7 @@ jobs:
         run: ./gradlew markdownlint
 
       - name: Unit tests
-        run: ./gradlew jacocoTestReport
+        run: ./gradlew test
 
       - name: Upload test artifacts
         if: failure()
