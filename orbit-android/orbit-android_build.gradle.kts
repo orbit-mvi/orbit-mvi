@@ -38,8 +38,3 @@ dependencies {
     GroupedDependencies.testsRuntime.forEach { testRuntimeOnly(it) }
     testImplementation(ProjectDependencies.kotlinFixture)
 }
-
-tasks.register<Jar>("sourcesJar") {
-    archiveClassifier.set("sources")
-    from(android.sourceSets["main"].java.srcDirs)
-}

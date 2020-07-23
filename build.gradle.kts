@@ -14,6 +14,7 @@
  *  limitations under the License.
  */
 
+import com.android.build.gradle.LibraryExtension
 import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
@@ -102,7 +103,13 @@ subprojects {
         apply(from = "$rootDir/gradle/scripts/jacoco-android.gradle.kts")
         apply(from = "$rootDir/gradle/scripts/bintray.gradle.kts")
 
-        configure<com.android.build.gradle.LibraryExtension> {
+        val sourceSets = extensions.findByType<LibraryExtension>()!!.sourceSets
+        tasks.register<Jar>("sourcesJar") {
+            archiveClassifier.set("sources")
+            from(sourceSets["main"].java.srcDirs)
+        }
+
+        configure<LibraryExtension> {
             compileSdkVersion(29)
             defaultConfig {
                 minSdkVersion(21)
