@@ -1,0 +1,4 @@
+graph LR
+	A[UI] -->|actions| B(Business Component)
+	B -->|events| C(Reducer)
+	C -->|state updates| A

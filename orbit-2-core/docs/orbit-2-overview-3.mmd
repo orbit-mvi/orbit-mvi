@@ -1,0 +1,8 @@
+graph LR
+	A[UI] -->|calls| B(ContainerHost)
+	B --> C(Container)
+	C --> D(Transformer)
+	C --> D2(Side Effect)
+	D2 -->|side effects| A
+	D -->|events| E(Reducer)
+	E -->|state updates| A
