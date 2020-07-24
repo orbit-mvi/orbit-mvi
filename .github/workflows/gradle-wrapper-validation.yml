@@ -3,12 +3,14 @@ name: "Validate Gradle Wrapper"
 on:
   push:
     branches:
-    - master
+      - main
+      - orbit1/3.x.x
     tags:
-    - '*'
+      - '*'
   pull_request:
     branches:
-    - master
+      - main
+      - orbit1/3.x.x
 
 jobs:
   validation:
