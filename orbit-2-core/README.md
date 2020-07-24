@@ -86,7 +86,7 @@ function which executes DSL operators of your desired business logic.
 A [ContainerHost](src/main/java/com/babylon/orbit2/ContainerHost.kt) is not
 strictly required to work with an Orbit
 [Container](src/main/java/com/babylon/orbit2/Container.kt), but it simplifies
-and organises access to it. A Host typically defines orbit flows (chains of DSL
+and organises access to it. A Host typically defines Orbit flows (chains of DSL
 operators to be invoked on the container) as functions that can be called by
 e.g. the UI.
 
@@ -309,7 +309,7 @@ done within particular `transform` blocks e.g. `transformSuspend`.
   come in on the same thread you call `Stream.connect` on. However the
   connection to the stream has to be manually managed and cancelled. To make it
   more convenient to consume a `Stream` we have created wrappers to turn it into
-  e.g. `LiveData`, a kotlin `Flow` or RxJava `Observable`.
+  e.g. `LiveData`, a Kotlin `Flow` or RxJava `Observable`.
 
 ## Error handling
 

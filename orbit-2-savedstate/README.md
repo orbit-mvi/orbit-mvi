@@ -4,8 +4,7 @@ The plugin provides:
 
 - [Container](../orbit-2-core/src/main/java/com/babylon/orbit2/Container.kt)
   factory extensions for ViewModel saved state functionality via
-  [Saved State module for
-  ViewModel](https://developer.android.com/topic/libraries/architecture/viewmodel-savedstate)
+  [Saved State module for ViewModel](https://developer.android.com/topic/libraries/architecture/viewmodel-savedstate)
   
 This allows you to automatically save and restore the container state on process
 death.
@@ -25,8 +24,7 @@ conditions:
    you need to implement the `Parcelable` interface on your state object.
    Using Kotlin's `@Parcelize`  is recommended for ease of use.
 1. You need to pass in a `SavedStateHandle` to your container factory function.
-   The easiest way to do this is via [Koin's
-   support](https://doc.insert-koin.io/#/koin-android/viewmodel?id=viewmodel-and-state-bundle).
+   The easiest way to do this is via [Koin's support](https://doc.insert-koin.io/#/koin-android/viewmodel?id=viewmodel-and-state-bundle).
    This can be set up using Dagger as well but this could mean creating your own
    custom equivalent of `androidx.lifecycle.SavedStateViewModelFactory`
 

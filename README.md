@@ -17,15 +17,15 @@ If you do not yet have an account with the Kotlinlang slack workspace,
 Orbit is a simple scaffolding you can build a Redux/MVI-like
 architecture around. We use it in production at [Babylon Health](https://www.babylonhealth.com).
 
-We've recently released a much improved version - Orbit 2.
+We've recently released a much-improved version - Orbit 2.
 [Read here why.](#a-bit-of-history)
 Be advised that while we have not tested it in production yet. However, we have
 heavily unit tested it based on our previous Orbit 1 requirements and
 experience. We would suggest using Orbit 2 over Orbit 1 for new and existing
 projects as we are actively working on it.
 
-If you are risk-averse, we will still continue to support Orbit 1 with
-necessary fixes for some time as we use it in our own projects.
+If you are risk-averse, we will continue to support Orbit 1 with
+necessary fixes for some time as we use it in our projects.
 
 [Orbit 1 is available here.](https://github.com/babylonhealth/orbit-mvi/tree/orbit/main)
 
@@ -33,9 +33,9 @@ The readme below covers only Orbit 2.
 
 ## Getting started
 
-Orbit 2 is a modular framework. Only one module is required, additional
-functionality is provided through plugins included in separate modules.
-Install only what you need!
+Orbit 2 is a modular framework. Only one module is required with additional
+functionality provided through plugins included in separate modules. Install
+only what you need!
 
 At the very least you will need the `orbit-core` module to get started.
 
@@ -51,7 +51,7 @@ testImplementation("com.babylon.orbit2:orbit-test:<latest-version>")
 
 [![Download](https://api.bintray.com/packages/babylonpartners/maven/orbit-core/images/download.svg)](https://bintray.com/babylonpartners/maven/orbit-core/_latestVersion)
 
-For detailed documentation see:
+For detailed documentation, see:
 
 - [Core module and architecture overview](orbit-2-core/README.MD)
 - [Coroutines](orbit-2-coroutines/README.md)
@@ -78,15 +78,15 @@ class MyApplication : Application() {
 ```
 
 The core syntax DSL plugin (`transform/sideEffect/reduce`) works out of the box
-and does not need to be explicitly installed.
+with no explicit configuration necessary.
 
 ## Creating a simple Orbit 2 ViewModel
 
-Using the core orbit DSL we can create a simple functional ViewModel.
+Using the core Orbit DSL, we can create a simple, functional ViewModel.
 
 ### Define the contract
 
-First we need to define its state and declared side effects.
+First, we need to define its state and declared side effects.
 
 ``` kotlin
 data class CalculatorState(
@@ -99,16 +99,16 @@ sealed class CalculatorSideEffect {
 ```
 
 The only requirement here is that the objects are comparable. We also recommend
-they be immutable, therefore we recommend using a mix of data classes, sealed
+they be immutable. Therefore we recommend using a mix of data classes, sealed
 classes and objects.
 
 ### Create the ViewModel
 
-Next we can define the ViewModel.
+Next, we can define the ViewModel.
 
 1. Implement the `Host` interface
 1. Override the `container` field and use the `Container.create` factory
-   function to build an orbit container in your `Host`
+   function to build an Orbit container in your `Host`
 
 ``` kotlin
 class CalculatorViewModel : ContainerHost<CalculatorState, CalculatorSideEffect>, ViewModel() {
@@ -130,8 +130,8 @@ class CalculatorViewModel : ContainerHost<CalculatorState, CalculatorSideEffect>
 }
 ```
 
-We have used an Android `ViewModel` as the most common example but there is no
-requirement to do so. You can host an orbit container in a simple class if you
+We have used an Android `ViewModel` as the most common example, but there is no
+requirement to do so. You can host an Orbit container in a simple class if you
 wish. This makes it possible to use in simple Kotlin projects as well as
 lifecycle independent services.
 
@@ -179,19 +179,18 @@ We originally set out to create Orbit with the following principles in mind:
 - Testable
 - Designed for, but not limited to Android
 
-Orbit 1 was our first attempt at this and while it worked well in general,
-it fell short of our expectations when it came to its flexibility and
-testability. It did not support coroutines, neither was such support easy to
-incorporate, as it was rigidly dependent on RxJava 2. The users were not
-shielded from this either. As we were in the process of migrating to coroutines
-ourselves, this was increasing the complexity of our Middlewares beyond what we
-were happy with.
+Orbit 1 was our first attempt at this, and while it worked well in general, it
+fell short of our expectations when it came to its flexibility and testability.
+It did not support coroutines with support hard to incorporate, as it was
+rigidly dependent on RxJava 2. The users were not shielded from this either. As
+we were migrating to coroutines ourselves, this was increasing the complexity
+of our code.
 
-We thought we had taken Orbit 1 as far as we could take it. Having learned a
-great deal about MVI in Orbit 1, we set out to take another shot at this. We
-resolved to keep the good things of Orbit 1 and redesign it from the ground up
-to live up to our standards as Orbit 2. We think - hopefully, finally - we hit
-the sweet spot.
+We thought we had taken Orbit 1 as far as we could. Having learned a great deal
+about MVI in Orbit 1, we set out to take another shot at this. We resolved to
+keep the good things of Orbit 1 and redesign it from the ground up to live up
+to our standards as Orbit 2. We think - hopefully, finally - we hit the sweet
+spot.
 
 We stand on the shoulders of giants:
 
