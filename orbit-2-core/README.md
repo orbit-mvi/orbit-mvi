@@ -71,7 +71,7 @@ Additional functionality is provided through plugins included in separate
 modules. Install only what you need!
 
 ```kotlin
-implementation("com.babylon.orbit2:orbit-core:<latest-version>") // <-- This module is mandatory
+implementation("com.babylon.orbit2:orbit-core:<latest-version>")
 ```
 
 ## Orbit container

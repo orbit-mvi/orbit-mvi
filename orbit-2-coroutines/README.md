@@ -7,7 +7,7 @@ The coroutine plugin provides:
 ## Including the module
 
 ```kotlin
-implementation("com.babylon.orbit2:orbit-coroutines:<latest-version>") // <-- This module is mandatory
+implementation("com.babylon.orbit2:orbit-coroutines:<latest-version>")
 ```
 
 ## Coroutine DSL Operators

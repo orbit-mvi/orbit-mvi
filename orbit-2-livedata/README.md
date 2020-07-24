@@ -8,7 +8,7 @@ The Live Data plugin provides:
 ## Including the module
 
 ```kotlin
-implementation("com.babylon.orbit2:orbit-livedata:<latest-version>") // <-- This module is mandatory
+implementation("com.babylon.orbit2:orbit-livedata:<latest-version>")
 ```
 
 ## LiveData streams

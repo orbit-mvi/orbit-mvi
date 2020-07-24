@@ -13,7 +13,7 @@ death.
 ## Including the module
 
 ```kotlin
-implementation("com.babylon.orbit2:orbit-savedstate:<latest-version>") // <-- This module is mandatory
+implementation("com.babylon.orbit2:orbit-savedstate:<latest-version>")
 ```
 
 ## Saved state functionality

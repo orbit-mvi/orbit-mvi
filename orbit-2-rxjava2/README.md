@@ -7,7 +7,7 @@ The RxJava 2 plugin provides:
 ## Including the module
 
 ```kotlin
-implementation("com.babylon.orbit2:orbit-rxjava2:<latest-version>") // <-- This module is mandatory
+implementation("com.babylon.orbit2:orbit-rxjava2:<latest-version>")
 ```
 
 ## RxJava 2 DSL Operators
