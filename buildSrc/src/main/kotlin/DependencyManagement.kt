@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Babylon Partners Limited
+ * Copyright 2020 Babylon Partners Limited
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,15 +16,14 @@
 
 object Versions {
 
-    const val gradleVersionsPlugin = "0.28.0"
-    const val gradleAndroidPlugin = "3.6.3"
+    const val gradleVersionsPlugin = "0.29.0"
+    const val gradleAndroidPlugin = "4.0.1"
     const val markdownLintPlugin = "0.6.0"
-    const val jacocoAndroidPlugin = "0.1.4"
-    const val detektPlugin = "1.4.0"
-    const val novodaBintrayRelease = "0.9.2"
+    const val detektPlugin = "1.10.0"
+    const val bintray = "1.8.5"
 
     const val kotlin = "1.3.72"
-    const val coroutines = "1.3.5"
+    const val coroutines = "1.3.8"
 
     const val androidxLifecycles = "2.2.0"
     const val androidxLifecyclesSavedState = "2.2.0"
@@ -32,7 +31,7 @@ object Versions {
     const val androidxTesting = "2.1.0"
     const val androidxAppCompat = "1.1.0"
     const val androidxConstrainLayout = "1.1.3"
-    const val androidMaterial = "1.1.0-rc02"
+    const val androidMaterial = "1.1.0"
 
     const val rxJava2 = "2.2.19"
     const val rxJava2Extensions = "0.20.10"
@@ -40,18 +39,18 @@ object Versions {
     const val rxAndroid = "2.1.1"
     const val androidRxBindings = "3.1.0"
 
-    const val koin = "2.1.5"
+    const val koin = "2.1.6"
     const val javaxInject = "1"
     const val groupie = "2.8.0"
 
     // Testing
-    const val spek = "2.0.10"
+    const val spek = "2.0.12"
     const val junitPlatform = "1.6.2"
     const val assertJ = "3.16.1"
     const val mockitoKotlin = "2.2.0"
-    const val mockito = "2.23.0"
+    const val mockito = "3.4.4"
     const val junitRuntime = "5.6.2"
-    const val kotlinFixture = "0.8.2"
+    const val kotlinFixture = "0.9.4"
     const val jacoco = "0.8.5"
 }
 
@@ -119,9 +118,8 @@ object ProjectDependencies {
 object PluginDependencies {
     const val android = "com.android.tools.build:gradle:${Versions.gradleAndroidPlugin}"
     const val kotlin = "org.jetbrains.kotlin:kotlin-gradle-plugin:${Versions.kotlin}"
-    const val jacocoAndroid = "com.dicedmelon.gradle:jacoco-android:${Versions.jacocoAndroidPlugin}"
     const val detekt = "io.gitlab.arturbosch.detekt:detekt-gradle-plugin:${Versions.detektPlugin}"
-    const val novodaBintray = "com.novoda:bintray-release:${Versions.novodaBintrayRelease}"
+    const val bintray = "com.jfrog.bintray.gradle:gradle-bintray-plugin:${Versions.bintray}"
 }
 
 object GroupedDependencies {
