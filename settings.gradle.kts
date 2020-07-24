@@ -23,7 +23,7 @@ include(
     "orbit-2-rxjava2",
     "orbit-2-savedstate",
     "orbit-2-test",
-    "sampleapp"
+    "samples:orbit-1-to-do"
 )
 
 // Will rename every module's build.gradle file to use its name instead of `build`.
