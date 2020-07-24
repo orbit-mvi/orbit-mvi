@@ -4,13 +4,13 @@ on:
   push:
     branches:
       - main
-      - orbit1/3.x.x
+      - orbit/main
     tags:
       - '**'
   pull_request:
     branches:
       - main
-      - orbit1/3.x.x
+      - orbit/main
 
 jobs:
   build:
