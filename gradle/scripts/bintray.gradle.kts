@@ -37,86 +37,76 @@ val tag = (System.getenv("GITHUB_REF") ?: System.getProperty("GITHUB_REF"))
     ?.replaceFirst("refs/tags/", "")
 
 val split = tag?.split("/")
-val tagName = split?.get(0)
 val tagVersion = split?.get(1)
+val projectGroupId = "com.babylon.orbit2"
+val projectArtifactId = project.name.replace("2-", "")
 
-val apply = when (tagName) {
-    "orbit2" -> project.name.startsWith("orbit-2")
-    "orbit" -> project.name.startsWith(tagName) && !project.name.startsWith("orbit-2")
-    else -> false
+apply<BintrayPlugin>()
+apply<MavenPublishPlugin>()
+
+if (project.plugins.hasPlugin("java")) {
+    configure<JavaPluginExtension> {
+        withSourcesJar()
+    }
 }
 
-if (apply) {
-    val projectGroupId = if (tagName == "orbit2") "com.babylon.orbit2" else "com.babylon.orbit"
-    val projectArtifactId = project.name.replace("2-", "")
+afterEvaluate {
+    configure<PublishingExtension> {
+        publications {
+            create<MavenPublication>("release") {
+                if (project.plugins.hasPlugin("com.android.library")) {
+                    from(components["release"])
+                } else {
+                    from(components["java"])
+                }
 
-    apply<BintrayPlugin>()
-    apply<MavenPublishPlugin>()
+                groupId = projectGroupId
+                artifactId = projectArtifactId
+                version = tagVersion
 
-    if (project.plugins.hasPlugin("java")) {
-        configure<JavaPluginExtension> {
-            withSourcesJar()
-        }
-    }
-
-    afterEvaluate {
-        configure<PublishingExtension> {
-            publications {
-                create<MavenPublication>("release") {
+                afterEvaluate {
                     if (project.plugins.hasPlugin("com.android.library")) {
-                        from(components["release"])
-                    } else {
-                        from(components["java"])
+                        artifact(project.tasks.named("sourcesJar").get())
                     }
+                }
 
+                pom {
                     groupId = projectGroupId
                     artifactId = projectArtifactId
                     version = tagVersion
 
-                    afterEvaluate {
-                        if (project.plugins.hasPlugin("com.android.library")) {
-                            artifact(project.tasks.named("sourcesJar").get())
-                        }
-                    }
-
-                    pom {
-                        groupId = projectGroupId
-                        artifactId = projectArtifactId
-                        version = tagVersion
-
-                        name.set(project.name)
-                        url.set("https://github.com/babylonhealth/orbit-mvi")
-                    }
+                    name.set(project.name)
+                    url.set("https://github.com/babylonhealth/orbit-mvi")
                 }
             }
         }
     }
+}
 
-    configure<BintrayExtension> {
-        user = System.getenv("BINTRAY_USER") ?: System.getProperty("BINTRAY_USER") ?: "unknown"
-        key = System.getenv("BINTRAY_KEY") ?: System.getProperty("BINTRAY_KEY") ?: "unknown"
-        publish = true
-        dryRun = false
-        override = false
+configure<BintrayExtension> {
+    user = System.getenv("BINTRAY_USER") ?: System.getProperty("BINTRAY_USER") ?: "unknown"
+    key = System.getenv("BINTRAY_KEY") ?: System.getProperty("BINTRAY_KEY") ?: "unknown"
+    publish = true
+    dryRun = true
+    override = false
 
-        setPublications("release")
+    setPublications("release")
 
-        pkg.apply {
-            repo = "maven"
-            userOrg = "babylonpartners"
-            name = projectArtifactId
-            desc = "Orbit MVI for Kotlin and Android"
-            websiteUrl = "https://github.com/babylonhealth/orbit-mvi"
-            issueTrackerUrl = "https://github.com/babylonhealth/orbit-mvi/issues"
-            vcsUrl = "https://github.com/appmattus/babylonhealth/orbit-mvi"
-            githubRepo = "babylonhealth/orbit-mvi"
+    pkg.apply {
+        repo = "maven"
+        userOrg = "babylonpartners"
+        name = projectArtifactId
+        desc = "Orbit MVI for Kotlin and Android"
+        websiteUrl = "https://github.com/babylonhealth/orbit-mvi"
+        issueTrackerUrl = "https://github.com/babylonhealth/orbit-mvi/issues"
+        vcsUrl = "https://github.com/appmattus/babylonhealth/orbit-mvi"
+        githubRepo = "babylonhealth/orbit-mvi"
 
-            setLicenses("Apache-2.0")
+        setLicenses("Apache-2.0")
 
-            version.apply {
-                name = tagName
-                vcsTag = tagName
-            }
+        version.apply {
+            name = tagVersion
+            vcsTag = tag
         }
     }
 }
