@@ -32,7 +32,7 @@ internal class TransformSuspend<S : Any, E : Any, E2 : Any>(
  */
 @Orbit2Dsl
 fun <S : Any, SE : Any, E : Any, E2 : Any> Builder<S, SE, E>.transformSuspend(block: suspend Context<S, E>.() -> E2): Builder<S, SE, E2> {
-    OrbitDslPlugins.requirePlugin(CoroutineDslPlugin, "transformSuspend")
+    OrbitDslPlugins.register(CoroutineDslPlugin)
     return Builder(
         stack + TransformSuspend(
             block

@@ -21,148 +21,82 @@ import io.reactivex.Completable
 import io.reactivex.Maybe
 import io.reactivex.Observable
 import io.reactivex.Single
-import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 
 internal class RxJava2DslPluginBehaviourTest {
     private val fixture = kotlinFixture()
     private val initialState = fixture<TestState>()
 
-    @Nested
-    inner class DslBehaviourTests {
+    @BeforeEach
+    fun beforeEach() {
+        OrbitDslPlugins.reset() // Test for proper registration
+    }
 
-        @BeforeEach
-        fun beforeEach() {
-            OrbitDslPlugins.register(RxJava2DslPlugin)
-        }
+    @Test
+    fun `single transformation flatmaps`() {
+        val action = fixture<Int>()
+        val middleware = Middleware().test(initialState)
 
-        @AfterEach
-        fun afterEach() {
-            OrbitDslPlugins.reset()
-        }
+        middleware.single(action)
 
-        @Test
-        fun `single transformation flatmaps`() {
-            val action = fixture<Int>()
-            val middleware = Middleware().test(initialState)
-
-            middleware.single(action)
-
-            middleware.assert {
-                states(
-                    { TestState(action + 5) }
-                )
-            }
-        }
-
-        @Test
-        fun `non empty maybe transformation flatmaps`() {
-            val action = fixture<Int>()
-            val middleware = Middleware().test(initialState)
-
-            middleware.maybe(action)
-
-            middleware.assert {
-                states(
-                    { TestState(action + 5) }
-                )
-            }
-        }
-
-        @Test
-        fun `empty maybe transformation flatmaps`() {
-            val action = fixture<Int>()
-            val middleware = Middleware().test(initialState)
-
-            middleware.maybeNot(action)
-        }
-
-        @Test
-        fun `completable transformation flatmaps`() {
-            val action = fixture<Int>()
-            val middleware = Middleware().test(initialState)
-
-            middleware.completable(action)
-
-            middleware.assert {
-                states(
-                    { TestState(action) }
-                )
-            }
-        }
-
-        @Test
-        fun `observable transformation flatmaps`() {
-            val action = fixture<Int>()
-            val middleware = Middleware().test(initialState)
-
-            middleware.observable(action)
-
-            middleware.assert {
-                states(
-                    { TestState(action) },
-                    { TestState(action + 1) },
-                    { TestState(action + 2) },
-                    { TestState(action + 3) }
-                )
-            }
+        middleware.assert {
+            states(
+                { TestState(action + 5) }
+            )
         }
     }
 
-    @Nested
-    inner class PluginRegistrationTests {
+    @Test
+    fun `non empty maybe transformation flatmaps`() {
+        val action = fixture<Int>()
+        val middleware = Middleware().test(initialState)
 
-        @Test
-        fun `single transformation crashes if plugin is not included`() {
-            val action = fixture<Int>()
-            val middleware = Middleware().test(initialState)
+        middleware.maybe(action)
 
-            assertThrows<IllegalStateException> {
-                middleware.single(action)
-            }
+        middleware.assert {
+            states(
+                { TestState(action + 5) }
+            )
         }
+    }
 
-        @Test
-        fun `non empty maybe transformation crashes if plugin is not included`() {
-            val action = fixture<Int>()
-            val middleware = Middleware().test(initialState)
+    @Test
+    fun `empty maybe transformation flatmaps`() {
+        val action = fixture<Int>()
+        val middleware = Middleware().test(initialState)
 
-            assertThrows<IllegalStateException> {
-                middleware.maybe(action)
-            }
+        middleware.maybeNot(action)
+    }
+
+    @Test
+    fun `completable transformation flatmaps`() {
+        val action = fixture<Int>()
+        val middleware = Middleware().test(initialState)
+
+        middleware.completable(action)
+
+        middleware.assert {
+            states(
+                { TestState(action) }
+            )
         }
+    }
 
-        @Test
-        fun `empty maybe transformation crashes if plugin is not included`() {
-            val action = fixture<Int>()
-            val middleware = Middleware().test(initialState)
+    @Test
+    fun `observable transformation flatmaps`() {
+        val action = fixture<Int>()
+        val middleware = Middleware().test(initialState)
 
-            assertThrows<IllegalStateException> {
-                middleware.maybeNot(action)
-            }
-        }
+        middleware.observable(action)
 
-        @Test
-        fun `completable transformation crashes if plugin is not included`() {
-            val action = fixture<Int>()
-            val middleware = Middleware().test(initialState)
-
-            assertThrows<IllegalStateException> {
-                middleware.completable(action)
-            }
-        }
-
-        @Test
-        fun `observable transformation crashes if plugin is not included`() {
-            val action = fixture<Int>()
-            val middleware = Middleware().test(initialState)
-
-            assertThrows<IllegalStateException> {
-                middleware.observable(action)
-            }
+        middleware.assert {
+            states(
+                { TestState(action) },
+                { TestState(action + 1) },
+                { TestState(action + 2) },
+                { TestState(action + 3) }
+            )
         }
     }
 

@@ -22,8 +22,6 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.newSingleThreadContext
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 internal class CoroutineDslPluginDslThreadingTest {
@@ -33,16 +31,6 @@ internal class CoroutineDslPluginDslThreadingTest {
     }
 
     private val fixture = kotlinFixture()
-
-    @BeforeEach
-    fun beforeEach() {
-        OrbitDslPlugins.register(CoroutineDslPlugin)
-    }
-
-    @AfterEach
-    fun afterEach() {
-        OrbitDslPlugins.reset()
-    }
 
     @Test
     fun `suspend transformation runs on IO dispatcher`() {

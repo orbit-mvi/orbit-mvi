@@ -34,7 +34,7 @@ internal class RxJava2Completable<S : Any, E : Any>(
 fun <S : Any, SE : Any, E : Any> Builder<S, SE, E>.transformRx2Completable(
     block: suspend Context<S, E>.() -> Completable
 ): Builder<S, SE, E> {
-    OrbitDslPlugins.requirePlugin(RxJava2DslPlugin, "transformRx2Completable")
+    OrbitDslPlugins.register(RxJava2DslPlugin)
     return Builder(
         stack + RxJava2Completable(
             block

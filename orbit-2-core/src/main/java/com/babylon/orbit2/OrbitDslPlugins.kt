@@ -31,10 +31,11 @@ object OrbitDslPlugins {
     /**
      * Register DSL plugins. This has to be done before using the DSL provided by the plugin.
      *
-     * @param plugins The DSL plugins to register
+     * @param plugin The DSL plugin to register
      */
-    fun register(vararg plugins: OrbitDslPlugin) {
-        this.plugins += plugins
+    fun register(plugin: OrbitDslPlugin) {
+        if (!plugins.contains(plugin))
+            plugins += plugin
     }
 
     /**
@@ -42,23 +43,5 @@ object OrbitDslPlugins {
      */
     fun reset() {
         plugins = setOf(BaseDslPlugin)
-    }
-
-    /**
-     * Used by plugins to ensure that they are properly installed when using their DSL.
-     *
-     * This function is only used when writing DSL plugins.
-     *
-     * @param plugin The required plugin
-     * @param componentName The component name that requires the plugin. Typically the DSL function
-     * name.
-     */
-    fun requirePlugin(plugin: OrbitDslPlugin, componentName: String) {
-        require(plugins.contains(plugin)) {
-            throw IllegalStateException(
-                "${plugin.javaClass.simpleName} required to use $componentName! " +
-                        "Install plugins using Orbit.registerPlugins."
-            )
-        }
     }
 }

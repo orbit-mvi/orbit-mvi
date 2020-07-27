@@ -21,7 +21,6 @@ import kotlinx.coroutines.flow.Flow
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 
 internal class OrbitDslPluginsTest {
     val fixture = kotlinFixture()
@@ -42,20 +41,6 @@ internal class OrbitDslPluginsTest {
         OrbitDslPlugins.register(TestPlugin)
 
         assertThat(OrbitDslPlugins.plugins).containsExactly(BaseDslPlugin, TestPlugin)
-    }
-
-    @Test
-    fun `requirePlugin throws exception for missing plugins`() {
-        val component = fixture<String>()
-
-        val throwable = assertThrows<IllegalStateException> {
-            OrbitDslPlugins.requirePlugin(TestPlugin, component)
-        }
-
-        assertThat(throwable.message).isEqualTo(
-            "${TestPlugin.javaClass.simpleName} required to use $component! " +
-                    "Install plugins using Orbit.registerPlugins."
-        )
     }
 
     private object TestPlugin : OrbitDslPlugin {

@@ -35,6 +35,11 @@ import kotlinx.coroutines.withContext
  * * [transformRx2Completable]
  */
 object RxJava2DslPlugin : OrbitDslPlugin {
+
+    init {
+        OrbitDslPlugins.register(this)
+    }
+
     @Suppress("UNCHECKED_CAST", "EXPERIMENTAL_API_USAGE")
     override fun <S : Any, E : Any, SE : Any> apply(
         containerContext: OrbitDslPlugin.ContainerContext<S, SE>,
