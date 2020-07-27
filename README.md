@@ -14,15 +14,19 @@ If you do not yet have an account with the Kotlinlang slack workspace,
 
 ## Overview
 
-Orbit is a simple scaffolding you can build a Redux/MVI-like
-architecture around. We use it in production at [Babylon Health](https://www.babylonhealth.com).
+Orbit is a simple scaffolding you can build a Redux/MVI-like architecture
+around.
 
-We've recently released a much-improved version - Orbit 2.
-[Read here why.](#a-bit-of-history)
-Be advised that while we have not tested it in production yet. However, we have
-heavily unit tested it based on our previous Orbit 1 requirements and
-experience. We would suggest using Orbit 2 over Orbit 1 for new and existing
-projects as we are actively working on it.
+It runs on top of coroutines but is built to be framework agnostic when it comes
+to usage. This helps incorporating it into legacy code bases. For example, it
+can support both RxJava 2 and coroutines (even on the same screen!) if you are
+in the process of migrating from one to the other.
+
+This latest project is Orbit 2 which we have recently [rewritten from scratch
+based on Orbit 1.](#a-bit-of-history) Be advised that we have not tested it in
+production yet. However, we have heavily unit tested it based on our previous
+Orbit 1 requirements and experience. We would suggest using Orbit 2 over Orbit 1
+for new and existing projects as we are actively working on it.
 
 If you are risk-averse, we will continue to support Orbit 1 with
 necessary fixes for some time as we use it in our projects.
@@ -33,14 +37,17 @@ The readme below covers only Orbit 2.
 
 ## Getting started
 
-Orbit 2 is a modular framework. Only one module is required with additional
-functionality provided through plugins included in separate modules. Install
-only what you need!
+Orbit 2 is a modular framework. The Core module provides basic Orbit
+functionality with additional features provided through optional modules.
+
+Orbit supports using various async/stream frameworks at the same time so it is
+perfect for legacy codebases. For example, it can support both RxJava 2 and
+coroutines if you are in the process of migrating from one to the other.
 
 At the very least you will need the `orbit-core` module to get started.
 
 ```kotlin
-implementation("com.babylon.orbit2:orbit-core:<latest-version>") // <-- This module is mandatory
+implementation("com.babylon.orbit2:orbit-core:<latest-version>") // mandatory
 implementation("com.babylon.orbit2:orbit-coroutines:<latest-version>")
 implementation("com.babylon.orbit2:orbit-rxjava2:<latest-version>")
 implementation("com.babylon.orbit2:orbit-livedata:<latest-version>")
@@ -60,29 +67,10 @@ For detailed documentation, see:
 - [Saved state](orbit-2-savedstate/README.md)
 - [Test](orbit-2-test/README.md)
 
-### A word on DSL plugins
-
-Modules like `orbit-coroutines` or `orbit-rxjava2` contain plugins that extend
-Orbit's DSL. In order for Orbit to recognise these plugins, they need to be
-installed at runtime, like so:
-
-``` kotlin
-class MyApplication : Application() {
-    override fun onCreate() {
-        OrbitDslPlugins.register(
-            CoroutineDslPlugin,
-            RxJava2DslPlugin
-        )
-    }
-}
-```
-
-The core syntax DSL plugin (`transform/sideEffect/reduce`) works out of the box
-with no explicit configuration necessary.
-
 ## Creating a simple Orbit 2 ViewModel
 
-Using the core Orbit DSL, we can create a simple, functional ViewModel.
+Using the core Orbit functionality, we can create a simple, functional
+ViewModel.
 
 ### Define the contract
 
@@ -99,30 +87,40 @@ sealed class CalculatorSideEffect {
 ```
 
 The only requirement here is that the objects are comparable. We also recommend
-they be immutable. Therefore we recommend using a mix of data classes, sealed
+they be immutable. Therefore we suggest using a mix of data classes, sealed
 classes and objects.
 
 ### Create the ViewModel
 
 Next, we can define the ViewModel.
 
-1. Implement the `Host` interface
+1. Implement the
+   [ContainerHost](orbit-2-core/src/main/java/com/babylon/orbit2/ContainerHost.kt)
+   interface
 1. Override the `container` field and use the `Container.create` factory
-   function to build an Orbit container in your `Host`
+   function to build an Orbit
+   [Container](orbit-2-core/src/main/java/com/babylon/orbit2/Container.kt) in
+   your
+   [ContainerHost](orbit-2-core/src/main/java/com/babylon/orbit2/ContainerHost.kt)
 
 ``` kotlin
-class CalculatorViewModel : ContainerHost<CalculatorState, CalculatorSideEffect>, ViewModel() {
+class CalculatorViewModel: ContainerHost<CalculatorState, CalculatorSideEffect>, ViewModel() {
+
     override val container = Container.create<CalculatorState, CalculatorSideEffect>(CalculatorState())
 
     fun add(number: Int) = orbit {
-        sideEffect { post(CalculatorSideEffect.Toast("Adding $number to ${currentState.total}!")) }
+        sideEffect {
+            post(CalculatorSideEffect.Toast("Adding $number to ${currentState.total}!"))
+        }
             .reduce {
                 currentState.copy(total = currentState.total + number)
             }
     }
 
     fun subtract(number: Int) = orbit {
-        sideEffect { post(CalculatorSideEffect.Toast("Subtracting $number from ${currentState.total}!")) }
+        sideEffect {
+            post(CalculatorSideEffect.Toast("Subtracting $number from ${currentState.total}!"))
+        }
             .reduce {
                 currentState.copy(total = currentState.total - number)
             }
@@ -131,15 +129,16 @@ class CalculatorViewModel : ContainerHost<CalculatorState, CalculatorSideEffect>
 ```
 
 We have used an Android `ViewModel` as the most common example, but there is no
-requirement to do so. You can host an Orbit container in a simple class if you
-wish. This makes it possible to use in simple Kotlin projects as well as
-lifecycle independent services.
+requirement to do so. You can host an Orbit
+[Container](orbit-2-core/src/main/java/com/babylon/orbit2/Container.kt) in a
+simple class if you wish. This makes it possible to use in simple Kotlin
+projects as well as lifecycle independent services.
 
 ## Connecting to a ViewModel
 
 Now we need to wire up the `ViewModel` to our UI. Orbit provides various methods
-of connecting via plugins. For Android, the most convenient way to connect is
-via `LiveData`, as it manages subscription disposal automatically.
+of connecting via optional modules. For Android, the most convenient way to
+connect is via `LiveData`, as it manages subscription disposal automatically.
 
 ``` kotlin
 class CalculatorActivity: Activity() {
@@ -152,7 +151,8 @@ class CalculatorActivity: Activity() {
         addButton.setOnClickListener { viewModel.add(1234) }
         subtractButton.setOnClickListener { viewModel.subtract(1234) }
 
-        // NOTE: Live data support is provided by the live data module: com.babylon.orbit2:orbit-livedata
+        // NOTE: Live data support is provided by the live data module:
+        // com.babylon.orbit2:orbit-livedata
         viewModel.stateLiveData.observe(this) { render(it) }
         viewModel.sideEffectLiveData.observe(this) { handleSideEffect(it) }
     }

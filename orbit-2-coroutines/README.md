@@ -1,25 +1,21 @@
 # Orbit 2 Coroutines plugin
 
-The coroutine plugin provides:
-
-- Coroutine DSL operators
-
-## Including the module
+- [Orbit 2 Coroutines plugin](#orbit-2-coroutines-plugin)
+  - [transformSuspend](#transformsuspend)
+  - [transformFlow](#transformflow)
+  
+The coroutine plugin provides Coroutine Orbit operators.
 
 ```kotlin
 implementation("com.babylon.orbit2:orbit-coroutines:<latest-version>")
 ```
 
-## Coroutine DSL Operators
-
-The Core DSL contains the following operators:
-
-- transformSuspend
-- transformFlow
-
-### TransformSuspend
+## transformSuspend
 
 ``` kotlin
+suspend fun apiCall(): SomeResult { ... }
+suspend fun anotherApiCall(param: SomeResult): OtherResult { ... }
+
 class ExampleViewModel : ContainerHost<ExampleState, ExampleSideEffect> {
     ...
 
@@ -29,7 +25,7 @@ class ExampleViewModel : ContainerHost<ExampleState, ExampleSideEffect> {
     }
     fun anotherExample() = orbit {
             transformSuspend { apiCall() }
-                .transformSuspend { anotherApiCall(event) } // Use the result of the first api call
+                .transformSuspend { anotherApiCall(event) } // "event" is the result of the first api call
         }
     }
 }
@@ -37,9 +33,11 @@ class ExampleViewModel : ContainerHost<ExampleState, ExampleSideEffect> {
 
 Suspending transformers allow you to call suspending functions
 
-### TransformFlow
+## transformFlow
 
 ``` kotlin
+fun subscribeToLocationUpdates(): Flow<LocationUpdate> { ... }
+
 class ExampleViewModel : ContainerHost<ExampleState, ExampleSideEffect> {
     ...
 
@@ -52,4 +50,6 @@ class ExampleViewModel : ContainerHost<ExampleState, ExampleSideEffect> {
 ```
 
 You can use this operator to subscribe to hot or cold coroutine flows. The flows
-will emit until completion or until the container has been closed.
+will emit until completion or until the
+[Container](../orbit-2-core/src/main/java/com/babylon/orbit2/Container.kt) has
+been closed.

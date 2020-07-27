@@ -1,6 +1,7 @@
 # Orbit 2 Unit Testing module
 
-The module provides a simple unit testing DSL for testing your Orbit 2 hosts.
+The module provides a simple unit testing framework for your Orbit 2
+[ContainerHosts](../orbit-2-core/src/main/java/com/babylon/orbit2/ContainerHost.kt).
 
 ## Including the module
 
@@ -35,8 +36,11 @@ to test.
 There are a couple of additional constraints that we put on our tests to make
 them more predictable.
 
-- Run the `Container` in blocking mode
-- Isolate the first function called on the `ContainerHost`
+- Run the
+  [Container](../orbit-2-core/src/main/java/com/babylon/orbit2/Container.kt) in
+  blocking mode
+- Isolate the first function called on the
+  [ContainerHost](../orbit-2-core/src/main/java/com/babylon/orbit2/ContainerHost.kt)
 
 Isolating flows helps avoid unexpected state/side effect emissions from
 loopbacks in your flow under test. This can be turned off if you have a
@@ -44,8 +48,10 @@ particular testing need.
 
 ## Testing method
 
-First we need to put our `ContainerHost` into test mode and call our flow
-(method) under test. Let's assume we've made a `ViewModel` the host.
+First we need to put our
+[ContainerHost](../orbit-2-core/src/main/java/com/babylon/orbit2/ContainerHost.kt)
+into test mode and call our flow (method) under test. Let's assume we've made a
+`ViewModel` the host.
 
 ```kotlin
 data class State(val count: Int = 0)

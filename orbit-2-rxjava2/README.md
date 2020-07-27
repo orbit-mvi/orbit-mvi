@@ -1,27 +1,22 @@
 # Orbit 2 RxJava2 plugin
 
-The RxJava 2 plugin provides:
+- [Orbit 2 RxJava2 plugin](#orbit-2-rxjava2-plugin)
+  - [transformObservable](#transformobservable)
+  - [transformSingle](#transformsingle)
+  - [transformMaybe](#transformmaybe)
+  - [transformCompletable](#transformcompletable)
 
-- RxJava 2 DSL operators
-
-## Including the module
+The RxJava plugin provides RxJava 2 operators.
 
 ```kotlin
 implementation("com.babylon.orbit2:orbit-rxjava2:<latest-version>")
 ```
 
-## RxJava 2 DSL Operators
-
-The Core DSL contains the following operators:
-
-- transformObservable
-- transformSingle
-- transformMaybe
-- transformCompletable
-
-### transformObservable
+## transformObservable
 
 ``` kotlin
+fun subscribeToLocationUpdates(): Observable<LocationUpdate> { ... }
+
 class ExampleViewModel : ContainerHost<ExampleState, ExampleSideEffect> {
     ...
 
@@ -33,29 +28,35 @@ class ExampleViewModel : ContainerHost<ExampleState, ExampleSideEffect> {
 }
 ```
 
-You can use this operator to subscribe to hot or cold observables.
-This operator acts similar to `flatMap`.
+You can use this operator to subscribe to a hot or cold [Observable](http://reactivex.io/documentation/observable.html).
+This operator acts similar to [flatMap](https://github.com/ReactiveX/RxJava/wiki/Transforming-Observables#flatmap).
 
-### transformSingle
+## transformSingle
 
 ``` kotlin
+fun apiCall(): Single<SomeResult> { ... }
+fun anotherApiCall(param: SomeResult): Single<OtherResult> { ... }
+
 class ExampleViewModel : ContainerHost<ExampleState, ExampleSideEffect> {
     ...
 
     fun example() = orbit {
             transformSingle { apiCall() }
-                .transformSingle { anotherApiCall(event) } // Use the result of the first api call
+                .transformSingle { anotherApiCall(event) } // "event" is the result of the first api call
         }
     }
 }
 ```
 
-You can use this operator to subscribe to an RxJava 2 `Single`.
-This operator acts similar to `flatMapSingle`.
+You can use this operator to subscribe to an RxJava 2 [Single](http://reactivex.io/documentation/single.html).
+This operator acts similar to [flatMapSingle](https://github.com/ReactiveX/RxJava/wiki/Transforming-Observables#flatmapsingle).
 
-### transformMaybe
+## transformMaybe
 
 ``` kotlin
+fun getLoggedInUser(): Maybe<User> { ... }
+fun anotherApiCall(param: User): Single<OtherResult> { ... }
+
 class ExampleViewModel : ContainerHost<ExampleState, ExampleSideEffect> {
     ...
 
@@ -68,11 +69,13 @@ class ExampleViewModel : ContainerHost<ExampleState, ExampleSideEffect> {
 ```
 
 You can use this operator to subscribe to an RxJava 2 `Maybe`.
-This operator acts similar to `flatMapMaybe`.
+This operator acts similar to [flatMapMaybe](https://github.com/ReactiveX/RxJava/wiki/Transforming-Observables#flatmapmaybe).
 
-### transformCompletable
+## transformCompletable
 
 ``` kotlin
+fun doSomeWork(): Completable { ... }
+
 class ExampleViewModel : ContainerHost<ExampleState, ExampleSideEffect> {
     ...
 
@@ -84,4 +87,4 @@ class ExampleViewModel : ContainerHost<ExampleState, ExampleSideEffect> {
 ```
 
 You can use this operator to subscribe to an RxJava 2 `Completable`.
-This operator acts similar to `flatMapCompletable`.
+This operator acts similar to [flatMapCompletable](https://github.com/ReactiveX/RxJava/wiki/Transforming-Observables#flatmapcompletable).

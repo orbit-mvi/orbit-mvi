@@ -1,9 +1,11 @@
-# Orbit 2 Live Data plugin
+# Orbit 2 LiveData plugin
 
-The Live Data plugin provides:
+The LiveData plugin provides the following
+[Container](../orbit-2-core/src/main/java/com/babylon/orbit2/Container.kt)
+extension properties:
 
-- [Container](../orbit-2-core/src/main/java/com/babylon/orbit2/Container.kt)
-  extensions for LiveData streams.
+- [stateLiveData](src/main/java/com/babylon/orbit2/LiveDataPlugin.kt#stateLiveData)
+- [sideEffectLiveData](src/main/java/com/babylon/orbit2/LiveDataPlugin.kt#sideEffectLiveData)
 
 ## Including the module
 
@@ -11,16 +13,11 @@ The Live Data plugin provides:
 implementation("com.babylon.orbit2:orbit-livedata:<latest-version>")
 ```
 
-## LiveData streams
+## Usage
 
-The Core DSL contains the following Container extension properties:
-
-- stateLiveData
-- sideEffectLiveData
-
-This is the recommended way to subscribe to a Container in Android.
-
-Usage:
+Below is the recommended way to subscribe to a
+[Container](../orbit-2-core/src/main/java/com/babylon/orbit2/Container.kt) in
+Android.
 
 ``` kotlin
 class ExampleActivity: Activity() {
