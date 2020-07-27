@@ -60,7 +60,7 @@ testImplementation("com.babylon.orbit2:orbit-test:<latest-version>")
 
 For detailed documentation, see:
 
-- [Core module and architecture overview](orbit-2-core/README.MD)
+- [Core module and architecture overview](orbit-2-core/README.md)
 - [Coroutines](orbit-2-coroutines/README.md)
 - [RxJava 2](orbit-2-rxjava2/README.md)
 - [LiveData](orbit-2-livedata/README.md)
