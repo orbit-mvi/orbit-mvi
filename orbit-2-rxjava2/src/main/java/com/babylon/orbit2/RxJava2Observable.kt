@@ -34,10 +34,7 @@ internal class RxJava2Observable<S : Any, E : Any, E2 : Any>(
 fun <S : Any, SE : Any, E : Any, E2 : Any> Builder<S, SE, E>.transformRx2Observable(
     block: Context<S, E>.() -> Observable<E2>
 ): Builder<S, SE, E2> {
-    OrbitDslPlugins.requirePlugin(
-        RxJava2DslPlugin,
-        "transformRxJava2Observable"
-    )
+    OrbitDslPlugins.register(RxJava2DslPlugin)
     return Builder(
         stack + RxJava2Observable(
             block

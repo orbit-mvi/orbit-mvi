@@ -15,6 +15,9 @@
  */
 
 import com.android.build.gradle.LibraryExtension
+import com.appmattus.markdown.rules.LineLengthRule
+import com.appmattus.markdown.rules.ProperNamesRule
+import com.appmattus.markdown.rules.ProperNamesRule.Companion.DefaultNames
 import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
@@ -122,5 +125,12 @@ subprojects {
                 }
             }
         }
+    }
+}
+
+markdownlint {
+    rules {
+        +LineLengthRule(codeBlocks = false)
+        +ProperNamesRule(names = DefaultNames + "Orbit")
     }
 }

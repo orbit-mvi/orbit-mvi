@@ -23,8 +23,6 @@ import io.reactivex.Observable
 import io.reactivex.Single
 import kotlinx.coroutines.newSingleThreadContext
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.util.concurrent.CountDownLatch
 
@@ -35,16 +33,6 @@ internal class RxJava2DslPluginDslThreadingTest {
     }
 
     private val fixture = kotlinFixture()
-
-    @BeforeEach
-    fun beforeEach() {
-        OrbitDslPlugins.register(RxJava2DslPlugin)
-    }
-
-    @AfterEach
-    fun afterEach() {
-        OrbitDslPlugins.reset()
-    }
 
     @Test
     fun `single transformation runs on IO dispatcher`() {

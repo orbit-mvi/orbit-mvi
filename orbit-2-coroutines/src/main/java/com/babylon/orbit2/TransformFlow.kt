@@ -33,7 +33,7 @@ internal class TransformFlow<S : Any, E : Any, E2 : Any>(
  */
 @Orbit2Dsl
 fun <S : Any, SE : Any, E : Any, E2 : Any> Builder<S, SE, E>.transformFlow(block: suspend Context<S, E>.() -> Flow<E2>): Builder<S, SE, E2> {
-    OrbitDslPlugins.requirePlugin(CoroutineDslPlugin, "transformFlow")
+    OrbitDslPlugins.register(CoroutineDslPlugin)
     return Builder(
         stack + TransformFlow(
             block

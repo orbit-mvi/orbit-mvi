@@ -29,6 +29,11 @@ import kotlinx.coroutines.withContext
  * * [transformFlow]
  */
 object CoroutineDslPlugin : OrbitDslPlugin {
+
+    init {
+        OrbitDslPlugins.register(this)
+    }
+
     @Suppress("UNCHECKED_CAST", "EXPERIMENTAL_API_USAGE")
     override fun <S : Any, E : Any, SE : Any> apply(
         containerContext: OrbitDslPlugin.ContainerContext<S, SE>,

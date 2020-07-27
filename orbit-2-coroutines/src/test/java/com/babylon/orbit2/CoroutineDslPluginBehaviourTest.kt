@@ -20,82 +20,46 @@ import com.appmattus.kotlinfixture.kotlinFixture
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.onEach
-import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 
 internal class CoroutineDslPluginBehaviourTest {
     private val fixture = kotlinFixture()
     private val initialState = fixture<TestState>()
 
-    @Nested
-    inner class DslBehaviourTests {
+    @BeforeEach
+    fun beforeEach() {
+        OrbitDslPlugins.reset() // Test for proper registration
+    }
 
-        @BeforeEach
-        fun beforeEach() {
-            OrbitDslPlugins.register(CoroutineDslPlugin)
-        }
+    @Test
+    fun `suspend transformation maps`() {
+        val action = fixture<Int>()
+        val middleware = Middleware().test(initialState)
 
-        @AfterEach
-        fun afterEach() {
-            OrbitDslPlugins.reset()
-        }
+        middleware.suspend(action)
 
-        @Test
-        fun `suspend transformation maps`() {
-            val action = fixture<Int>()
-            val middleware = Middleware().test(initialState)
-
-            middleware.suspend(action)
-
-            middleware.assert {
-                states(
-                    { TestState(action + 5) }
-                )
-            }
-        }
-
-        @Test
-        fun `flow transformation flatmaps`() {
-            val action = fixture<Int>()
-            val middleware = Middleware().test(initialState)
-
-            middleware.flow(action)
-
-            middleware.assert {
-                states(
-                    { TestState(action) },
-                    { TestState(action + 1) },
-                    { TestState(action + 2) },
-                    { TestState(action + 3) }
-                )
-            }
+        middleware.assert {
+            states(
+                { TestState(action + 5) }
+            )
         }
     }
 
-    @Nested
-    inner class PluginRegistrationTests {
+    @Test
+    fun `flow transformation flatmaps`() {
+        val action = fixture<Int>()
+        val middleware = Middleware().test(initialState)
 
-        @Test
-        fun `suspend transformation crashes if the plugin is not included`() {
-            val action = fixture<Int>()
-            val middleware = Middleware().test(initialState)
+        middleware.flow(action)
 
-            assertThrows<IllegalStateException> {
-                middleware.flow(action)
-            }
-        }
-
-        @Test
-        fun `flow transformation crashes if the plugin is not included`() {
-            val action = fixture<Int>()
-            val middleware = Middleware().test(initialState)
-
-            assertThrows<IllegalStateException> {
-                middleware.flow(action)
-            }
+        middleware.assert {
+            states(
+                { TestState(action) },
+                { TestState(action + 1) },
+                { TestState(action + 2) },
+                { TestState(action + 3) }
+            )
         }
     }
 
