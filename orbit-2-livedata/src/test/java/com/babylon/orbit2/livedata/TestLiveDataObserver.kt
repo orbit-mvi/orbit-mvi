@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package com.babylon.orbit2
+package com.babylon.orbit2.livedata
 
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData

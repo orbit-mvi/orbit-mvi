@@ -14,13 +14,15 @@
  *  limitations under the License.
  */
 
-package com.babylon.orbit2
+package com.babylon.orbit2.viewmodel
 
 import android.os.Parcelable
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.babylon.orbit2.Container
 import com.babylon.orbit2.Container.Settings
+import com.babylon.orbit2.container
 
 internal const val SAVED_STATE_KEY = "state"
 

@@ -25,28 +25,16 @@ class Register(private val value: String = "") : Parcelable {
         Register(if (value.startsWith('-')) value.substring(1) else "-$value")
 
     operator fun plus(register: Register) =
-        Register(
-            (this.asBigDecimal + register.asBigDecimal).stripTrailingZeros().toPlainString()
-        )
+        Register((this.asBigDecimal + register.asBigDecimal).stripTrailingZeros().toPlainString())
 
     operator fun minus(register: Register) =
-        Register(
-            (this.asBigDecimal - register.asBigDecimal).stripTrailingZeros().toPlainString()
-        )
+        Register((this.asBigDecimal - register.asBigDecimal).stripTrailingZeros().toPlainString())
 
     operator fun div(register: Register) =
-        Register(
-            (this.asBigDecimal.divide(
-                register.asBigDecimal,
-                SCALE,
-                RoundingMode.HALF_EVEN
-            )).stripTrailingZeros().toPlainString()
-        )
+        Register((this.asBigDecimal.divide(register.asBigDecimal, SCALE, RoundingMode.HALF_EVEN)).stripTrailingZeros().toPlainString())
 
     operator fun times(register: Register) =
-        Register(
-            (this.asBigDecimal * register.asBigDecimal).stripTrailingZeros().toPlainString()
-        )
+        Register((this.asBigDecimal * register.asBigDecimal).stripTrailingZeros().toPlainString())
 
     override fun toString() = "Register($value)"
 

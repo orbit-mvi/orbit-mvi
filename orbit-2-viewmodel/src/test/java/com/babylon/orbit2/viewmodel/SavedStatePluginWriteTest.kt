@@ -14,13 +14,16 @@
  *  limitations under the License.
  */
 
-package com.babylon.orbit2
+package com.babylon.orbit2.viewmodel
 
 import android.os.Parcel
 import android.os.Parcelable
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import com.appmattus.kotlinfixture.kotlinFixture
+import com.babylon.orbit2.ContainerHost
+import com.babylon.orbit2.reduce
+import com.babylon.orbit2.test
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 

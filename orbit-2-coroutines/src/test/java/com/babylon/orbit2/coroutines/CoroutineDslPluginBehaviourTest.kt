@@ -14,9 +14,15 @@
  *  limitations under the License.
  */
 
-package com.babylon.orbit2
+package com.babylon.orbit2.coroutines
 
 import com.appmattus.kotlinfixture.kotlinFixture
+import com.babylon.orbit2.ContainerHost
+import com.babylon.orbit2.OrbitDslPlugins
+import com.babylon.orbit2.assert
+import com.babylon.orbit2.container
+import com.babylon.orbit2.reduce
+import com.babylon.orbit2.test
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -67,9 +73,12 @@ internal class CoroutineDslPluginBehaviourTest {
 
     private data class TestState(val id: Int)
 
-    private class Middleware : ContainerHost<TestState, String> {
+    private class Middleware :
+        ContainerHost<TestState, String> {
         override val container =
-            CoroutineScope(Dispatchers.Unconfined).container<TestState, String>(TestState(42))
+            CoroutineScope(Dispatchers.Unconfined).container<TestState, String>(
+                TestState(42)
+            )
 
         fun suspend(action: Int) = orbit {
             transformSuspend {

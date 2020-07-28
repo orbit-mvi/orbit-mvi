@@ -14,9 +14,12 @@
  *  limitations under the License.
  */
 
-package com.babylon.orbit2
+package com.babylon.orbit2.viewmodel
 
 import androidx.lifecycle.SavedStateHandle
+import com.babylon.orbit2.Builder
+import com.babylon.orbit2.Container
+import com.babylon.orbit2.Stream
 import java.io.Closeable
 
 internal class SavedStateContainerDecorator<STATE : Any, SIDE_EFFECT : Any>(

@@ -20,10 +20,6 @@ class CalculatorApplication : Application() {
     }
 
     private val mainModule = module {
-        viewModel { (savedStateHandle: SavedStateHandle) ->
-            CalculatorViewModel(
-                savedStateHandle
-            )
-        }
+        viewModel { (savedStateHandle: SavedStateHandle) -> CalculatorViewModel(savedStateHandle) }
     }
 }

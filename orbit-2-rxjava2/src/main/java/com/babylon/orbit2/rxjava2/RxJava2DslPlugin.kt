@@ -14,8 +14,11 @@
  *  limitations under the License.
  */
 
-package com.babylon.orbit2
+package com.babylon.orbit2.rxjava2
 
+import com.babylon.orbit2.Context
+import com.babylon.orbit2.Operator
+import com.babylon.orbit2.OrbitDslPlugin
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.flowOn
@@ -35,10 +38,6 @@ import kotlinx.coroutines.withContext
  * * [transformRx2Completable]
  */
 object RxJava2DslPlugin : OrbitDslPlugin {
-
-    init {
-        OrbitDslPlugins.register(this)
-    }
 
     @Suppress("UNCHECKED_CAST", "EXPERIMENTAL_API_USAGE")
     override fun <S : Any, E : Any, SE : Any> apply(

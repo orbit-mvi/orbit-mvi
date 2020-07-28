@@ -262,18 +262,6 @@
             app:layout_constraintWidth_percent="0.25" />
 
         <Button
-            android:id="@+id/button_00"
-            style="@style/Button"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:onClick="@{() -> viewmodel.digit(0) }"
-            android:text="@string/button_0"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintDimensionRatio="1"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintWidth_percent="0.25" />
-
-        <Button
             android:id="@+id/button_period"
             style="@style/Button"
             android:layout_width="0dp"

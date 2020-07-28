@@ -7,13 +7,13 @@ import kotlinx.android.parcel.Parcelize
 internal data class CalculatorStateInternal(
     val xRegister: Register = Register(),
     val yRegister: Register = Register(),
-    val flag: Flag? = null
+    val lastOperator: Operator? = null
 ) : CalculatorState, Parcelable {
 
     override val digitalDisplay: String
         get() = if (xRegister.isEmpty()) yRegister.displayValue else xRegister.displayValue
 
-    enum class Flag {
+    enum class Operator {
         Add,
         Subtract,
         Divide,

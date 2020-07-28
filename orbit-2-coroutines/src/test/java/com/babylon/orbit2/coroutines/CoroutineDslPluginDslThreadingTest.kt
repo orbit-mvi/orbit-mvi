@@ -14,9 +14,14 @@
  *  limitations under the License.
  */
 
-package com.babylon.orbit2
+package com.babylon.orbit2.coroutines
 
 import com.appmattus.kotlinfixture.kotlinFixture
+import com.babylon.orbit2.Container
+import com.babylon.orbit2.ContainerHost
+import com.babylon.orbit2.RealContainer
+import com.babylon.orbit2.reduce
+import com.babylon.orbit2.test
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -62,14 +67,16 @@ internal class CoroutineDslPluginDslThreadingTest {
 
     private data class TestState(val id: Int)
 
-    private class Middleware : ContainerHost<TestState, String> {
+    private class Middleware :
+        ContainerHost<TestState, String> {
         @Suppress("EXPERIMENTAL_API_USAGE")
-        override val container = RealContainer<TestState, String>(
-            initialState = TestState(42),
-            settings = Container.Settings(),
-            parentScope = CoroutineScope(Dispatchers.Unconfined),
-            backgroundDispatcher = newSingleThreadContext(BACKGROUND_THREAD_PREFIX)
-        )
+        override val container =
+            RealContainer<TestState, String>(
+                initialState = TestState(42),
+                settings = Container.Settings(),
+                parentScope = CoroutineScope(Dispatchers.Unconfined),
+                backgroundDispatcher = newSingleThreadContext(BACKGROUND_THREAD_PREFIX)
+            )
         lateinit var threadName: String
 
         fun suspend(action: Int) = orbit {

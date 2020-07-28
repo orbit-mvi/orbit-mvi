@@ -14,8 +14,13 @@
  *  limitations under the License.
  */
 
-package com.babylon.orbit2
+package com.babylon.orbit2.rxjava2
 
+import com.babylon.orbit2.Builder
+import com.babylon.orbit2.Context
+import com.babylon.orbit2.Operator
+import com.babylon.orbit2.Orbit2Dsl
+import com.babylon.orbit2.OrbitDslPlugins
 import io.reactivex.Completable
 
 internal class RxJava2Completable<S : Any, E : Any>(

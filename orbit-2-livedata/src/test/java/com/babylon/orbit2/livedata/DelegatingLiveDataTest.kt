@@ -14,10 +14,11 @@
  *  limitations under the License.
  */
 
-package com.babylon.orbit2
+package com.babylon.orbit2.livedata
 
 import androidx.lifecycle.Lifecycle
 import com.appmattus.kotlinfixture.kotlinFixture
+import com.babylon.orbit2.Stream
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith

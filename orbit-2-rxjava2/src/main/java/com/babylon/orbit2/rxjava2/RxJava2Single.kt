@@ -14,29 +14,34 @@
  *  limitations under the License.
  */
 
-package com.babylon.orbit2
+package com.babylon.orbit2.rxjava2
 
-import io.reactivex.Observable
+import com.babylon.orbit2.Builder
+import com.babylon.orbit2.Context
+import com.babylon.orbit2.Operator
+import com.babylon.orbit2.Orbit2Dsl
+import com.babylon.orbit2.OrbitDslPlugins
+import io.reactivex.Single
 
-internal class RxJava2Observable<S : Any, E : Any, E2 : Any>(
-    val block: Context<S, E>.() -> Observable<E2>
+internal class RxJava2Single<S : Any, E : Any, E2 : Any>(
+    val block: Context<S, E>.() -> Single<E2>
 ) : Operator<S, E>
 
 /**
- * The observable transformer flat maps incoming [Context] for every event into an [Observable] of
+ * The observable transformer flat maps incoming [Context] for every event into a [Single] of
  * another type.
  *
  * The transformer executes on an `IO` dispatcher by default.
  *
- * @param block the lambda returning a new observable of events given the current state and event
+ * @param block the lambda returning a new [Single] given the current state and event
  */
 @Orbit2Dsl
-fun <S : Any, SE : Any, E : Any, E2 : Any> Builder<S, SE, E>.transformRx2Observable(
-    block: Context<S, E>.() -> Observable<E2>
+fun <S : Any, SE : Any, E : Any, E2 : Any> Builder<S, SE, E>.transformRx2Single(
+    block: Context<S, E>.() -> Single<E2>
 ): Builder<S, SE, E2> {
     OrbitDslPlugins.register(RxJava2DslPlugin)
     return Builder(
-        stack + RxJava2Observable(
+        stack + RxJava2Single(
             block
         )
     )

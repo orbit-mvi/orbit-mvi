@@ -14,9 +14,15 @@
  *  limitations under the License.
  */
 
-package com.babylon.orbit2
+package com.babylon.orbit2.rxjava2
 
 import com.appmattus.kotlinfixture.kotlinFixture
+import com.babylon.orbit2.ContainerHost
+import com.babylon.orbit2.OrbitDslPlugins
+import com.babylon.orbit2.assert
+import com.babylon.orbit2.container
+import com.babylon.orbit2.reduce
+import com.babylon.orbit2.test
 import io.reactivex.Completable
 import io.reactivex.Maybe
 import io.reactivex.Observable
@@ -104,9 +110,12 @@ internal class RxJava2DslPluginBehaviourTest {
 
     private data class TestState(val id: Int)
 
-    private class Middleware : ContainerHost<TestState, String> {
+    private class Middleware :
+        ContainerHost<TestState, String> {
         override val container =
-            CoroutineScope(Dispatchers.Unconfined).container<TestState, String>(TestState(42))
+            CoroutineScope(Dispatchers.Unconfined).container<TestState, String>(
+                TestState(42)
+            )
 
         fun single(action: Int) = orbit {
             transformRx2Single {

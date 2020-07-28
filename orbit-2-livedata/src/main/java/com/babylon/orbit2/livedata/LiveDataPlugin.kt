@@ -14,9 +14,10 @@
  *  limitations under the License.
  */
 
-package com.babylon.orbit2
+package com.babylon.orbit2.livedata
 
 import androidx.lifecycle.LiveData
+import com.babylon.orbit2.Container
 import com.babylon.orbit2.Container.Settings
 import java.io.Closeable
 
@@ -24,19 +25,19 @@ import java.io.Closeable
  * A [LiveData] of one-off side effects. Depending on the [Settings] this container has been
  * instantiated with, can support side effect caching when there are no listeners (default)
  */
-val <STATE : Any, SIDE_EFFECT : Any> Container<STATE, SIDE_EFFECT>.sideEffectLiveData: LiveData<SIDE_EFFECT>
+val <STATE : Any, SIDE_EFFECT : Any> Container<STATE, SIDE_EFFECT>.sideEffect: LiveData<SIDE_EFFECT>
     get() = DelegatingLiveData(this.sideEffectStream)
 
 /**
  * A [LiveData] of state updates. Emits the latest state upon subscription and serves only distinct
  * values (only changed states are emitted) by default.
  */
-val <STATE : Any, SIDE_EFFECT : Any> Container<STATE, SIDE_EFFECT>.stateLiveData: LiveData<STATE>
+val <STATE : Any, SIDE_EFFECT : Any> Container<STATE, SIDE_EFFECT>.state: LiveData<STATE>
     get() = object : LiveData<STATE>(this.currentState) {
         private var closeable: Closeable? = null
 
         override fun onActive() {
-            closeable = this@stateLiveData.stateStream.observe {
+            closeable = this@state.stateStream.observe {
                 postValue(it)
             }
         }

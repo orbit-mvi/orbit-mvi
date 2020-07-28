@@ -14,19 +14,27 @@
  *  limitations under the License.
  */
 
-package com.babylon.orbit2
+package com.babylon.orbit2.livedata
 
-import io.reactivex.Observable
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LifecycleRegistry
 
-/**
- * Consume a [Stream] as an RxJava 2 [Observable].
- */
-fun <T> Stream<T>.asRxObservable() =
-    Observable.create<T> { emitter ->
-        val closeable = observe {
-            if (!emitter.isDisposed) {
-                emitter.onNext(it)
-            }
+internal class MockLifecycleOwner : LifecycleOwner {
+    private val registry = LifecycleRegistry(this)
+
+    var currentState: Lifecycle.State
+        get() = registry.currentState
+        set(value) {
+            registry.currentState = value
         }
-        emitter.setCancellable { closeable.close() }
+
+    val hasObservers: Boolean
+        get() = registry.observerCount > 0
+
+    fun dispatchEvent(event: Lifecycle.Event) {
+        registry.handleLifecycleEvent(event)
     }
+
+    override fun getLifecycle(): Lifecycle = registry
+}
