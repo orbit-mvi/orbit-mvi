@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Babylon Partners Limited
+ * Copyright 2020 Babylon Partners Limited
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,7 +20,8 @@ include(
     "orbit-2-livedata",
     "orbit-2-rxjava2",
     "orbit-2-viewmodel",
-    "orbit-2-test"
+    "orbit-2-test",
+    "samples:orbit-2-calculator"
 )
 
 fun renameBuildFileToModuleName(project: ProjectDescriptor) {
