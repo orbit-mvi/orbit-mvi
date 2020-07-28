@@ -4,8 +4,8 @@ The LiveData plugin provides the following
 [Container](../orbit-2-core/src/main/java/com/babylon/orbit2/Container.kt)
 extension properties:
 
-- [state](src/main/java/com/babylon/orbit2/LiveDataPlugin.kt#state)
-- [sideEffect](src/main/java/com/babylon/orbit2/LiveDataPlugin.kt#sideEffect)
+- [state](src/main/java/com/babylon/orbit2/livedata/LiveDataPlugin.kt#state)
+- [sideEffect](src/main/java/com/babylon/orbit2/livedata/LiveDataPlugin.kt#sideEffect)
 
 ## Including the module
 

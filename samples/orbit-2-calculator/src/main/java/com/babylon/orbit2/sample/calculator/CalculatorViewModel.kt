@@ -1,17 +1,22 @@
 package com.babylon.orbit2.sample.calculator
 
+import android.os.Parcelable
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import com.babylon.orbit2.ContainerHost
-import com.babylon.orbit2.viewmodel.container
 import com.babylon.orbit2.livedata.state
 import com.babylon.orbit2.reduce
+import com.babylon.orbit2.viewmodel.container
+import kotlinx.android.parcel.Parcelize
+import java.math.BigDecimal
+import java.math.RoundingMode
 
 class CalculatorViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
 
-    private val host = object : ContainerHost<CalculatorStateInternal, Nothing> {
-        override val container = container<CalculatorStateInternal, Nothing>(CalculatorStateInternal(), savedStateHandle)
+    // private ContainerHost to not expose the caller to the internal implementation of CalculatorState
+    private val host = object : ContainerHost<CalculatorStateImpl, Nothing> {
+        override val container = container<CalculatorStateImpl, Nothing>(CalculatorStateImpl(), savedStateHandle)
     }
 
     @Suppress("UNCHECKED_CAST")
@@ -19,7 +24,7 @@ class CalculatorViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
 
     fun clear() = host.orbit {
         reduce {
-            CalculatorStateInternal()
+            CalculatorStateImpl()
         }
     }
 
@@ -40,28 +45,28 @@ class CalculatorViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
     fun add() = host.orbit {
         reduce {
             val yRegister = if (state.xRegister.isEmpty()) state.yRegister else state.xRegister
-            state.copy(lastOperator = CalculatorStateInternal.Operator.Add, xRegister = Register(), yRegister = yRegister)
+            state.copy(lastOperator = CalculatorStateImpl.Operator.Add, xRegister = Register(), yRegister = yRegister)
         }
     }
 
     fun subtract() = host.orbit {
         reduce {
             val yRegister = if (state.xRegister.isEmpty()) state.yRegister else state.xRegister
-            state.copy(lastOperator = CalculatorStateInternal.Operator.Subtract, xRegister = Register(), yRegister = yRegister)
+            state.copy(lastOperator = CalculatorStateImpl.Operator.Subtract, xRegister = Register(), yRegister = yRegister)
         }
     }
 
     fun multiply() = host.orbit {
         reduce {
             val yRegister = if (state.xRegister.isEmpty()) state.yRegister else state.xRegister
-            state.copy(lastOperator = CalculatorStateInternal.Operator.Multiply, xRegister = Register(), yRegister = yRegister)
+            state.copy(lastOperator = CalculatorStateImpl.Operator.Multiply, xRegister = Register(), yRegister = yRegister)
         }
     }
 
     fun divide() = host.orbit {
         reduce {
             val yRegister = if (state.xRegister.isEmpty()) state.yRegister else state.xRegister
-            state.copy(lastOperator = CalculatorStateInternal.Operator.Divide, xRegister = Register(), yRegister = yRegister)
+            state.copy(lastOperator = CalculatorStateImpl.Operator.Divide, xRegister = Register(), yRegister = yRegister)
         }
     }
 
@@ -86,10 +91,10 @@ class CalculatorViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
             try {
                 if (!state.yRegister.isEmpty()) {
                     val newValue = when (state.lastOperator) {
-                        CalculatorStateInternal.Operator.Add -> state.yRegister + state.xRegister
-                        CalculatorStateInternal.Operator.Subtract -> state.yRegister - state.xRegister
-                        CalculatorStateInternal.Operator.Divide -> state.yRegister / state.xRegister
-                        CalculatorStateInternal.Operator.Multiply -> state.yRegister * state.xRegister
+                        CalculatorStateImpl.Operator.Add -> state.yRegister + state.xRegister
+                        CalculatorStateImpl.Operator.Subtract -> state.yRegister - state.xRegister
+                        CalculatorStateImpl.Operator.Divide -> state.yRegister / state.xRegister
+                        CalculatorStateImpl.Operator.Multiply -> state.yRegister * state.xRegister
                         null -> state.xRegister
                     }
 
@@ -100,6 +105,62 @@ class CalculatorViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
             } catch (ignored: Exception) {
                 state.copy(xRegister = Register("Err"))
             }
+        }
+    }
+
+    @Parcelize
+    private data class CalculatorStateImpl(
+        val xRegister: Register = Register(),
+        val yRegister: Register = Register(),
+        val lastOperator: Operator? = null
+    ) : CalculatorState, Parcelable {
+
+        override val digitalDisplay: String
+            get() = if (xRegister.isEmpty()) yRegister.displayValue else xRegister.displayValue
+
+        enum class Operator {
+            Add,
+            Subtract,
+            Divide,
+            Multiply
+        }
+    }
+
+    @Parcelize
+    private class Register(private val value: String = "") : Parcelable {
+        private val asBigDecimal: BigDecimal
+            get() = if (value.isEmpty()) BigDecimal.ZERO else value.toBigDecimal()
+
+        val displayValue: String
+            get() = if (value.isEmpty()) "0" else value
+
+        fun isEmpty() = value.isEmpty()
+
+        fun appendDigit(digit: Int) =
+            Register(value + digit)
+
+        fun appendPeriod() =
+            if (!value.contains('.')) Register("$value.") else this
+
+        fun plusMinus() =
+            Register(if (value.startsWith('-')) value.substring(1) else "-$value")
+
+        operator fun plus(register: Register) =
+            Register((this.asBigDecimal + register.asBigDecimal).stripTrailingZeros().toPlainString())
+
+        operator fun minus(register: Register) =
+            Register((this.asBigDecimal - register.asBigDecimal).stripTrailingZeros().toPlainString())
+
+        operator fun div(register: Register) =
+            Register((this.asBigDecimal.divide(register.asBigDecimal, SCALE, RoundingMode.HALF_EVEN)).stripTrailingZeros().toPlainString())
+
+        operator fun times(register: Register) =
+            Register((this.asBigDecimal * register.asBigDecimal).stripTrailingZeros().toPlainString())
+
+        override fun toString() = "Register($value)"
+
+        companion object {
+            private const val SCALE = 7
         }
     }
 }
