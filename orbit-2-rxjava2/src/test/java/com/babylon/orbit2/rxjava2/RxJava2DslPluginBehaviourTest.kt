@@ -110,12 +110,9 @@ internal class RxJava2DslPluginBehaviourTest {
 
     private data class TestState(val id: Int)
 
-    private class Middleware :
-        ContainerHost<TestState, String> {
-        override val container =
-            CoroutineScope(Dispatchers.Unconfined).container<TestState, String>(
-                TestState(42)
-            )
+    private class Middleware : ContainerHost<TestState, String> {
+
+        override val container = CoroutineScope(Dispatchers.Unconfined).container<TestState, String>(TestState(42))
 
         fun single(action: Int) = orbit {
             transformRx2Single {
