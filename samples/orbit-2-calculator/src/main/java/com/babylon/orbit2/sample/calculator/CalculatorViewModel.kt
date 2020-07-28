@@ -132,7 +132,11 @@ class CalculatorViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
             get() = if (value.isEmpty()) BigDecimal.ZERO else value.toBigDecimal()
 
         val displayValue: String
-            get() = if (value.isEmpty()) "0" else value
+            get() = when {
+                value.isEmpty() -> "0"
+                value == "-" -> "-0"
+                else -> value
+            }
 
         fun isEmpty() = value.isEmpty()
 
