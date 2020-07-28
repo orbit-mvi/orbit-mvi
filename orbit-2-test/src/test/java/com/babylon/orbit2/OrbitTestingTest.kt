@@ -20,6 +20,8 @@ import com.appmattus.kotlinfixture.kotlinFixture
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.never
 import com.nhaarman.mockitokotlin2.verify
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -245,7 +247,8 @@ class OrbitTestingTest {
 
         private inner class StateTestMiddleware :
             ContainerHost<State, Nothing> {
-            override val container = Container.create<State, Nothing>(State())
+            override val container =
+                CoroutineScope(Dispatchers.Unconfined).container<State, Nothing>(State())
 
             fun something(action: Int): Unit = orbit {
                 transform {
@@ -328,7 +331,8 @@ class OrbitTestingTest {
 
         private inner class SideEffectTestMiddleware :
             ContainerHost<State, Int> {
-            override val container = Container.create<State, Int>(State())
+            override val container =
+                CoroutineScope(Dispatchers.Unconfined).container<State, Int>(State())
 
             fun something(action: Int): Unit = orbit {
                 sideEffect {
@@ -375,9 +379,10 @@ class OrbitTestingTest {
 
         private inner class GeneralTestMiddleware(private val dependency: BogusDependency) :
             ContainerHost<State, Nothing> {
-            override val container = Container.create<State, Nothing>(State()) {
-                created()
-            }
+            override val container =
+                CoroutineScope(Dispatchers.Unconfined).container<State, Nothing>(State()) {
+                    created()
+                }
 
             fun created() {
                 dependency.create()

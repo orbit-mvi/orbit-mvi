@@ -44,14 +44,16 @@ Orbit supports using various async/stream frameworks at the same time so it is
 perfect for legacy codebases. For example, it can support both RxJava 2 and
 coroutines if you are in the process of migrating from one to the other.
 
-At the very least you will need the `orbit-core` module to get started.
+At the very least you will need the `orbit-core` module to get started,
+alternatively include one of the other modules which already include
+`orbit-core`.
 
 ```kotlin
-implementation("com.babylon.orbit2:orbit-core:<latest-version>") // mandatory
+implementation("com.babylon.orbit2:orbit-core:<latest-version>")
 implementation("com.babylon.orbit2:orbit-coroutines:<latest-version>")
 implementation("com.babylon.orbit2:orbit-rxjava2:<latest-version>")
 implementation("com.babylon.orbit2:orbit-livedata:<latest-version>")
-implementation("com.babylon.orbit2:orbit-savedstate:<latest-version>")
+implementation("com.babylon.orbit2:orbit-viewmodel:<latest-version>")
 
 testImplementation("com.babylon.orbit2:orbit-test:<latest-version>")
 ```
@@ -64,13 +66,19 @@ For detailed documentation, see:
 - [Coroutines](orbit-2-coroutines/README.md)
 - [RxJava 2](orbit-2-rxjava2/README.md)
 - [LiveData](orbit-2-livedata/README.md)
-- [Saved state](orbit-2-savedstate/README.md)
+- [ViewModel](orbit-2-viewmodel/README.md)
 - [Test](orbit-2-test/README.md)
 
 ## Creating a simple Orbit 2 ViewModel
 
 Using the core Orbit functionality, we can create a simple, functional
 ViewModel.
+
+### Include the dependencies
+
+```kotlin
+implementation("com.babylon.orbit2:orbit-viewmodel:<latest-version>")
+```
 
 ### Define the contract
 
@@ -97,7 +105,7 @@ Next, we can define the ViewModel.
 1. Implement the
    [ContainerHost](orbit-2-core/src/main/java/com/babylon/orbit2/ContainerHost.kt)
    interface
-1. Override the `container` field and use the `Container.create` factory
+1. Override the `container` field and use the `ViewModel.container` factory
    function to build an Orbit
    [Container](orbit-2-core/src/main/java/com/babylon/orbit2/Container.kt) in
    your
@@ -106,23 +114,24 @@ Next, we can define the ViewModel.
 ``` kotlin
 class CalculatorViewModel: ContainerHost<CalculatorState, CalculatorSideEffect>, ViewModel() {
 
-    override val container = Container.create<CalculatorState, CalculatorSideEffect>(CalculatorState())
+    // Include `orbit-viewmodel` for the factory function
+    override val container = container<CalculatorState, CalculatorSideEffect>(CalculatorState())
 
     fun add(number: Int) = orbit {
         sideEffect {
-            post(CalculatorSideEffect.Toast("Adding $number to ${currentState.total}!"))
+            post(CalculatorSideEffect.Toast("Adding $number to ${state.total}!"))
         }
             .reduce {
-                currentState.copy(total = currentState.total + number)
+                state.copy(total = state.total + number)
             }
     }
 
     fun subtract(number: Int) = orbit {
         sideEffect {
-            post(CalculatorSideEffect.Toast("Subtracting $number from ${currentState.total}!"))
+            post(CalculatorSideEffect.Toast("Subtracting $number from ${state.total}!"))
         }
             .reduce {
-                currentState.copy(total = currentState.total - number)
+                state.copy(total = state.total - number)
             }
     }
 }
@@ -141,23 +150,23 @@ of connecting via optional modules. For Android, the most convenient way to
 connect is via `LiveData`, as it manages subscription disposal automatically.
 
 ``` kotlin
-class CalculatorActivity: Activity() {
+class CalculatorActivity: AppCompatActivity() {
 
     // Example of injection using koin, your DI system might differ
     private val viewModel by viewModel<CalculatorViewModel>()
 
-    override fun onCreate() {
+    override fun onCreate(savedState: Bundle?) {
         ...
         addButton.setOnClickListener { viewModel.add(1234) }
         subtractButton.setOnClickListener { viewModel.subtract(1234) }
 
         // NOTE: Live data support is provided by the live data module:
         // com.babylon.orbit2:orbit-livedata
-        viewModel.stateLiveData.observe(this) { render(it) }
-        viewModel.sideEffectLiveData.observe(this) { handleSideEffect(it) }
+        viewModel.container.stateLiveData.observe(this, Observer { render(it) })
+        viewModel.container.sideEffectLiveData.observe(this, Observer { handleSideEffect(it) })
     }
 
-    private fun render(state: State) {
+    private fun render(state: CalculatorState) {
         ...
     }
 

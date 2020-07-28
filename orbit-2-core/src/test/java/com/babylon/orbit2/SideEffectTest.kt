@@ -17,6 +17,8 @@
 package com.babylon.orbit2
 
 import com.appmattus.kotlinfixture.kotlinFixture
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtensionContext
@@ -163,9 +165,11 @@ internal class SideEffectTest {
 
     private class Middleware(caching: Boolean? = null) : ContainerHost<Unit, Int> {
         override val container: Container<Unit, Int> =
-            when (caching) {
-                null -> Container.create(Unit) // making sure defaults are tested
-                else -> Container.create(Unit, Container.Settings(caching))
+            with(CoroutineScope(Dispatchers.Unconfined)) {
+                when (caching) {
+                    null -> container(Unit) // making sure defaults are tested
+                    else -> container(Unit, Container.Settings(caching))
+                }
             }
 
         fun someFlow(action: Int) = orbit {

@@ -17,6 +17,8 @@
 package com.babylon.orbit2
 
 import com.appmattus.kotlinfixture.kotlinFixture
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import org.junit.jupiter.api.Test
 
 internal class BaseDslBehaviourTest {
@@ -77,7 +79,7 @@ internal class BaseDslBehaviourTest {
     private data class TestState(val id: Int)
 
     private class BaseDslMiddleware : ContainerHost<TestState, String> {
-        override val container = Container.create<TestState, String>(
+        override val container = CoroutineScope(Dispatchers.Unconfined).container<TestState, String>(
             TestState(42)
         )
 

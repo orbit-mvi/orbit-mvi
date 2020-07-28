@@ -19,29 +19,34 @@ package com.babylon.orbit2
 import android.os.Parcel
 import android.os.Parcelable
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.ViewModel
 import com.appmattus.kotlinfixture.kotlinFixture
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-class SavedStatePluginWriteTest {
+class SavedStatePluginReadTest {
 
     private val fixture = kotlinFixture()
 
     @Test
-    fun `Modified state is saved in the saved state handle`() {
+    fun `When saved state is present it is read`() {
         val initialState = fixture<TestState>()
-        val something = fixture<Int>()
-        val savedStateHandle = SavedStateHandle()
+        val savedState = fixture<TestState>()
+        val savedStateHandle = SavedStateHandle(mapOf(SAVED_STATE_KEY to savedState))
+
         val middleware = Middleware(savedStateHandle, initialState)
-        val testStateObserver = middleware.container.stateStream.test()
 
-        middleware.something(something)
+        assertThat(middleware.container.currentState).isEqualTo(savedState)
+    }
 
-        testStateObserver.awaitCount(2)
+    @Test
+    fun `When saved state is not present the initial state is unchanged`() {
+        val initialState = fixture<TestState>()
+        val savedStateHandle = SavedStateHandle()
 
-        assertThat(savedStateHandle.get<TestState?>(Container.SAVED_STATE_KEY)).isEqualTo(
-            TestState(something)
-        )
+        val middleware = Middleware(savedStateHandle, initialState)
+
+        assertThat(middleware.container.currentState).isEqualTo(initialState)
     }
 
     private data class TestState(val id: Int) : Parcelable {
@@ -57,9 +62,7 @@ class SavedStatePluginWriteTest {
 
         companion object CREATOR : Parcelable.Creator<TestState> {
             override fun createFromParcel(parcel: Parcel): TestState {
-                return TestState(
-                    parcel
-                )
+                return TestState(parcel)
             }
 
             override fun newArray(size: Int): Array<TestState?> {
@@ -71,16 +74,10 @@ class SavedStatePluginWriteTest {
     private inner class Middleware(
         savedStateHandle: SavedStateHandle,
         initialState: TestState
-    ) : ContainerHost<TestState, Int> {
-        override val container: Container<TestState, Int> = Container.createWithSavedState(
+    ) : ContainerHost<TestState, Int>, ViewModel() {
+        override val container = container<TestState, Int>(
             initialState,
             savedStateHandle
         )
-
-        fun something(action: Int) = orbit {
-            reduce {
-                state.copy(id = action)
-            }
-        }
     }
 }

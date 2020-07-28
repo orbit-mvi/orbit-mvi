@@ -17,6 +17,8 @@
 package com.babylon.orbit2
 
 import com.appmattus.kotlinfixture.kotlinFixture
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.newSingleThreadContext
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -87,6 +89,7 @@ internal class BaseDslThreadingTest {
         override val container = RealContainer<TestState, String>(
             initialState = TestState(42),
             settings = Container.Settings(),
+            parentScope = CoroutineScope(Dispatchers.Unconfined),
             backgroundDispatcher = newSingleThreadContext(BACKGROUND_THREAD_PREFIX)
         )
         lateinit var threadName: String

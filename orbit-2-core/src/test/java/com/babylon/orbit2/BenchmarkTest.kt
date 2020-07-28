@@ -16,6 +16,8 @@
 
 package com.babylon.orbit2
 
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.junit.jupiter.api.Test
@@ -52,7 +54,8 @@ internal class BenchmarkTest {
     private data class TestState(val id: Int)
 
     private class BenchmarkMiddleware : ContainerHost<TestState, String> {
-        override val container = Container.create<TestState, String>(TestState(42))
+        override val container =
+            CoroutineScope(Dispatchers.Unconfined).container<TestState, String>(TestState(42))
 
         fun reducer(action: Int) = orbit {
             reduce {

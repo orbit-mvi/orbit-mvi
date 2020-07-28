@@ -34,8 +34,9 @@ object OrbitDslPlugins {
      * @param plugin The DSL plugin to register
      */
     fun register(plugin: OrbitDslPlugin) {
-        if (!plugins.contains(plugin))
+        if (!plugins.contains(plugin)) {
             plugins += plugin
+        }
     }
 
     /**

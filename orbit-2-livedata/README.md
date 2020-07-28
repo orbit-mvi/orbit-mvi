@@ -20,19 +20,19 @@ Below is the recommended way to subscribe to a
 Android.
 
 ``` kotlin
-class ExampleActivity: Activity() {
+class ExampleActivity: AppCompatActivity() {
 
     // Example of injection using koin, your DI system might differ
     private val viewModel by viewModel<ExampleViewModel>()
 
-    override fun onCreate() {
+    override fun onCreate(savedState: Bundle?) {
         ...
 
-        viewModel.stateLiveData.observe(this) { render(it) }
-        viewModel.sideEffectLiveData.observe(this) { handleSideEffect(it) }
+        viewModel.container.stateLiveData.observe(this, Observer {render(it) })
+        viewModel.container.sideEffectLiveData.observe(this, Observer {handleSideEffect(it) })
     }
 
-    private fun render(state: State) {
+    private fun render(state: CalculatorState) {
         ...
     }
 

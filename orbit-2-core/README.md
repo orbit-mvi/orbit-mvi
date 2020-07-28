@@ -132,14 +132,14 @@ sealed class ExampleSideEffect {
 }
 
 class ExampleViewModel : ContainerHost<ExampleState, ExampleSideEffect>, ViewModel() {
-    override val container = Container.create<ExampleState, ExampleSideEffect>(ExampleState())
+    override val container = container<ExampleState, ExampleSideEffect>(ExampleState())
 
     fun example(number: Int) = orbit {
        transform {
           number.toString()
        }
          .sideEffect { post(ExampleSideEffect.Toast(event)) }
-         .reduce { currentState.copy(seen = currentState.seen + event) }
+         .reduce { state.copy(seen = state.seen + event) }
     }
 }
 ```
@@ -181,7 +181,7 @@ class ExampleViewModel : ContainerHost<ExampleState, ExampleSideEffect> {
     ...
 
     fun example(number: Int) = orbit {
-        reduce { state.copy(currentState.total + number)}
+        reduce { state.copy(state.total + number)}
     }
 
     fun anotherExample(number: Int) = orbit {
@@ -268,8 +268,8 @@ class ExampleViewModel : ContainerHost<ExampleState, ExampleSideEffect> {
 
 ``` kotlin
 perform("Toast the current state")
-class ExampleViewModel : ContainerHost<ExampleState, ExampleSideEffect> {
-    override val container = Container.create<ExampleState, ExampleSideEffect>(ExampleState()) {
+class ExampleViewModel : ContainerHost<ExampleState, ExampleSideEffect>, ViewModel() {
+    override val container = container<ExampleState, ExampleSideEffect>(ExampleState()) {
         onCreate()
     }
 

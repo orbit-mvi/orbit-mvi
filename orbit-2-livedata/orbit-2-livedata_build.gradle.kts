@@ -23,13 +23,14 @@ plugins {
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
 
-    implementation(project(":orbit-2-core"))
+    api(project(":orbit-2-core"))
 
     implementation(ProjectDependencies.androidxLifecycleComponents)
 
     // Testing
     testImplementation(project(":orbit-2-test"))
     testImplementation(ProjectDependencies.androidXTesting)
+    testImplementation(ProjectDependencies.kotlinCoroutines)
     GroupedDependencies.testsImplementationJUnit5.forEach { testImplementation(it) }
     GroupedDependencies.testsRuntime.forEach { testRuntimeOnly(it) }
 }

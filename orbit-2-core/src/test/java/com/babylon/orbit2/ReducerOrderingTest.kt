@@ -16,6 +16,8 @@
 
 package com.babylon.orbit2
 
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -56,9 +58,10 @@ internal class ReducerOrderingTest {
     private data class TestState(val ids: List<Int> = emptyList())
 
     private class ThreeReducersMiddleware : ContainerHost<TestState, String> {
-        override val container = Container.create<TestState, String>(
-            TestState()
-        )
+        override val container =
+            CoroutineScope(Dispatchers.Unconfined).container<TestState, String>(
+                TestState()
+            )
 
         fun one() = orbit {
             reduce {

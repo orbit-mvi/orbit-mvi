@@ -30,7 +30,7 @@ internal class SavedStateContainerDecorator<STATE : Any, SIDE_EFFECT : Any>(
         get() = object : Stream<STATE> {
             override fun observe(lambda: (STATE) -> Unit): Closeable {
                 return actual.stateStream.observe {
-                    savedStateHandle[Container.SAVED_STATE_KEY] = it
+                    savedStateHandle[SAVED_STATE_KEY] = it
                     lambda(it)
                 }
             }

@@ -21,6 +21,8 @@ import io.reactivex.Completable
 import io.reactivex.Maybe
 import io.reactivex.Observable
 import io.reactivex.Single
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.newSingleThreadContext
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -102,9 +104,10 @@ internal class RxJava2DslPluginDslThreadingTest {
 
     private class Middleware : ContainerHost<TestState, String> {
         @Suppress("EXPERIMENTAL_API_USAGE")
-        override val container: Container<TestState, String> = RealContainer(
+        override val container = RealContainer<TestState, String>(
             initialState = TestState(42),
             settings = Container.Settings(),
+            parentScope = CoroutineScope(Dispatchers.Unconfined),
             backgroundDispatcher = newSingleThreadContext(BACKGROUND_THREAD_PREFIX)
         )
         lateinit var threadName: String

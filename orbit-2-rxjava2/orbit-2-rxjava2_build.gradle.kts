@@ -24,7 +24,7 @@ dependencies {
     implementation(ProjectDependencies.rxJava2)
     implementation(ProjectDependencies.kotlinCoroutinesRx2)
 
-    implementation(project(":orbit-2-core"))
+    api(project(":orbit-2-core"))
 
     // Testing
     testImplementation(project(":orbit-2-test"))

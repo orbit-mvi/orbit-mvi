@@ -17,6 +17,8 @@
 package com.babylon.orbit2
 
 import com.appmattus.kotlinfixture.kotlinFixture
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.onEach
@@ -66,7 +68,8 @@ internal class CoroutineDslPluginBehaviourTest {
     private data class TestState(val id: Int)
 
     private class Middleware : ContainerHost<TestState, String> {
-        override val container = Container.create<TestState, String>(TestState(42))
+        override val container =
+            CoroutineScope(Dispatchers.Unconfined).container<TestState, String>(TestState(42))
 
         fun suspend(action: Int) = orbit {
             transformSuspend {

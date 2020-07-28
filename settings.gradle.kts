@@ -19,13 +19,15 @@ include(
     "orbit-2-coroutines",
     "orbit-2-livedata",
     "orbit-2-rxjava2",
-    "orbit-2-savedstate",
+    "orbit-2-viewmodel",
     "orbit-2-test"
 )
 
-// Will rename every module's build.gradle file to use its name instead of `build`.
-// E.g. `app/build.gradle` will become `app/app_build.gradle`
-// The root build.gradle file remains untouched
-rootProject.children.forEach { project ->
+fun renameBuildFileToModuleName(project: ProjectDescriptor) {
     project.buildFileName = "${project.name}_build.gradle.kts"
+    project.children.forEach { child -> renameBuildFileToModuleName(child) }
 }
+// Will rename every module's build.gradle file to use its name instead of `build`.
+// E.g. `app/build.gradle` will become `app/app.gradle`
+// The root build.gradle file will remain untouched
+rootProject.children.forEach { subproject -> renameBuildFileToModuleName(subproject) }

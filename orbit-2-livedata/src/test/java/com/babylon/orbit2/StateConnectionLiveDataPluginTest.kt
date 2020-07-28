@@ -18,6 +18,8 @@ package com.babylon.orbit2
 
 import androidx.lifecycle.Lifecycle
 import com.appmattus.kotlinfixture.kotlinFixture
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -120,7 +122,8 @@ internal class StateConnectionLiveDataPluginTest {
     private data class TestState(val id: Int)
 
     private class Middleware(initialState: TestState) : ContainerHost<TestState, String> {
-        override val container = Container.create<TestState, String>(initialState)
+        override val container =
+            CoroutineScope(Dispatchers.Unconfined).container<TestState, String>(initialState)
 
         fun something(action: Int) = orbit {
             reduce {

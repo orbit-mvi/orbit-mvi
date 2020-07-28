@@ -1,19 +1,39 @@
-# Orbit 2 Saved State plugin
+# Orbit 2 ViewModel plugin
 
-The plugin provides:
+The plugin provides [Container](../orbit-2-core/src/main/java/com/babylon/orbit2/Container.kt)
+  factory extensions on `ViewModel` for
 
-- [Container](../orbit-2-core/src/main/java/com/babylon/orbit2/Container.kt)
-  factory extensions for ViewModel saved state functionality via
+- creating containers scoped with
+  [ViewModelScope](https://developer.android.com/topic/libraries/architecture/coroutines)
+  to automatically cancel the
+  [Container](../orbit-2-core/src/main/java/com/babylon/orbit2/Container.kt)
+  whenever the `ViewModel` is cleared.
+- saved state functionality via Jetpack's
   [Saved State module for ViewModel](https://developer.android.com/topic/libraries/architecture/viewmodel-savedstate)
-  
-This allows you to automatically save and restore the
-[Container](../orbit-2-core/src/main/java/com/babylon/orbit2/Container.kt) state
-on process death.
+  to automatically save and restore the
+  [Container](../orbit-2-core/src/main/java/com/babylon/orbit2/Container.kt)
+  state on Activity or process death.
 
 ## Including the module
 
 ```kotlin
-implementation("com.babylon.orbit2:orbit-savedstate:<latest-version>")
+implementation("com.babylon.orbit2:orbit-viewmodel:<latest-version>")
+```
+
+## Creating a container in a ViewModel
+
+This module contains a
+[Container](../orbit-2-core/src/main/java/com/babylon/orbit2/Container.kt)
+factory extension function on `ViewModel` to facilitate creating a scoped
+container.
+
+``` kotlin
+class ExampleViewModel : ContainerHost<ExampleState, Nothing>, ViewModel() {
+
+    override val container = container<ExampleState, Nothing>(ExampleState())
+
+    ...
+}
 ```
 
 ## Saved state functionality
@@ -40,7 +60,6 @@ destroyed there are two conditions:
 Usage with Koin:
 
 ``` kotlin
-
 // Declare the ViewModel with a saved state handle in your Koin module
 val viewModelModule = module {
     viewModel { (handle: SavedStateHandle) -> MyViewModel(handle) }
@@ -50,13 +69,13 @@ val viewModelModule = module {
 private val viewModel by stateViewModel<TodoViewModel>()
 
 // Pass the SavedStateHandle to  your ViewModel
-class ExampleViewModel(savedStateHandle: SavedStateHandle) : ContainerHost<ExampleState, Nothing> {
-    override val container: Container<ExampleState, Nothing> = Container.createWithSavedState(
+class ExampleViewModel(savedStateHandle: SavedStateHandle) : ContainerHost<ExampleState, Nothing>, ViewModel() {
+
+    override val container = container<ExampleState, Nothing>(
         ExampleState(),
         savedStateHandle
     )
 
     ...
 }
-
 ```

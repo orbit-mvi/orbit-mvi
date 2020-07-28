@@ -21,6 +21,8 @@ import io.reactivex.Completable
 import io.reactivex.Maybe
 import io.reactivex.Observable
 import io.reactivex.Single
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
@@ -103,7 +105,8 @@ internal class RxJava2DslPluginBehaviourTest {
     private data class TestState(val id: Int)
 
     private class Middleware : ContainerHost<TestState, String> {
-        override val container = Container.create<TestState, String>(TestState(42))
+        override val container =
+            CoroutineScope(Dispatchers.Unconfined).container<TestState, String>(TestState(42))
 
         fun single(action: Int) = orbit {
             transformRx2Single {

@@ -16,6 +16,7 @@
 
 package com.babylon.orbit2
 
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import java.util.concurrent.atomic.AtomicBoolean
@@ -26,6 +27,7 @@ class TestContainer<STATE : Any, SIDE_EFFECT : Any>(
 ) : RealContainer<STATE, SIDE_EFFECT>(
     initialState = initialState,
     settings = Container.Settings(),
+    parentScope = CoroutineScope(Dispatchers.Unconfined),
     orbitDispatcher = Dispatchers.Unconfined,
     backgroundDispatcher = Dispatchers.Unconfined
 ) {

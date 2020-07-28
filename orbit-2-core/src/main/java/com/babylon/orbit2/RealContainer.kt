@@ -26,6 +26,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.newSingleThreadContext
+import kotlinx.coroutines.plus
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
@@ -33,10 +34,11 @@ import kotlinx.coroutines.sync.withLock
 open class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
     initialState: STATE,
     settings: Container.Settings,
-    orbitDispatcher: CoroutineDispatcher = DEFAULT_DISPATCHER,
-    backgroundDispatcher: CoroutineDispatcher = Dispatchers.IO
+    private val orbitDispatcher: CoroutineDispatcher = DEFAULT_DISPATCHER,
+    backgroundDispatcher: CoroutineDispatcher = Dispatchers.IO,
+    parentScope: CoroutineScope
 ) : Container<STATE, SIDE_EFFECT> {
-    private val scope = CoroutineScope(orbitDispatcher)
+    private val scope = parentScope + orbitDispatcher
     private val stateChannel = ConflatedBroadcastChannel(initialState)
     private val sideEffectChannel = Channel<SIDE_EFFECT>(Channel.RENDEZVOUS)
     private val sideEffectMutex = Mutex()

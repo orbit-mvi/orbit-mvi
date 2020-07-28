@@ -53,32 +53,6 @@ interface Container<STATE : Any, SIDE_EFFECT : Any> {
         init: Builder<STATE, SIDE_EFFECT, Unit>.() -> Builder<STATE, SIDE_EFFECT, *>
     )
 
-    @Suppress("EXPERIMENTAL_API_USAGE")
-    companion object {
-        /**
-         * Helps create a concrete container in a standard way.
-         *
-         * @param initialState The initial state of the container.
-         * @param settings The [Settings] to set the container up with.
-         * @param onCreate The lambda to execute when the container is created. By default it is
-         * executed in a lazy manner when the container is first interacted with in any way.
-         * @return A [Container] implementation
-         */
-        fun <STATE : Any, SIDE_EFFECT : Any> create(
-            initialState: STATE,
-            settings: Settings = Settings(),
-            onCreate: (() -> Unit)? = null
-        ): Container<STATE, SIDE_EFFECT> =
-            if (onCreate == null) {
-                RealContainer(initialState, settings)
-            } else {
-                LazyCreateContainerDecorator(
-                    RealContainer(initialState, settings),
-                    onCreate
-                )
-            }
-    }
-
     /**
      * Represents additional settings to create the container with.
      *

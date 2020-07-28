@@ -26,7 +26,6 @@ object Versions {
     const val coroutines = "1.3.8"
 
     const val androidxLifecycles = "2.2.0"
-    const val androidxLifecyclesSavedState = "2.2.0"
     const val androidxAnnotation = "1.1.0"
     const val androidxTesting = "2.1.0"
     const val androidxAppCompat = "1.1.0"
@@ -73,7 +72,9 @@ object ProjectDependencies {
     const val androidxLifecycleCompiler =
         "androidx.lifecycle:lifecycle-compiler:${Versions.androidxLifecycles}"
     const val androidxLifecycleSavedState =
-        "androidx.lifecycle:lifecycle-viewmodel-savedstate:${Versions.androidxLifecyclesSavedState}"
+        "androidx.lifecycle:lifecycle-viewmodel-savedstate:${Versions.androidxLifecycles}"
+    const val androidxLifecycleKtx =
+        "androidx.lifecycle:lifecycle-viewmodel-ktx:${Versions.androidxLifecycles}"
     const val androidMaterial = "com.google.android.material:material:${Versions.androidMaterial}"
 
     // Dependency injection
