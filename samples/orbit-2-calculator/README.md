@@ -2,6 +2,9 @@
 
 This sample implements a simple calculator using [Orbit MVI](https://github.com/babylonhealth/orbit-mvi).
 
+- The application uses Koin for dependency injection which is initialised in
+  [CalculatorApplication](src/main/java/com/babylon/orbit2/sample/calculator/CalculatorApplication.kt).
+
 - [CalculatorActivity](src/main/java/com/babylon/orbit2/sample/calculator/CalculatorActivity.kt)
   uses the [Data Binding Library](https://developer.android.com/topic/libraries/data-binding)
   to provide the [CalculatorViewModel](src/main/java/com/babylon/orbit2/sample/calculator/CalculatorViewModel.kt)

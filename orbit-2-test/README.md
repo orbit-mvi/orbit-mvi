@@ -69,7 +69,7 @@ the initial state, this is done automatically as a sanity check.
 ```kotlin
 testSubject.assert {
     states(
-        Toast(1) ,
+        { Toast(1) },
         { copy(count = 2) },
         { copy(count = 3) },
         { copy(count = 4) }
@@ -118,7 +118,7 @@ testSubject.countToFour()
 
 testSubject.assert {
     states(
-        Toast(1) ,
+        { Toast(1) },
         { copy(count = 2) },
         { copy(count = 3) },
         { copy(count = 4) }

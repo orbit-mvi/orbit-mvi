@@ -51,16 +51,12 @@ android {
 
 dependencies {
     implementation(project(":orbit-2-core"))
-    implementation(project(":orbit-2-coroutines"))
     implementation(project(":orbit-2-livedata"))
     implementation(project(":orbit-2-viewmodel"))
     implementation(kotlin("stdlib-jdk8"))
 
-    implementation(ProjectDependencies.androidxLifecycleComponents)
-    implementation(ProjectDependencies.androidxLifecycleSavedState)
     implementation(ProjectDependencies.androidxAppCompat)
     implementation(ProjectDependencies.androidxConstrainLayout)
-    kapt(ProjectDependencies.androidxLifecycleCompiler)
     implementation(ProjectDependencies.androidMaterial)
     implementation(ProjectDependencies.koinViewModel)
 
@@ -68,8 +64,6 @@ dependencies {
     GroupedDependencies.testsImplementation.forEach { testImplementation(it) }
     GroupedDependencies.testsRuntime.forEach { testRuntimeOnly(it) }
     testImplementation(ProjectDependencies.koinTest)
-    testImplementation("androidx.test.ext:junit:1.1.1")
-    testImplementation("org.robolectric:robolectric:4.3.1")
+    testImplementation(ProjectDependencies.kotlinFixture)
     testImplementation(project(":orbit-2-test"))
-    testImplementation(ProjectDependencies.kotlinCoroutines)
 }

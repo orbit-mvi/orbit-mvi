@@ -45,5 +45,18 @@ class TestLiveDataObserver<T>(lifecycleOwner: LifecycleOwner, private val liveDa
         }
     }
 
+    fun awaitIdle(timeout: Long = 10L) {
+        var currentCount = values.count()
+
+        while (true) {
+            Thread.sleep(timeout)
+
+            if (values.count() == currentCount)
+                break
+
+            currentCount = values.count()
+        }
+    }
+
     fun close(): Unit = liveData.removeObserver(observer)
 }
