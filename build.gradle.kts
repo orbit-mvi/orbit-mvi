@@ -98,6 +98,9 @@ subprojects {
             targetCompatibility = JavaVersion.VERSION_1_8
         }
     }
+    plugins.withId("com.android.application") {
+        apply(from = "$rootDir/gradle/scripts/jacoco-android.gradle.kts")
+    }
     plugins.withId("org.jetbrains.kotlin.jvm") {
         apply(from = "$rootDir/gradle/scripts/jacoco.gradle.kts")
         apply(from = "$rootDir/gradle/scripts/bintray.gradle.kts")
