@@ -51,8 +51,9 @@ class TestLiveDataObserver<T>(lifecycleOwner: LifecycleOwner, private val liveDa
         while (true) {
             Thread.sleep(timeout)
 
-            if (values.count() == currentCount)
+            if (values.count() == currentCount) {
                 break
+            }
 
             currentCount = values.count()
         }

@@ -146,7 +146,6 @@ class CalculatorViewModelTest {
         assertEquals(a - b, testLiveData.values.last().digitalDisplay.toInt())
     }
 
-
     @ParameterizedTest(name = "{0} × {1}")
     @ArgumentsSource(DecimalNumberPairProvider::class)
     fun `multiply decimal numbers`(a: Double, b: Double) {
