@@ -50,11 +50,12 @@ fun <STATE : Any, SIDE_EFFECT : Any> ViewModel.container(
  * Provide a [SavedStateHandle] in order for your [Parcelable] state to be automatically saved as
  * you use the container.
  *
- *
  * @param initialState The initial state of the container.
  * @param savedStateHandle The [SavedStateHandle] corresponding to this host. Typically retrieved
  * from the containing [ViewModel]
  * @param settings The [Settings] to set the container up with.
+ * @param onRecreate The lambda to execute when the container is recreated with a saved state. By
+ * default it is executed in a lazy manner after the container has been interacted with in any way.
  * @param onCreate The lambda to execute when the container is created. By default it is
  * executed in a lazy manner after the container has been interacted with in any way.
  * @return A [Container] implementation
