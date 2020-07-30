@@ -32,7 +32,7 @@ object Versions {
     const val androidxAppCompat = "1.1.0"
     const val androidxConstrainLayout = "1.1.3"
     const val androidMaterial = "1.1.0"
-    const val androidxNavigation = "1.0.0"
+    const val androidxNavigation = "2.3.0"
 
     const val rxJava2 = "2.2.19"
 
@@ -77,8 +77,8 @@ object ProjectDependencies {
     const val androidxLifecycleKtx =
         "androidx.lifecycle:lifecycle-viewmodel-ktx:${Versions.androidxLifecycles}"
     const val androidMaterial = "com.google.android.material:material:${Versions.androidMaterial}"
-    const val androidxNavigationFragmentKtx = "android.arch.navigation:navigation-fragment-ktx:${Versions.androidxNavigation}"
-    const val androidxNavigationUiKtx = "android.arch.navigation:navigation-ui-ktx:${Versions.androidxNavigation}"
+    const val androidxNavigationFragmentKtx = "androidx.navigation:navigation-fragment-ktx:${Versions.androidxNavigation}"
+    const val androidxNavigationUiKtx = "androidx.navigation:navigation-ui-ktx:${Versions.androidxNavigation}"
 
     // Streaming service
     const val lightstreamer = "com.lightstreamer:ls-android-client:${Versions.lightstreamer}"

@@ -17,6 +17,7 @@
 package com.babylon.orbit2.sample.stocklist
 
 import android.app.Application
+import androidx.lifecycle.SavedStateHandle
 import com.babylon.orbit2.sample.stocklist.detail.business.DetailViewModel
 import com.babylon.orbit2.sample.stocklist.list.business.ListViewModel
 import com.babylon.orbit2.sample.stocklist.streaming.StreamingClient
@@ -42,7 +43,7 @@ class StockListApplication : Application() {
         single { StreamingClient() }
         single { StockRepository(get()) }
 
-        viewModel { ListViewModel(get()) }
-        viewModel { (itemName: String) -> DetailViewModel(itemName, get()) }
+        viewModel { (savedStateHandle: SavedStateHandle) -> ListViewModel(savedStateHandle, get()) }
+        viewModel { (savedStateHandle: SavedStateHandle, itemName: String) -> DetailViewModel(savedStateHandle, itemName, get()) }
     }
 }

@@ -34,13 +34,13 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
-import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.androidx.viewmodel.ext.android.stateViewModel
 import org.koin.core.parameter.parametersOf
 
 class DetailFragment : Fragment() {
 
     private val args: DetailFragmentArgs by navArgs()
-    private val detailViewModel by viewModel<DetailViewModel> { parametersOf(args.itemName) }
+    private val detailViewModel by stateViewModel<DetailViewModel> { parametersOf(args.itemName) }
     private lateinit var binding: DetailFragmentBinding
 
     class JobHolder(var job: Job? = null)
