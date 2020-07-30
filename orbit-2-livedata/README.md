@@ -4,8 +4,8 @@ The LiveData plugin provides the following
 [Container](../orbit-2-core/src/main/java/com/babylon/orbit2/Container.kt)
 extension properties:
 
-- [stateLiveData](src/main/java/com/babylon/orbit2/LiveDataPlugin.kt#stateLiveData)
-- [sideEffectLiveData](src/main/java/com/babylon/orbit2/LiveDataPlugin.kt#sideEffectLiveData)
+- [state](src/main/java/com/babylon/orbit2/livedata/LiveDataPlugin.kt#state)
+- [sideEffect](src/main/java/com/babylon/orbit2/livedata/LiveDataPlugin.kt#sideEffect)
 
 ## Including the module
 
@@ -28,8 +28,8 @@ class ExampleActivity: AppCompatActivity() {
     override fun onCreate(savedState: Bundle?) {
         ...
 
-        viewModel.container.stateLiveData.observe(this, Observer {render(it) })
-        viewModel.container.sideEffectLiveData.observe(this, Observer {handleSideEffect(it) })
+        viewModel.container.state.observe(this, Observer {render(it) })
+        viewModel.container.sideEffect.observe(this, Observer {handleSideEffect(it) })
     }
 
     private fun render(state: CalculatorState) {

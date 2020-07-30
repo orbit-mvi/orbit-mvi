@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="buttonBackground">#f5f5f5</color>
+    <color name="buttonText">@android:color/black</color>
+
+    <color name="buttonColoredText">@android:color/white</color>
+
+    <color name="buttonDivideBackground">#9c27b0</color>
+    <color name="buttonMultiplyBackground">#f44336</color>
+    <color name="buttonSubtractBackground">#03a9f4</color>
+    <color name="buttonAddBackground">#ff9800</color>
+    <color name="buttonEqualsBackground">#4caf50</color>
+</resources>
