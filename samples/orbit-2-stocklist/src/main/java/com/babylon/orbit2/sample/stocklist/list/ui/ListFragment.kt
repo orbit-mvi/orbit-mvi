@@ -34,11 +34,11 @@ import com.babylon.orbit2.sample.stocklist.list.business.ListSideEffect
 import com.babylon.orbit2.sample.stocklist.list.business.ListViewModel
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.GroupieViewHolder
-import org.koin.androidx.viewmodel.ext.android.stateViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class ListFragment : Fragment() {
 
-    private val listViewModel by stateViewModel<ListViewModel>()
+    private val listViewModel by viewModel<ListViewModel>()
 
     private lateinit var binding: ListFragmentBinding
 

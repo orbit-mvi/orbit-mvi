@@ -19,14 +19,14 @@ package com.babylon.orbit2.sample.stocklist
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
-import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.findNavController
 import androidx.navigation.ui.setupActionBarWithNavController
 import com.babylon.orbit2.sample.stocklist.streaming.StreamingClient
 import org.koin.android.ext.android.inject
 
 class MainActivity : AppCompatActivity() {
 
-    private val navController by lazy { (supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment).navController }
+    private val navController by lazy { findNavController(R.id.nav_host_fragment) }
 
     private val streamingClient by inject<StreamingClient>()
 

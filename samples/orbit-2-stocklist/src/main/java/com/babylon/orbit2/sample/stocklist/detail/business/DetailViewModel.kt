@@ -16,7 +16,6 @@
 
 package com.babylon.orbit2.sample.stocklist.detail.business
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import com.babylon.orbit2.ContainerHost
 import com.babylon.orbit2.coroutines.transformFlow
@@ -25,12 +24,11 @@ import com.babylon.orbit2.sample.stocklist.streaming.stock.StockRepository
 import com.babylon.orbit2.viewmodel.container
 
 class DetailViewModel(
-    savedStateHandle: SavedStateHandle,
     private val itemName: String,
     private val stockRepository: StockRepository
 ) : ViewModel(), ContainerHost<DetailState, Nothing> {
 
-    override val container = container<DetailState, Nothing>(DetailState(), savedStateHandle) {
+    override val container = container<DetailState, Nothing>(DetailState()) {
         requestStock()
     }
 

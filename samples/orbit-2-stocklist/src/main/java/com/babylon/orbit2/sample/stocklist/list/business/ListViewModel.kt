@@ -16,7 +16,6 @@
 
 package com.babylon.orbit2.sample.stocklist.list.business
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import com.babylon.orbit2.ContainerHost
 import com.babylon.orbit2.coroutines.transformFlow
@@ -26,11 +25,10 @@ import com.babylon.orbit2.sideEffect
 import com.babylon.orbit2.viewmodel.container
 
 class ListViewModel(
-    savedStateHandle: SavedStateHandle,
     private val stockRepository: StockRepository
 ) : ViewModel(), ContainerHost<ListState, ListSideEffect> {
 
-    override val container = container<ListState, ListSideEffect>(ListState(), savedStateHandle) {
+    override val container = container<ListState, ListSideEffect>(ListState()) {
         requestStocks()
     }
 
