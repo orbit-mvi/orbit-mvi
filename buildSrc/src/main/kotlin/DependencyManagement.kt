@@ -21,6 +21,7 @@ object Versions {
     const val markdownLintPlugin = "0.6.0"
     const val detektPlugin = "1.10.0"
     const val bintray = "1.8.5"
+    const val safeargs = "2.3.0"
 
     const val kotlin = "1.3.72"
     const val coroutines = "1.3.8"
@@ -31,16 +32,16 @@ object Versions {
     const val androidxAppCompat = "1.1.0"
     const val androidxConstrainLayout = "1.1.3"
     const val androidMaterial = "1.1.0"
+    const val androidxNavigation = "1.0.0"
 
     const val rxJava2 = "2.2.19"
-    const val rxJava2Extensions = "0.20.10"
-    const val rxKotlin = "2.4.0"
-    const val rxAndroid = "2.1.1"
-    const val androidRxBindings = "3.1.0"
 
     const val koin = "2.1.6"
-    const val javaxInject = "1"
     const val groupie = "2.8.0"
+
+    const val lightstreamer = "4.2.1"
+
+    const val desugar = "1.0.10"
 
     // Testing
     const val spek = "2.0.12"
@@ -76,29 +77,28 @@ object ProjectDependencies {
     const val androidxLifecycleKtx =
         "androidx.lifecycle:lifecycle-viewmodel-ktx:${Versions.androidxLifecycles}"
     const val androidMaterial = "com.google.android.material:material:${Versions.androidMaterial}"
+    const val androidxNavigationFragmentKtx = "android.arch.navigation:navigation-fragment-ktx:${Versions.androidxNavigation}"
+    const val androidxNavigationUiKtx = "android.arch.navigation:navigation-ui-ktx:${Versions.androidxNavigation}"
+
+    // Streaming service
+    const val lightstreamer = "com.lightstreamer:ls-android-client:${Versions.lightstreamer}"
 
     // Dependency injection
     const val koinViewModel = "org.koin:koin-androidx-viewmodel:${Versions.koin}"
     const val koinTest = "org.koin:koin-test:${Versions.koin}"
-    const val javaxInject = "javax.inject:javax.inject:${Versions.javaxInject}"
 
     // UI
     const val groupie = "com.xwray:groupie:${Versions.groupie}"
     const val groupieKotlinAndroidExtensions =
         "com.xwray:groupie-kotlin-android-extensions:${Versions.groupie}"
+    const val groupieViewBinding = "com.xwray:groupie-viewbinding:${Versions.groupie}"
 
     // RxJava
     const val rxJava2 = "io.reactivex.rxjava2:rxjava:${Versions.rxJava2}"
-    const val rxJava2Extensions =
-        "com.github.akarnokd:rxjava2-extensions:${Versions.rxJava2Extensions}"
-    const val rxKotlin = "io.reactivex.rxjava2:rxkotlin:${Versions.rxKotlin}"
-    const val rxAndroid = "io.reactivex.rxjava2:rxandroid:${Versions.rxAndroid}"
-    const val androidRxBindings =
-        "com.jakewharton.rxbinding3:rxbinding-material:${Versions.androidRxBindings}"
 
     // Tools
-    const val detektFormatting =
-        "io.gitlab.arturbosch.detekt:detekt-formatting:${Versions.detektPlugin}"
+    const val detektFormatting = "io.gitlab.arturbosch.detekt:detekt-formatting:${Versions.detektPlugin}"
+    const val desugar = "com.android.tools:desugar_jdk_libs:${Versions.desugar}"
 
     // Test prerequisites
     const val androidXTesting =
@@ -121,6 +121,7 @@ object PluginDependencies {
     const val kotlin = "org.jetbrains.kotlin:kotlin-gradle-plugin:${Versions.kotlin}"
     const val detekt = "io.gitlab.arturbosch.detekt:detekt-gradle-plugin:${Versions.detektPlugin}"
     const val bintray = "com.jfrog.bintray.gradle:gradle-bintray-plugin:${Versions.bintray}"
+    const val safeargs = "androidx.navigation:navigation-safe-args-gradle-plugin:${Versions.safeargs}"
 }
 
 object GroupedDependencies {

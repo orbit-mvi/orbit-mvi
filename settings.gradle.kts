@@ -21,7 +21,8 @@ include(
     "orbit-2-rxjava2",
     "orbit-2-viewmodel",
     "orbit-2-test",
-    "samples:orbit-2-calculator"
+    "samples:orbit-2-calculator",
+    "samples:orbit-2-stocklist"
 )
 
 fun renameBuildFileToModuleName(project: ProjectDescriptor) {
