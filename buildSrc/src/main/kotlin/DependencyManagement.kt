@@ -35,9 +35,10 @@ object Versions {
     const val androidxNavigation = "2.3.0"
 
     const val rxJava2 = "2.2.19"
+    const val rxJava3 = "3.0.4"
 
     const val koin = "2.1.6"
-    const val groupie = "2.8.0"
+    const val groupie = "2.8.1"
 
     const val lightstreamer = "4.2.1"
 
@@ -48,7 +49,7 @@ object Versions {
     const val junitPlatform = "1.6.2"
     const val assertJ = "3.16.1"
     const val mockitoKotlin = "2.2.0"
-    const val mockito = "3.4.4"
+    const val mockito = "3.4.6"
     const val junitRuntime = "5.6.2"
     const val kotlinFixture = "0.9.4"
     const val jacoco = "0.8.5"
@@ -61,6 +62,8 @@ object ProjectDependencies {
         "org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versions.coroutines}"
     const val kotlinCoroutinesRx2 =
         "org.jetbrains.kotlinx:kotlinx-coroutines-rx2:${Versions.coroutines}"
+    const val kotlinCoroutinesRx3 =
+        "org.jetbrains.kotlinx:kotlinx-coroutines-rx3:${Versions.coroutines}"
     const val kotlinTest = "org.jetbrains.kotlin:kotlin-test:${Versions.kotlin}"
 
     // AndroidX
@@ -95,6 +98,7 @@ object ProjectDependencies {
 
     // RxJava
     const val rxJava2 = "io.reactivex.rxjava2:rxjava:${Versions.rxJava2}"
+    const val rxJava3 = "io.reactivex.rxjava3:rxjava:${Versions.rxJava3}"
 
     // Tools
     const val detektFormatting = "io.gitlab.arturbosch.detekt:detekt-formatting:${Versions.detektPlugin}"

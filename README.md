@@ -52,6 +52,7 @@ alternatively include one of the other modules which already include
 implementation("com.babylon.orbit2:orbit-core:<latest-version>")
 implementation("com.babylon.orbit2:orbit-coroutines:<latest-version>")
 implementation("com.babylon.orbit2:orbit-rxjava2:<latest-version>")
+implementation("com.babylon.orbit2:orbit-rxjava3:<latest-version>")
 implementation("com.babylon.orbit2:orbit-livedata:<latest-version>")
 implementation("com.babylon.orbit2:orbit-viewmodel:<latest-version>")
 
@@ -65,6 +66,7 @@ For detailed documentation, see:
 - [Core module and architecture overview](orbit-2-core/README.md)
 - [Coroutines](orbit-2-coroutines/README.md)
 - [RxJava 2](orbit-2-rxjava2/README.md)
+- [RxJava 3](orbit-2-rxjava3/README.md)
 - [LiveData](orbit-2-livedata/README.md)
 - [ViewModel](orbit-2-viewmodel/README.md)
 - [Test](orbit-2-test/README.md)

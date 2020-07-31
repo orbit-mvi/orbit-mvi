@@ -1,18 +1,18 @@
-# Orbit 2 RxJava2 plugin
+# Orbit 2 RxJava3 plugin
 
-- [Orbit 2 RxJava2 plugin](#orbit-2-rxjava2-plugin)
-  - [transformRx2Observable](#transformrx2observable)
-  - [transformRx2Single](#transformrx2single)
-  - [transformRx2Maybe](#transformrx2maybe)
-  - [transformRx2Completable](#transformrx2completable)
+- [Orbit 2 RxJava3 plugin](#orbit-2-rxjava3-plugin)
+  - [transformRx3Observable](#transformrx3observable)
+  - [transformRx3Single](#transformrx3single)
+  - [transformRx3Maybe](#transformrx3maybe)
+  - [transformRx3Completable](#transformrx3completable)
 
-The RxJava2 plugin provides RxJava 2 operators.
+The RxJava3 plugin provides RxJava 3 operators.
 
 ```kotlin
-implementation("com.babylon.orbit2:orbit-rxjava2:<latest-version>")
+implementation("com.babylon.orbit2:orbit-rxjava3:<latest-version>")
 ```
 
-## transformRx2Observable
+## transformRx3Observable
 
 ``` kotlin
 fun subscribeToLocationUpdates(): Observable<LocationUpdate> { ... }
@@ -21,7 +21,7 @@ class ExampleViewModel : ContainerHost<ExampleState, ExampleSideEffect> {
     ...
 
     fun startLocationTracking() = orbit {
-            transformRx2Observable { subscribeToLocationUpdates() }
+            transformRx3Observable { subscribeToLocationUpdates() }
                 .reduce { state.copy(currentLocation = event) }
         }
     }
@@ -31,7 +31,7 @@ class ExampleViewModel : ContainerHost<ExampleState, ExampleSideEffect> {
 You can use this operator to subscribe to a hot or cold [Observable](http://reactivex.io/documentation/observable.html).
 This operator acts similar to [flatMap](https://github.com/ReactiveX/RxJava/wiki/Transforming-Observables#flatmap).
 
-## transformRx2Single
+## transformRx3Single
 
 ``` kotlin
 fun apiCall(): Single<SomeResult> { ... }
@@ -41,17 +41,17 @@ class ExampleViewModel : ContainerHost<ExampleState, ExampleSideEffect> {
     ...
 
     fun example() = orbit {
-            transformRx2Single { apiCall() }
-                .transformRx2Single { anotherApiCall(event) } // "event" is the result of the first api call
+            transformRx3Single { apiCall() }
+                .transformRx3Single { anotherApiCall(event) } // "event" is the result of the first api call
         }
     }
 }
 ```
 
-You can use this operator to subscribe to an RxJava 2 [Single](http://reactivex.io/documentation/single.html).
+You can use this operator to subscribe to an RxJava 3 [Single](http://reactivex.io/documentation/single.html).
 This operator acts similar to [flatMapSingle](https://github.com/ReactiveX/RxJava/wiki/Transforming-Observables#flatmapsingle).
 
-## transformRx2Maybe
+## transformRx3Maybe
 
 ``` kotlin
 fun getLoggedInUser(): Maybe<User> { ... }
@@ -61,17 +61,17 @@ class ExampleViewModel : ContainerHost<ExampleState, ExampleSideEffect> {
     ...
 
     fun example() = orbit {
-            transformRx2Maybe { getLoggedInUser() }
-                .transformRx2Single { anotherApiCall(event) } // Runs the API call if the user is logged in
+            transformRx3Maybe { getLoggedInUser() }
+                .transformRx3Single { anotherApiCall(event) } // Runs the API call if the user is logged in
         }
     }
 }
 ```
 
-You can use this operator to subscribe to an RxJava 2 `Maybe`.
+You can use this operator to subscribe to an RxJava 3 `Maybe`.
 This operator acts similar to [flatMapMaybe](https://github.com/ReactiveX/RxJava/wiki/Transforming-Observables#flatmapmaybe).
 
-## transformRx2Completable
+## transformRx3Completable
 
 ``` kotlin
 fun doSomeWork(): Completable { ... }
@@ -80,11 +80,11 @@ class ExampleViewModel : ContainerHost<ExampleState, ExampleSideEffect> {
     ...
 
     fun example() = orbit {
-            transformRx2Completable { doSomeWork() }
+            transformRx3Completable { doSomeWork() }
         }
     }
 }
 ```
 
-You can use this operator to subscribe to an RxJava 2 `Completable`.
+You can use this operator to subscribe to an RxJava 3 `Completable`.
 This operator acts similar to [flatMapCompletable](https://github.com/ReactiveX/RxJava/wiki/Transforming-Observables#flatmapcompletable).

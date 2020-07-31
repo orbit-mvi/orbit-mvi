@@ -19,6 +19,7 @@ include(
     "orbit-2-coroutines",
     "orbit-2-livedata",
     "orbit-2-rxjava2",
+    "orbit-2-rxjava3",
     "orbit-2-viewmodel",
     "orbit-2-test",
     "samples:orbit-2-calculator",

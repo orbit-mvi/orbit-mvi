@@ -14,15 +14,15 @@
  *  limitations under the License.
  */
 
-package com.babylon.orbit2.rxjava2
+package com.babylon.orbit2.rxjava3
 
 import com.babylon.orbit2.Stream
-import io.reactivex.Observable
+import io.reactivex.rxjava3.core.Observable
 
 /**
- * Consume a [Stream] as an RxJava 2 [Observable].
+ * Consume a [Stream] as an RxJava 3 [Observable].
  */
-fun <T> Stream<T>.asRx2Observable() =
+fun <T> Stream<T>.asRx3Observable() =
     Observable.create<T> { emitter ->
         val closeable = observe {
             if (!emitter.isDisposed) {
