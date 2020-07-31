@@ -31,7 +31,7 @@ class DetailViewModel(
 ) : ViewModel(), ContainerHost<DetailState, Nothing> {
 
     override val container =
-        container<DetailState, Nothing>(DetailState(), savedStateHandle, onCreate = ::requestStock, onRecreate = ::requestStock)
+        container<DetailState, Nothing>(DetailState(), savedStateHandle) { requestStock() }
 
     private fun requestStock(): Unit = orbit {
         transformFlow {

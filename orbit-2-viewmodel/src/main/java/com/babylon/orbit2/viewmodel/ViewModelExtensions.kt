@@ -54,26 +54,23 @@ fun <STATE : Any, SIDE_EFFECT : Any> ViewModel.container(
  * @param savedStateHandle The [SavedStateHandle] corresponding to this host. Typically retrieved
  * from the containing [ViewModel]
  * @param settings The [Settings] to set the container up with.
- * @param onRecreate The lambda to execute when the container is recreated with a saved state. By
- * default it is executed in a lazy manner after the container has been interacted with in any way.
- * @param onCreate The lambda to execute when the container is created. By default it is
- * executed in a lazy manner after the container has been interacted with in any way.
+ * @param onCreate The lambda to execute when the container is created, parameter is false, or
+ * recreated, parameter is true. By default it is executed in a lazy manner after the container
+ * has been interacted with in any way.
  * @return A [Container] implementation
  */
 fun <STATE : Parcelable, SIDE_EFFECT : Any> ViewModel.container(
     initialState: STATE,
     savedStateHandle: SavedStateHandle,
     settings: Settings = Settings(),
-    onRecreate: (() -> Unit)? = null,
-    onCreate: (() -> Unit)? = null
+    onCreate: ((hasSavedState: Boolean) -> Unit)? = null
 ): Container<STATE, SIDE_EFFECT> {
     val savedState: STATE? = savedStateHandle[SAVED_STATE_KEY]
+    val state = savedState ?: initialState
 
     val realContainer: Container<STATE, SIDE_EFFECT> =
-        when {
-            savedState != null -> viewModelScope.container(savedState, settings, onRecreate)
-            else -> viewModelScope.container(initialState, settings, onCreate)
-        }
+        viewModelScope.container(state, settings, { onCreate?.invoke(savedState != null) })
+
     return SavedStateContainerDecorator(
         realContainer,
         savedStateHandle

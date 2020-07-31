@@ -45,16 +45,16 @@ class StockItem(
             animateChange(viewBinding.ask, viewBinding.askTick, stock.ask, askRef)
         } else {
             hideTicks(viewBinding)
+
+            viewBinding.root.setOnClickListener {
+                listViewModel.viewMarket(stock.itemName)
+            }
         }
 
         viewBinding.name.text = stock.name
         viewBinding.bid.text = stock.bid
         viewBinding.ask.text = stock.ask
         viewBinding.timestamp.text = stock.timestamp
-
-        viewBinding.root.setOnClickListener {
-            listViewModel.viewMarket(stock.itemName)
-        }
     }
 
     private fun hideTicks(viewBinding: ListItemBinding) {
