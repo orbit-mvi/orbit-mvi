@@ -30,6 +30,7 @@ buildscript {
     dependencies {
         classpath(PluginDependencies.android)
         classpath(PluginDependencies.kotlin)
+        classpath(PluginDependencies.safeargs)
     }
 }
 

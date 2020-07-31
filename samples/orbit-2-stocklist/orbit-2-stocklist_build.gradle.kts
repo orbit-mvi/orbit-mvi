@@ -19,6 +19,7 @@ plugins {
     kotlin("android")
     kotlin("kapt")
     id("kotlin-android-extensions")
+    id("androidx.navigation.safeargs.kotlin")
 }
 
 android {
@@ -28,7 +29,7 @@ android {
         targetSdkVersion(29)
         versionCode = 1
         versionName = "1.0"
-        applicationId = "com.babylon.orbit2.sample.calculator"
+        applicationId = "com.babylon.orbit2.sample.stocklist"
         testInstrumentationRunner = "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -38,6 +39,8 @@ android {
         }
     }
     compileOptions {
+        coreLibraryDesugaringEnabled = true
+
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
@@ -47,18 +50,41 @@ android {
     }
 
     testOptions.unitTests.isIncludeAndroidResources = true
+
+    packagingOptions {
+        pickFirst("build.number")
+        pickFirst("version.number")
+        pickFirst("compatibility_version.number")
+        exclude("META-INF/INDEX.LIST")
+        exclude("META-INF/io.netty.versions.properties")
+    }
+}
+
+repositories {
+    jcenter()
+    maven { setUrl("https://www.lightstreamer.com/repo/maven") }
+    maven { setUrl("https://dl.bintray.com/lisawray/maven") }
 }
 
 dependencies {
     implementation(project(":orbit-2-core"))
     implementation(project(":orbit-2-livedata"))
     implementation(project(":orbit-2-viewmodel"))
+    implementation(project(":orbit-2-coroutines"))
     implementation(kotlin("stdlib-jdk8"))
 
+    implementation(ProjectDependencies.kotlinCoroutines)
     implementation(ProjectDependencies.androidxAppCompat)
     implementation(ProjectDependencies.androidxConstrainLayout)
     implementation(ProjectDependencies.androidMaterial)
+    implementation(ProjectDependencies.androidxNavigationFragmentKtx)
+    implementation(ProjectDependencies.androidxNavigationUiKtx)
+    implementation(ProjectDependencies.lightstreamer)
+    implementation(ProjectDependencies.groupie)
+    implementation(ProjectDependencies.groupieKotlinAndroidExtensions)
+    implementation(ProjectDependencies.groupieViewBinding)
     implementation(ProjectDependencies.koinViewModel)
+    kapt(ProjectDependencies.androidxLifecycleCompiler)
 
     // Testing
     GroupedDependencies.testsImplementation.forEach { testImplementation(it) }
@@ -66,4 +92,6 @@ dependencies {
     testImplementation(ProjectDependencies.koinTest)
     testImplementation(ProjectDependencies.kotlinFixture)
     testImplementation(project(":orbit-2-test"))
+
+    coreLibraryDesugaring(ProjectDependencies.desugar)
 }
