@@ -29,7 +29,7 @@ android {
         targetSdkVersion(29)
         versionCode = 1
         versionName = "1.0"
-        applicationId = "com.babylon.orbit.sample"
+        applicationId = "com.babylon.orbit2.sample.stocklist"
         testInstrumentationRunner = "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {

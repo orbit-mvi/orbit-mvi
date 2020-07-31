@@ -47,10 +47,7 @@ class ListFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = DataBindingUtil.inflate(
-            inflater,
-            R.layout.list_fragment, container, false
-        )
+        binding = DataBindingUtil.inflate(inflater, R.layout.list_fragment, container, false)
         return binding.root
     }
 

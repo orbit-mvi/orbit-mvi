@@ -20,7 +20,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -29,11 +28,8 @@ import com.babylon.orbit2.livedata.state
 import com.babylon.orbit2.sample.stocklist.R
 import com.babylon.orbit2.sample.stocklist.databinding.DetailFragmentBinding
 import com.babylon.orbit2.sample.stocklist.detail.business.DetailViewModel
-import com.babylon.orbit2.sample.stocklist.list.ui.CheckableImageView
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.async
-import kotlinx.coroutines.delay
+import com.babylon.orbit2.sample.stocklist.list.ui.JobHolder
+import com.babylon.orbit2.sample.stocklist.list.ui.animateChange
 import org.koin.androidx.viewmodel.ext.android.stateViewModel
 import org.koin.core.parameter.parametersOf
 
@@ -43,8 +39,6 @@ class DetailFragment : Fragment() {
     private val detailViewModel by stateViewModel<DetailViewModel> { parametersOf(args.itemName) }
     private lateinit var binding: DetailFragmentBinding
 
-    class JobHolder(var job: Job? = null)
-
     private val bidRef = JobHolder()
     private val askRef = JobHolder()
 
@@ -53,10 +47,7 @@ class DetailFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = DataBindingUtil.inflate(
-            inflater,
-            R.layout.detail_fragment, container, false
-        )
+        binding = DataBindingUtil.inflate(inflater, R.layout.detail_fragment, container, false)
         return binding.root
     }
 
@@ -74,26 +65,5 @@ class DetailFragment : Fragment() {
                 animateChange(binding.ask, binding.askTick, stock.ask, askRef)
             }
         })
-    }
-
-    private fun animateChange(textView: TextView, tick: CheckableImageView, newValue: String, jobReference: JobHolder) {
-        val currentValue = textView.text.toString()
-        if (newValue != currentValue && currentValue.isNotEmpty()) {
-            val diff = newValue.toDouble().compareTo(currentValue.toDouble())
-
-            if (diff != 0) {
-                tick.isChecked = diff > 0
-                tick.visibility = View.VISIBLE
-
-                jobReference.job?.cancel()
-
-                jobReference.job = GlobalScope.async {
-                    @Suppress("MagicNumber")
-                    delay(300)
-
-                    tick.visibility = View.INVISIBLE
-                }
-            }
-        }
     }
 }
