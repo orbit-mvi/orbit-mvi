@@ -40,12 +40,12 @@ import kotlinx.coroutines.withContext
 object RxJava2DslPlugin : OrbitDslPlugin {
 
     @Suppress("UNCHECKED_CAST", "EXPERIMENTAL_API_USAGE")
-    override fun <S : Any, E : Any, SE : Any> apply(
+    override fun <S : Any, E, SE : Any> apply(
         containerContext: OrbitDslPlugin.ContainerContext<S, SE>,
         flow: Flow<E>,
         operator: Operator<S, E>,
         createContext: (event: E) -> Context<S, E>
-    ): Flow<Any> {
+    ): Flow<Any?> {
         return when (operator) {
             is RxJava2Observable<*, *, *> -> flow.flatMapConcat {
                 with(operator as RxJava2Observable<S, E, Any>) {

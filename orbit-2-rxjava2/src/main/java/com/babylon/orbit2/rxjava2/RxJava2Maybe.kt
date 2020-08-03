@@ -23,7 +23,7 @@ import com.babylon.orbit2.Orbit2Dsl
 import com.babylon.orbit2.OrbitDslPlugins
 import io.reactivex.Maybe
 
-internal class RxJava2Maybe<S : Any, E : Any, E2 : Any>(
+internal class RxJava2Maybe<S : Any, E, E2 : Any>(
     val block: suspend Context<S, E>.() -> Maybe<E2>
 ) : Operator<S, E>
 

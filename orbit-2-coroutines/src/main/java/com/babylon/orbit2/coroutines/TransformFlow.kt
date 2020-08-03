@@ -24,7 +24,7 @@ import com.babylon.orbit2.OrbitDslPlugins
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 
-internal class TransformFlow<S : Any, E : Any, E2 : Any>(
+internal class TransformFlow<S : Any, E, E2>(
     val block: suspend Context<S, E>.() -> Flow<E2>
 ) : Operator<S, E>
 
@@ -37,7 +37,7 @@ internal class TransformFlow<S : Any, E : Any, E2 : Any>(
  * event
  */
 @Orbit2Dsl
-fun <S : Any, SE : Any, E : Any, E2 : Any> Builder<S, SE, E>.transformFlow(block: suspend Context<S, E>.() -> Flow<E2>): Builder<S, SE, E2> {
+fun <S : Any, SE : Any, E, E2> Builder<S, SE, E>.transformFlow(block: suspend Context<S, E>.() -> Flow<E2>): Builder<S, SE, E2> {
     OrbitDslPlugins.register(CoroutineDslPlugin)
     return Builder(
         stack + TransformFlow(

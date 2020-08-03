@@ -21,13 +21,13 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.withContext
 
-internal class Transform<S : Any, E : Any, E2 : Any>(val block: Context<S, E>.() -> E2) :
+internal class Transform<S : Any, E, E2>(val block: Context<S, E>.() -> E2) :
     Operator<S, E2>
 
-internal class SideEffect<S : Any, SE : Any, E : Any>(val block: SideEffectContext<S, SE, E>.() -> Unit) :
+internal class SideEffect<S : Any, SE : Any, E>(val block: SideEffectContext<S, SE, E>.() -> Unit) :
     Operator<S, E>
 
-internal class Reduce<S : Any, E : Any>(val block: Context<S, E>.() -> Any) :
+internal class Reduce<S : Any, E>(val block: Context<S, E>.() -> Any) :
     Operator<S, E>
 
 /**
@@ -37,7 +37,7 @@ internal class Reduce<S : Any, E : Any>(val block: Context<S, E>.() -> Any) :
  * @property event The current event being processed
  */
 @Orbit2Dsl
-data class SideEffectContext<S : Any, SE : Any, E : Any>(
+data class SideEffectContext<S : Any, SE : Any, E>(
     val state: S,
     val event: E,
     private val postSideEffect: (SE) -> Unit
@@ -58,7 +58,7 @@ data class SideEffectContext<S : Any, SE : Any, E : Any>(
  * @param block the lambda returning a new event given the current state and event
  */
 @Orbit2Dsl
-fun <S : Any, SE : Any, E : Any, E2 : Any> Builder<S, SE, E>.transform(block: Context<S, E>.() -> E2): Builder<S, SE, E2> {
+fun <S : Any, SE : Any, E, E2> Builder<S, SE, E>.transform(block: Context<S, E>.() -> E2): Builder<S, SE, E2> {
     return Builder(
         stack + Transform(
             block
@@ -81,7 +81,7 @@ fun <S : Any, SE : Any, E : Any, E2 : Any> Builder<S, SE, E>.transform(block: Co
  * @param block the lambda executing side effects given the current state and event
  */
 @Orbit2Dsl
-fun <S : Any, SE : Any, E : Any> Builder<S, SE, E>.sideEffect(block: SideEffectContext<S, SE, E>.() -> Unit): Builder<S, SE, E> {
+fun <S : Any, SE : Any, E> Builder<S, SE, E>.sideEffect(block: SideEffectContext<S, SE, E>.() -> Unit): Builder<S, SE, E> {
     return Builder(
         stack + SideEffect(
             block
@@ -98,7 +98,7 @@ fun <S : Any, SE : Any, E : Any> Builder<S, SE, E>.sideEffect(block: SideEffectC
  * @param block the lambda reducing the current state and incoming event to produce a new state
  */
 @Orbit2Dsl
-fun <S : Any, SE : Any, E : Any> Builder<S, SE, E>.reduce(block: Context<S, E>.() -> S): Builder<S, SE, E> {
+fun <S : Any, SE : Any, E> Builder<S, SE, E>.reduce(block: Context<S, E>.() -> S): Builder<S, SE, E> {
     return Builder(
         stack + Reduce(
             block
@@ -114,12 +114,12 @@ fun <S : Any, SE : Any, E : Any> Builder<S, SE, E>.reduce(block: Context<S, E>.(
  * * [reduce]
  */
 object BaseDslPlugin : OrbitDslPlugin {
-    override fun <S : Any, E : Any, SE : Any> apply(
+    override fun <S : Any, E, SE : Any> apply(
         containerContext: OrbitDslPlugin.ContainerContext<S, SE>,
         flow: Flow<E>,
         operator: Operator<S, E>,
         createContext: (event: E) -> Context<S, E>
-    ): Flow<Any> {
+    ): Flow<Any?> {
         @Suppress("UNCHECKED_CAST")
         return when (operator) {
             is Transform<*, *, *> -> flow.map {

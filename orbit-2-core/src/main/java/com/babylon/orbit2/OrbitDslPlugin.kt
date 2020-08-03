@@ -24,12 +24,12 @@ import kotlinx.coroutines.flow.Flow
  * Extend this interface to create your own DSL plugin.
  */
 interface OrbitDslPlugin {
-    fun <S : Any, E : Any, SE : Any> apply(
+    fun <S : Any, E, SE : Any> apply(
         containerContext: ContainerContext<S, SE>,
         flow: Flow<E>,
         operator: Operator<S, E>,
         createContext: (event: E) -> Context<S, E>
-    ): Flow<Any>
+    ): Flow<Any?>
 
     class ContainerContext<S : Any, SE : Any>(
         val backgroundDispatcher: CoroutineDispatcher,

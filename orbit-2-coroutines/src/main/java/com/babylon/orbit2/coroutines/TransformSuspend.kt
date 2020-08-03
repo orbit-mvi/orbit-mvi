@@ -23,7 +23,7 @@ import com.babylon.orbit2.Orbit2Dsl
 import com.babylon.orbit2.OrbitDslPlugins
 import kotlinx.coroutines.Dispatchers
 
-internal class TransformSuspend<S : Any, E : Any, E2 : Any>(
+internal class TransformSuspend<S : Any, E, E2>(
     val block: suspend Context<S, E>.() -> E2
 ) : Operator<S, E2>
 
@@ -36,7 +36,7 @@ internal class TransformSuspend<S : Any, E : Any, E2 : Any>(
  * @param block the suspending lambda returning a new event given the current state and event
  */
 @Orbit2Dsl
-fun <S : Any, SE : Any, E : Any, E2 : Any> Builder<S, SE, E>.transformSuspend(block: suspend Context<S, E>.() -> E2): Builder<S, SE, E2> {
+fun <S : Any, SE : Any, E, E2> Builder<S, SE, E>.transformSuspend(block: suspend Context<S, E>.() -> E2): Builder<S, SE, E2> {
     OrbitDslPlugins.register(CoroutineDslPlugin)
     return Builder(
         stack + TransformSuspend(

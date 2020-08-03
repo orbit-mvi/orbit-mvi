@@ -23,7 +23,7 @@ import com.babylon.orbit2.Orbit2Dsl
 import com.babylon.orbit2.OrbitDslPlugins
 import io.reactivex.Single
 
-internal class RxJava2Single<S : Any, E : Any, E2 : Any>(
+internal class RxJava2Single<S : Any, E, E2 : Any>(
     val block: Context<S, E>.() -> Single<E2>
 ) : Operator<S, E>
 

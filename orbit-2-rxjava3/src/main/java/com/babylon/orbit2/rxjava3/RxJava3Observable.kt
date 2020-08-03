@@ -23,7 +23,7 @@ import com.babylon.orbit2.Orbit2Dsl
 import com.babylon.orbit2.OrbitDslPlugins
 import io.reactivex.rxjava3.core.Observable
 
-internal class RxJava3Observable<S : Any, E : Any, E2 : Any>(
+internal class RxJava3Observable<S : Any, E, E2 : Any>(
     val block: Context<S, E>.() -> Observable<E2>
 ) : Operator<S, E>
 
