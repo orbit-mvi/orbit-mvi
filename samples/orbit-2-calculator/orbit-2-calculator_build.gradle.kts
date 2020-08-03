@@ -49,10 +49,10 @@ android {
 }
 
 dependencies {
+    implementation(kotlin("stdlib-jdk8"))
     implementation(project(":orbit-2-core"))
     implementation(project(":orbit-2-livedata"))
     implementation(project(":orbit-2-viewmodel"))
-    implementation(kotlin("stdlib-jdk8"))
 
     implementation(ProjectDependencies.androidxAppCompat)
     implementation(ProjectDependencies.androidxConstrainLayout)
@@ -60,9 +60,8 @@ dependencies {
     implementation(ProjectDependencies.koinViewModel)
 
     // Testing
-    GroupedDependencies.testsImplementation.forEach { testImplementation(it) }
-    GroupedDependencies.testsRuntime.forEach { testRuntimeOnly(it) }
-    testImplementation(ProjectDependencies.koinTest)
-    testImplementation(ProjectDependencies.kotlinFixture)
     testImplementation(project(":orbit-2-test"))
+    GroupedDependencies.testsImplementation.forEach { testImplementation(it) }
+    testRuntimeOnly(ProjectDependencies.junitJupiterEngine)
+    testImplementation(ProjectDependencies.koinTest)
 }

@@ -26,9 +26,9 @@ dependencies {
     compileOnly(ProjectDependencies.androidxAnnotation)
 
     // Testing
-    GroupedDependencies.testsImplementationJUnit5.forEach { testImplementation(it) }
-    testRuntimeOnly(ProjectDependencies.junitJupiterEngine)
     testImplementation(project(":orbit-2-test"))
+    GroupedDependencies.testsImplementation.forEach { testImplementation(it) }
+    testRuntimeOnly(ProjectDependencies.junitJupiterEngine)
 }
 
 // Fix lack of source code when publishing pure Kotlin projects

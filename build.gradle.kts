@@ -79,8 +79,7 @@ subprojects {
         @Suppress("UnstableApiUsage")
         useJUnitPlatform {
             includeEngines(
-                "junit-jupiter",
-                "spek2"
+                "junit-jupiter"
             )
         }
         testLogging {

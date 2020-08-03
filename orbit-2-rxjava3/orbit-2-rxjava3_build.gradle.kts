@@ -28,8 +28,8 @@ dependencies {
 
     // Testing
     testImplementation(project(":orbit-2-test"))
-    GroupedDependencies.testsImplementationJUnit5.forEach { testImplementation(it) }
-    GroupedDependencies.testsRuntime.forEach { testRuntimeOnly(it) }
+    GroupedDependencies.testsImplementation.forEach { testImplementation(it) }
+    testRuntimeOnly(ProjectDependencies.junitJupiterEngine)
 }
 
 // Fix lack of source code when publishing pure Kotlin projects

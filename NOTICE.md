@@ -16,6 +16,5 @@ This software uses the following open source works:
 - [RxJava 2](https://github.com/ReactiveX/RxJava)
 - [RxJava 3](https://github.com/ReactiveX/RxJava)
 - [Gradle Versions plugin](https://github.com/ben-manes/gradle-versions-plugin)
-- [Spek](https://www.spekframework.org/)
 - [Mockito Kotlin](https://github.com/nhaarman/mockito-kotlin)
 - [AssertK](https://github.com/willowtreeapps/assertk)
