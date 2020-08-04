@@ -16,4 +16,4 @@
 
 package com.babylon.orbit2
 
-interface Operator<S : Any, E : Any>
+interface Operator<S : Any, E>

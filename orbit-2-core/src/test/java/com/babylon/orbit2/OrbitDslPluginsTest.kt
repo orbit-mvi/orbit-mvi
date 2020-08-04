@@ -44,12 +44,12 @@ internal class OrbitDslPluginsTest {
     }
 
     private object TestPlugin : OrbitDslPlugin {
-        override fun <S : Any, E : Any, SE : Any> apply(
+        override fun <S : Any, E, SE : Any> apply(
             containerContext: OrbitDslPlugin.ContainerContext<S, SE>,
             flow: Flow<E>,
             operator: Operator<S, E>,
             createContext: (event: E) -> Context<S, E>
-        ): Flow<Any> {
+        ): Flow<Any?> {
             return flow
         }
     }

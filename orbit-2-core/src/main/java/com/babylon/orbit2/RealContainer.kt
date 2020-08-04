@@ -76,12 +76,12 @@ open class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
     @Suppress("UNCHECKED_CAST")
     suspend fun collectFlow(init: Builder<STATE, SIDE_EFFECT, Unit>.() -> Builder<STATE, SIDE_EFFECT, *>) {
         Builder<STATE, SIDE_EFFECT, Unit>()
-            .init().stack.fold(flowOf(Unit)) { flow: Flow<Any>, operator: Operator<STATE, *> ->
-                OrbitDslPlugins.plugins.fold(flow) { flow2: Flow<Any>, plugin: OrbitDslPlugin ->
+            .init().stack.fold(flowOf(Unit)) { flow: Flow<Any?>, operator: Operator<STATE, *> ->
+                OrbitDslPlugins.plugins.fold(flow) { flow2: Flow<Any?>, plugin: OrbitDslPlugin ->
                     plugin.apply(
                         pluginContext,
                         flow2,
-                        operator as Operator<STATE, Any>
+                        operator as Operator<STATE, Any?>
                     ) { Context(currentState, it) }
                 }
             }.collect()

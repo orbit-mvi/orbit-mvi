@@ -76,6 +76,18 @@ internal class BaseDslBehaviourTest {
         middleware.assert {}
     }
 
+    @Test
+    fun `allows nullable event`() {
+        val action = null
+        val middleware = BaseDslMiddleware().test(initialState)
+
+        middleware.allowsNulls(action)
+
+        middleware.assert {
+            postedSideEffects(action.toString())
+        }
+    }
+
     private data class TestState(val id: Int)
 
     private class BaseDslMiddleware : ContainerHost<TestState, String> {
@@ -107,6 +119,16 @@ internal class BaseDslBehaviourTest {
         fun sideEffect(action: Int) = orbit {
             sideEffect {
                 action.toString()
+            }
+        }
+
+        fun allowsNulls(action: Int?) = orbit {
+            transform {
+                action
+            }.reduce {
+                event?.let { event -> state.copy(id = event) } ?: state
+            }.sideEffect {
+                post(event.toString())
             }
         }
     }

@@ -17,4 +17,4 @@
 package com.babylon.orbit2
 
 @Orbit2Dsl
-class Builder<S : Any, SE : Any, E : Any>(val stack: List<Operator<S, *>> = emptyList())
+class Builder<S : Any, SE : Any, E>(val stack: List<Operator<S, *>> = emptyList())
