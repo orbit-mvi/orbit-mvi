@@ -73,40 +73,38 @@ class ViewModelExtensionsKtTest {
         val initialState = fixture<TestState>()
         val savedState = fixture<TestState>()
         val savedStateHandle = SavedStateHandle(mapOf(SAVED_STATE_KEY to savedState))
-        var bool: Boolean? = null
+        var onCreateState: TestState? = null
 
         val middleware = Middleware(savedStateHandle, initialState) {
-            bool = it
+            onCreateState = it
         }
 
         // Used to trigger execution of onCreate
         middleware.container.stateStream.observe { }
 
-        @Suppress("UsePropertyAccessSyntax")
-        assertThat(bool).isTrue()
+        assertThat(onCreateState).isEqualTo(savedState)
     }
 
     @Test
     fun `When saved state is not present calls onCreate with false`() {
         val initialState = fixture<TestState>()
         val savedStateHandle = SavedStateHandle()
-        var bool: Boolean? = null
+        var onCreateState: TestState? = null
 
         val middleware = Middleware(savedStateHandle, initialState) {
-            bool = it
+            onCreateState = it
         }
 
         // Used to trigger execution of onCreate
         middleware.container.stateStream.observe { }
 
-        @Suppress("UsePropertyAccessSyntax")
-        assertThat(bool).isFalse()
+        assertThat(onCreateState).isEqualTo(initialState)
     }
 
     private class Middleware(
         savedStateHandle: SavedStateHandle,
         initialState: TestState,
-        onCreate: ((Boolean) -> Unit)? = null
+        onCreate: ((TestState) -> Unit)? = null
     ) : ContainerHost<TestState, Int>, ViewModel() {
         override val container = container<TestState, Int>(
             initialState = initialState,

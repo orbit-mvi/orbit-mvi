@@ -55,7 +55,7 @@ dependencies {
     implementation(project(":orbit-2-viewmodel"))
 
     implementation(ProjectDependencies.androidxAppCompat)
-    implementation(ProjectDependencies.androidxConstrainLayout)
+    implementation(ProjectDependencies.androidxConstraintLayout)
     implementation(ProjectDependencies.androidMaterial)
     implementation(ProjectDependencies.koinViewModel)
 

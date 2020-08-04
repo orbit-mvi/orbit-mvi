@@ -364,6 +364,17 @@ class OrbitTestingTest {
         }
 
         @Test
+        fun `created is invoked upon request`() {
+
+            val mockDependency = mock<BogusDependency>()
+            val testSubject = GeneralTestMiddleware(mockDependency)
+
+            testSubject.test(initialState = State(), runOnCreate = true)
+
+            verify(mockDependency).create()
+        }
+
+        @Test
         fun `first flow is isolated by default`() {
 
             val mockDependency = mock<BogusDependency>()

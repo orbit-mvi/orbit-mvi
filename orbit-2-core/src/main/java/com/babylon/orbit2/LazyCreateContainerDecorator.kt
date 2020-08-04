@@ -20,9 +20,9 @@ import java.io.Closeable
 import java.util.concurrent.atomic.AtomicBoolean
 
 class LazyCreateContainerDecorator<STATE : Any, SIDE_EFFECT : Any>(
-    private val actual: Container<STATE, SIDE_EFFECT>,
-    private val onCreate: () -> Unit
-) : Container<STATE, SIDE_EFFECT> {
+    override val actual: Container<STATE, SIDE_EFFECT>,
+    val onCreate: (state: STATE) -> Unit
+) : ContainerDecorator<STATE, SIDE_EFFECT> {
     private val created = AtomicBoolean(false)
 
     override val currentState: STATE
@@ -49,7 +49,7 @@ class LazyCreateContainerDecorator<STATE : Any, SIDE_EFFECT : Any>(
 
     private fun runOnCreate() {
         if (created.compareAndSet(false, true)) {
-            onCreate()
+            onCreate(actual.currentState)
         }
     }
 }

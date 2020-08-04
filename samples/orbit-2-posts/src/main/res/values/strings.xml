@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Orbit Posts</string>
+    <string name="emptyContentDescription" />
+
+    <plurals name="comments">
+        <item quantity="one">%d post</item>
+        <item quantity="other">%d comments</item>
+    </plurals>
+</resources>

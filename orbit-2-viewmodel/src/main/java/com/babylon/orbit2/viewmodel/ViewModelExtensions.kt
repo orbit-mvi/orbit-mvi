@@ -38,7 +38,7 @@ internal const val SAVED_STATE_KEY = "state"
 fun <STATE : Any, SIDE_EFFECT : Any> ViewModel.container(
     initialState: STATE,
     settings: Settings = Settings(),
-    onCreate: (() -> Unit)? = null
+    onCreate: ((state: STATE) -> Unit)? = null
 ): Container<STATE, SIDE_EFFECT> {
     return viewModelScope.container(initialState, settings, onCreate)
 }
@@ -63,13 +63,13 @@ fun <STATE : Parcelable, SIDE_EFFECT : Any> ViewModel.container(
     initialState: STATE,
     savedStateHandle: SavedStateHandle,
     settings: Settings = Settings(),
-    onCreate: ((hasSavedState: Boolean) -> Unit)? = null
+    onCreate: ((state: STATE) -> Unit)? = null
 ): Container<STATE, SIDE_EFFECT> {
     val savedState: STATE? = savedStateHandle[SAVED_STATE_KEY]
     val state = savedState ?: initialState
 
     val realContainer: Container<STATE, SIDE_EFFECT> =
-        viewModelScope.container(state, settings, { onCreate?.invoke(savedState != null) })
+        viewModelScope.container(state, settings, onCreate)
 
     return SavedStateContainerDecorator(
         realContainer,

@@ -43,14 +43,15 @@ internal class ContainerLifecycleTest {
     private data class TestState(val id: Int)
 
     private class Middleware(initialState: TestState) : ContainerHost<TestState, String> {
+
         override val container =
             CoroutineScope(Dispatchers.Unconfined).container<TestState, String>(initialState) {
-                onCreate()
+                onCreate(it)
             }
 
-        private fun onCreate() = orbit {
+        private fun onCreate(createState: TestState) = orbit {
             sideEffect {
-                post(state.id.toString())
+                post(createState.id.toString())
             }
         }
     }

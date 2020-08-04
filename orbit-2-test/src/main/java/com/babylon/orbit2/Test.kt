@@ -36,8 +36,11 @@ import kotlin.test.assertEquals
  */
 inline fun <STATE : Any, SIDE_EFFECT : Any, reified T : ContainerHost<STATE, SIDE_EFFECT>> T.test(
     initialState: STATE,
-    isolateFlow: Boolean = true
+    isolateFlow: Boolean = true,
+    runOnCreate: Boolean = false
 ): T {
+
+    val onCreate = container.findOnCreate()
 
     @Suppress("EXPERIMENTAL_API_USAGE")
     val testContainer = TestContainer<STATE, SIDE_EFFECT>(
@@ -45,9 +48,12 @@ inline fun <STATE : Any, SIDE_EFFECT : Any, reified T : ContainerHost<STATE, SID
         isolateFlow
     )
 
-    val spy = spy(this) {
-        on { container }.thenReturn(testContainer)
+    this.javaClass.declaredFields.firstOrNull { it.name == "container" }?.apply {
+        isAccessible = true
+        set(this@test, testContainer)
     }
+
+    val spy = spy(this)
 
     TestHarness.FIXTURES[spy] = TestFixtures(
         initialState,
@@ -57,7 +63,17 @@ inline fun <STATE : Any, SIDE_EFFECT : Any, reified T : ContainerHost<STATE, SID
 
     Mockito.clearInvocations(spy)
 
+    if (runOnCreate) {
+        onCreate(initialState)
+    }
+
     return spy
+}
+
+fun <STATE : Any, SIDE_EFFECT : Any> Container<STATE, SIDE_EFFECT>.findOnCreate(): (STATE) -> Unit {
+    return (this as? LazyCreateContainerDecorator<STATE, SIDE_EFFECT>)?.onCreate
+        ?: (this as? ContainerDecorator<STATE, SIDE_EFFECT>)?.actual?.findOnCreate()
+        ?: {}
 }
 
 /**

@@ -68,7 +68,7 @@ object ProjectDependencies {
     // AndroidX
     const val androidxAppCompat = "androidx.appcompat:appcompat:${Versions.androidxAppCompat}"
     const val androidxAnnotation = "androidx.annotation:annotation:${Versions.androidxAnnotation}"
-    const val androidxConstrainLayout =
+    const val androidxConstraintLayout =
         "androidx.constraintlayout:constraintlayout:${Versions.androidxConstrainLayout}"
     const val androidxLifecycleComponents =
         "androidx.lifecycle:lifecycle-extensions:${Versions.androidxLifecycles}"

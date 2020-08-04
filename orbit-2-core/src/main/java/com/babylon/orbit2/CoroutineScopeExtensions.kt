@@ -30,7 +30,7 @@ import kotlinx.coroutines.CoroutineScope
 fun <STATE : Any, SIDE_EFFECT : Any> CoroutineScope.container(
     initialState: STATE,
     settings: Container.Settings = Container.Settings(),
-    onCreate: (() -> Unit)? = null
+    onCreate: ((state: STATE) -> Unit)? = null
 ): Container<STATE, SIDE_EFFECT> =
     if (onCreate == null) {
         RealContainer(

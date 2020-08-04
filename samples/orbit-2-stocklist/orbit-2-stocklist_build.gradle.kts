@@ -74,7 +74,7 @@ dependencies {
 
     implementation(ProjectDependencies.kotlinCoroutines)
     implementation(ProjectDependencies.androidxAppCompat)
-    implementation(ProjectDependencies.androidxConstrainLayout)
+    implementation(ProjectDependencies.androidxConstraintLayout)
     implementation(ProjectDependencies.androidMaterial)
     implementation(ProjectDependencies.androidxNavigationFragmentKtx)
     implementation(ProjectDependencies.androidxNavigationUiKtx)

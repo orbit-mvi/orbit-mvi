@@ -19,13 +19,14 @@ package com.babylon.orbit2.viewmodel
 import androidx.lifecycle.SavedStateHandle
 import com.babylon.orbit2.Builder
 import com.babylon.orbit2.Container
+import com.babylon.orbit2.ContainerDecorator
 import com.babylon.orbit2.Stream
 import java.io.Closeable
 
 internal class SavedStateContainerDecorator<STATE : Any, SIDE_EFFECT : Any>(
-    private val actual: Container<STATE, SIDE_EFFECT>,
+    override val actual: Container<STATE, SIDE_EFFECT>,
     private val savedStateHandle: SavedStateHandle
-) : Container<STATE, SIDE_EFFECT> {
+) : ContainerDecorator<STATE, SIDE_EFFECT> {
     override val currentState: STATE
         get() = actual.currentState
 

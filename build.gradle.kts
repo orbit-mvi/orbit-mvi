@@ -35,6 +35,7 @@ buildscript {
 }
 
 plugins {
+    kotlin(module = "plugin.serialization") version Versions.kotlin
     id("com.github.ben-manes.versions") version Versions.gradleVersionsPlugin
     id("com.appmattus.markdown") version Versions.markdownLintPlugin
 }
