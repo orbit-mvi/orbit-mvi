@@ -18,6 +18,7 @@ include(
     "orbit-2-core",
     "orbit-2-coroutines",
     "orbit-2-livedata",
+    "orbit-2-rxjava1",
     "orbit-2-rxjava2",
     "orbit-2-rxjava3",
     "orbit-2-viewmodel",

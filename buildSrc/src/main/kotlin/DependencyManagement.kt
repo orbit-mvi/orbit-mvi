@@ -34,6 +34,7 @@ object Versions {
     const val androidMaterial = "1.1.0"
     const val androidxNavigation = "2.3.0"
 
+    const val rxJava1 = "1.3.8"
     const val rxJava2 = "2.2.19"
     const val rxJava3 = "3.0.4"
 
@@ -95,6 +96,7 @@ object ProjectDependencies {
     const val groupieViewBinding = "com.xwray:groupie-viewbinding:${Versions.groupie}"
 
     // RxJava
+    const val rxJava1 = "io.reactivex:rxjava:${Versions.rxJava1}"
     const val rxJava2 = "io.reactivex.rxjava2:rxjava:${Versions.rxJava2}"
     const val rxJava3 = "io.reactivex.rxjava3:rxjava:${Versions.rxJava3}"
 
