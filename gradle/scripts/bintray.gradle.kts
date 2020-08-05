@@ -87,7 +87,7 @@ configure<BintrayExtension> {
     user = System.getenv("BINTRAY_USER") ?: System.getProperty("BINTRAY_USER") ?: "unknown"
     key = System.getenv("BINTRAY_KEY") ?: System.getProperty("BINTRAY_KEY") ?: "unknown"
     publish = true
-    dryRun = true
+    dryRun = false
     override = false
 
     setPublications("release")
