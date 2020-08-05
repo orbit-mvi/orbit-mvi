@@ -99,7 +99,7 @@ configure<BintrayExtension> {
         desc = "Orbit MVI for Kotlin and Android"
         websiteUrl = "https://github.com/babylonhealth/orbit-mvi"
         issueTrackerUrl = "https://github.com/babylonhealth/orbit-mvi/issues"
-        vcsUrl = "https://github.com/appmattus/babylonhealth/orbit-mvi"
+        vcsUrl = "https://github.com/babylonhealth/orbit-mvi"
         githubRepo = "babylonhealth/orbit-mvi"
 
         setLicenses("Apache-2.0")
