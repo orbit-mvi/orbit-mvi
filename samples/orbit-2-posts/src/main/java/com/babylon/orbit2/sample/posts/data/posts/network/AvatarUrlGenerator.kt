@@ -17,5 +17,5 @@
 package com.babylon.orbit2.sample.posts.data.posts.network
 
 class AvatarUrlGenerator {
-    fun generateUrl(email: String) = "https://api.adorable.io/avatars/285/$email"
+    fun generateUrl(email: String) = "https://i.pravatar.cc/285?u=$email"
 }

@@ -16,9 +16,9 @@
 
 package com.babylon.orbit2.sample.posts.data.posts.network
 
-import com.babylon.orbit2.sample.posts.data.posts.common.model.CommentData
-import com.babylon.orbit2.sample.posts.data.posts.common.model.PostData
-import com.babylon.orbit2.sample.posts.data.posts.common.model.UserData
+import com.babylon.orbit2.sample.posts.data.posts.model.CommentData
+import com.babylon.orbit2.sample.posts.data.posts.model.PostData
+import com.babylon.orbit2.sample.posts.data.posts.model.UserData
 import com.babylon.orbit2.sample.posts.domain.repositories.Status
 import retrofit2.HttpException
 import java.io.IOException
@@ -36,7 +36,7 @@ class PostNetworkDataSource(private val typicodeService: TypicodeService) {
 
     suspend fun getPosts(): List<PostData> {
         return try {
-            typicodeService.posts()
+            typicodeService.posts().sortedBy { it.title }
         } catch (e: IOException) {
             emptyList()
         } catch (e: HttpException) {

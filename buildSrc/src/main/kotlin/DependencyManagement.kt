@@ -29,19 +29,10 @@ object Versions {
     const val androidxLifecycles = "2.2.0"
     const val androidxAnnotation = "1.1.0"
     const val androidxTesting = "2.1.0"
-    const val androidxAppCompat = "1.1.0"
-    const val androidxConstrainLayout = "1.1.3"
-    const val androidMaterial = "1.1.0"
-    const val androidxNavigation = "2.3.0"
 
     const val rxJava1 = "1.3.8"
     const val rxJava2 = "2.2.19"
     const val rxJava3 = "3.0.4"
-
-    const val koin = "2.1.6"
-    const val groupie = "2.8.1"
-
-    const val lightstreamer = "4.2.1"
 
     const val desugar = "1.0.10"
 
@@ -57,43 +48,16 @@ object Versions {
 
 object ProjectDependencies {
     // Kotlin
-    const val kotlinCoroutines =
-        "org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versions.coroutines}"
-    const val kotlinCoroutinesRx2 =
-        "org.jetbrains.kotlinx:kotlinx-coroutines-rx2:${Versions.coroutines}"
-    const val kotlinCoroutinesRx3 =
-        "org.jetbrains.kotlinx:kotlinx-coroutines-rx3:${Versions.coroutines}"
+    const val kotlinCoroutines = "org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versions.coroutines}"
+    const val kotlinCoroutinesRx2 = "org.jetbrains.kotlinx:kotlinx-coroutines-rx2:${Versions.coroutines}"
+    const val kotlinCoroutinesRx3 = "org.jetbrains.kotlinx:kotlinx-coroutines-rx3:${Versions.coroutines}"
     const val kotlinTest = "org.jetbrains.kotlin:kotlin-test:${Versions.kotlin}"
 
     // AndroidX
-    const val androidxAppCompat = "androidx.appcompat:appcompat:${Versions.androidxAppCompat}"
     const val androidxAnnotation = "androidx.annotation:annotation:${Versions.androidxAnnotation}"
-    const val androidxConstraintLayout =
-        "androidx.constraintlayout:constraintlayout:${Versions.androidxConstrainLayout}"
-    const val androidxLifecycleComponents =
-        "androidx.lifecycle:lifecycle-extensions:${Versions.androidxLifecycles}"
-    const val androidxLifecycleCompiler =
-        "androidx.lifecycle:lifecycle-compiler:${Versions.androidxLifecycles}"
-    const val androidxLifecycleSavedState =
-        "androidx.lifecycle:lifecycle-viewmodel-savedstate:${Versions.androidxLifecycles}"
-    const val androidxLifecycleKtx =
-        "androidx.lifecycle:lifecycle-viewmodel-ktx:${Versions.androidxLifecycles}"
-    const val androidMaterial = "com.google.android.material:material:${Versions.androidMaterial}"
-    const val androidxNavigationFragmentKtx = "androidx.navigation:navigation-fragment-ktx:${Versions.androidxNavigation}"
-    const val androidxNavigationUiKtx = "androidx.navigation:navigation-ui-ktx:${Versions.androidxNavigation}"
-
-    // Streaming service
-    const val lightstreamer = "com.lightstreamer:ls-android-client:${Versions.lightstreamer}"
-
-    // Dependency injection
-    const val koinViewModel = "org.koin:koin-androidx-viewmodel:${Versions.koin}"
-    const val koinTest = "org.koin:koin-test:${Versions.koin}"
-
-    // UI
-    const val groupie = "com.xwray:groupie:${Versions.groupie}"
-    const val groupieKotlinAndroidExtensions =
-        "com.xwray:groupie-kotlin-android-extensions:${Versions.groupie}"
-    const val groupieViewBinding = "com.xwray:groupie-viewbinding:${Versions.groupie}"
+    const val androidxLifecycleComponents = "androidx.lifecycle:lifecycle-extensions:${Versions.androidxLifecycles}"
+    const val androidxLifecycleSavedState = "androidx.lifecycle:lifecycle-viewmodel-savedstate:${Versions.androidxLifecycles}"
+    const val androidxLifecycleKtx = "androidx.lifecycle:lifecycle-viewmodel-ktx:${Versions.androidxLifecycles}"
 
     // RxJava
     const val rxJava1 = "io.reactivex:rxjava:${Versions.rxJava1}"
@@ -102,13 +66,10 @@ object ProjectDependencies {
 
     // Tools
     const val detektFormatting = "io.gitlab.arturbosch.detekt:detekt-formatting:${Versions.detektPlugin}"
-    const val desugar = "com.android.tools:desugar_jdk_libs:${Versions.desugar}"
 
     // Test prerequisites
-    const val androidXTesting =
-        "androidx.arch.core:core-testing:${Versions.androidxTesting}"
-    const val junitPlatformConsole =
-        "org.junit.platform:junit-platform-console:${Versions.junitPlatform}"
+    const val androidxTesting = "androidx.arch.core:core-testing:${Versions.androidxTesting}"
+    const val junitPlatformConsole = "org.junit.platform:junit-platform-console:${Versions.junitPlatform}"
     const val assertJ = "org.assertj:assertj-core:${Versions.assertJ}"
     const val mockitoKotlin = "com.nhaarman.mockitokotlin2:mockito-kotlin:${Versions.mockitoKotlin}"
     const val mockitoInline = "org.mockito:mockito-inline:${Versions.mockito}"

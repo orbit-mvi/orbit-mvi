@@ -42,7 +42,7 @@ class PostDataRepository(
                     post.id,
                     avatarUrlGenerator.generateUrl(user.email),
                     post.title,
-                    user.username
+                    user.name
                 )
             }
         }

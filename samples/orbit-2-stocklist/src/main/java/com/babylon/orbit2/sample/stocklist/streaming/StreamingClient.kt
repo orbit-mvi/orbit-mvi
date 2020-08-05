@@ -16,14 +16,13 @@
 
 package com.babylon.orbit2.sample.stocklist.streaming
 
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleObserver
-import androidx.lifecycle.OnLifecycleEvent
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
 import com.lightstreamer.client.LightstreamerClient
 import com.lightstreamer.client.Subscription
 import kotlin.concurrent.thread
 
-class StreamingClient : LifecycleObserver {
+class StreamingClient : DefaultLifecycleObserver {
     private var connectionWish = false
 
     private val lsClient = LightstreamerClient(
@@ -33,17 +32,14 @@ class StreamingClient : LifecycleObserver {
         connect()
     }
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_START)
-    fun start(): Boolean {
+    override fun onStart(owner: LifecycleOwner) {
         synchronized(lsClient) {
             connectionWish = true
             lsClient.connect()
-            return true
         }
     }
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
-    fun stop() {
+    override fun onStop(owner: LifecycleOwner) {
         synchronized(lsClient) {
             connectionWish = false
 

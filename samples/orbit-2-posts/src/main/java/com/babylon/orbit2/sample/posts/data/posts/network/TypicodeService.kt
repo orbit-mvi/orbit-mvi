@@ -16,9 +16,9 @@
 
 package com.babylon.orbit2.sample.posts.data.posts.network
 
-import com.babylon.orbit2.sample.posts.data.posts.common.model.CommentData
-import com.babylon.orbit2.sample.posts.data.posts.common.model.PostData
-import com.babylon.orbit2.sample.posts.data.posts.common.model.UserData
+import com.babylon.orbit2.sample.posts.data.posts.model.CommentData
+import com.babylon.orbit2.sample.posts.data.posts.model.PostData
+import com.babylon.orbit2.sample.posts.data.posts.model.UserData
 import retrofit2.http.GET
 import retrofit2.http.Path
 

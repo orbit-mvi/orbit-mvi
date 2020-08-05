@@ -17,7 +17,6 @@
 plugins {
     id("com.android.application")
     kotlin("android")
-    kotlin("kapt")
     id("kotlin-android-extensions")
 }
 
@@ -29,7 +28,6 @@ android {
         versionCode = 1
         versionName = "1.0"
         applicationId = "com.babylon.orbit2.sample.calculator"
-        testInstrumentationRunner = "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
         getByName("release") {
@@ -54,14 +52,16 @@ dependencies {
     implementation(project(":orbit-2-livedata"))
     implementation(project(":orbit-2-viewmodel"))
 
-    implementation(ProjectDependencies.androidxAppCompat)
-    implementation(ProjectDependencies.androidxConstraintLayout)
-    implementation(ProjectDependencies.androidMaterial)
-    implementation(ProjectDependencies.koinViewModel)
+    implementation("androidx.constraintlayout:constraintlayout:1.1.3")
+    implementation("com.google.android.material:material:1.1.0")
+    implementation("org.koin:koin-androidx-viewmodel:2.1.6")
 
     // Testing
     testImplementation(project(":orbit-2-test"))
-    GroupedDependencies.testsImplementation.forEach { testImplementation(it) }
-    testRuntimeOnly(ProjectDependencies.junitJupiterEngine)
-    testImplementation(ProjectDependencies.koinTest)
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.6.2")
+    testImplementation("org.junit.platform:junit-platform-console:1.6.2")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.6.2")
+    testImplementation("org.junit.jupiter:junit-jupiter-params:5.6.2")
+    testImplementation("junit:junit:4.13")
+    testImplementation("com.appmattus.fixture:fixture:0.9.4")
 }

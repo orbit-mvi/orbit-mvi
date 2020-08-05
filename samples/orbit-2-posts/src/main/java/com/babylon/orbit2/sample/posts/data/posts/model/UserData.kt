@@ -14,12 +14,11 @@
  *  limitations under the License.
  */
 
-package com.babylon.orbit2.sample.posts.data.posts.common.model
+package com.babylon.orbit2.sample.posts.data.posts.model
 
-data class CommentData(
+data class UserData(
     val id: Int,
-    val postId: Int,
     val name: String,
-    val email: String,
-    val body: String
+    val username: String,
+    val email: String
 )

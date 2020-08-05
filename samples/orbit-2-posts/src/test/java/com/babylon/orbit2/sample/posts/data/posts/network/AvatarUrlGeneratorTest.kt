@@ -23,6 +23,6 @@ class AvatarUrlGeneratorTest {
     @Test
     fun `generate url based on parameter`() {
         val actual = AvatarUrlGenerator().generateUrl("peopleandperformance@babylonhealth.com")
-        assertEquals("https://api.adorable.io/avatars/285/peopleandperformance@babylonhealth.com", actual)
+        assertEquals("https://i.pravatar.cc/285?u=peopleandperformance@babylonhealth.com", actual)
     }
 }

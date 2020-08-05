@@ -17,7 +17,6 @@
 plugins {
     id("com.android.library")
     kotlin("android")
-    kotlin("kapt")
 }
 
 dependencies {
@@ -28,7 +27,7 @@ dependencies {
 
     // Testing
     testImplementation(project(":orbit-2-test"))
-    testImplementation(ProjectDependencies.androidXTesting)
+    testImplementation(ProjectDependencies.androidxTesting)
     testImplementation(ProjectDependencies.kotlinCoroutines)
     GroupedDependencies.testsImplementation.forEach { testImplementation(it) }
     testRuntimeOnly(ProjectDependencies.junitJupiterEngine)

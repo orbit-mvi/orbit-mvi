@@ -17,7 +17,6 @@
 plugins {
     id("com.android.application")
     kotlin("android")
-    kotlin("kapt")
     id("kotlin-android-extensions")
     id("androidx.navigation.safeargs.kotlin")
 }
@@ -30,7 +29,6 @@ android {
         versionCode = 1
         versionName = "1.0"
         applicationId = "com.babylon.orbit2.sample.stocklist"
-        testInstrumentationRunner = "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
         getByName("release") {
@@ -72,24 +70,16 @@ dependencies {
     implementation(project(":orbit-2-viewmodel"))
     implementation(project(":orbit-2-coroutines"))
 
-    implementation(ProjectDependencies.kotlinCoroutines)
-    implementation(ProjectDependencies.androidxAppCompat)
-    implementation(ProjectDependencies.androidxConstraintLayout)
-    implementation(ProjectDependencies.androidMaterial)
-    implementation(ProjectDependencies.androidxNavigationFragmentKtx)
-    implementation(ProjectDependencies.androidxNavigationUiKtx)
-    implementation(ProjectDependencies.lightstreamer)
-    implementation(ProjectDependencies.groupie)
-    implementation(ProjectDependencies.groupieKotlinAndroidExtensions)
-    implementation(ProjectDependencies.groupieViewBinding)
-    implementation(ProjectDependencies.koinViewModel)
-    kapt(ProjectDependencies.androidxLifecycleCompiler)
+    implementation("androidx.constraintlayout:constraintlayout:1.1.3")
+    implementation("com.google.android.material:material:1.1.0")
+    implementation("androidx.navigation:navigation-fragment-ktx:2.3.0")
+    implementation("androidx.navigation:navigation-ui-ktx:2.3.0")
+    implementation("com.lightstreamer:ls-android-client:4.2.1")
+    implementation("com.xwray:groupie:2.8.1")
+    implementation("com.xwray:groupie-kotlin-android-extensions:2.8.1")
+    implementation("com.xwray:groupie-viewbinding:2.8.1")
+    implementation("org.koin:koin-androidx-viewmodel:2.1.6")
+    implementation("androidx.lifecycle:lifecycle-common-java8:2.2.0")
 
-    // Testing
-    testImplementation(project(":orbit-2-test"))
-    GroupedDependencies.testsImplementation.forEach { testImplementation(it) }
-    testRuntimeOnly(ProjectDependencies.junitJupiterEngine)
-    testImplementation(ProjectDependencies.koinTest)
-
-    coreLibraryDesugaring(ProjectDependencies.desugar)
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:${Versions.desugar}")
 }
