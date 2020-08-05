@@ -48,29 +48,45 @@ object RxJava2DslPlugin : OrbitDslPlugin {
     ): Flow<Any?> {
         return when (operator) {
             is RxJava2Observable<*, *, *> -> flow.flatMapConcat {
+                if (operator.registerIdling) containerContext.settings.idlingRegistry.increment()
+
                 with(operator as RxJava2Observable<S, E, Any>) {
                     createContext(it).block()
-                }.asFlow().flowOn(containerContext.backgroundDispatcher)
+                }.asFlow().flowOn(containerContext.backgroundDispatcher).also {
+                    if (operator.registerIdling) containerContext.settings.idlingRegistry.decrement()
+                }
             }
             is RxJava2Single<*, *, *> -> flow.map {
+                if (operator.registerIdling) containerContext.settings.idlingRegistry.increment()
+
                 with(operator as RxJava2Single<S, E, Any>) {
                     withContext(containerContext.backgroundDispatcher) {
                         createContext(it).block().await()
                     }
+                }.also {
+                    if (operator.registerIdling) containerContext.settings.idlingRegistry.decrement()
                 }
             }
             is RxJava2Maybe<*, *, *> -> flow.mapNotNull {
+                if (operator.registerIdling) containerContext.settings.idlingRegistry.increment()
+
                 with(operator as RxJava2Maybe<S, E, Any>) {
                     withContext(containerContext.backgroundDispatcher) {
                         createContext(it).block().await()
                     }
+                }.also {
+                    if (operator.registerIdling) containerContext.settings.idlingRegistry.decrement()
                 }
             }
             is RxJava2Completable -> flow.onEach {
+                if (operator.registerIdling) containerContext.settings.idlingRegistry.increment()
+
                 with(operator) {
                     withContext(containerContext.backgroundDispatcher) {
                         createContext(it).block().await()
                     }
+                }.also {
+                    if (operator.registerIdling) containerContext.settings.idlingRegistry.decrement()
                 }
             }
             else -> flow

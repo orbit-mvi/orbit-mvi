@@ -28,6 +28,9 @@ dependencies {
 
     implementation(ProjectDependencies.androidxLifecycleSavedState)
     implementation(ProjectDependencies.androidxLifecycleKtx)
+    // TODO Replace with our own implementation of net to use the base implementation instead
+    // implementation("androidx.test.espresso:espresso-idling-resource:3.2.0")
+    implementation("androidx.test.espresso.idling:idling-net:3.2.0")
 
     // Testing
     testImplementation(project(":orbit-2-test"))

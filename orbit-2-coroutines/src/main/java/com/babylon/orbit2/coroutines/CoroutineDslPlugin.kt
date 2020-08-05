@@ -23,6 +23,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.withContext
 
 /**
@@ -42,16 +43,26 @@ object CoroutineDslPlugin : OrbitDslPlugin {
     ): Flow<Any?> {
         return when (operator) {
             is TransformSuspend<*, *, *> -> flow.map {
+                if (operator.registerIdling) containerContext.settings.idlingRegistry.increment()
+
                 @Suppress("UNCHECKED_CAST")
                 with(operator as TransformSuspend<S, E, Any>) {
                     withContext(containerContext.backgroundDispatcher) {
                         createContext(it).block()
                     }
+                }.also {
+                    if (operator.registerIdling) containerContext.settings.idlingRegistry.decrement()
                 }
             }
             is TransformFlow<*, *, *> -> flow.flatMapConcat {
+                if (operator.registerIdling) containerContext.settings.idlingRegistry.increment()
+
                 with(operator as TransformFlow<S, E, Any>) {
-                    createContext(it).block().flowOn(containerContext.backgroundDispatcher)
+                    createContext(it).block().flowOn(containerContext.backgroundDispatcher).onEach {
+
+                    }
+                }.also {
+                    if (operator.registerIdling) containerContext.settings.idlingRegistry.decrement()
                 }
             }
             else -> flow

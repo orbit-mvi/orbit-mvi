@@ -24,6 +24,7 @@ import com.babylon.orbit2.OrbitDslPlugins
 import io.reactivex.Maybe
 
 internal class RxJava2Maybe<S : Any, E, E2 : Any>(
+    val registerIdling: Boolean,
     val block: suspend Context<S, E>.() -> Maybe<E2>
 ) : Operator<S, E>
 
@@ -33,16 +34,14 @@ internal class RxJava2Maybe<S : Any, E, E2 : Any>(
  *
  * The transformer executes on an `IO` dispatcher by default.
  *
+ * @param registerIdling When true registers the calls idling state, default: true
  * @param block the lambda returning a new [Maybe] given the current state and event
  */
 @Orbit2Dsl
 fun <S : Any, SE : Any, E : Any, E2 : Any> Builder<S, SE, E>.transformRx2Maybe(
+    registerIdling: Boolean = true,
     block: suspend Context<S, E>.() -> Maybe<E2>
 ): Builder<S, SE, E2> {
     OrbitDslPlugins.register(RxJava2DslPlugin)
-    return Builder(
-        stack + RxJava2Maybe(
-            block
-        )
-    )
+    return Builder(stack + RxJava2Maybe(registerIdling, block))
 }

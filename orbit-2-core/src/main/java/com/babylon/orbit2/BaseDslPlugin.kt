@@ -21,13 +21,13 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.withContext
 
-internal class Transform<S : Any, E, E2>(val block: Context<S, E>.() -> E2) :
+internal class Transform<S : Any, E, E2>(val registerIdling: Boolean, val block: Context<S, E>.() -> E2) :
     Operator<S, E2>
 
-internal class SideEffect<S : Any, SE : Any, E>(val block: SideEffectContext<S, SE, E>.() -> Unit) :
+internal class SideEffect<S : Any, SE : Any, E>(val registerIdling: Boolean, val block: SideEffectContext<S, SE, E>.() -> Unit) :
     Operator<S, E>
 
-internal class Reduce<S : Any, E>(val block: Context<S, E>.() -> Any) :
+internal class Reduce<S : Any, E>(val registerIdling: Boolean, val block: Context<S, E>.() -> Any) :
     Operator<S, E>
 
 /**
@@ -58,12 +58,11 @@ data class SideEffectContext<S : Any, SE : Any, E>(
  * @param block the lambda returning a new event given the current state and event
  */
 @Orbit2Dsl
-fun <S : Any, SE : Any, E, E2> Builder<S, SE, E>.transform(block: Context<S, E>.() -> E2): Builder<S, SE, E2> {
-    return Builder(
-        stack + Transform(
-            block
-        )
-    )
+fun <S : Any, SE : Any, E, E2> Builder<S, SE, E>.transform(
+    registerIdling: Boolean = true,
+    block: Context<S, E>.() -> E2
+): Builder<S, SE, E2> {
+    return Builder(stack + Transform(registerIdling, block))
 }
 
 /**
@@ -81,12 +80,11 @@ fun <S : Any, SE : Any, E, E2> Builder<S, SE, E>.transform(block: Context<S, E>.
  * @param block the lambda executing side effects given the current state and event
  */
 @Orbit2Dsl
-fun <S : Any, SE : Any, E> Builder<S, SE, E>.sideEffect(block: SideEffectContext<S, SE, E>.() -> Unit): Builder<S, SE, E> {
-    return Builder(
-        stack + SideEffect(
-            block
-        )
-    )
+fun <S : Any, SE : Any, E> Builder<S, SE, E>.sideEffect(
+    registerIdling: Boolean = true,
+    block: SideEffectContext<S, SE, E>.() -> Unit
+): Builder<S, SE, E> {
+    return Builder(stack + SideEffect(registerIdling, block))
 }
 
 /**
@@ -98,12 +96,11 @@ fun <S : Any, SE : Any, E> Builder<S, SE, E>.sideEffect(block: SideEffectContext
  * @param block the lambda reducing the current state and incoming event to produce a new state
  */
 @Orbit2Dsl
-fun <S : Any, SE : Any, E> Builder<S, SE, E>.reduce(block: Context<S, E>.() -> S): Builder<S, SE, E> {
-    return Builder(
-        stack + Reduce(
-            block
-        )
-    )
+fun <S : Any, SE : Any, E> Builder<S, SE, E>.reduce(
+    registerIdling: Boolean = true,
+    block: Context<S, E>.() -> S
+): Builder<S, SE, E> {
+    return Builder(stack + Reduce(registerIdling, block))
 }
 
 /**
@@ -123,13 +120,19 @@ object BaseDslPlugin : OrbitDslPlugin {
         @Suppress("UNCHECKED_CAST")
         return when (operator) {
             is Transform<*, *, *> -> flow.map {
+                if (operator.registerIdling) containerContext.settings.idlingRegistry.increment()
+
                 with(operator as Transform<S, E, Any>) {
                     withContext(containerContext.backgroundDispatcher) {
                         createContext(it).block()
                     }
+                }.also {
+                    if (operator.registerIdling) containerContext.settings.idlingRegistry.decrement()
                 }
             }
             is SideEffect<*, *, *> -> flow.onEach {
+                if (operator.registerIdling) containerContext.settings.idlingRegistry.increment()
+
                 with(operator as SideEffect<S, SE, E>) {
                     createContext(it).let { context ->
                         SideEffectContext(
@@ -137,15 +140,20 @@ object BaseDslPlugin : OrbitDslPlugin {
                             context.event,
                             containerContext.postSideEffect
                         )
-                    }
-                        .block()
+                    }.block()
+                }.also {
+                    if (operator.registerIdling) containerContext.settings.idlingRegistry.decrement()
                 }
             }
             is Reduce -> flow.onEach { event ->
+                if (operator.registerIdling) containerContext.settings.idlingRegistry.increment()
+
                 with(operator) {
                     containerContext.setState.send(
                         createContext(event).block() as S
                     )
+                }.also {
+                    if (operator.registerIdling) containerContext.settings.idlingRegistry.decrement()
                 }
             }
             else -> flow

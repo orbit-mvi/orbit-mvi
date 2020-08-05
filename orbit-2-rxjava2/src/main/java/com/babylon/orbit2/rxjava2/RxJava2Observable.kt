@@ -24,6 +24,7 @@ import com.babylon.orbit2.OrbitDslPlugins
 import io.reactivex.Observable
 
 internal class RxJava2Observable<S : Any, E, E2 : Any>(
+    val registerIdling: Boolean,
     val block: Context<S, E>.() -> Observable<E2>
 ) : Operator<S, E>
 
@@ -33,16 +34,14 @@ internal class RxJava2Observable<S : Any, E, E2 : Any>(
  *
  * The transformer executes on an `IO` dispatcher by default.
  *
+ * @param registerIdling When true registers the calls idling state, default: false
  * @param block the lambda returning a new observable of events given the current state and event
  */
 @Orbit2Dsl
 fun <S : Any, SE : Any, E : Any, E2 : Any> Builder<S, SE, E>.transformRx2Observable(
+    registerIdling: Boolean = false,
     block: Context<S, E>.() -> Observable<E2>
 ): Builder<S, SE, E2> {
     OrbitDslPlugins.register(RxJava2DslPlugin)
-    return Builder(
-        stack + RxJava2Observable(
-            block
-        )
-    )
+    return Builder(stack + RxJava2Observable(registerIdling, block))
 }

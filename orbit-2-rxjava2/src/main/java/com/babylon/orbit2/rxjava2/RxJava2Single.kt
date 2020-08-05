@@ -24,6 +24,7 @@ import com.babylon.orbit2.OrbitDslPlugins
 import io.reactivex.Single
 
 internal class RxJava2Single<S : Any, E, E2 : Any>(
+    val registerIdling: Boolean,
     val block: Context<S, E>.() -> Single<E2>
 ) : Operator<S, E>
 
@@ -33,16 +34,14 @@ internal class RxJava2Single<S : Any, E, E2 : Any>(
  *
  * The transformer executes on an `IO` dispatcher by default.
  *
+ * @param registerIdling When true registers the calls idling state, default: true
  * @param block the lambda returning a new [Single] given the current state and event
  */
 @Orbit2Dsl
 fun <S : Any, SE : Any, E : Any, E2 : Any> Builder<S, SE, E>.transformRx2Single(
+    registerIdling: Boolean = true,
     block: Context<S, E>.() -> Single<E2>
 ): Builder<S, SE, E2> {
     OrbitDslPlugins.register(RxJava2DslPlugin)
-    return Builder(
-        stack + RxJava2Single(
-            block
-        )
-    )
+    return Builder(stack + RxJava2Single(registerIdling, block))
 }

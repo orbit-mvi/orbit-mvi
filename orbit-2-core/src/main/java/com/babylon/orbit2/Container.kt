@@ -16,6 +16,9 @@
 
 package com.babylon.orbit2
 
+import com.babylon.orbit2.idling.IdlingResource
+import com.babylon.orbit2.idling.NoopIdlingResource
+
 /**
  * The heart of the Orbit MVI system. Represents an MVI container with its input and outputs.
  * You can manipulate the container through the [orbit] function
@@ -61,6 +64,7 @@ interface Container<STATE : Any, SIDE_EFFECT : Any> {
      * On by default.
      */
     class Settings(
-        val sideEffectCaching: Boolean = true
+        val sideEffectCaching: Boolean = true,
+        val idlingRegistry: IdlingResource = NoopIdlingResource()
     )
 }
