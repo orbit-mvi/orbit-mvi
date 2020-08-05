@@ -20,7 +20,6 @@ import android.os.Parcelable
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import com.appmattus.kotlinfixture.kotlinFixture
-import com.babylon.orbit2.Container
 import com.babylon.orbit2.ContainerHost
 import com.babylon.orbit2.reduce
 import com.babylon.orbit2.test
@@ -110,8 +109,7 @@ class ViewModelExtensionsKtTest {
         override val container = container<TestState, Int>(
             initialState = initialState,
             savedStateHandle = savedStateHandle,
-            onCreate = onCreate,
-            settings = Container.Settings()
+            onCreate = onCreate
         )
 
         fun something(action: Int) = orbit {
