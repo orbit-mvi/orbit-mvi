@@ -28,10 +28,18 @@ dependencies {
 
     implementation(ProjectDependencies.androidxLifecycleSavedState)
     implementation(ProjectDependencies.androidxLifecycleKtx)
-    implementation("androidx.test.espresso:espresso-idling-resource:3.2.0")
+    implementation(ProjectDependencies.androidxEspressoIdlingResource)
 
     // Testing
     testImplementation(project(":orbit-2-test"))
+    testImplementation(project(":orbit-2-coroutines"))
+    testImplementation(ProjectDependencies.androidxEspressoCore)
+    testImplementation(ProjectDependencies.robolectric)
+
     GroupedDependencies.testsImplementation.forEach { testImplementation(it) }
     testRuntimeOnly(ProjectDependencies.junitJupiterEngine)
+}
+
+android {
+    testOptions.unitTests.isIncludeAndroidResources = true
 }

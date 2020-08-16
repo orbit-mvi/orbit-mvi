@@ -29,6 +29,7 @@ object Versions {
     const val androidxLifecycles = "2.2.0"
     const val androidxAnnotation = "1.1.0"
     const val androidxTesting = "2.1.0"
+    const val androidxEspresso = "3.2.0"
 
     const val rxJava1 = "1.3.8"
     const val rxJava2 = "2.2.19"
@@ -44,6 +45,7 @@ object Versions {
     const val junitRuntime = "5.6.2"
     const val kotlinFixture = "0.9.4"
     const val jacoco = "0.8.5"
+    const val robolectric = "4.3.1"
 }
 
 object ProjectDependencies {
@@ -58,6 +60,8 @@ object ProjectDependencies {
     const val androidxLifecycleComponents = "androidx.lifecycle:lifecycle-extensions:${Versions.androidxLifecycles}"
     const val androidxLifecycleSavedState = "androidx.lifecycle:lifecycle-viewmodel-savedstate:${Versions.androidxLifecycles}"
     const val androidxLifecycleKtx = "androidx.lifecycle:lifecycle-viewmodel-ktx:${Versions.androidxLifecycles}"
+    const val androidxEspressoIdlingResource = "androidx.test.espresso:espresso-idling-resource:${Versions.androidxEspresso}"
+    const val androidxEspressoCore = "androidx.test.espresso:espresso-core:${Versions.androidxEspresso}"
 
     // RxJava
     const val rxJava1 = "io.reactivex:rxjava:${Versions.rxJava1}"
@@ -74,6 +78,7 @@ object ProjectDependencies {
     const val mockitoKotlin = "com.nhaarman.mockitokotlin2:mockito-kotlin:${Versions.mockitoKotlin}"
     const val mockitoInline = "org.mockito:mockito-inline:${Versions.mockito}"
     const val kotlinFixture = "com.appmattus.fixture:fixture:${Versions.kotlinFixture}"
+    const val robolectric = "org.robolectric:robolectric:${Versions.robolectric}"
     const val junitJupiterEngine = "org.junit.jupiter:junit-jupiter-engine:${Versions.junitRuntime}"
     const val junitJupiterApi = "org.junit.jupiter:junit-jupiter-api:${Versions.junitRuntime}"
     const val junitJupiterParams = "org.junit.jupiter:junit-jupiter-params:${Versions.junitRuntime}"

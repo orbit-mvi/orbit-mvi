@@ -7,6 +7,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.util.UUID
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.atomic.AtomicReference
@@ -21,7 +22,8 @@ class AndroidIdlingResource : IdlingResource {
     private var resourceCallback: ResourceCallback? = null
 
     private val espressoIdlingResource = object : androidx.test.espresso.IdlingResource {
-        override fun getName() = "orbit-mvi"
+        private val uniqueId = UUID.randomUUID()
+        override fun getName() = "orbit-mvi-$uniqueId"
 
         override fun isIdleNow() = idle.get()
 
