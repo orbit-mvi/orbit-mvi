@@ -9,6 +9,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withTimeout
@@ -17,6 +18,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
@@ -24,6 +26,13 @@ import kotlin.coroutines.suspendCoroutine
 class AndroidIdlingResourceTest {
 
     private val scope = CoroutineScope(Dispatchers.Unconfined)
+
+    @BeforeEach
+    fun before() {
+        IdlingRegistry.getInstance().resources.forEach {
+            IdlingRegistry.getInstance().unregister(it)
+        }
+    }
 
     @AfterEach
     fun after() {
@@ -86,7 +95,6 @@ class AndroidIdlingResourceTest {
             }
         }
     }
-
 
     @Test
     fun `not idle directly after running`() {
@@ -266,7 +274,7 @@ class AndroidIdlingResourceTest {
             withTimeout(200) {
                 mutex1.withLock {
                     mutex2.withLock {
-                        val result = suspendCoroutine<Boolean> {
+                        val result = suspendCancellableCoroutine<Boolean> {
                             idlingResource.registerIdleTransitionCallback {
                                 it.resume(true)
                             }
@@ -279,23 +287,12 @@ class AndroidIdlingResourceTest {
         }
     }
 
-
-    private fun CoroutineScope.createContainer(): Container<TestState, Int> {
-        return container(
-            initialState = TestState(0),
-            settings = Container.Settings(idlingRegistry = AndroidIdlingResource())
-        )
-    }
-
     @Test
     fun `cancelling scope removes IdlingResource`() {
         runBlocking {
             val scope = CoroutineScope(Dispatchers.Unconfined)
 
-            scope.container<TestState, Int>(
-                initialState = TestState(0),
-                settings = Container.Settings(idlingRegistry = AndroidIdlingResource())
-            )
+            scope.createContainer()
 
             assertEquals(1, IdlingRegistry.getInstance().resources.size)
 
@@ -305,6 +302,13 @@ class AndroidIdlingResourceTest {
 
             assertEquals(0, IdlingRegistry.getInstance().resources.size)
         }
+    }
+
+    private fun CoroutineScope.createContainer(): Container<TestState, Int> {
+        return container(
+            initialState = TestState(0),
+            settings = Container.Settings(idlingRegistry = AndroidIdlingResource())
+        )
     }
 
     data class TestState(val value: Int)

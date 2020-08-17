@@ -37,18 +37,16 @@ class AndroidIdlingResource : IdlingResource {
     }
 
     override fun increment() {
-        val counterVal = counter.getAndIncrement()
-        if (counterVal == 0) {
+        if (counter.getAndIncrement() == 0) {
             job.get()?.cancel()
         }
         idle.set(false)
     }
 
     override fun decrement() {
-        val counterVal = counter.decrementAndGet()
-        if (counterVal == 0) {
+        if (counter.decrementAndGet() == 0) {
             job.getAndSet(GlobalScope.launch {
-                delay(100)
+                delay(MILLIS_BEFORE_IDLE)
                 idle.set(true)
                 resourceCallback?.onTransitionToIdle()
             })?.cancel()
@@ -57,5 +55,9 @@ class AndroidIdlingResource : IdlingResource {
 
     override fun close() {
         IdlingRegistry.getInstance().unregister(espressoIdlingResource)
+    }
+
+    companion object {
+        private const val MILLIS_BEFORE_IDLE = 100L
     }
 }

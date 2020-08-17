@@ -67,8 +67,6 @@ dependencies {
     // Dependency Injection
     implementation("org.koin:koin-androidx-viewmodel:2.1.6")
 
-    implementation("androidx.test.espresso:espresso-idling-resource:3.2.0")
-
     // Testing
     testImplementation(project(":orbit-2-test"))
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.6.2")

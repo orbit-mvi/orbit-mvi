@@ -110,6 +110,7 @@ fun <S : Any, SE : Any, E> Builder<S, SE, E>.reduce(
  * * [sideEffect]
  * * [reduce]
  */
+@Suppress("ComplexMethod")
 object BaseDslPlugin : OrbitDslPlugin {
     override fun <S : Any, E, SE : Any> apply(
         containerContext: OrbitDslPlugin.ContainerContext<S, SE>,

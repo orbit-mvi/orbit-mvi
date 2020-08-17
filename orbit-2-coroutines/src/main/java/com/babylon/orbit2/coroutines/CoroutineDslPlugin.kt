@@ -23,7 +23,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.withContext
 
 /**
@@ -58,9 +57,7 @@ object CoroutineDslPlugin : OrbitDslPlugin {
                 if (operator.registerIdling) containerContext.settings.idlingRegistry.increment()
 
                 with(operator as TransformFlow<S, E, Any>) {
-                    createContext(it).block().flowOn(containerContext.backgroundDispatcher).onEach {
-
-                    }
+                    createContext(it).block().flowOn(containerContext.backgroundDispatcher)
                 }.also {
                     if (operator.registerIdling) containerContext.settings.idlingRegistry.decrement()
                 }
