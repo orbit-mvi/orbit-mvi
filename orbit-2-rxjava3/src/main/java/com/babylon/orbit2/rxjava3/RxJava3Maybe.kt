@@ -25,7 +25,7 @@ import io.reactivex.rxjava3.core.Maybe
 
 internal class RxJava3Maybe<S : Any, E, E2 : Any>(
     override val registerIdling: Boolean,
-    val block: suspend VolatileContext<S, E>.() -> Maybe<E2>
+    val block: VolatileContext<S, E>.() -> Maybe<E2>
 ) : Operator<S, E>
 
 /**
@@ -40,7 +40,7 @@ internal class RxJava3Maybe<S : Any, E, E2 : Any>(
 @Orbit2Dsl
 fun <S : Any, SE : Any, E : Any, E2 : Any> Builder<S, SE, E>.transformRx3Maybe(
     registerIdling: Boolean = true,
-    block: suspend VolatileContext<S, E>.() -> Maybe<E2>
+    block: VolatileContext<S, E>.() -> Maybe<E2>
 ): Builder<S, SE, E2> {
     OrbitDslPlugins.register(RxJava3DslPlugin)
     return Builder(stack + RxJava3Maybe(registerIdling, block))

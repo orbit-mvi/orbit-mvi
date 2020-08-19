@@ -25,7 +25,7 @@ import io.reactivex.rxjava3.core.Completable
 
 internal class RxJava3Completable<S : Any, E : Any>(
     override val registerIdling: Boolean,
-    val block: suspend VolatileContext<S, E>.() -> Completable
+    val block: VolatileContext<S, E>.() -> Completable
 ) : Operator<S, E>
 
 /**
@@ -40,7 +40,7 @@ internal class RxJava3Completable<S : Any, E : Any>(
 @Orbit2Dsl
 fun <S : Any, SE : Any, E : Any> Builder<S, SE, E>.transformRx3Completable(
     registerIdling: Boolean = true,
-    block: suspend VolatileContext<S, E>.() -> Completable
+    block: VolatileContext<S, E>.() -> Completable
 ): Builder<S, SE, E> {
     OrbitDslPlugins.register(RxJava3DslPlugin)
     return Builder(stack + RxJava3Completable(registerIdling, block))

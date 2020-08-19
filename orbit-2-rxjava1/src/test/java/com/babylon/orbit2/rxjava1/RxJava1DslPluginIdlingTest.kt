@@ -1,4 +1,4 @@
-package com.babylon.orbit2.coroutines
+package com.babylon.orbit2.rxjava1
 
 import com.babylon.orbit2.Container
 import com.babylon.orbit2.container
@@ -7,7 +7,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -16,8 +15,11 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
+import rx.Completable
+import rx.Observable
+import rx.Single
 
-class CoroutineDslPluginIdlingTest {
+class RxJava1DslPluginIdlingTest {
 
     private val scope = CoroutineScope(Dispatchers.Unconfined)
     private val testIdlingResource = TestIdlingResource()
@@ -35,16 +37,19 @@ class CoroutineDslPluginIdlingTest {
     }
 
     @Test
-    fun `transformSuspend not idle when actively running`() {
+    fun `transformRx1Single not idle when actively running`() {
         runBlocking {
             val container = scope.createContainer()
 
             val mutex = Mutex(locked = true)
 
             container.orbit {
-                transformSuspend {
-                    mutex.unlock()
-                    delay(50)
+                transformRx1Single {
+                    runBlocking {
+                        mutex.unlock()
+                        delay(50)
+                        Single.just(0)
+                    }
                 }
             }
 
@@ -57,16 +62,19 @@ class CoroutineDslPluginIdlingTest {
     }
 
     @Test
-    fun `transformSuspend idle when actively running with registration disabled`() {
+    fun `transformRx1Single idle when actively running with registration disabled`() {
         runBlocking {
             val container = scope.createContainer()
 
             val mutex = Mutex(locked = true)
 
             container.orbit {
-                transformSuspend(registerIdling = false) {
-                    mutex.unlock()
-                    delay(50)
+                transformRx1Single(registerIdling = false) {
+                    runBlocking {
+                        mutex.unlock()
+                        delay(50)
+                        Single.just(0)
+                    }
                 }
             }
 
@@ -79,15 +87,18 @@ class CoroutineDslPluginIdlingTest {
     }
 
     @Test
-    fun `transformSuspend idle after running`() {
+    fun `transformRx1Single idle after running`() {
         runBlocking {
             val container = scope.createContainer()
 
             val mutex = Mutex(locked = true)
 
             container.orbit {
-                transformSuspend {
-                    mutex.unlock()
+                transformRx1Single {
+                    runBlocking {
+                        mutex.unlock()
+                        Single.just(0)
+                    }
                 }
             }
 
@@ -101,20 +112,18 @@ class CoroutineDslPluginIdlingTest {
     }
 
     @Test
-    fun `transformFlow not idle when actively running`() {
+    fun `transformRx1Completable not idle when actively running`() {
         runBlocking {
             val container = scope.createContainer()
 
             val mutex = Mutex(locked = true)
 
             container.orbit {
-                transformFlow(registerIdling = true) {
-                    flow<Int> {
-                        println("start")
+                transformRx1Completable {
+                    runBlocking {
                         mutex.unlock()
-                        println("release")
-                        delay(100)
-                        println("end")
+                        delay(50)
+                        Completable.complete()
                     }
                 }
             }
@@ -128,17 +137,18 @@ class CoroutineDslPluginIdlingTest {
     }
 
     @Test
-    fun `transformFlow idle when actively running with registration disabled`() {
+    fun `transformRx1Completable idle when actively running with registration disabled`() {
         runBlocking {
             val container = scope.createContainer()
 
             val mutex = Mutex(locked = true)
 
             container.orbit {
-                transformFlow(registerIdling = false) {
-                    flow<Int> {
+                transformRx1Completable(registerIdling = false) {
+                    runBlocking {
                         mutex.unlock()
                         delay(50)
+                        Completable.complete()
                     }
                 }
             }
@@ -152,15 +162,92 @@ class CoroutineDslPluginIdlingTest {
     }
 
     @Test
-    fun `transformFlow idle after running`() {
+    fun `transformRx1Completable idle after running`() {
         runBlocking {
             val container = scope.createContainer()
 
             val mutex = Mutex(locked = true)
 
             container.orbit {
-                transformFlow(registerIdling = true) {
-                    flow<Int> {
+                transformRx1Completable {
+                    runBlocking {
+                        mutex.unlock()
+                        Completable.complete()
+                    }
+                }
+            }
+
+            withTimeout(TIMEOUT) {
+                delay(50)
+                mutex.withLock {
+                    assertTrue(testIdlingResource.isIdle())
+                }
+            }
+        }
+    }
+
+    @Test
+    fun `transformRx1Observable not idle when actively running`() {
+        runBlocking {
+            val container = scope.createContainer()
+
+            val mutex = Mutex(locked = true)
+
+            container.orbit {
+                transformRx1Observable(registerIdling = true) {
+                    Observable.fromCallable {
+                        runBlocking {
+                            mutex.unlock()
+                            delay(100)
+                        }
+                    }
+                }
+            }
+
+            withTimeout(TIMEOUT) {
+                mutex.withLock {
+                    assertFalse(testIdlingResource.isIdle())
+                }
+            }
+        }
+    }
+
+    @Test
+    fun `transformRx1Observable idle when actively running with registration disabled`() {
+        runBlocking {
+            val container = scope.createContainer()
+
+            val mutex = Mutex(locked = true)
+
+            container.orbit {
+                transformRx1Observable(registerIdling = false) {
+                    Observable.fromCallable {
+                        runBlocking {
+                            mutex.unlock()
+                            delay(100)
+                        }
+                    }
+                }
+            }
+
+            withTimeout(TIMEOUT) {
+                mutex.withLock {
+                    assertTrue(testIdlingResource.isIdle())
+                }
+            }
+        }
+    }
+
+    @Test
+    fun `transformRx1Observable idle after running`() {
+        runBlocking {
+            val container = scope.createContainer()
+
+            val mutex = Mutex(locked = true)
+
+            container.orbit {
+                transformRx1Observable(registerIdling = true) {
+                    Observable.fromCallable {
                         mutex.unlock()
                     }
                 }
@@ -189,12 +276,10 @@ class CoroutineDslPluginIdlingTest {
 
         override fun increment() {
             counter++
-            println("inc")
         }
 
         override fun decrement() {
             counter--
-            println("dec")
         }
 
         override fun close() = Unit
