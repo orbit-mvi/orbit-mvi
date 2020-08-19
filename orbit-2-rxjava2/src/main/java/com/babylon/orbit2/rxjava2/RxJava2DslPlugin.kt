@@ -39,7 +39,6 @@ import kotlinx.coroutines.withContext
  * * [transformRx2Maybe]
  * * [transformRx2Completable]
  */
-@Suppress("ComplexMethod")
 object RxJava2DslPlugin : OrbitDslPlugin {
 
     @Suppress("UNCHECKED_CAST", "EXPERIMENTAL_API_USAGE")
