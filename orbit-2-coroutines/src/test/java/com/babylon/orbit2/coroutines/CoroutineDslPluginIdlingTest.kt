@@ -12,6 +12,7 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withTimeout
+import kotlinx.coroutines.yield
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -91,9 +92,8 @@ class CoroutineDslPluginIdlingTest {
                 }
             }
 
-            withTimeout(TIMEOUT) {
-                delay(50)
-                mutex.withLock {
+            mutex.withLock {
+                assertEventually {
                     assertTrue(testIdlingResource.isIdle())
                 }
             }
@@ -163,10 +163,22 @@ class CoroutineDslPluginIdlingTest {
                 }
             }
 
-            withTimeout(TIMEOUT) {
-                mutex.withLock {
-                    delay(50)
+            mutex.withLock {
+                assertEventually {
                     assertTrue(testIdlingResource.isIdle())
+                }
+            }
+        }
+    }
+
+    private suspend fun assertEventually(block: suspend () -> Unit) {
+        withTimeout(TIMEOUT) {
+            while (true) {
+                try {
+                    block()
+                    break
+                } catch (ignored: Throwable) {
+                    yield()
                 }
             }
         }
