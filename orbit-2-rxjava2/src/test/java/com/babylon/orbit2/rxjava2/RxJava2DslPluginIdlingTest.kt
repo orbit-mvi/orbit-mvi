@@ -330,7 +330,7 @@ class RxJava2DslPluginIdlingTest {
             }
 
             withTimeout(TIMEOUT) {
-                delay(100)
+                delay(200)
                 mutex.withLock {
                     assertTrue(testIdlingResource.isIdle())
                 }
