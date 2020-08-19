@@ -16,18 +16,14 @@
 
 package com.babylon.orbit2
 
-import com.babylon.orbit2.idling.IdlingResource
-
 /**
  * Represents the current context in which an [Operator] is executing.
  *
  * @property state The state captured at the point when the operator is executed
  * @property event The current event being processed
- * @property idlingResource TODO Write description here
  */
 @Orbit2Dsl
 interface Context<STATE : Any, EVENT> {
     val state: STATE
     val event: EVENT
-    val idlingResource: IdlingResource
 }
