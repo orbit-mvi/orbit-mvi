@@ -36,6 +36,7 @@ internal class Reduce<S : Any, E>(override val registerIdling: Boolean, val bloc
  *
  * The transformer executes on an `IO` dispatcher by default.
  *
+ * @param registerIdling When true tracks the block's idling state, default: true
  * @param block the lambda returning a new event given the current state and event
  */
 @Orbit2Dsl
@@ -58,6 +59,7 @@ fun <S : Any, SE : Any, E, E2> Builder<S, SE, E>.transform(
  * Side effects are passthrough operators. This means that after applying
  * a side effect, the upstream event flows unmodified downstream.
  *
+ * @param registerIdling When true tracks the block's idling state, default: true
  * @param block the lambda executing side effects given the current state and event
  */
 @Orbit2Dsl
@@ -74,6 +76,7 @@ fun <S : Any, SE : Any, E> Builder<S, SE, E>.sideEffect(
  * Reducers are passthrough operators. This means that after applying
  * a reducer, the upstream event flows unmodified downstream.
  *
+ * @param registerIdling When true tracks the block's idling state, default: true
  * @param block the lambda reducing the current state and incoming event to produce a new state
  */
 @Orbit2Dsl

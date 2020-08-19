@@ -34,7 +34,7 @@ internal class TransformSuspend<S : Any, E, E2>(
  *
  * The transformer executes on [Dispatchers.IO] by default.
  *
- * @param registerIdling When true registers the calls idling state, default: true
+ * @param registerIdling When true tracks the block's idling state, default: true
  * @param block the suspending lambda returning a new event given the current state and event
  */
 @Orbit2Dsl

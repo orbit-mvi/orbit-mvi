@@ -34,7 +34,7 @@ internal class RxJava1Completable<S : Any, E>(
  *
  * The transformer executes on an `IO` dispatcher by default.
  *
- * @param registerIdling When true registers the calls idling state, default: true
+ * @param registerIdling When true tracks the block's idling state, default: true
  * @param block the lambda returning a new [Completable] given the current state and event
  */
 @Orbit2Dsl
