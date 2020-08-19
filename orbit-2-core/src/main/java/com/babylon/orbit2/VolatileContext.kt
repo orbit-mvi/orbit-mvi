@@ -17,13 +17,12 @@
 package com.babylon.orbit2
 
 /**
- * Represents the current context in which an [Operator] is executing.
- *
- * @property state The state captured at the point when the operator is executed
- * @property event The current event being processed
+ * Represents the current context in which an [Operator] is executing with access to the [volatileState].
  */
 @Orbit2Dsl
-interface Context<STATE : Any, EVENT> {
-    val state: STATE
-    val event: EVENT
+interface VolatileContext<STATE : Any, EVENT> : Context<STATE, EVENT> {
+    /**
+     * The current state which can change throughout execution of the operator
+     */
+    fun volatileState(): STATE
 }

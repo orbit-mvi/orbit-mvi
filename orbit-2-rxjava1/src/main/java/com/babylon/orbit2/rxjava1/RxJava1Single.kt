@@ -17,18 +17,18 @@
 package com.babylon.orbit2.rxjava1
 
 import com.babylon.orbit2.Builder
-import com.babylon.orbit2.Context
 import com.babylon.orbit2.Operator
 import com.babylon.orbit2.Orbit2Dsl
 import com.babylon.orbit2.OrbitDslPlugins
+import com.babylon.orbit2.VolatileContext
 import rx.Single
 
 internal class RxJava1Single<S : Any, E, E2>(
-    val block: Context<S, E>.() -> Single<E2>
+    val block: VolatileContext<S, E>.() -> Single<E2>
 ) : Operator<S, E>
 
 /**
- * The observable transformer flat maps incoming [Context] for every event into a [Single] of
+ * The observable transformer flat maps incoming [VolatileContext] for every event into a [Single] of
  * another type.
  *
  * The transformer executes on an `IO` dispatcher by default.
@@ -37,7 +37,7 @@ internal class RxJava1Single<S : Any, E, E2>(
  */
 @Orbit2Dsl
 fun <S : Any, SE : Any, E, E2> Builder<S, SE, E>.transformRx1Single(
-    block: Context<S, E>.() -> Single<E2>
+    block: VolatileContext<S, E>.() -> Single<E2>
 ): Builder<S, SE, E2> {
     OrbitDslPlugins.register(RxJava1DslPlugin)
     return Builder(

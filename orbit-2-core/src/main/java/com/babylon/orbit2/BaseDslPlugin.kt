@@ -21,7 +21,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.withContext
 
-internal class Transform<S : Any, E, E2>(val block: Context<S, E>.() -> E2) :
+internal class Transform<S : Any, E, E2>(val block: VolatileContext<S, E>.() -> E2) :
     Operator<S, E2>
 
 internal class SideEffect<S : Any, SE : Any, E>(val block: SideEffectContext<S, SE, E>.() -> Unit) :
@@ -31,26 +31,6 @@ internal class Reduce<S : Any, E>(val block: Context<S, E>.() -> Any) :
     Operator<S, E>
 
 /**
- * Represents the current context in which an [Operator] is executing.
- *
- * @property state The current state captured at the point when the operator is executed
- * @property event The current event being processed
- */
-@Orbit2Dsl
-data class SideEffectContext<S : Any, SE : Any, E>(
-    val state: S,
-    val event: E,
-    private val postSideEffect: (SE) -> Unit
-) {
-    /**
-     * Posts a side effect to [Container.sideEffectStream].
-     */
-    fun post(event: SE) {
-        postSideEffect(event)
-    }
-}
-
-/**
  * The basic transformer maps the incoming state and event into a new event.
  *
  * The transformer executes on an `IO` dispatcher by default.
@@ -58,7 +38,7 @@ data class SideEffectContext<S : Any, SE : Any, E>(
  * @param block the lambda returning a new event given the current state and event
  */
 @Orbit2Dsl
-fun <S : Any, SE : Any, E, E2> Builder<S, SE, E>.transform(block: Context<S, E>.() -> E2): Builder<S, SE, E2> {
+fun <S : Any, SE : Any, E, E2> Builder<S, SE, E>.transform(block: VolatileContext<S, E>.() -> E2): Builder<S, SE, E2> {
     return Builder(
         stack + Transform(
             block
@@ -118,7 +98,7 @@ object BaseDslPlugin : OrbitDslPlugin {
         containerContext: OrbitDslPlugin.ContainerContext<S, SE>,
         flow: Flow<E>,
         operator: Operator<S, E>,
-        createContext: (event: E) -> Context<S, E>
+        createContext: (event: E) -> VolatileContext<S, E>
     ): Flow<Any?> {
         @Suppress("UNCHECKED_CAST")
         return when (operator) {
@@ -132,11 +112,11 @@ object BaseDslPlugin : OrbitDslPlugin {
             is SideEffect<*, *, *> -> flow.onEach {
                 with(operator as SideEffect<S, SE, E>) {
                     createContext(it).let { context ->
-                        SideEffectContext(
-                            context.state,
-                            context.event,
-                            containerContext.postSideEffect
-                        )
+                        object : SideEffectContext<S, SE, E> {
+                            override val state = context.state
+                            override val event = context.event
+                            override fun post(event: SE) = containerContext.postSideEffect(event)
+                        }
                     }
                         .block()
                 }

@@ -16,9 +16,9 @@
 
 package com.babylon.orbit2.rxjava2
 
-import com.babylon.orbit2.Context
 import com.babylon.orbit2.Operator
 import com.babylon.orbit2.OrbitDslPlugin
+import com.babylon.orbit2.VolatileContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.flowOn
@@ -44,7 +44,7 @@ object RxJava2DslPlugin : OrbitDslPlugin {
         containerContext: OrbitDslPlugin.ContainerContext<S, SE>,
         flow: Flow<E>,
         operator: Operator<S, E>,
-        createContext: (event: E) -> Context<S, E>
+        createContext: (event: E) -> VolatileContext<S, E>
     ): Flow<Any?> {
         return when (operator) {
             is RxJava2Observable<*, *, *> -> flow.flatMapConcat {

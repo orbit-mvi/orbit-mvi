@@ -17,19 +17,19 @@
 package com.babylon.orbit2.coroutines
 
 import com.babylon.orbit2.Builder
-import com.babylon.orbit2.Context
 import com.babylon.orbit2.Operator
 import com.babylon.orbit2.Orbit2Dsl
 import com.babylon.orbit2.OrbitDslPlugins
+import com.babylon.orbit2.VolatileContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 
 internal class TransformFlow<S : Any, E, E2>(
-    val block: suspend Context<S, E>.() -> Flow<E2>
+    val block: suspend VolatileContext<S, E>.() -> Flow<E2>
 ) : Operator<S, E>
 
 /**
- * The flow transformer flat maps incoming [Context] for every event into coroutine flows.
+ * The flow transformer flat maps incoming [VolatileContext] for every event into coroutine flows.
  *
  * The transformer executes on [Dispatchers.IO] by default.
  *
@@ -37,7 +37,7 @@ internal class TransformFlow<S : Any, E, E2>(
  * event
  */
 @Orbit2Dsl
-fun <S : Any, SE : Any, E, E2> Builder<S, SE, E>.transformFlow(block: suspend Context<S, E>.() -> Flow<E2>): Builder<S, SE, E2> {
+fun <S : Any, SE : Any, E, E2> Builder<S, SE, E>.transformFlow(block: suspend VolatileContext<S, E>.() -> Flow<E2>): Builder<S, SE, E2> {
     OrbitDslPlugins.register(CoroutineDslPlugin)
     return Builder(
         stack + TransformFlow(
