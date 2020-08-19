@@ -48,7 +48,7 @@ internal class OrbitDslPluginsTest {
             containerContext: OrbitDslPlugin.ContainerContext<S, SE>,
             flow: Flow<E>,
             operator: Operator<S, E>,
-            createContext: (event: E) -> Context<S, E>
+            createContext: (event: E) -> VolatileContext<S, E>
         ): Flow<Any?> {
             return flow
         }

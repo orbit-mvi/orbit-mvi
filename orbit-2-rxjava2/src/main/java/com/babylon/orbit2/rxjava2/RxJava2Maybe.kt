@@ -17,19 +17,19 @@
 package com.babylon.orbit2.rxjava2
 
 import com.babylon.orbit2.Builder
-import com.babylon.orbit2.Context
 import com.babylon.orbit2.Operator
 import com.babylon.orbit2.Orbit2Dsl
 import com.babylon.orbit2.OrbitDslPlugins
+import com.babylon.orbit2.VolatileContext
 import io.reactivex.Maybe
 
 internal class RxJava2Maybe<S : Any, E, E2 : Any>(
     val registerIdling: Boolean,
-    val block: suspend Context<S, E>.() -> Maybe<E2>
+    val block: suspend VolatileContext<S, E>.() -> Maybe<E2>
 ) : Operator<S, E>
 
 /**
- * The maybe transformer flat maps incoming [Context] for every event into a [Maybe] of
+ * The maybe transformer flat maps incoming [VolatileContext] for every event into a [Maybe] of
  * another type.
  *
  * The transformer executes on an `IO` dispatcher by default.
@@ -40,7 +40,7 @@ internal class RxJava2Maybe<S : Any, E, E2 : Any>(
 @Orbit2Dsl
 fun <S : Any, SE : Any, E : Any, E2 : Any> Builder<S, SE, E>.transformRx2Maybe(
     registerIdling: Boolean = true,
-    block: suspend Context<S, E>.() -> Maybe<E2>
+    block: suspend VolatileContext<S, E>.() -> Maybe<E2>
 ): Builder<S, SE, E2> {
     OrbitDslPlugins.register(RxJava2DslPlugin)
     return Builder(stack + RxJava2Maybe(registerIdling, block))

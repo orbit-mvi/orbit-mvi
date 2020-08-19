@@ -28,7 +28,7 @@ interface OrbitDslPlugin {
         containerContext: ContainerContext<S, SE>,
         flow: Flow<E>,
         operator: Operator<S, E>,
-        createContext: (event: E) -> Context<S, E>
+        createContext: (event: E) -> VolatileContext<S, E>
     ): Flow<Any?>
 
     class ContainerContext<S : Any, SE : Any>(

@@ -17,15 +17,15 @@
 package com.babylon.orbit2.coroutines
 
 import com.babylon.orbit2.Builder
-import com.babylon.orbit2.Context
 import com.babylon.orbit2.Operator
 import com.babylon.orbit2.Orbit2Dsl
 import com.babylon.orbit2.OrbitDslPlugins
+import com.babylon.orbit2.VolatileContext
 import kotlinx.coroutines.Dispatchers
 
 internal class TransformSuspend<S : Any, E, E2>(
     val registerIdling: Boolean,
-    val block: suspend Context<S, E>.() -> E2
+    val block: suspend VolatileContext<S, E>.() -> E2
 ) : Operator<S, E2>
 
 /**
@@ -40,7 +40,7 @@ internal class TransformSuspend<S : Any, E, E2>(
 @Orbit2Dsl
 fun <S : Any, SE : Any, E, E2> Builder<S, SE, E>.transformSuspend(
     registerIdling: Boolean = true,
-    block: suspend Context<S, E>.() -> E2
+    block: suspend VolatileContext<S, E>.() -> E2
 ): Builder<S, SE, E2> {
     OrbitDslPlugins.register(CoroutineDslPlugin)
     return Builder(stack + TransformSuspend(registerIdling, block))

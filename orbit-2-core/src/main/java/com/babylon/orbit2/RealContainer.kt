@@ -93,7 +93,14 @@ open class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
                         pluginContext,
                         flow2,
                         operator as Operator<STATE, Any?>
-                    ) { Context(currentState, it, settings.idlingRegistry) }
+                    ) {
+                        object : VolatileContext<STATE, Any?> {
+                            override val state = currentState
+                            override val event = it
+                            override fun volatileState() = currentState
+                            override val idlingRegistry = settings.idlingRegistry
+                        }
+                    }
                 }
             }.collect()
     }

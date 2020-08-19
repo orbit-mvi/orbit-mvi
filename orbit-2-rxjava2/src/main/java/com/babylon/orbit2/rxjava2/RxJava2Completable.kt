@@ -17,19 +17,19 @@
 package com.babylon.orbit2.rxjava2
 
 import com.babylon.orbit2.Builder
-import com.babylon.orbit2.Context
 import com.babylon.orbit2.Operator
 import com.babylon.orbit2.Orbit2Dsl
 import com.babylon.orbit2.OrbitDslPlugins
+import com.babylon.orbit2.VolatileContext
 import io.reactivex.Completable
 
 internal class RxJava2Completable<S : Any, E : Any>(
     val registerIdling: Boolean,
-    val block: suspend Context<S, E>.() -> Completable
+    val block: suspend VolatileContext<S, E>.() -> Completable
 ) : Operator<S, E>
 
 /**
- * The maybe transformer flat maps incoming [Context] for every event into a [Completable] of
+ * The maybe transformer flat maps incoming [VolatileContext] for every event into a [Completable] of
  * another type.
  *
  * The transformer executes on an `IO` dispatcher by default.
@@ -40,7 +40,7 @@ internal class RxJava2Completable<S : Any, E : Any>(
 @Orbit2Dsl
 fun <S : Any, SE : Any, E : Any> Builder<S, SE, E>.transformRx2Completable(
     registerIdling: Boolean = true,
-    block: suspend Context<S, E>.() -> Completable
+    block: suspend VolatileContext<S, E>.() -> Completable
 ): Builder<S, SE, E> {
     OrbitDslPlugins.register(RxJava2DslPlugin)
     return Builder(stack + RxJava2Completable(registerIdling, block))
