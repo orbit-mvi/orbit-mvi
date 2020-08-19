@@ -24,7 +24,7 @@ import com.babylon.orbit2.VolatileContext
 import kotlinx.coroutines.Dispatchers
 
 internal class TransformSuspend<S : Any, E, E2>(
-    val registerIdling: Boolean,
+    override val registerIdling: Boolean,
     val block: suspend VolatileContext<S, E>.() -> E2
 ) : Operator<S, E2>
 

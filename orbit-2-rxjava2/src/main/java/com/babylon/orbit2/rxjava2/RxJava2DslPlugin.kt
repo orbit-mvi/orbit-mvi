@@ -19,6 +19,8 @@ package com.babylon.orbit2.rxjava2
 import com.babylon.orbit2.Operator
 import com.babylon.orbit2.OrbitDslPlugin
 import com.babylon.orbit2.VolatileContext
+import com.babylon.orbit2.idling.withIdling
+import com.babylon.orbit2.idling.withIdlingFlow
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.flowOn
@@ -49,45 +51,29 @@ object RxJava2DslPlugin : OrbitDslPlugin {
     ): Flow<Any?> {
         return when (operator) {
             is RxJava2Observable<*, *, *> -> flow.flatMapConcat {
-                if (operator.registerIdling) containerContext.settings.idlingRegistry.increment()
-
-                with(operator as RxJava2Observable<S, E, Any>) {
-                    createContext(it).block()
-                }.asFlow().flowOn(containerContext.backgroundDispatcher).also {
-                    if (operator.registerIdling) containerContext.settings.idlingRegistry.decrement()
+                containerContext.withIdlingFlow(operator as RxJava2Observable<S, E, Any>) {
+                    createContext(it).block().asFlow().flowOn(containerContext.backgroundDispatcher)
                 }
             }
             is RxJava2Single<*, *, *> -> flow.map {
-                if (operator.registerIdling) containerContext.settings.idlingRegistry.increment()
-
-                with(operator as RxJava2Single<S, E, Any>) {
+                containerContext.withIdling(operator as RxJava2Single<S, E, Any>) {
                     withContext(containerContext.backgroundDispatcher) {
                         createContext(it).block().await()
                     }
-                }.also {
-                    if (operator.registerIdling) containerContext.settings.idlingRegistry.decrement()
                 }
             }
             is RxJava2Maybe<*, *, *> -> flow.mapNotNull {
-                if (operator.registerIdling) containerContext.settings.idlingRegistry.increment()
-
-                with(operator as RxJava2Maybe<S, E, Any>) {
+                containerContext.withIdling(operator as RxJava2Maybe<S, E, Any>) {
                     withContext(containerContext.backgroundDispatcher) {
                         createContext(it).block().await()
                     }
-                }.also {
-                    if (operator.registerIdling) containerContext.settings.idlingRegistry.decrement()
                 }
             }
             is RxJava2Completable -> flow.onEach {
-                if (operator.registerIdling) containerContext.settings.idlingRegistry.increment()
-
-                with(operator) {
+                containerContext.withIdling(operator) {
                     withContext(containerContext.backgroundDispatcher) {
                         createContext(it).block().await()
                     }
-                }.also {
-                    if (operator.registerIdling) containerContext.settings.idlingRegistry.decrement()
                 }
             }
             else -> flow

@@ -16,18 +16,19 @@
 
 package com.babylon.orbit2
 
+import com.babylon.orbit2.idling.withIdling
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.withContext
 
-internal class Transform<S : Any, E, E2>(val registerIdling: Boolean, val block: VolatileContext<S, E>.() -> E2) :
+internal class Transform<S : Any, E, E2>(override val registerIdling: Boolean, val block: VolatileContext<S, E>.() -> E2) :
     Operator<S, E2>
 
-internal class SideEffect<S : Any, SE : Any, E>(val registerIdling: Boolean, val block: SideEffectContext<S, SE, E>.() -> Unit) :
+internal class SideEffect<S : Any, SE : Any, E>(override val registerIdling: Boolean, val block: SideEffectContext<S, SE, E>.() -> Unit) :
     Operator<S, E>
 
-internal class Reduce<S : Any, E>(val registerIdling: Boolean, val block: Context<S, E>.() -> Any) :
+internal class Reduce<S : Any, E>(override val registerIdling: Boolean, val block: Context<S, E>.() -> Any) :
     Operator<S, E>
 
 /**
@@ -101,20 +102,14 @@ object BaseDslPlugin : OrbitDslPlugin {
         @Suppress("UNCHECKED_CAST")
         return when (operator) {
             is Transform<*, *, *> -> flow.map {
-                if (operator.registerIdling) containerContext.settings.idlingRegistry.increment()
-
-                with(operator as Transform<S, E, Any>) {
+                containerContext.withIdling(operator as Transform<S, E, Any>) {
                     withContext(containerContext.backgroundDispatcher) {
                         createContext(it).block()
                     }
-                }.also {
-                    if (operator.registerIdling) containerContext.settings.idlingRegistry.decrement()
                 }
             }
             is SideEffect<*, *, *> -> flow.onEach {
-                if (operator.registerIdling) containerContext.settings.idlingRegistry.increment()
-
-                with(operator as SideEffect<S, SE, E>) {
+                containerContext.withIdling(operator as SideEffect<S, SE, E>) {
                     createContext(it).let { context ->
                         object : SideEffectContext<S, SE, E> {
                             override val state = context.state
@@ -122,19 +117,13 @@ object BaseDslPlugin : OrbitDslPlugin {
                             override fun post(event: SE) = containerContext.postSideEffect(event)
                         }
                     }.block()
-                }.also {
-                    if (operator.registerIdling) containerContext.settings.idlingRegistry.decrement()
                 }
             }
             is Reduce -> flow.onEach { event ->
-                if (operator.registerIdling) containerContext.settings.idlingRegistry.increment()
-
-                with(operator) {
+                containerContext.withIdling(operator) {
                     containerContext.setState.send(
                         createContext(event).block() as S
                     )
-                }.also {
-                    if (operator.registerIdling) containerContext.settings.idlingRegistry.decrement()
                 }
             }
             else -> flow

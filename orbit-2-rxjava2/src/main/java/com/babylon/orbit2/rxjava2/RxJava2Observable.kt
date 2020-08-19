@@ -24,7 +24,7 @@ import com.babylon.orbit2.VolatileContext
 import io.reactivex.Observable
 
 internal class RxJava2Observable<S : Any, E, E2 : Any>(
-    val registerIdling: Boolean,
+    override val registerIdling: Boolean,
     val block: VolatileContext<S, E>.() -> Observable<E2>
 ) : Operator<S, E>
 

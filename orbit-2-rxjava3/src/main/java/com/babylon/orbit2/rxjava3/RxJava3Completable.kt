@@ -24,6 +24,7 @@ import com.babylon.orbit2.VolatileContext
 import io.reactivex.rxjava3.core.Completable
 
 internal class RxJava3Completable<S : Any, E : Any>(
+    override val registerIdling: Boolean,
     val block: suspend VolatileContext<S, E>.() -> Completable
 ) : Operator<S, E>
 
@@ -33,16 +34,14 @@ internal class RxJava3Completable<S : Any, E : Any>(
  *
  * The transformer executes on an `IO` dispatcher by default.
  *
+ * @param registerIdling When true registers the calls idling state, default: true
  * @param block the lambda returning a new [Completable] given the current state and event
  */
 @Orbit2Dsl
 fun <S : Any, SE : Any, E : Any> Builder<S, SE, E>.transformRx3Completable(
+    registerIdling: Boolean = true,
     block: suspend VolatileContext<S, E>.() -> Completable
 ): Builder<S, SE, E> {
     OrbitDslPlugins.register(RxJava3DslPlugin)
-    return Builder(
-        stack + RxJava3Completable(
-            block
-        )
-    )
+    return Builder(stack + RxJava3Completable(registerIdling, block))
 }

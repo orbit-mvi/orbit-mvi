@@ -24,7 +24,7 @@ import com.babylon.orbit2.VolatileContext
 import io.reactivex.Completable
 
 internal class RxJava2Completable<S : Any, E : Any>(
-    val registerIdling: Boolean,
+    override val registerIdling: Boolean,
     val block: suspend VolatileContext<S, E>.() -> Completable
 ) : Operator<S, E>
 

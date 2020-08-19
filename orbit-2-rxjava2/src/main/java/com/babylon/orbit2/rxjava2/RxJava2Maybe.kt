@@ -24,7 +24,7 @@ import com.babylon.orbit2.VolatileContext
 import io.reactivex.Maybe
 
 internal class RxJava2Maybe<S : Any, E, E2 : Any>(
-    val registerIdling: Boolean,
+    override val registerIdling: Boolean,
     val block: suspend VolatileContext<S, E>.() -> Maybe<E2>
 ) : Operator<S, E>
 

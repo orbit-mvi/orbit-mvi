@@ -24,7 +24,7 @@ import com.babylon.orbit2.VolatileContext
 import io.reactivex.Single
 
 internal class RxJava2Single<S : Any, E, E2 : Any>(
-    val registerIdling: Boolean,
+    override val registerIdling: Boolean,
     val block: VolatileContext<S, E>.() -> Single<E2>
 ) : Operator<S, E>
 

@@ -25,7 +25,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 
 internal class TransformFlow<S : Any, E, E2>(
-    val registerIdling: Boolean,
+    override val registerIdling: Boolean,
     val block: suspend VolatileContext<S, E>.() -> Flow<E2>
 ) : Operator<S, E>
 
