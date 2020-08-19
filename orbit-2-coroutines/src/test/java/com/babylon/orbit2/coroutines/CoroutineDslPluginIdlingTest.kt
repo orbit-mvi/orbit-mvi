@@ -110,11 +110,8 @@ class CoroutineDslPluginIdlingTest {
             container.orbit {
                 transformFlow(registerIdling = true) {
                     flow<Int> {
-                        println("start")
                         mutex.unlock()
-                        println("release")
                         delay(100)
-                        println("end")
                     }
                 }
             }
@@ -189,12 +186,10 @@ class CoroutineDslPluginIdlingTest {
 
         override fun increment() {
             counter++
-            println("inc")
         }
 
         override fun decrement() {
             counter--
-            println("dec")
         }
 
         override fun close() = Unit
