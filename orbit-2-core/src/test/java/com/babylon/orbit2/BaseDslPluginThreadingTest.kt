@@ -24,7 +24,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.util.concurrent.CountDownLatch
 
-internal class BaseDslThreadingTest {
+internal class BaseDslPluginThreadingTest {
 
     companion object {
         const val ORBIT_THREAD_PREFIX = "orbit"

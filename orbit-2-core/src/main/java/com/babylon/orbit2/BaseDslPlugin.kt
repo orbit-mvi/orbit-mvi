@@ -16,18 +16,19 @@
 
 package com.babylon.orbit2
 
+import com.babylon.orbit2.idling.withIdling
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.withContext
 
-internal class Transform<S : Any, E, E2>(val block: VolatileContext<S, E>.() -> E2) :
+internal class Transform<S : Any, E, E2>(override val registerIdling: Boolean, val block: VolatileContext<S, E>.() -> E2) :
     Operator<S, E2>
 
-internal class SideEffect<S : Any, SE : Any, E>(val block: SideEffectContext<S, SE, E>.() -> Unit) :
+internal class SideEffect<S : Any, SE : Any, E>(override val registerIdling: Boolean, val block: SideEffectContext<S, SE, E>.() -> Unit) :
     Operator<S, E>
 
-internal class Reduce<S : Any, E>(val block: Context<S, E>.() -> Any) :
+internal class Reduce<S : Any, E>(override val registerIdling: Boolean, val block: Context<S, E>.() -> Any) :
     Operator<S, E>
 
 /**
@@ -35,15 +36,15 @@ internal class Reduce<S : Any, E>(val block: Context<S, E>.() -> Any) :
  *
  * The transformer executes on an `IO` dispatcher by default.
  *
+ * @param registerIdling When true tracks the block's idling state, default: true
  * @param block the lambda returning a new event given the current state and event
  */
 @Orbit2Dsl
-fun <S : Any, SE : Any, E, E2> Builder<S, SE, E>.transform(block: VolatileContext<S, E>.() -> E2): Builder<S, SE, E2> {
-    return Builder(
-        stack + Transform(
-            block
-        )
-    )
+fun <S : Any, SE : Any, E, E2> Builder<S, SE, E>.transform(
+    registerIdling: Boolean = true,
+    block: VolatileContext<S, E>.() -> E2
+): Builder<S, SE, E2> {
+    return Builder(stack + Transform(registerIdling, block))
 }
 
 /**
@@ -58,15 +59,15 @@ fun <S : Any, SE : Any, E, E2> Builder<S, SE, E>.transform(block: VolatileContex
  * Side effects are passthrough operators. This means that after applying
  * a side effect, the upstream event flows unmodified downstream.
  *
+ * @param registerIdling When true tracks the block's idling state, default: true
  * @param block the lambda executing side effects given the current state and event
  */
 @Orbit2Dsl
-fun <S : Any, SE : Any, E> Builder<S, SE, E>.sideEffect(block: SideEffectContext<S, SE, E>.() -> Unit): Builder<S, SE, E> {
-    return Builder(
-        stack + SideEffect(
-            block
-        )
-    )
+fun <S : Any, SE : Any, E> Builder<S, SE, E>.sideEffect(
+    registerIdling: Boolean = true,
+    block: SideEffectContext<S, SE, E>.() -> Unit
+): Builder<S, SE, E> {
+    return Builder(stack + SideEffect(registerIdling, block))
 }
 
 /**
@@ -75,15 +76,15 @@ fun <S : Any, SE : Any, E> Builder<S, SE, E>.sideEffect(block: SideEffectContext
  * Reducers are passthrough operators. This means that after applying
  * a reducer, the upstream event flows unmodified downstream.
  *
+ * @param registerIdling When true tracks the block's idling state, default: true
  * @param block the lambda reducing the current state and incoming event to produce a new state
  */
 @Orbit2Dsl
-fun <S : Any, SE : Any, E> Builder<S, SE, E>.reduce(block: Context<S, E>.() -> S): Builder<S, SE, E> {
-    return Builder(
-        stack + Reduce(
-            block
-        )
-    )
+fun <S : Any, SE : Any, E> Builder<S, SE, E>.reduce(
+    registerIdling: Boolean = true,
+    block: Context<S, E>.() -> S
+): Builder<S, SE, E> {
+    return Builder(stack + Reduce(registerIdling, block))
 }
 
 /**
@@ -103,26 +104,25 @@ object BaseDslPlugin : OrbitDslPlugin {
         @Suppress("UNCHECKED_CAST")
         return when (operator) {
             is Transform<*, *, *> -> flow.map {
-                with(operator as Transform<S, E, Any>) {
+                containerContext.withIdling(operator as Transform<S, E, Any>) {
                     withContext(containerContext.backgroundDispatcher) {
                         createContext(it).block()
                     }
                 }
             }
             is SideEffect<*, *, *> -> flow.onEach {
-                with(operator as SideEffect<S, SE, E>) {
+                containerContext.withIdling(operator as SideEffect<S, SE, E>) {
                     createContext(it).let { context ->
                         object : SideEffectContext<S, SE, E> {
                             override val state = context.state
                             override val event = context.event
                             override fun post(event: SE) = containerContext.postSideEffect(event)
                         }
-                    }
-                        .block()
+                    }.block()
                 }
             }
             is Reduce -> flow.onEach { event ->
-                with(operator) {
+                containerContext.withIdling(operator) {
                     containerContext.setState.send(
                         createContext(event).block() as S
                     )

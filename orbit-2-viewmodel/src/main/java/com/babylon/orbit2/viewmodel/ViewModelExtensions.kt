@@ -62,7 +62,7 @@ fun <STATE : Any, SIDE_EFFECT : Any> ViewModel.container(
 fun <STATE : Parcelable, SIDE_EFFECT : Any> ViewModel.container(
     initialState: STATE,
     savedStateHandle: SavedStateHandle,
-    settings: Settings = Settings(),
+    settings: Settings = Settings(idlingRegistry = AndroidIdlingResource()),
     onCreate: ((state: STATE) -> Unit)? = null
 ): Container<STATE, SIDE_EFFECT> {
     val savedState: STATE? = savedStateHandle[SAVED_STATE_KEY]

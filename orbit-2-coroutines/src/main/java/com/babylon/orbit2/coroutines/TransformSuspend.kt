@@ -24,6 +24,7 @@ import com.babylon.orbit2.VolatileContext
 import kotlinx.coroutines.Dispatchers
 
 internal class TransformSuspend<S : Any, E, E2>(
+    override val registerIdling: Boolean,
     val block: suspend VolatileContext<S, E>.() -> E2
 ) : Operator<S, E2>
 
@@ -33,14 +34,14 @@ internal class TransformSuspend<S : Any, E, E2>(
  *
  * The transformer executes on [Dispatchers.IO] by default.
  *
+ * @param registerIdling When true tracks the block's idling state, default: true
  * @param block the suspending lambda returning a new event given the current state and event
  */
 @Orbit2Dsl
-fun <S : Any, SE : Any, E, E2> Builder<S, SE, E>.transformSuspend(block: suspend VolatileContext<S, E>.() -> E2): Builder<S, SE, E2> {
+fun <S : Any, SE : Any, E, E2> Builder<S, SE, E>.transformSuspend(
+    registerIdling: Boolean = true,
+    block: suspend VolatileContext<S, E>.() -> E2
+): Builder<S, SE, E2> {
     OrbitDslPlugins.register(CoroutineDslPlugin)
-    return Builder(
-        stack + TransformSuspend(
-            block
-        )
-    )
+    return Builder(stack + TransformSuspend(registerIdling, block))
 }

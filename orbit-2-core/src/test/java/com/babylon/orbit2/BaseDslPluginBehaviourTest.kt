@@ -21,7 +21,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import org.junit.jupiter.api.Test
 
-internal class BaseDslBehaviourTest {
+internal class BaseDslPluginBehaviourTest {
 
     private val fixture = kotlinFixture()
     private val initialState = fixture<TestState>()

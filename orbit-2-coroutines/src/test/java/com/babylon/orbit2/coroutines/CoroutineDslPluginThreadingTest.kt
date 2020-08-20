@@ -31,7 +31,7 @@ import kotlinx.coroutines.newSingleThreadContext
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-internal class CoroutineDslPluginDslThreadingTest {
+internal class CoroutineDslPluginThreadingTest {
 
     companion object {
         const val BACKGROUND_THREAD_PREFIX = "IO"

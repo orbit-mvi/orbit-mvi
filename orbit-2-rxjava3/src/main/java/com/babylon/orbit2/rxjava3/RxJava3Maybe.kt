@@ -24,7 +24,8 @@ import com.babylon.orbit2.VolatileContext
 import io.reactivex.rxjava3.core.Maybe
 
 internal class RxJava3Maybe<S : Any, E, E2 : Any>(
-    val block: suspend VolatileContext<S, E>.() -> Maybe<E2>
+    override val registerIdling: Boolean,
+    val block: VolatileContext<S, E>.() -> Maybe<E2>
 ) : Operator<S, E>
 
 /**
@@ -33,16 +34,14 @@ internal class RxJava3Maybe<S : Any, E, E2 : Any>(
  *
  * The transformer executes on an `IO` dispatcher by default.
  *
+ * @param registerIdling When true tracks the block's idling state, default: true
  * @param block the lambda returning a new [Maybe] given the current state and event
  */
 @Orbit2Dsl
 fun <S : Any, SE : Any, E : Any, E2 : Any> Builder<S, SE, E>.transformRx3Maybe(
-    block: suspend VolatileContext<S, E>.() -> Maybe<E2>
+    registerIdling: Boolean = true,
+    block: VolatileContext<S, E>.() -> Maybe<E2>
 ): Builder<S, SE, E2> {
     OrbitDslPlugins.register(RxJava3DslPlugin)
-    return Builder(
-        stack + RxJava3Maybe(
-            block
-        )
-    )
+    return Builder(stack + RxJava3Maybe(registerIdling, block))
 }

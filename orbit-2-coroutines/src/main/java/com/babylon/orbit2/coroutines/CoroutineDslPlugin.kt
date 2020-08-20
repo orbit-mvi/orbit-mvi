@@ -19,6 +19,8 @@ package com.babylon.orbit2.coroutines
 import com.babylon.orbit2.Operator
 import com.babylon.orbit2.OrbitDslPlugin
 import com.babylon.orbit2.VolatileContext
+import com.babylon.orbit2.idling.withIdling
+import com.babylon.orbit2.idling.withIdlingFlow
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.flowOn
@@ -42,15 +44,14 @@ object CoroutineDslPlugin : OrbitDslPlugin {
     ): Flow<Any?> {
         return when (operator) {
             is TransformSuspend<*, *, *> -> flow.map {
-                @Suppress("UNCHECKED_CAST")
-                with(operator as TransformSuspend<S, E, Any>) {
+                containerContext.withIdling(operator as TransformSuspend<S, E, Any>) {
                     withContext(containerContext.backgroundDispatcher) {
                         createContext(it).block()
                     }
                 }
             }
             is TransformFlow<*, *, *> -> flow.flatMapConcat {
-                with(operator as TransformFlow<S, E, Any>) {
+                containerContext.withIdlingFlow(operator as TransformFlow<S, E, Any>) {
                     createContext(it).block().flowOn(containerContext.backgroundDispatcher)
                 }
             }

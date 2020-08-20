@@ -19,6 +19,8 @@ package com.babylon.orbit2.rxjava1
 import com.babylon.orbit2.Operator
 import com.babylon.orbit2.OrbitDslPlugin
 import com.babylon.orbit2.VolatileContext
+import com.babylon.orbit2.idling.withIdling
+import com.babylon.orbit2.idling.withIdlingFlow
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.channels.sendBlocking
 import kotlinx.coroutines.flow.Flow
@@ -57,19 +59,19 @@ object RxJava1DslPlugin : OrbitDslPlugin {
     ): Flow<Any?> {
         return when (operator) {
             is RxJava1Observable<*, *, *> -> flow.flatMapConcat {
-                with(operator as RxJava1Observable<S, E, Any?>) {
-                    createContext(it).block()
-                }.asFlow().flowOn(containerContext.backgroundDispatcher)
+                containerContext.withIdlingFlow(operator as RxJava1Observable<S, E, Any?>) {
+                    createContext(it).block().asFlow().flowOn(containerContext.backgroundDispatcher)
+                }
             }
             is RxJava1Single<*, *, *> -> flow.map {
-                with(operator as RxJava1Single<S, E, Any?>) {
+                containerContext.withIdling(operator as RxJava1Single<S, E, Any?>) {
                     withContext(containerContext.backgroundDispatcher) {
                         createContext(it).block().await()
                     }
                 }
             }
             is RxJava1Completable -> flow.onEach {
-                with(operator) {
+                containerContext.withIdling(operator) {
                     withContext(containerContext.backgroundDispatcher) {
                         createContext(it).block().suspendAwait()
                     }

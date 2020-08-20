@@ -21,6 +21,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.channels.produce
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flowOf
@@ -33,8 +35,8 @@ import kotlinx.coroutines.sync.withLock
 @Suppress("EXPERIMENTAL_API_USAGE")
 open class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
     initialState: STATE,
-    settings: Container.Settings,
-    private val orbitDispatcher: CoroutineDispatcher = DEFAULT_DISPATCHER,
+    private val settings: Container.Settings,
+    orbitDispatcher: CoroutineDispatcher = DEFAULT_DISPATCHER,
     backgroundDispatcher: CoroutineDispatcher = Dispatchers.IO,
     parentScope: CoroutineScope
 ) : Container<STATE, SIDE_EFFECT> {
@@ -52,8 +54,17 @@ open class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
                     sideEffectChannel.send(event)
                 }
             }
-        }
+        },
+        settings = settings
     )
+
+    init {
+        scope.produce<Unit> {
+            awaitClose {
+                settings.idlingRegistry.close()
+            }
+        }
+    }
 
     override val currentState: STATE
         get() = stateChannel.value

@@ -24,6 +24,7 @@ import com.babylon.orbit2.VolatileContext
 import io.reactivex.rxjava3.core.Single
 
 internal class RxJava3Single<S : Any, E, E2 : Any>(
+    override val registerIdling: Boolean,
     val block: VolatileContext<S, E>.() -> Single<E2>
 ) : Operator<S, E>
 
@@ -33,16 +34,14 @@ internal class RxJava3Single<S : Any, E, E2 : Any>(
  *
  * The transformer executes on an `IO` dispatcher by default.
  *
+ * @param registerIdling When true tracks the block's idling state, default: true
  * @param block the lambda returning a new [Single] given the current state and event
  */
 @Orbit2Dsl
 fun <S : Any, SE : Any, E : Any, E2 : Any> Builder<S, SE, E>.transformRx3Single(
+    registerIdling: Boolean = true,
     block: VolatileContext<S, E>.() -> Single<E2>
 ): Builder<S, SE, E2> {
     OrbitDslPlugins.register(RxJava3DslPlugin)
-    return Builder(
-        stack + RxJava3Single(
-            block
-        )
-    )
+    return Builder(stack + RxJava3Single(registerIdling, block))
 }
