@@ -12,28 +12,38 @@
 If you do not yet have an account with the Kotlinlang slack workspace,
 [sign up here](https://slack.kotlinlang.org).
 
+If you're looking for the original Orbit library,
+[it's available here.](https://github.com/babylonhealth/orbit-mvi/tree/orbit/main)
+
 ## Overview
 
-Orbit is a simple scaffolding you can build a Redux/MVI-like architecture
+Orbit 2 is a simple scaffolding you can build a Redux/MVI-like architecture
 around.
 
-It runs on top of coroutines but is built to be framework agnostic when it comes
-to usage. This helps incorporating it into legacy code bases. For example, it
-can support both RxJava 2 and coroutines (even on the same screen!) if you are
-in the process of migrating from one to the other.
+In Orbit 2 we have taken the best features of Orbit 1 and rewritten the rest
+from scratch.
 
-This latest project is Orbit 2 which we have recently [rewritten from scratch
-based on Orbit 1.](#a-bit-of-history) Be advised that we have not tested it in
-production yet. However, we have heavily unit tested it based on our previous
-Orbit 1 requirements and experience. We would suggest using Orbit 2 over Orbit 1
-for new and existing projects as we are actively working on it.
+### Powerful and flexible design 🏋️‍♀️ 🤸‍♂️
 
-If you are risk-averse, we will continue to support Orbit 1 with
-necessary fixes for some time as we use it in our projects.
+- Integrates best practices from our 2+ years of experience with MVI
+- Powered by coroutines
+- Easy to use, type-safe, extensible API
 
-[Orbit 1 is available here.](https://github.com/babylonhealth/orbit-mvi/tree/orbit/main)
+### Works with any async/stream framework 🔀
 
-The readme below covers only Orbit 2.
+- Coroutine, RxJava (1 2 & 3!) and LiveData operator support
+
+### Orbit ❤️ Android
+
+- Subscribe to state and side effects through LiveData
+- ViewModel support, along with SavedState!
+
+### Testing 🤖
+
+- Unit test framework designed in step with the framework
+- Built-in espresso idling resource support
+
+And more!...
 
 ## Getting started
 
