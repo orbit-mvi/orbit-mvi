@@ -134,21 +134,15 @@ jobs:
           key: ${{ runner.os }}-gradlewrapper
 
       - name: Build
-        run: ./gradlew assemble
+        run: ./gradlew assembleRelease
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
         with:
           name: upload-artifacts
           path: |
-            "orbit-2-core/build/libs/**"
-            "orbit-2-coroutines/build/libs/**"
-            "orbit-2-livedata/build/outputs/aar/**"
-            "orbit-2-rxjava1/build/libs/**"
-            "orbit-2-rxjava2/build/libs/**"
-            "orbit-2-rxjava3/build/libs/**"
-            "orbit-2-test/build/libs/**"
-            "orbit-2-viewmodel/build/outputs/aar/**"
+            orbit-*/build/libs/*.jar
+            orbit-*/build/outputs/aar/*.aar
 
   upload:
     needs: [static-checks, lint, unit-tests, build]
