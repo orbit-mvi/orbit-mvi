@@ -16,6 +16,7 @@
 
 package com.babylon.orbit2
 
+import kotlinx.coroutines.delay
 import java.io.Closeable
 
 /**
@@ -48,6 +49,22 @@ class TestStreamObserver<T>(stream: Stream<T>) {
                 break
             }
             Thread.sleep(AWAIT_TIMEOUT_MS)
+        }
+    }
+
+    /**
+     * Awaits until the specified count of elements has been received or the timeout is hit.
+     *
+     * @param count The awaited element count.
+     * @param timeout How long to wait for in milliseconds
+     */
+    suspend fun awaitCountSuspending(count: Int, timeout: Long = 5000L) {
+        val start = System.currentTimeMillis()
+        while (values.count() < count) {
+            if (System.currentTimeMillis() - start > timeout) {
+                break
+            }
+            delay(AWAIT_TIMEOUT_MS)
         }
     }
 

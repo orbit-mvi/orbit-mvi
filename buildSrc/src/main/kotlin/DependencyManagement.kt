@@ -51,6 +51,8 @@ object Versions {
 object ProjectDependencies {
     // Kotlin
     const val kotlinCoroutines = "org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versions.coroutines}"
+    const val kotlinCoroutinesTest = "org.jetbrains.kotlinx:kotlinx-coroutines-test:${Versions.coroutines}"
+    const val kotlinCoroutinesAndroid = "org.jetbrains.kotlinx:kotlinx-coroutines-android:${Versions.coroutines}"
     const val kotlinCoroutinesRx2 = "org.jetbrains.kotlinx:kotlinx-coroutines-rx2:${Versions.coroutines}"
     const val kotlinCoroutinesRx3 = "org.jetbrains.kotlinx:kotlinx-coroutines-rx3:${Versions.coroutines}"
     const val kotlinTest = "org.jetbrains.kotlin:kotlin-test:${Versions.kotlin}"
@@ -60,6 +62,7 @@ object ProjectDependencies {
     const val androidxLifecycleComponents = "androidx.lifecycle:lifecycle-extensions:${Versions.androidxLifecycles}"
     const val androidxLifecycleSavedState = "androidx.lifecycle:lifecycle-viewmodel-savedstate:${Versions.androidxLifecycles}"
     const val androidxLifecycleKtx = "androidx.lifecycle:lifecycle-viewmodel-ktx:${Versions.androidxLifecycles}"
+    const val androidxLiveDataKtx = "androidx.lifecycle:lifecycle-livedata-ktx:${Versions.androidxLifecycles}"
     const val androidxEspressoIdlingResource = "androidx.test.espresso:espresso-idling-resource:${Versions.androidxEspresso}"
     const val androidxEspressoCore = "androidx.test.espresso:espresso-core:${Versions.androidxEspresso}"
 
@@ -78,10 +81,10 @@ object ProjectDependencies {
     const val mockitoKotlin = "com.nhaarman.mockitokotlin2:mockito-kotlin:${Versions.mockitoKotlin}"
     const val mockitoInline = "org.mockito:mockito-inline:${Versions.mockito}"
     const val kotlinFixture = "com.appmattus.fixture:fixture:${Versions.kotlinFixture}"
-    const val robolectric = "org.robolectric:robolectric:${Versions.robolectric}"
     const val junitJupiterEngine = "org.junit.jupiter:junit-jupiter-engine:${Versions.junitRuntime}"
     const val junitJupiterApi = "org.junit.jupiter:junit-jupiter-api:${Versions.junitRuntime}"
     const val junitJupiterParams = "org.junit.jupiter:junit-jupiter-params:${Versions.junitRuntime}"
+    const val robolectric = "org.robolectric:robolectric:${Versions.robolectric}"
 }
 
 object PluginDependencies {

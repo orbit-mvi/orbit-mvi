@@ -326,6 +326,30 @@ internal class SideEffectLiveDataPluginTest {
         assertThat(testSideEffectObserver2.values).isEmpty()
     }
 
+    @ParameterizedTest(name = "Caching is {0}")
+    @ArgumentsSource(MulticastTestCases::class)
+    fun `side effects are not conflated`(
+        enabled: Boolean?
+    ) {
+        val action = fixture<Int>()
+        val action2 = fixture<Int>()
+        val action3 = fixture<Int>()
+        val middleware = Middleware(enabled)
+        val mockLifecycleOwner = MockLifecycleOwner()
+        mockLifecycleOwner.dispatchEvent(Lifecycle.Event.ON_CREATE)
+        mockLifecycleOwner.dispatchEvent(Lifecycle.Event.ON_START)
+
+        val testSideEffectObserver = middleware.container.sideEffect.test(mockLifecycleOwner)
+
+        middleware.someFlow(action)
+        middleware.someFlow(action2)
+        middleware.someFlow(action3)
+
+        testSideEffectObserver.awaitCount(3)
+
+        assertThat(testSideEffectObserver.values).containsExactly(action, action2, action3)
+    }
+
     private class Middleware(caching: Boolean? = null) : ContainerHost<Unit, Int> {
         override val container: Container<Unit, Int> =
             with(CoroutineScope(Dispatchers.Unconfined)) {

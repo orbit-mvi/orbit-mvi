@@ -31,9 +31,9 @@ import org.junit.jupiter.api.extension.ExtendWith
 internal class StateConnectionLiveDataPluginTest {
 
     private val fixture = kotlinFixture()
-    private val mockLifecycleOwner = MockLifecycleOwner().also {
-        it.dispatchEvent(Lifecycle.Event.ON_CREATE)
-        it.dispatchEvent(Lifecycle.Event.ON_START)
+    private val mockLifecycleOwner = MockLifecycleOwner().apply {
+        dispatchEvent(Lifecycle.Event.ON_CREATE)
+        dispatchEvent(Lifecycle.Event.ON_START)
     }
 
     @Test

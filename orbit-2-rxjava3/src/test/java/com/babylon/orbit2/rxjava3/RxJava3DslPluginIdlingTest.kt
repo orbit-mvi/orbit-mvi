@@ -33,7 +33,10 @@ class RxJava3DslPluginIdlingTest {
 
     @Test
     fun `idle when nothing running`() {
-        scope.createContainer()
+        runBlocking {
+            scope.createContainer()
+            delay(50)
+        }
 
         assertTrue(testIdlingResource.isIdle())
     }

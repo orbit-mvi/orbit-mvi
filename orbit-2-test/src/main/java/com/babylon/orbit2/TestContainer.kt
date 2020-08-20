@@ -18,17 +18,20 @@ package com.babylon.orbit2
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.newSingleThreadContext
 import kotlinx.coroutines.runBlocking
 import java.util.concurrent.atomic.AtomicBoolean
 
 class TestContainer<STATE : Any, SIDE_EFFECT : Any>(
     initialState: STATE,
-    private val isolateFlow: Boolean
+    private val isolateFlow: Boolean,
+    private val blocking: Boolean
 ) : RealContainer<STATE, SIDE_EFFECT>(
     initialState = initialState,
     settings = Container.Settings(),
     parentScope = CoroutineScope(Dispatchers.Unconfined),
-    orbitDispatcher = Dispatchers.Unconfined,
+    orbitDispatcher =
+    @Suppress("EXPERIMENTAL_API_USAGE") if (blocking) Dispatchers.Unconfined else newSingleThreadContext("orbit"),
     backgroundDispatcher = Dispatchers.Unconfined
 ) {
     private val dispatched = AtomicBoolean(false)
@@ -37,8 +40,12 @@ class TestContainer<STATE : Any, SIDE_EFFECT : Any>(
         init: Builder<STATE, SIDE_EFFECT, Unit>.() -> Builder<STATE, SIDE_EFFECT, *>
     ) {
         if (!isolateFlow || dispatched.compareAndSet(false, true)) {
-            runBlocking {
-                collectFlow(init)
+            if (blocking) {
+                runBlocking {
+                    collectFlow(init)
+                }
+            } else {
+                super.orbit(init)
             }
         }
     }

@@ -19,6 +19,10 @@ package com.babylon.orbit2
 import com.nhaarman.mockitokotlin2.spy
 import com.nhaarman.mockitokotlin2.times
 import com.nhaarman.mockitokotlin2.verify
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.joinAll
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import org.mockito.Mockito
 import java.util.WeakHashMap
 import kotlin.test.assertEquals
@@ -37,7 +41,8 @@ import kotlin.test.assertEquals
 inline fun <STATE : Any, SIDE_EFFECT : Any, reified T : ContainerHost<STATE, SIDE_EFFECT>> T.test(
     initialState: STATE,
     isolateFlow: Boolean = true,
-    runOnCreate: Boolean = false
+    runOnCreate: Boolean = false,
+    blocking: Boolean = true
 ): T {
 
     val onCreate = container.findOnCreate()
@@ -45,7 +50,8 @@ inline fun <STATE : Any, SIDE_EFFECT : Any, reified T : ContainerHost<STATE, SID
     @Suppress("EXPERIMENTAL_API_USAGE")
     val testContainer = TestContainer<STATE, SIDE_EFFECT>(
         initialState,
-        isolateFlow
+        isolateFlow,
+        blocking
     )
 
     this.javaClass.declaredFields.firstOrNull { it.name == "container" }?.apply {
@@ -85,6 +91,7 @@ fun <STATE : Any, SIDE_EFFECT : Any> Container<STATE, SIDE_EFFECT>.findOnCreate(
  * @param block The block containing assertions for your [ContainerHost].
  */
 fun <STATE : Any, SIDE_EFFECT : Any, T : ContainerHost<STATE, SIDE_EFFECT>> T.assert(
+    timeoutMillis: Long = 5000L,
     block: OrbitVerification<T, STATE, SIDE_EFFECT>.() -> Unit
 ) {
     val mockingDetails = Mockito.mockingDetails(this)
@@ -99,6 +106,17 @@ fun <STATE : Any, SIDE_EFFECT : Any, T : ContainerHost<STATE, SIDE_EFFECT>> T.as
     @Suppress("UNCHECKED_CAST")
     val testFixtures =
         TestHarness.FIXTURES[this] as TestFixtures<STATE, SIDE_EFFECT>
+
+    runBlocking {
+        joinAll(
+            launch(Dispatchers.IO) {
+                testFixtures.stateObserver.awaitCountSuspending(verification.expectedStateChanges.size + 1, timeoutMillis)
+            },
+            launch(Dispatchers.IO) {
+                testFixtures.sideEffectObserver.awaitCountSuspending(verification.expectedSideEffects.size, timeoutMillis)
+            }
+        )
+    }
 
     // sanity check the initial state
     assertEquals(

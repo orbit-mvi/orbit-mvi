@@ -25,7 +25,12 @@ import com.babylon.orbit2.reduce
 import com.babylon.orbit2.test
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.channels.sendBlocking
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.consumeAsFlow
+import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.onEach
 import org.junit.jupiter.api.BeforeEach
@@ -71,9 +76,32 @@ internal class CoroutineDslPluginBehaviourTest {
         }
     }
 
+    @Test
+    fun `hot flow transformation flatmaps`() {
+        val action = fixture<Int>()
+        val channel = Channel<Int>(100)
+        val middleware = Middleware(channel.consumeAsFlow()).test(initialState = initialState, blocking = false)
+
+        middleware.hotFlow()
+
+        channel.sendBlocking(action)
+        channel.sendBlocking(action + 1)
+        channel.sendBlocking(action + 2)
+        channel.sendBlocking(action + 3)
+
+        middleware.assert {
+            states(
+                { TestState(action) },
+                { TestState(action + 1) },
+                { TestState(action + 2) },
+                { TestState(action + 3) }
+            )
+        }
+    }
+
     private data class TestState(val id: Int)
 
-    private class Middleware : ContainerHost<TestState, String> {
+    private class Middleware(val hotFlow: Flow<Int> = emptyFlow()) : ContainerHost<TestState, String> {
 
         override val container = CoroutineScope(Dispatchers.Unconfined).container<TestState, String>(TestState(42))
 
@@ -91,6 +119,15 @@ internal class CoroutineDslPluginBehaviourTest {
             transformFlow {
                 flowOf(action, action + 1, action + 2, action + 3)
                     .onEach { delay(50) }
+            }
+                .reduce {
+                    state.copy(id = event)
+                }
+        }
+
+        fun hotFlow() = orbit {
+            transformFlow {
+                hotFlow
             }
                 .reduce {
                     state.copy(id = event)
