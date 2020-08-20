@@ -134,7 +134,7 @@ jobs:
           key: ${{ runner.os }}-gradlewrapper
 
       - name: Build
-        run: ./gradlew assembleRelease
+        run: ./gradlew clean assemble sourcesJar -xassembleDebug
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
