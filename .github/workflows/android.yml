@@ -141,8 +141,14 @@ jobs:
         with:
           name: upload-artifacts
           path: |
-            "orbit-**/build/outputs/aar/**"
-            "orbit-**/build/libs/**"
+            "orbit-2-core/build/libs/**"
+            "orbit-2-coroutines/build/libs/**"
+            "orbit-2-livedata/build/outputs/aar/**"
+            "orbit-2-rxjava1/build/libs/**"
+            "orbit-2-rxjava2/build/libs/**"
+            "orbit-2-rxjava3/build/libs/**"
+            "orbit-2-test/build/libs/**"
+            "orbit-2-viewmodel/build/outputs/aar/**"
 
   upload:
     needs: [static-checks, lint, unit-tests, build]
