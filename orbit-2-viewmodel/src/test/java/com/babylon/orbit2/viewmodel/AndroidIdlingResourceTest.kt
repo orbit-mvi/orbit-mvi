@@ -13,7 +13,6 @@ import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withTimeout
-import kotlinx.coroutines.yield
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -298,7 +297,7 @@ class AndroidIdlingResourceTest {
 
             scope.cancel()
 
-            yield()
+            delay(50)
 
             assertEquals(0, IdlingRegistry.getInstance().resources.size)
         }

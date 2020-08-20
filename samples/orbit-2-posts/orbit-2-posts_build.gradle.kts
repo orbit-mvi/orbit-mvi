@@ -51,7 +51,7 @@ dependencies {
 
     // UI
     implementation("androidx.constraintlayout:constraintlayout:1.1.3")
-    implementation("com.google.android.material:material:1.1.0")
+    implementation("com.google.android.material:material:1.2.0")
     implementation("com.github.bumptech.glide:glide:4.11.0")
     implementation("com.xwray:groupie:2.8.1")
     implementation("com.xwray:groupie-kotlin-android-extensions:2.8.1")
@@ -59,10 +59,12 @@ dependencies {
     implementation("androidx.navigation:navigation-ui-ktx:2.3.0")
 
     // Networking
-    implementation("com.squareup.okhttp3:okhttp:4.8.0")
+    implementation("com.squareup.okhttp3:okhttp:4.8.1")
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-jackson:2.9.0")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.11.1")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.11.2")
+    // reflect set to override version from jackson
+    implementation(kotlin("reflect"))
 
     // Dependency Injection
     implementation("org.koin:koin-androidx-viewmodel:2.1.6")
@@ -75,7 +77,7 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-params:5.6.2")
     testImplementation("junit:junit:4.13")
     testImplementation("com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0")
-    testImplementation("org.mockito:mockito-inline:3.4.6")
-    testImplementation("com.appmattus.fixture:fixture:0.9.4")
+    testImplementation("org.mockito:mockito-inline:3.5.2")
+    testImplementation("com.appmattus.fixture:fixture:0.9.5")
     testImplementation("com.squareup.retrofit2:retrofit-mock:2.9.0")
 }

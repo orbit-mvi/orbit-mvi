@@ -53,7 +53,7 @@ dependencies {
     implementation(project(":orbit-2-viewmodel"))
 
     implementation("androidx.constraintlayout:constraintlayout:1.1.3")
-    implementation("com.google.android.material:material:1.1.0")
+    implementation("com.google.android.material:material:1.2.0")
     implementation("org.koin:koin-androidx-viewmodel:2.1.6")
 
     // Testing
@@ -63,5 +63,5 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.6.2")
     testImplementation("org.junit.jupiter:junit-jupiter-params:5.6.2")
     testImplementation("junit:junit:4.13")
-    testImplementation("com.appmattus.fixture:fixture:0.9.4")
+    testImplementation("com.appmattus.fixture:fixture:0.9.5")
 }
