@@ -10,15 +10,14 @@ This software uses the following open source works:
 
 - [Kotlin](https://github.com/JetBrains/kotlin)
 - [Android](https://developer.android.com)
-- [Markdown Lint plugin](https://github.com/appmattus/markdown-lint)
-- [Gradle Versions plugin](https://github.com/ben-manes/gradle-versions-plugin)
-- [Bintray plugin](https://github.com/bintray/gradle-bintray-plugin)
-- [Detekt](https://github.com/detekt/detekt)
-- [RxJava](https://github.com/ReactiveX/RxJava)
+- [Orbit MVI](https://github.com/babylonhealth/orbit-mvi)
+- [Koin](https://insert-koin.io/)
+- [OkHttp](https://square.github.io/okhttp/)
+- [Retrofit](https://square.github.io/retrofit/)
+- [Jackson](https://github.com/FasterXML/jackson)
+- [Glide](https://bumptech.github.io/glide/)
+- [Groupie](https://github.com/lisawray/groupie)
 - [JUnit](https://junit.org/)
-- [AssertJ](https://assertj.github.io/doc/)
 - [Mockito](https://site.mockito.org)
 - [Mockito-Kotlin](https://github.com/nhaarman/mockito-kotlin)
 - [Kotlin Fixture](https://github.com/appmattus/kotlinfixture/)
-
-See individual sample projects for their notices.
