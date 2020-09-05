@@ -45,11 +45,13 @@ class AndroidIdlingResource : IdlingResource {
 
     override fun decrement() {
         if (counter.decrementAndGet() == 0) {
-            job.getAndSet(GlobalScope.launch {
-                delay(MILLIS_BEFORE_IDLE)
-                idle.set(true)
-                resourceCallback?.onTransitionToIdle()
-            })?.cancel()
+            job.getAndSet(
+                GlobalScope.launch {
+                    delay(MILLIS_BEFORE_IDLE)
+                    idle.set(true)
+                    resourceCallback?.onTransitionToIdle()
+                }
+            )?.cancel()
         }
     }
 

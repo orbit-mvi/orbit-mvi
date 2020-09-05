@@ -62,13 +62,15 @@ class ShadowScrollBehavior(context: Context, attrs: AttributeSet) : AppBarLayout
 
     private fun addScrollListener(child: RecyclerView, dependency: AppBarLayout) {
         child.clearOnScrollListeners()
-        child.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+        child.addOnScrollListener(
+            object : RecyclerView.OnScrollListener() {
 
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                super.onScrolled(recyclerView, dx, dy)
-                setElevation(recyclerView, dependency)
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                    super.onScrolled(recyclerView, dx, dy)
+                    setElevation(recyclerView, dependency)
+                }
             }
-        })
+        )
     }
 
     private fun setElevation(view: View, appBarLayout: AppBarLayout) {

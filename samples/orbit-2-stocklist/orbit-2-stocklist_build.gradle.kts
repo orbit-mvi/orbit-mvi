@@ -70,8 +70,8 @@ dependencies {
     implementation(project(":orbit-2-viewmodel"))
     implementation(project(":orbit-2-coroutines"))
 
-    implementation("androidx.constraintlayout:constraintlayout:1.1.3")
-    implementation("com.google.android.material:material:1.2.0")
+    implementation("androidx.constraintlayout:constraintlayout:2.0.1")
+    implementation("com.google.android.material:material:1.2.1")
     implementation("androidx.navigation:navigation-fragment-ktx:2.3.0")
     implementation("androidx.navigation:navigation-ui-ktx:2.3.0")
     implementation("com.lightstreamer:ls-android-client:4.2.1")

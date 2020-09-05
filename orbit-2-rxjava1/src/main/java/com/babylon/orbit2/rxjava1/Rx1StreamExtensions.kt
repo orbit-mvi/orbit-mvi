@@ -31,13 +31,15 @@ fun <T> Stream<T>.asRx1Observable() = Observable.unsafeCreate<T> { emitter ->
             emitter.onNext(it)
         }
     }
-    emitter.add(object : Subscription {
-        override fun isUnsubscribed() = unsubscribed.get()
+    emitter.add(
+        object : Subscription {
+            override fun isUnsubscribed() = unsubscribed.get()
 
-        override fun unsubscribe() {
-            unsubscribed.set(true)
-            closeable.close()
-            emitter.onCompleted()
+            override fun unsubscribe() {
+                unsubscribed.set(true)
+                closeable.close()
+                emitter.onCompleted()
+            }
         }
-    })
+    )
 }

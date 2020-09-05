@@ -63,19 +63,25 @@ class ListFragment : Fragment() {
             addItemDecoration(DividerItemDecoration(context, LinearLayoutManager.VERTICAL))
         }
 
-        listViewModel.container.state.observe(viewLifecycleOwner, Observer {
-            val items = it.stocks.map { stock ->
-                StockItem(stock, listViewModel)
-            }
+        listViewModel.container.state.observe(
+            viewLifecycleOwner,
+            Observer {
+                val items = it.stocks.map { stock ->
+                    StockItem(stock, listViewModel)
+                }
 
-            groupAdapter.update(items)
-        })
-
-        listViewModel.container.sideEffect.observe(viewLifecycleOwner, Observer {
-            when (it) {
-                is ListSideEffect.NavigateToDetail ->
-                    findNavController().navigate(ListFragmentDirections.actionListFragmentToDetailFragment(it.itemName))
+                groupAdapter.update(items)
             }
-        })
+        )
+
+        listViewModel.container.sideEffect.observe(
+            viewLifecycleOwner,
+            Observer {
+                when (it) {
+                    is ListSideEffect.NavigateToDetail ->
+                        findNavController().navigate(ListFragmentDirections.actionListFragmentToDetailFragment(it.itemName))
+                }
+            }
+        )
     }
 }

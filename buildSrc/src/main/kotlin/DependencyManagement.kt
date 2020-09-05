@@ -16,10 +16,10 @@
 
 object Versions {
 
-    const val gradleVersionsPlugin = "0.29.0"
+    const val gradleVersionsPlugin = "0.30.0"
     const val gradleAndroidPlugin = "4.0.1"
     const val markdownLintPlugin = "0.6.0"
-    const val detektPlugin = "1.11.2"
+    const val detektPlugin = "1.12.0"
     const val bintray = "1.8.5"
     const val safeargs = "2.3.0"
 
@@ -29,7 +29,7 @@ object Versions {
     const val androidxLifecycles = "2.2.0"
     const val androidxAnnotation = "1.1.0"
     const val androidxTesting = "2.1.0"
-    const val androidxEspresso = "3.2.0"
+    const val androidxEspresso = "3.3.0"
 
     const val rxJava1 = "1.3.8"
     const val rxJava2 = "2.2.19"
@@ -39,13 +39,13 @@ object Versions {
 
     // Testing
     const val junitPlatform = "1.6.2"
-    const val assertJ = "3.16.1"
+    const val assertJ = "3.17.1"
     const val mockitoKotlin = "2.2.0"
-    const val mockito = "3.5.2"
+    const val mockito = "3.5.10"
     const val junitRuntime = "5.6.2"
     const val kotlinFixture = "0.9.5"
     const val jacoco = "0.8.5"
-    const val robolectric = "4.3.1"
+    const val robolectric = "4.4"
 }
 
 object ProjectDependencies {

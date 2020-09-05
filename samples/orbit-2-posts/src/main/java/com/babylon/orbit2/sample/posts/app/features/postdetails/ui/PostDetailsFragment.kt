@@ -84,19 +84,21 @@ class PostDetailsFragment : Fragment() {
                 title = state.postOverview.username
                 Glide.with(requireContext()).load(state.postOverview.avatarUrl)
                     .apply(RequestOptions.overrideOf(resources.getDimensionPixelSize(R.dimen.toolbar_logo_size)))
-                    .apply(RequestOptions.circleCropTransform()).into(object : CustomTarget<Drawable>() {
-                        override fun onLoadCleared(placeholder: Drawable?) {
-                            placeholder?.let(::setLogo)
-                        }
-
-                        override fun onResourceReady(resource: Drawable, transition: Transition<in Drawable>?) {
-                            val logo = LayerDrawable(arrayOf(resource)).apply {
-                                setLayerInset(0, 0, 0, resources.getDimensionPixelSize(R.dimen.toolbar_logo_padding_end), 0)
+                    .apply(RequestOptions.circleCropTransform()).into(
+                        object : CustomTarget<Drawable>() {
+                            override fun onLoadCleared(placeholder: Drawable?) {
+                                placeholder?.let(::setLogo)
                             }
 
-                            setLogo(logo)
+                            override fun onResourceReady(resource: Drawable, transition: Transition<in Drawable>?) {
+                                val logo = LayerDrawable(arrayOf(resource)).apply {
+                                    setLayerInset(0, 0, 0, resources.getDimensionPixelSize(R.dimen.toolbar_logo_padding_end), 0)
+                                }
+
+                                setLogo(logo)
+                            }
                         }
-                    })
+                    )
             }
             post_title.text = state.postOverview.title
         }

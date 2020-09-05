@@ -50,8 +50,8 @@ dependencies {
     implementation(project(":orbit-2-viewmodel"))
 
     // UI
-    implementation("androidx.constraintlayout:constraintlayout:1.1.3")
-    implementation("com.google.android.material:material:1.2.0")
+    implementation("androidx.constraintlayout:constraintlayout:2.0.1")
+    implementation("com.google.android.material:material:1.2.1")
     implementation("com.github.bumptech.glide:glide:4.11.0")
     implementation("com.xwray:groupie:2.8.1")
     implementation("com.xwray:groupie-kotlin-android-extensions:2.8.1")
@@ -77,7 +77,7 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-params:5.6.2")
     testImplementation("junit:junit:4.13")
     testImplementation("com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0")
-    testImplementation("org.mockito:mockito-inline:3.5.2")
+    testImplementation("org.mockito:mockito-inline:3.5.10")
     testImplementation("com.appmattus.fixture:fixture:0.9.5")
     testImplementation("com.squareup.retrofit2:retrofit-mock:2.9.0")
 }
