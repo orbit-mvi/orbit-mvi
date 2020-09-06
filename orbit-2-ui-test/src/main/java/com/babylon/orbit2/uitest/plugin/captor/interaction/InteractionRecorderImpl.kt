@@ -1,6 +1,5 @@
 package com.babylon.orbit2.uitest.plugin.captor.interaction
 
-import com.babylon.orbit.LifecycleAction
 import kotlin.reflect.KClass
 
 class InteractionRecorderImpl : InteractionRecorder {
@@ -14,7 +13,7 @@ class InteractionRecorderImpl : InteractionRecorder {
     override fun record(screenClass: KClass<out Any>, interaction: OrbitInteraction) {
         if (interaction.flow !in ignoredFlows) {
             val targetMap = when (interaction.action) {
-                is LifecycleAction.Created -> recordedMiddlewareInteractions
+                //is LifecycleAction.Created -> recordedMiddlewareInteractions
                 else -> recordedInteractions
             }
 

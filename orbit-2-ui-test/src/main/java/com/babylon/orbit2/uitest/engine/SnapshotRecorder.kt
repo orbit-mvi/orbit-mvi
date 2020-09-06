@@ -14,7 +14,7 @@ internal class SnapshotRecorder(
         screenUnderTest: KClass<out Any>,
         testName: String,
         stateDescription: String,
-        tags: Map<String, String>
+        tags: Map<String, String> = emptyMap()
     ) {
         val screenshotDir = File(activity.filesDir, "screenshots")
         val metadata = UiMetadata(

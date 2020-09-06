@@ -1,6 +1,5 @@
 package com.babylon.orbit2.uitest.engine.rules
 
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.os.Bundle
 import android.util.Log
@@ -8,9 +7,6 @@ import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.runner.lifecycle.ActivityLifecycleMonitorRegistry
 import androidx.test.runner.lifecycle.Stage
 import com.amazonaws.regions.Regions
-import com.babylon.app.api.common.OwnedBySquads
-import com.babylon.app.api.common.squadNames
-import com.babylon.orbit2.uitest.annotation.ScreenshotTest
 import com.babylon.orbit2.uitest.engine.SnapshotFactory
 import com.babylon.orbit2.uitest.engine.SnapshotRecorder
 import com.babylon.orbit2.uitest.plugin.appender.happo.HappoLogger
@@ -35,18 +31,18 @@ class ScreenshotRule(private val screenUnderTest: KClass<out Any>) : TestWatcher
     private val snapshotRecorder = createSnapshotRecorder(InstrumentationRegistry.getArguments())
 
     override fun succeeded(description: Description) {
-        val ownedBySquads = description.getAnnotation(OwnedBySquads::class.java)
+        /*val ownedBySquads = description.getAnnotation(OwnedBySquads::class.java)
             ?: description.testClass?.getAnnotation(OwnedBySquads::class.java)
             ?: throw IllegalStateException("OwnedBySquads annotation is missing")
         val screenshotTestAnnotation = description.getAnnotation(ScreenshotTest::class.java)
-            ?: throw IllegalStateException("ScreenshotTest annotation is missing")
+            ?: throw IllegalStateException("ScreenshotTest annotation is missing")*/
 
         snapshotRecorder.recordScreenShot(
             activity = getCurrentActivity(),
             screenUnderTest = screenUnderTest,
             testName = "${description.className}#${description.methodName}",
-            stateDescription = screenshotTestAnnotation.description,
-            tags = mapOf("owner" to ownedBySquads.squadNames)
+            stateDescription = ""//screenshotTestAnnotation.description,
+            //tags = mapOf("owner" to ownedBySquads.squadNames)
         )
     }
 

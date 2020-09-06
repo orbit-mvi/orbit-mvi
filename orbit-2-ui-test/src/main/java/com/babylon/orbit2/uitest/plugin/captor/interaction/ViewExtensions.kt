@@ -18,13 +18,14 @@ import com.babylon.orbit2.uitest.plugin.captor.interaction.detector.TabLayoutDet
 import com.babylon.orbit2.uitest.plugin.captor.interaction.detector.ToolbarDetector
 import com.babylon.orbit2.uitest.plugin.captor.interaction.detector.ViewDetector
 import com.babylon.orbit2.uitest.plugin.captor.interaction.detector.ViewPagerDetector
-import com.babylon.v3.items.Item
+
+const val UI_COMPONENT_CLASS_KEY: Int = 0xF123456
 
 internal val View.description: String
     @SuppressLint("ResourceType")
     @Suppress("EXPERIMENTAL_API_USAGE")
     get() = this.let {
-        val type = (this.getTag(Item.UI_COMPONENT_CLASS_KEY) as? String)
+        val type = (this.getTag(UI_COMPONENT_CLASS_KEY) as? String)
             ?: this.javaClass.simpleName
 
         val name = when (this) {

@@ -15,25 +15,50 @@
  */
 
 plugins {
-    id("java-library")
-    kotlin("jvm")
+    `kotlin-dsl`
+    //id("org.gradle.kotlin.kotlin-dsl")
+}
+
+allprojects {
+    repositories {
+        mavenCentral()
+        jcenter()
+        google()
+    }
 }
 
 dependencies {
-    implementation(kotlin("stdlib-jdk8"))
+    implementation("org.eclipse.mylyn.github:org.eclipse.egit.github.core:2.1.5")
 
-    api(project(":orbit-2-core"))
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation("com.squareup.okhttp3:okhttp:4.8.1")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.8.1")
 
     // Testing
-    GroupedDependencies.testsImplementation.forEach { testImplementation(it) }
+    testImplementation(ProjectDependencies.junitPlatformConsole)
+    testImplementation(ProjectDependencies.junitJupiterApi)
+    testImplementation(ProjectDependencies.junitJupiterParams)
+    testImplementation(ProjectDependencies.assertJ)
     testRuntimeOnly(ProjectDependencies.junitJupiterEngine)
 }
 
-// Fix lack of source code when publishing pure Kotlin projects
-// See https://github.com/novoda/bintray-release/issues/262
-tasks.whenTaskAdded {
-    if (name == "generateSourcesJarForMavenPublication") {
-        this as Jar
-        from(sourceSets.main.get().allSource)
+gradlePlugin {
+    plugins {
+        create("uitest") {
+            id = "com.babylon.orbit2.uitest.gradle"
+            implementationClass = "com.babylon.orbit2.uitest.gradle.UITestPlugin"
+        }
     }
 }
+
+/*validatePlugins {
+    failOnWarning = true
+    enableStricterValidation = true
+}*/
+
+/*tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().all {
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+}*/

@@ -21,6 +21,7 @@ plugins {
 
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
+    implementation(kotlin("reflect"))
     implementation(ProjectDependencies.kotlinCoroutines)
 
     implementation("androidx.test.espresso:espresso-core:3.3.0")
