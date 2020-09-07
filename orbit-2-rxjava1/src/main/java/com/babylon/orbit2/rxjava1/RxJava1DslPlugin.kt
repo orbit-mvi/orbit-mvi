@@ -103,17 +103,21 @@ private fun <T> Observable<T>.asFlow(): Flow<T> = callbackFlow {
 }
 
 private suspend fun <T> Single<T>.await(): T = suspendCancellableCoroutine { cont ->
-    val subscription = subscribe(object : SingleSubscriber<T>() {
-        override fun onSuccess(t: T) = cont.resume(t)
-        override fun onError(error: Throwable) = cont.resumeWithException(error)
-    })
+    val subscription = subscribe(
+        object : SingleSubscriber<T>() {
+            override fun onSuccess(t: T) = cont.resume(t)
+            override fun onError(error: Throwable) = cont.resumeWithException(error)
+        }
+    )
     cont.invokeOnCancellation { subscription.unsubscribe() }
 }
 
 private suspend fun Completable.suspendAwait(): Unit = suspendCancellableCoroutine { cont ->
-    subscribe(object : CompletableSubscriber {
-        override fun onSubscribe(d: Subscription) = cont.invokeOnCancellation { d.unsubscribe() }
-        override fun onCompleted() = cont.resume(Unit)
-        override fun onError(e: Throwable) = cont.resumeWithException(e)
-    })
+    subscribe(
+        object : CompletableSubscriber {
+            override fun onSubscribe(d: Subscription) = cont.invokeOnCancellation { d.unsubscribe() }
+            override fun onCompleted() = cont.resume(Unit)
+            override fun onError(e: Throwable) = cont.resumeWithException(e)
+        }
+    )
 }

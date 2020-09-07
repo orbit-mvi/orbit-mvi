@@ -59,11 +59,14 @@ class DetailFragment : Fragment() {
             lifecycleOwner = this@DetailFragment
         }
 
-        detailViewModel.container.state.observe(viewLifecycleOwner, Observer {
-            it.stock?.let { stock ->
-                animateChange(binding.bid, binding.bidTick, stock.bid, bidRef)
-                animateChange(binding.ask, binding.askTick, stock.ask, askRef)
+        detailViewModel.container.state.observe(
+            viewLifecycleOwner,
+            Observer {
+                it.stock?.let { stock ->
+                    animateChange(binding.bid, binding.bidTick, stock.bid, bidRef)
+                    animateChange(binding.ask, binding.askTick, stock.ask, askRef)
+                }
             }
-        })
+        )
     }
 }

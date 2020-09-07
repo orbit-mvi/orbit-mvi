@@ -27,11 +27,15 @@ class CheckableImageView : AppCompatImageView, Checkable {
 
     private var checked = true
 
-    constructor(context: Context?) : this(context, null)
-    constructor(context: Context?, attrs: AttributeSet?) : this(context, attrs, 0)
-    constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr) {
-        context!!.obtainStyledAttributes(attrs,
-            R.styleable.CheckableImageView, defStyleAttr, 0).apply {
+    constructor(context: Context) : this(context, null)
+    constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
+    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr) {
+        context.obtainStyledAttributes(
+            attrs,
+            R.styleable.CheckableImageView,
+            defStyleAttr,
+            0
+        ).apply {
             isChecked = getBoolean(R.styleable.CheckableImageView_android_checked, false)
         }.recycle()
     }
@@ -50,7 +54,8 @@ class CheckableImageView : AppCompatImageView, Checkable {
     override fun onCreateDrawableState(extraSpace: Int): IntArray? {
         val drawableState = super.onCreateDrawableState(extraSpace + 2)
         if (checked) {
-            View.mergeDrawableStates(drawableState,
+            View.mergeDrawableStates(
+                drawableState,
                 STATE_CHECKED
             )
         }

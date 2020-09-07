@@ -51,20 +51,24 @@ class StockRepository(private val client: StreamingClient) {
             dataAdapter = "QUOTE_ADAPTER"
             requestedMaxFrequency = "1"
             requestedSnapshot = "yes"
-            addListener(object : SubscriptionListener by EmptySubscriptionListener {
-                override fun onItemUpdate(p0: ItemUpdate) {
-                    val itemName = p0.itemName
-                    val stockName = p0.getValue("stock_name")
-                    val formattedBid = p0.getValue("bid")?.to2dp()
-                    val formattedAsk = p0.getValue("ask")?.to2dp()
-                    val formattedTimestamp = p0.getValue("timestamp")?.toFormattedTimestamp()
+            addListener(
+                object : SubscriptionListener by EmptySubscriptionListener {
+                    override fun onItemUpdate(p0: ItemUpdate) {
+                        val itemName = p0.itemName
+                        val stockName = p0.getValue("stock_name")
+                        val formattedBid = p0.getValue("bid")?.to2dp()
+                        val formattedAsk = p0.getValue("ask")?.to2dp()
+                        val formattedTimestamp = p0.getValue("timestamp")?.toFormattedTimestamp()
 
-                    if (itemName != null && stockName != null && formattedBid != null && formattedAsk != null && formattedTimestamp != null) {
-                        stockList[p0.itemPos - 1] = Stock(itemName, stockName, formattedBid, formattedAsk, formattedTimestamp)
-                        sendBlocking(stockList.filterNotNull())
+                        if (itemName != null && stockName != null && formattedBid != null && formattedAsk != null &&
+                            formattedTimestamp != null
+                        ) {
+                            stockList[p0.itemPos - 1] = Stock(itemName, stockName, formattedBid, formattedAsk, formattedTimestamp)
+                            sendBlocking(stockList.filterNotNull())
+                        }
                     }
                 }
-            })
+            )
         }
 
         client.addSubscription(subscription)
@@ -80,44 +84,46 @@ class StockRepository(private val client: StreamingClient) {
             dataAdapter = "QUOTE_ADAPTER"
             requestedSnapshot = "yes"
 
-            addListener(object : SubscriptionListener by EmptySubscriptionListener {
-                override fun onItemUpdate(p0: ItemUpdate) {
-                    val stockName = p0.getValue("stock_name")
-                    val pctChange = p0.getValue("pct_change")?.to2dp()
-                    val formattedBid = p0.getValue("bid")?.to2dp()
-                    val bidQuantity = p0.getValue("bid_quantity")
-                    val formattedAsk = p0.getValue("ask")?.to2dp()
-                    val askQuantity = p0.getValue("ask_quantity")
-                    val min = p0.getValue("min")?.to2dp()
-                    val max = p0.getValue("max")?.to2dp()
-                    val formattedTimestamp = p0.getValue("timestamp")?.toFormattedTimestamp()
+            addListener(
+                object : SubscriptionListener by EmptySubscriptionListener {
+                    override fun onItemUpdate(p0: ItemUpdate) {
+                        val stockName = p0.getValue("stock_name")
+                        val pctChange = p0.getValue("pct_change")?.to2dp()
+                        val formattedBid = p0.getValue("bid")?.to2dp()
+                        val bidQuantity = p0.getValue("bid_quantity")
+                        val formattedAsk = p0.getValue("ask")?.to2dp()
+                        val askQuantity = p0.getValue("ask_quantity")
+                        val min = p0.getValue("min")?.to2dp()
+                        val max = p0.getValue("max")?.to2dp()
+                        val formattedTimestamp = p0.getValue("timestamp")?.toFormattedTimestamp()
 
-                    if (stockName != null &&
-                        pctChange != null &&
-                        formattedBid != null &&
-                        bidQuantity != null &&
-                        formattedAsk != null &&
-                        askQuantity != null &&
-                        min != null &&
-                        max != null &&
-                        formattedTimestamp != null
-                    ) {
-                        val stock = StockDetail(
-                            itemName = itemName,
-                            name = stockName,
-                            pctChange = pctChange,
-                            bid = formattedBid,
-                            bidQuantity = bidQuantity,
-                            ask = formattedAsk,
-                            askQuantity = askQuantity,
-                            min = min,
-                            max = max,
-                            timestamp = formattedTimestamp
-                        )
-                        sendBlocking(stock)
+                        if (stockName != null &&
+                            pctChange != null &&
+                            formattedBid != null &&
+                            bidQuantity != null &&
+                            formattedAsk != null &&
+                            askQuantity != null &&
+                            min != null &&
+                            max != null &&
+                            formattedTimestamp != null
+                        ) {
+                            val stock = StockDetail(
+                                itemName = itemName,
+                                name = stockName,
+                                pctChange = pctChange,
+                                bid = formattedBid,
+                                bidQuantity = bidQuantity,
+                                ask = formattedAsk,
+                                askQuantity = askQuantity,
+                                min = min,
+                                max = max,
+                                timestamp = formattedTimestamp
+                            )
+                            sendBlocking(stock)
+                        }
                     }
                 }
-            })
+            )
         }
 
         client.addSubscription(subscription)

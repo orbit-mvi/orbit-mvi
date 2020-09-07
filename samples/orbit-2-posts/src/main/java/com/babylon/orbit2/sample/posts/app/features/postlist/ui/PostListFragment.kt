@@ -45,12 +45,15 @@ class PostListFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        viewModel.container.sideEffect.observe(viewLifecycleOwner, Observer {
-            when (it) {
-                is OpenPostNavigationEvent ->
-                    findNavController().navigate(PostListFragmentDirections.actionListFragmentToDetailFragment(it.post))
+        viewModel.container.sideEffect.observe(
+            viewLifecycleOwner,
+            Observer {
+                when (it) {
+                    is OpenPostNavigationEvent ->
+                        findNavController().navigate(PostListFragmentDirections.actionListFragmentToDetailFragment(it.post))
+                }
             }
-        })
+        )
 
         return inflater.inflate(R.layout.post_list_fragment, container, false)
     }
@@ -70,8 +73,11 @@ class PostListFragment : Fragment() {
 
         content.adapter = adapter
 
-        viewModel.container.state.observe(viewLifecycleOwner, Observer {
-            adapter.update(it.overviews.map { PostListItem(it, viewModel) })
-        })
+        viewModel.container.state.observe(
+            viewLifecycleOwner,
+            Observer {
+                adapter.update(it.overviews.map { PostListItem(it, viewModel) })
+            }
+        )
     }
 }
