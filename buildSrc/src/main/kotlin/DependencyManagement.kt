@@ -16,7 +16,7 @@
 
 object Versions {
 
-    const val gradleVersionsPlugin = "0.30.0"
+    const val gradleVersionsPlugin = "0.31.0"
     const val gradleAndroidPlugin = "4.0.1"
     const val markdownLintPlugin = "0.6.0"
     const val detektPlugin = "1.12.0"
