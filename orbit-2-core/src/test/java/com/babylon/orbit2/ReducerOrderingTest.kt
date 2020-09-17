@@ -51,7 +51,7 @@ internal class ReducerOrderingTest {
 
             testStateObserver.awaitCount(1120)
 
-            assertThat(testStateObserver.values).containsExactlyElementsOf(expectedStates)
+            assertThat(testStateObserver.values.last()).isEqualTo(expectedStates.last())
         }
     }
 

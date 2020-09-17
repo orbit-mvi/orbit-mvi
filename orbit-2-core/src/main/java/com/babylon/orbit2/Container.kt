@@ -18,6 +18,7 @@ package com.babylon.orbit2
 
 import com.babylon.orbit2.idling.IdlingResource
 import com.babylon.orbit2.idling.NoopIdlingResource
+import kotlinx.coroutines.flow.Flow
 
 /**
  * The heart of the Orbit MVI system. Represents an MVI container with its input and outputs.
@@ -37,14 +38,14 @@ interface Container<STATE : Any, SIDE_EFFECT : Any> {
      * A [Stream] of state updates. Emits the latest state upon subscription and serves only distinct
      * values (only changed states are emitted) by default.
      */
-    val stateStream: Stream<STATE>
+    val stateStream: Flow<STATE>
 
     /**
      * A [Stream] of one-off side effects posted from [Builder.sideEffect].
      * Depending on the [Settings] this container has been instantiated with, can support
      * side effect caching when there are no listeners (default).
      */
-    val sideEffectStream: Stream<SIDE_EFFECT>
+    val sideEffectStream: Flow<SIDE_EFFECT>
 
     /**
      * Builds and executes an orbit flow using the [Builder] and

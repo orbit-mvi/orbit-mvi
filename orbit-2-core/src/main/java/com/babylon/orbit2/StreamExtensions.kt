@@ -20,91 +20,28 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.channels.BroadcastChannel
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.channels.broadcast
+import kotlinx.coroutines.channels.consumeEach
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.buffer
+import kotlinx.coroutines.flow.channelFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.Closeable
 import java.util.concurrent.atomic.AtomicInteger
 
+@FlowPreview
 @ExperimentalCoroutinesApi
-internal fun <T> BroadcastChannel<T>.asStateStream(initial: () -> T): Stream<T> {
-    return object : Stream<T> {
-        override fun observe(lambda: (T) -> Unit): Closeable {
-            val sub = this@asStateStream.openSubscription()
+internal fun <T> Channel<T>.asNonCachingStream(): Flow<T> = this.broadcast(1).asFlow()
 
-            CoroutineScope(Dispatchers.Unconfined).launch {
-                var lastState = initial()
-                lambda(lastState)
-
-                for (state in sub) {
-                    if (state != lastState) {
-                        lastState = state
-                        lambda(state)
-                    }
-                }
-            }
-            return Closeable { sub.cancel() }
-        }
-    }
-}
-
+@FlowPreview
 @ExperimentalCoroutinesApi
-internal fun <T> Channel<T>.asNonCachingStream(): Stream<T> {
-    val broadcastChannel = this.broadcast(start = CoroutineStart.DEFAULT)
-
-    return object : Stream<T> {
-        override fun observe(lambda: (T) -> Unit): Closeable {
-            val receiveChannel = broadcastChannel.openSubscription()
-            CoroutineScope(Dispatchers.Unconfined).launch {
-                for (item in receiveChannel) {
-                    lambda(item)
-                }
-            }
-            return Closeable {
-                receiveChannel.cancel()
-            }
-        }
-    }
-}
-
-@ExperimentalCoroutinesApi
-internal fun <T> Channel<T>.asCachingStream(originalScope: CoroutineScope): Stream<T> {
-    return object : Stream<T> {
-        private val subCount = AtomicInteger(0)
-        private val buffer = mutableListOf<T>()
-        private val channel = BroadcastChannel<T>(Channel.BUFFERED)
-
-        init {
-            originalScope.launch {
-                for (item in this@asCachingStream) {
-                    if (subCount.get() == 0) {
-                        buffer.add(item)
-                    } else {
-                        channel.send(item)
-                    }
-                }
-            }
-        }
-
-        override fun observe(lambda: (T) -> Unit): Closeable {
-            val receiveChannel = channel.openSubscription()
-
-            CoroutineScope(Dispatchers.Unconfined).launch {
-                if (subCount.compareAndSet(0, 1)) {
-                    buffer.forEach { buffered ->
-                        channel.send(buffered)
-                    }
-                    buffer.clear()
-                }
-                for (item in receiveChannel) {
-                    lambda(item)
-                }
-            }
-            return Closeable {
-                receiveChannel.cancel()
-                subCount.decrementAndGet()
-            }
-        }
-    }
+internal fun <T> Channel<T>.asCachingStream(): Flow<T> {
+    return this.broadcast(10000).asFlow()
 }

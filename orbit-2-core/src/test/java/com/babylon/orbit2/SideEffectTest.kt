@@ -19,6 +19,8 @@ package com.babylon.orbit2
 import com.appmattus.kotlinfixture.kotlinFixture
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtensionContext
@@ -26,6 +28,8 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.ArgumentsProvider
 import org.junit.jupiter.params.provider.ArgumentsSource
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.TimeUnit
 import java.util.stream.Stream
 
 internal class SideEffectTest {
@@ -162,6 +166,30 @@ internal class SideEffectTest {
         assertThat(testSideEffectObserver1.values).containsExactly(action, action2, action3)
         assertThat(testSideEffectObserver2.values).isEmpty()
     }
+//
+//    @ParameterizedTest(name = "Caching is {0}")
+//    @ArgumentsSource(CachingOnTestCases::class)
+//    fun `side effects are emitted on the thread you subscribe on`(
+//        caching: Boolean?
+//    ) {
+//        val action = fixture<Int>()
+//        val middleware = Middleware(caching)
+//        var subscribingThreadName: String? = null
+//        val countDownLatch = CountDownLatch(1)
+//
+//        runBlocking {
+//
+//            middleware.container.sideEffectStream.collect {
+//                subscribingThreadName = Thread.currentThread().name
+//                countDownLatch.countDown()
+//            }
+//        }
+//
+//        middleware.someFlow(action)
+//        countDownLatch.await(5, TimeUnit.SECONDS)
+//
+//        assertThat(subscribingThreadName).isEqualTo(Thread.currentThread().name)
+//    }
 
     private class Middleware(caching: Boolean? = null) : ContainerHost<Unit, Int> {
         override val container: Container<Unit, Int> =

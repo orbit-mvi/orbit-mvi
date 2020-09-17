@@ -350,6 +350,57 @@ internal class SideEffectLiveDataPluginTest {
         assertThat(testSideEffectObserver.values).containsExactly(action, action2, action3)
     }
 
+    @ParameterizedTest(name = "Caching is {0}")
+    @ArgumentsSource(MulticastTestCases::class)
+    fun `consecutive equal objects are emitted properly`(
+        enabled: Boolean?
+    ) {
+        val action = fixture<Int>()
+        val middleware = Middleware(enabled)
+        val mockLifecycleOwner = MockLifecycleOwner()
+        mockLifecycleOwner.dispatchEvent(Lifecycle.Event.ON_CREATE)
+        mockLifecycleOwner.dispatchEvent(Lifecycle.Event.ON_START)
+
+        val testSideEffectObserver = middleware.container.sideEffect.test(mockLifecycleOwner)
+
+        middleware.someFlow(action)
+        middleware.someFlow(action)
+        middleware.someFlow(action)
+
+        testSideEffectObserver.awaitCount(3)
+
+        assertThat(testSideEffectObserver.values).containsExactly(action, action, action)
+    }
+
+    @ParameterizedTest(name = "Caching is {0}")
+    @ArgumentsSource(MulticastTestCases::class)
+    fun `something`(
+        enabled: Boolean?
+    ) {
+        val action = fixture<Int>()
+        val middleware = Middleware(enabled)
+        val mockLifecycleOwner = MockLifecycleOwner()
+        mockLifecycleOwner.dispatchEvent(Lifecycle.Event.ON_CREATE)
+        mockLifecycleOwner.dispatchEvent(Lifecycle.Event.ON_START)
+
+        val testSideEffectObserver = middleware.container.sideEffect.test(mockLifecycleOwner)
+        middleware.someFlow(action)
+        testSideEffectObserver.awaitCount(1)
+        mockLifecycleOwner.dispatchEvent(Lifecycle.Event.ON_STOP)
+        testSideEffectObserver.close()
+        assertThat(testSideEffectObserver.values).containsExactly(action)
+
+        mockLifecycleOwner.dispatchEvent(Lifecycle.Event.ON_START)
+        val testSideEffectObserver2 = middleware.container.sideEffect.test(mockLifecycleOwner)
+        middleware.someFlow(action)
+        middleware.someFlow(action)
+
+        testSideEffectObserver2.awaitCount(2)
+
+
+        assertThat(testSideEffectObserver2.values).containsExactly(action, action)
+    }
+
     private class Middleware(caching: Boolean? = null) : ContainerHost<Unit, Int> {
         override val container: Container<Unit, Int> =
             with(CoroutineScope(Dispatchers.Unconfined)) {

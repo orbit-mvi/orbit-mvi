@@ -35,25 +35,19 @@ import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.kotlinandroidextensions.GroupieViewHolder
 import kotlinx.android.synthetic.main.post_list_fragment.*
 import org.koin.androidx.viewmodel.ext.android.stateViewModel
+import java.io.Closeable
 
 class PostListFragment : Fragment() {
 
     private val viewModel: PostListViewModel by stateViewModel()
+    private var sub: Closeable? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        viewModel.container.sideEffect.observe(
-            viewLifecycleOwner,
-            Observer {
-                when (it) {
-                    is OpenPostNavigationEvent ->
-                        findNavController().navigate(PostListFragmentDirections.actionListFragmentToDetailFragment(it.post))
-                }
-            }
-        )
+
 
         return inflater.inflate(R.layout.post_list_fragment, container, false)
     }
@@ -79,5 +73,20 @@ class PostListFragment : Fragment() {
                 adapter.update(it.overviews.map { PostListItem(it, viewModel) })
             }
         )
+    }
+
+    override fun onStart() {
+        super.onStart()
+        sub = viewModel.container.sideEffectStream.observe {
+                when (it) {
+                    is OpenPostNavigationEvent ->
+                        findNavController().navigate(PostListFragmentDirections.actionListFragmentToDetailFragment(it.post))
+                }
+            }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        sub?.close()
     }
 }

@@ -24,6 +24,7 @@ import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.channels.produce
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
@@ -69,11 +70,11 @@ open class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
     override val currentState: STATE
         get() = stateChannel.value
 
-    override val stateStream = stateChannel.asStateStream { currentState }
+    override val stateStream = stateChannel.asFlow()
 
-    override val sideEffectStream: Stream<SIDE_EFFECT> =
+    override val sideEffectStream: Flow<SIDE_EFFECT> =
         if (settings.sideEffectCaching) {
-            sideEffectChannel.asCachingStream(scope)
+            sideEffectChannel.asCachingStream()
         } else {
             sideEffectChannel.asNonCachingStream()
         }
