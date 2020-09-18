@@ -27,10 +27,10 @@ android {
         targetCompatibility = JavaVersion.VERSION_1_8
     }
 
-    compileSdkVersion(29)
+    compileSdkVersion(30)
     defaultConfig {
         minSdkVersion(21)
-        targetSdkVersion(29)
+        targetSdkVersion(30)
         applicationId = "com.babylon.orbit2.sample.posts"
         versionCode = 1
         versionName = "1.0"

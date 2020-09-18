@@ -22,9 +22,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.navigation.fragment.navArgs
-import com.babylon.orbit2.livedata.state
+import com.babylon.orbit2.livedata.stateLiveData
 import com.babylon.orbit2.sample.stocklist.R
 import com.babylon.orbit2.sample.stocklist.databinding.DetailFragmentBinding
 import com.babylon.orbit2.sample.stocklist.detail.business.DetailViewModel
@@ -55,18 +54,15 @@ class DetailFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
 
         binding.apply {
-            state = detailViewModel.container.state
+            state = detailViewModel.container.stateLiveData
             lifecycleOwner = this@DetailFragment
         }
 
-        detailViewModel.container.state.observe(
-            viewLifecycleOwner,
-            Observer {
-                it.stock?.let { stock ->
-                    animateChange(binding.bid, binding.bidTick, stock.bid, bidRef)
-                    animateChange(binding.ask, binding.askTick, stock.ask, askRef)
-                }
+        detailViewModel.container.stateLiveData.observe(viewLifecycleOwner) {
+            it.stock?.let { stock ->
+                animateChange(binding.bid, binding.bidTick, stock.bid, bidRef)
+                animateChange(binding.ask, binding.askTick, stock.ask, askRef)
             }
-        )
+        }
     }
 }

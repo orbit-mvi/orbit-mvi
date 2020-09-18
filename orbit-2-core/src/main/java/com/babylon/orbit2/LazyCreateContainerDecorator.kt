@@ -22,6 +22,7 @@ import kotlinx.coroutines.flow.flow
 import java.io.Closeable
 import java.util.concurrent.atomic.AtomicBoolean
 
+@Suppress("OverridingDeprecatedMember", "DEPRECATION")
 class LazyCreateContainerDecorator<STATE : Any, SIDE_EFFECT : Any>(
     override val actual: Container<STATE, SIDE_EFFECT>,
     val onCreate: (state: STATE) -> Unit
@@ -47,7 +48,6 @@ class LazyCreateContainerDecorator<STATE : Any, SIDE_EFFECT : Any>(
         get() = object : Stream<STATE> {
             override fun observe(lambda: (STATE) -> Unit): Closeable {
                 runOnCreate()
-                @Suppress("DEPRECATION")
                 return actual.stateStream.observe(lambda)
             }
         }
@@ -56,7 +56,6 @@ class LazyCreateContainerDecorator<STATE : Any, SIDE_EFFECT : Any>(
         get() = object : Stream<SIDE_EFFECT> {
             override fun observe(lambda: (SIDE_EFFECT) -> Unit): Closeable {
                 runOnCreate()
-                @Suppress("DEPRECATION")
                 return actual.sideEffectStream.observe(lambda)
             }
         }

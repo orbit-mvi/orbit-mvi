@@ -22,10 +22,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.babylon.orbit2.livedata.state
+import com.babylon.orbit2.livedata.sideEffectLiveData
+import com.babylon.orbit2.livedata.stateLiveData
 import com.babylon.orbit2.sample.posts.R
 import com.babylon.orbit2.sample.posts.app.common.SeparatorDecoration
 import com.babylon.orbit2.sample.posts.app.features.postlist.viewmodel.OpenPostNavigationEvent
@@ -34,12 +34,10 @@ import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.kotlinandroidextensions.GroupieViewHolder
 import kotlinx.android.synthetic.main.post_list_fragment.*
 import org.koin.androidx.viewmodel.ext.android.stateViewModel
-import java.io.Closeable
 
 class PostListFragment : Fragment() {
 
     private val viewModel: PostListViewModel by stateViewModel()
-    private var sub: Closeable? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -65,26 +63,18 @@ class PostListFragment : Fragment() {
 
         content.adapter = adapter
 
-        viewModel.container.state.observe(
-            viewLifecycleOwner,
-            Observer {
-                adapter.update(it.overviews.map { PostListItem(it, viewModel) })
-            }
-        )
+        viewModel.container.stateLiveData.observe(viewLifecycleOwner) {
+            adapter.update(it.overviews.map { PostListItem(it, viewModel) })
+        }
     }
 
     override fun onStart() {
         super.onStart()
-        sub = viewModel.container.sideEffectStream.observe {
-                when (it) {
-                    is OpenPostNavigationEvent ->
-                        findNavController().navigate(PostListFragmentDirections.actionListFragmentToDetailFragment(it.post))
-                }
+        viewModel.container.sideEffectLiveData.observe(viewLifecycleOwner) {
+            when (it) {
+                is OpenPostNavigationEvent ->
+                    findNavController().navigate(PostListFragmentDirections.actionListFragmentToDetailFragment(it.post))
             }
-    }
-
-    override fun onStop() {
-        super.onStop()
-        sub?.close()
+        }
     }
 }

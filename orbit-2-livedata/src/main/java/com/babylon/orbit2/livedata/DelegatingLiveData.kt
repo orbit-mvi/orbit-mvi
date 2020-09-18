@@ -20,28 +20,28 @@ import androidx.annotation.MainThread
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
-import com.babylon.orbit2.Stream
-import java.io.Closeable
+import androidx.lifecycle.asLiveData
+import kotlinx.coroutines.flow.Flow
 
 /**
- * This class creates one LiveData per observer in order to defer to the behaviour of the [Stream]
+ * This class creates one LiveData per observer in order to defer to the behaviour of the [Flow]
  * when it comes to caching values. This ensures that side effect caching is properly
  * resolved while retaining the benefits of using LiveData in terms of main thread callbacks and
  * automatic unsubscription.
  */
-internal class DelegatingLiveData<T>(private val stream: Stream<T>) : LiveData<T>() {
+internal class DelegatingLiveData<T>(private val flow: Flow<T>) : LiveData<T>() {
     private val closeables = mutableMapOf<Observer<in T>, LiveData<T>>()
 
     @MainThread
     override fun observe(owner: LifecycleOwner, observer: Observer<in T>) {
         // Observe the internal MutableLiveData
-        closeables[observer] = InternalStreamLiveData(stream).also {
+        closeables[observer] = flow.asLiveData().also {
             it.observe(owner, observer)
         }
     }
 
     override fun observeForever(observer: Observer<in T>) {
-        closeables[observer] = InternalStreamLiveData(stream).also {
+        closeables[observer] = flow.asLiveData().also {
             it.observeForever(observer)
         }
     }
@@ -68,19 +68,5 @@ internal class DelegatingLiveData<T>(private val stream: Stream<T>) : LiveData<T
     override fun removeObservers(owner: LifecycleOwner) {
         closeables.values.forEach { it.removeObservers(owner) }
         closeables.clear()
-    }
-
-    private class InternalStreamLiveData<T>(private val stream: Stream<T>) : LiveData<T>() {
-        private var closeable: Closeable? = null
-
-        override fun onActive() {
-            closeable = stream.observe {
-                postValue(it)
-            }
-        }
-
-        override fun onInactive() {
-            closeable?.close()
-        }
     }
 }

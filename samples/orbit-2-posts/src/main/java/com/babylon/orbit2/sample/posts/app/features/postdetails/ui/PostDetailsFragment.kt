@@ -25,10 +25,9 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.babylon.orbit2.livedata.state
+import com.babylon.orbit2.livedata.stateLiveData
 import com.babylon.orbit2.sample.posts.R
 import com.babylon.orbit2.sample.posts.app.common.SeparatorDecoration
 import com.babylon.orbit2.sample.posts.app.features.postdetails.viewmodel.PostDetailState
@@ -74,7 +73,7 @@ class PostDetailsFragment : Fragment() {
 
         post_comments_list.adapter = adapter
 
-        viewModel.container.state.observe(viewLifecycleOwner, Observer { render(it) })
+        viewModel.container.stateLiveData.observe(viewLifecycleOwner) { render(it) }
     }
 
     private fun render(state: PostDetailState) {

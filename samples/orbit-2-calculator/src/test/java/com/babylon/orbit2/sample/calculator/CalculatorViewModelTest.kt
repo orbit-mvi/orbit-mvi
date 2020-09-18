@@ -22,7 +22,13 @@ import com.appmattus.kotlinfixture.kotlinFixture
 import com.babylon.orbit2.sample.calculator.livedata.InstantTaskExecutorExtension
 import com.babylon.orbit2.sample.calculator.livedata.MockLifecycleOwner
 import com.babylon.orbit2.sample.calculator.livedata.test
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.setMain
 import org.junit.Assert.assertEquals
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.RepeatedTest
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -34,14 +40,25 @@ import org.junit.jupiter.params.provider.ArgumentsProvider
 import org.junit.jupiter.params.provider.ArgumentsSource
 import java.util.stream.Stream
 
+@ExperimentalCoroutinesApi
 @ExtendWith(InstantTaskExecutorExtension::class)
 class CalculatorViewModelTest {
 
-    private val viewModel = CalculatorViewModel(SavedStateHandle())
+    private val viewModel by lazy { CalculatorViewModel(SavedStateHandle()) }
 
     private val mockLifecycleOwner = MockLifecycleOwner().also {
         it.dispatchEvent(Lifecycle.Event.ON_CREATE)
         it.dispatchEvent(Lifecycle.Event.ON_START)
+    }
+
+    @BeforeEach
+    fun beforeEach() {
+        Dispatchers.setMain(Dispatchers.Unconfined)
+    }
+
+    @AfterEach
+    fun afterEach() {
+        Dispatchers.resetMain()
     }
 
     /**

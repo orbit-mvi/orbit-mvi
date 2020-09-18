@@ -48,14 +48,14 @@ interface Container<STATE : Any, SIDE_EFFECT : Any> {
     val sideEffectFlow: Flow<SIDE_EFFECT>
 
     /**
-     * A [Stream] of state updates. Emits the latest state upon subscription and serves only distinct
+     * A [Flow] of state updates. Emits the latest state upon subscription and serves only distinct
      * values (only changed states are emitted) by default.
      */
     @Deprecated("stateStream is deprecated, use stateFlow instead")
     val stateStream: Stream<STATE>
 
     /**
-     * A [Stream] of one-off side effects posted from [Builder.sideEffect].
+     * A [Flow] of one-off side effects posted from [Builder.sideEffect].
      * Depending on the [Settings] this container has been instantiated with, can support
      * side effect caching when there are no listeners (default).
      */

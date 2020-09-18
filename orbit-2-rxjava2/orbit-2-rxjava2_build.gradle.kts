@@ -22,7 +22,7 @@ plugins {
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
     implementation(ProjectDependencies.rxJava2)
-    implementation(ProjectDependencies.kotlinCoroutinesRx2)
+    api(ProjectDependencies.kotlinCoroutinesRx2)
 
     api(project(":orbit-2-core"))
 

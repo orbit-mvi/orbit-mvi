@@ -22,12 +22,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.babylon.orbit2.livedata.sideEffect
-import com.babylon.orbit2.livedata.state
+import com.babylon.orbit2.livedata.sideEffectLiveData
+import com.babylon.orbit2.livedata.stateLiveData
 import com.babylon.orbit2.sample.stocklist.R
 import com.babylon.orbit2.sample.stocklist.databinding.ListFragmentBinding
 import com.babylon.orbit2.sample.stocklist.list.business.ListSideEffect
@@ -63,25 +62,19 @@ class ListFragment : Fragment() {
             addItemDecoration(DividerItemDecoration(context, LinearLayoutManager.VERTICAL))
         }
 
-        listViewModel.container.state.observe(
-            viewLifecycleOwner,
-            Observer {
-                val items = it.stocks.map { stock ->
-                    StockItem(stock, listViewModel)
-                }
-
-                groupAdapter.update(items)
+        listViewModel.container.stateLiveData.observe(viewLifecycleOwner) {
+            val items = it.stocks.map { stock ->
+                StockItem(stock, listViewModel)
             }
-        )
 
-        listViewModel.container.sideEffect.observe(
-            viewLifecycleOwner,
-            Observer {
-                when (it) {
-                    is ListSideEffect.NavigateToDetail ->
-                        findNavController().navigate(ListFragmentDirections.actionListFragmentToDetailFragment(it.itemName))
-                }
+            groupAdapter.update(items)
+        }
+
+        listViewModel.container.sideEffectLiveData.observe(viewLifecycleOwner) {
+            when (it) {
+                is ListSideEffect.NavigateToDetail ->
+                    findNavController().navigate(ListFragmentDirections.actionListFragmentToDetailFragment(it.itemName))
             }
-        )
+        }
     }
 }

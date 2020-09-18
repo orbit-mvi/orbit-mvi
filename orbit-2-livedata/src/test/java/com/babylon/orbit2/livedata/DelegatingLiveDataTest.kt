@@ -18,14 +18,24 @@ package com.babylon.orbit2.livedata
 
 import androidx.lifecycle.Lifecycle
 import com.appmattus.kotlinfixture.kotlinFixture
-import com.babylon.orbit2.Stream
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.channels.sendBlocking
+import kotlinx.coroutines.flow.consumeAsFlow
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.setMain
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.EnumSource
-import java.io.Closeable
 
+@ExperimentalCoroutinesApi
 @ExtendWith(InstantTaskExecutorExtension::class)
 internal class DelegatingLiveDataTest {
     private val fixture = kotlinFixture()
@@ -33,19 +43,14 @@ internal class DelegatingLiveDataTest {
         it.dispatchEvent(Lifecycle.Event.ON_CREATE)
     }
 
-    class TestStream<T> : Stream<T> {
-        private val observers = mutableSetOf<(T) -> Unit>()
+    @BeforeEach
+    fun beforeEach() {
+        Dispatchers.setMain(Dispatchers.Unconfined)
+    }
 
-        override fun observe(lambda: (T) -> Unit): Closeable {
-            observers += lambda
-            return Closeable { observers.remove(lambda) }
-        }
-
-        fun post(value: T) {
-            observers.forEach { it(value) }
-        }
-
-        fun hasObservers() = observers.size > 0
+    @AfterEach
+    fun afterEach() {
+        Dispatchers.resetMain()
     }
 
     @Suppress("unused")
@@ -78,58 +83,57 @@ internal class DelegatingLiveDataTest {
     @ParameterizedTest
     @EnumSource(TestCase::class)
     fun `observer does not subscribe until onStart`(testCase: TestCase) {
-        val stream = TestStream<Int>()
+        val channel = Channel<Int>()
         val action = fixture<Int>()
         mockLifecycleOwner.currentState = testCase.state
-        val observer = DelegatingLiveData(stream).test(mockLifecycleOwner)
+        val observer = DelegatingLiveData(channel.consumeAsFlow()).test(mockLifecycleOwner)
 
-        stream.post(action)
+        GlobalScope.launch {
+            channel.send(action)
+        }
 
         if (testCase.expectedSubscription) {
-            assertThat(stream.hasObservers()).isTrue()
+            observer.awaitCount(1)
             assertThat(observer.values).containsExactly(action)
         } else {
-            assertThat(stream.hasObservers()).isFalse()
             assertThat(observer.values).isEmpty()
         }
     }
 
     @Test
     fun `observer is unsubscribed after the lifecycle is stopped`() {
-        val stream = TestStream<Int>()
+        val channel = Channel<Int>()
 
         val action = fixture<Int>()
         val action2 = fixture<Int>()
         val action3 = fixture<Int>()
 
-        val observer = DelegatingLiveData(stream).test(mockLifecycleOwner)
+        val observer = DelegatingLiveData(channel.consumeAsFlow()).test(mockLifecycleOwner)
 
         mockLifecycleOwner.dispatchEvent(Lifecycle.Event.ON_START)
         mockLifecycleOwner.dispatchEvent(Lifecycle.Event.ON_RESUME)
 
-        stream.post(action)
-        assertThat(stream.hasObservers()).isTrue()
+        channel.sendBlocking(action)
 
         mockLifecycleOwner.dispatchEvent(Lifecycle.Event.ON_PAUSE)
         mockLifecycleOwner.dispatchEvent(Lifecycle.Event.ON_STOP)
 
-        stream.post(action2)
-        stream.post(action3)
+        channel.sendBlocking(action2)
+        channel.sendBlocking(action3)
 
         assertThat(observer.values).containsExactly(action)
-        assertThat(stream.hasObservers()).isFalse()
     }
 
     @Test
     fun `the current value cannot be retrieved and returns nulls instead`() {
-        val stream = TestStream<Int>()
+        val channel = Channel<Int>()
         val action = fixture<Int>()
-        val liveData = DelegatingLiveData(stream)
+        val liveData = DelegatingLiveData(channel.consumeAsFlow())
         val observer = liveData.test(mockLifecycleOwner)
         mockLifecycleOwner.dispatchEvent(Lifecycle.Event.ON_START)
         mockLifecycleOwner.dispatchEvent(Lifecycle.Event.ON_RESUME)
 
-        stream.post(action)
+        channel.sendBlocking(action)
 
         assertThat(observer.values).containsExactly(action)
         assertThat(liveData.value).isNull()

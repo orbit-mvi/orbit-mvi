@@ -22,6 +22,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import com.babylon.orbit2.ContainerHost
 import com.babylon.orbit2.livedata.state
+import com.babylon.orbit2.livedata.stateLiveData
 import com.babylon.orbit2.reduce
 import com.babylon.orbit2.viewmodel.container
 import kotlinx.android.parcel.Parcelize
@@ -36,7 +37,7 @@ class CalculatorViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
     }
 
     @Suppress("UNCHECKED_CAST")
-    val state: LiveData<CalculatorState> = host.container.state as LiveData<CalculatorState>
+    val state: LiveData<CalculatorState> = host.container.stateLiveData as LiveData<CalculatorState>
 
     fun clear() = host.orbit {
         reduce {

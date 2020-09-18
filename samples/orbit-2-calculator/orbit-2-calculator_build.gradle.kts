@@ -21,10 +21,10 @@ plugins {
 }
 
 android {
-    compileSdkVersion(29)
+    compileSdkVersion(30)
     defaultConfig {
         minSdkVersion(21)
-        targetSdkVersion(29)
+        targetSdkVersion(30)
         versionCode = 1
         versionName = "1.0"
         applicationId = "com.babylon.orbit2.sample.calculator"
@@ -64,4 +64,5 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-params:5.6.2")
     testImplementation("junit:junit:4.13")
     testImplementation("com.appmattus.fixture:fixture:0.9.5")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.3.9")
 }

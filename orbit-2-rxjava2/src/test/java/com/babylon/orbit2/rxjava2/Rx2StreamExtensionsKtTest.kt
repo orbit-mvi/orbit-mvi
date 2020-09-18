@@ -7,6 +7,7 @@ import org.junit.jupiter.api.RepeatedTest
 import org.junit.jupiter.api.Test
 import java.io.Closeable
 
+@Suppress("DEPRECATION")
 class Rx2StreamExtensionsKtTest {
 
     private val fixture = kotlinFixture()

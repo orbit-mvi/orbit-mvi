@@ -22,8 +22,13 @@ import io.reactivex.rxjava3.core.Observable
 /**
  * Consume a [Stream] as an RxJava 3 [Observable].
  */
-fun <T> Stream<T>.asRx3Observable() =
-    Observable.create<T> { emitter ->
+@Deprecated(
+    message = "Stream is deprecated. Please use coroutine extensions on " +
+            "Container.stateFlow.asObservable() or Container.sideEffectFlow.asObservable() instead: " +
+            "https://github.com/Kotlin/kotlinx.coroutines/tree/master/reactive/kotlinx-coroutines-rx3",
+)
+fun <T> Stream<T>.asRx3Observable(): Observable<T> =
+    Observable.create { emitter ->
         val closeable = observe {
             if (!emitter.isDisposed) {
                 emitter.onNext(it)
