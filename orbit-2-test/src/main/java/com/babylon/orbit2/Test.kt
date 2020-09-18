@@ -68,8 +68,8 @@ inline fun <STATE : Any, SIDE_EFFECT : Any, reified T : ContainerHost<STATE, SID
 
     TestHarness.FIXTURES[spy] = TestFixtures(
         initialState,
-        spy.container.stateStream.test(),
-        spy.container.sideEffectStream.test()
+        spy.container.stateFlow.test(),
+        spy.container.sideEffectFlow.test()
     )
 
     Mockito.clearInvocations(spy)

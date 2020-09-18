@@ -25,7 +25,6 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.babylon.orbit2.livedata.sideEffect
 import com.babylon.orbit2.livedata.state
 import com.babylon.orbit2.sample.posts.R
 import com.babylon.orbit2.sample.posts.app.common.SeparatorDecoration
@@ -47,7 +46,6 @@ class PostListFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-
 
         return inflater.inflate(R.layout.post_list_fragment, container, false)
     }

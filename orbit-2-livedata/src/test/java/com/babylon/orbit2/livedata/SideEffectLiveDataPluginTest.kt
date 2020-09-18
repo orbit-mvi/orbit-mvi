@@ -397,7 +397,6 @@ internal class SideEffectLiveDataPluginTest {
 
         testSideEffectObserver2.awaitCount(2)
 
-
         assertThat(testSideEffectObserver2.values).containsExactly(action, action)
     }
 

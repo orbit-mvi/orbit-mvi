@@ -19,11 +19,6 @@ package com.babylon.orbit2
 import com.appmattus.kotlinfixture.kotlinFixture
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -35,7 +30,7 @@ internal class StateConnectionTest {
     fun `initial state is emitted on connection`() {
         val initialState = fixture<TestState>()
         val middleware = Middleware(initialState)
-        val testStateObserver = middleware.container.stateStream.test()
+        val testStateObserver = middleware.container.stateFlow.test()
 
         testStateObserver.awaitCount(1)
 
@@ -46,12 +41,12 @@ internal class StateConnectionTest {
     fun `latest state is emitted on connection`() {
         val initialState = fixture<TestState>()
         val middleware = Middleware(initialState)
-        val testStateObserver = middleware.container.stateStream.test()
+        val testStateObserver = middleware.container.stateFlow.test()
         val action = fixture<Int>()
         middleware.something(action)
         testStateObserver.awaitCount(2) // block until the state is updated
 
-        val testStateObserver2 = middleware.container.stateStream.test()
+        val testStateObserver2 = middleware.container.stateFlow.test()
         testStateObserver2.awaitCount(1)
 
         assertThat(testStateObserver.values).containsExactly(
@@ -78,7 +73,7 @@ internal class StateConnectionTest {
         val initialState = fixture<TestState>()
         val middleware = Middleware(initialState)
         val action = fixture<Int>()
-        val testStateObserver = middleware.container.stateStream.test()
+        val testStateObserver = middleware.container.stateFlow.test()
 
         middleware.something(action)
 

@@ -19,6 +19,7 @@ package com.babylon.orbit2
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.flow
+import java.io.Closeable
 import java.util.concurrent.atomic.AtomicBoolean
 
 class LazyCreateContainerDecorator<STATE : Any, SIDE_EFFECT : Any>(
@@ -30,16 +31,34 @@ class LazyCreateContainerDecorator<STATE : Any, SIDE_EFFECT : Any>(
     override val currentState: STATE
         get() = actual.currentState
 
-    override val stateStream: Flow<STATE>
+    override val stateFlow: Flow<STATE>
         get() = flow {
             runOnCreate()
-            emitAll(actual.stateStream)
+            emitAll(actual.stateFlow)
         }
 
-    override val sideEffectStream: Flow<SIDE_EFFECT>
+    override val sideEffectFlow: Flow<SIDE_EFFECT>
         get() = flow {
             runOnCreate()
-            emitAll(actual.sideEffectStream)
+            emitAll(actual.sideEffectFlow)
+        }
+
+    override val stateStream: Stream<STATE>
+        get() = object : Stream<STATE> {
+            override fun observe(lambda: (STATE) -> Unit): Closeable {
+                runOnCreate()
+                @Suppress("DEPRECATION")
+                return actual.stateStream.observe(lambda)
+            }
+        }
+
+    override val sideEffectStream: Stream<SIDE_EFFECT>
+        get() = object : Stream<SIDE_EFFECT> {
+            override fun observe(lambda: (SIDE_EFFECT) -> Unit): Closeable {
+                runOnCreate()
+                @Suppress("DEPRECATION")
+                return actual.sideEffectStream.observe(lambda)
+            }
         }
 
     override fun orbit(

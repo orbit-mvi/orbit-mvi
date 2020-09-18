@@ -17,31 +17,24 @@
 package com.babylon.orbit2
 
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.channels.BroadcastChannel
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.channels.broadcast
-import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.flow.buffer
-import kotlinx.coroutines.flow.channelFlow
-import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.io.Closeable
-import java.util.concurrent.atomic.AtomicInteger
 
-@FlowPreview
 @ExperimentalCoroutinesApi
-internal fun <T> Channel<T>.asNonCachingStream(): Flow<T> = this.broadcast(1).asFlow()
+internal fun <T> Flow<T>.asStream(): Stream<T> {
+    return object : Stream<T> {
+        override fun observe(lambda: (T) -> Unit): Closeable {
 
-@FlowPreview
-@ExperimentalCoroutinesApi
-internal fun <T> Channel<T>.asCachingStream(): Flow<T> {
-    return this.broadcast(10000).asFlow()
+            val job = CoroutineScope(Dispatchers.Unconfined).launch {
+                this@asStream.collect {
+                    lambda(it)
+                }
+            }
+            return Closeable { job.cancel() }
+        }
+    }
 }

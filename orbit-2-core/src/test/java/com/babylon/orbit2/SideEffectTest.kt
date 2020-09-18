@@ -19,8 +19,6 @@ package com.babylon.orbit2
 import com.appmattus.kotlinfixture.kotlinFixture
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtensionContext
@@ -28,8 +26,6 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.ArgumentsProvider
 import org.junit.jupiter.params.provider.ArgumentsSource
-import java.util.concurrent.CountDownLatch
-import java.util.concurrent.TimeUnit
 import java.util.stream.Stream
 
 internal class SideEffectTest {
@@ -53,9 +49,9 @@ internal class SideEffectTest {
         val action3 = fixture<Int>()
         val middleware = Middleware(caching)
 
-        val testSideEffectObserver1 = middleware.container.sideEffectStream.test()
-        val testSideEffectObserver2 = middleware.container.sideEffectStream.test()
-        val testSideEffectObserver3 = middleware.container.sideEffectStream.test()
+        val testSideEffectObserver1 = middleware.container.sideEffectFlow.test()
+        val testSideEffectObserver2 = middleware.container.sideEffectFlow.test()
+        val testSideEffectObserver3 = middleware.container.sideEffectFlow.test()
 
         middleware.someFlow(action)
         middleware.someFlow(action2)
@@ -90,7 +86,7 @@ internal class SideEffectTest {
         middleware.someFlow(action2)
         middleware.someFlow(action3)
 
-        val testSideEffectObserver1 = middleware.container.sideEffectStream.test()
+        val testSideEffectObserver1 = middleware.container.sideEffectFlow.test()
 
         testSideEffectObserver1.awaitCount(3)
 
@@ -103,7 +99,7 @@ internal class SideEffectTest {
         val action2 = fixture<Int>()
         val action3 = fixture<Int>()
         val middleware = Middleware(false)
-        val testSideEffectObserver1 = middleware.container.sideEffectStream.test()
+        val testSideEffectObserver1 = middleware.container.sideEffectFlow.test()
 
         middleware.someFlow(action)
         middleware.someFlow(action2)
@@ -111,7 +107,7 @@ internal class SideEffectTest {
         testSideEffectObserver1.awaitCount(3)
         testSideEffectObserver1.close()
 
-        val testSideEffectObserver2 = middleware.container.sideEffectStream.test()
+        val testSideEffectObserver2 = middleware.container.sideEffectFlow.test()
 
         testSideEffectObserver1.awaitCount(3, 10L)
 
@@ -126,7 +122,7 @@ internal class SideEffectTest {
         val action3 = fixture<Int>()
         val middleware = Middleware(caching)
 
-        val testSideEffectObserver1 = middleware.container.sideEffectStream.test()
+        val testSideEffectObserver1 = middleware.container.sideEffectFlow.test()
 
         middleware.someFlow(action)
 
@@ -136,7 +132,7 @@ internal class SideEffectTest {
         middleware.someFlow(action2)
         middleware.someFlow(action3)
 
-        val testSideEffectObserver2 = middleware.container.sideEffectStream.test()
+        val testSideEffectObserver2 = middleware.container.sideEffectFlow.test()
         testSideEffectObserver2.awaitCount(2)
 
         assertThat(testSideEffectObserver1.values).containsExactly(action)
@@ -153,7 +149,7 @@ internal class SideEffectTest {
         val action3 = fixture<Int>()
         val middleware = Middleware(caching)
 
-        val testSideEffectObserver1 = middleware.container.sideEffectStream.test()
+        val testSideEffectObserver1 = middleware.container.sideEffectFlow.test()
 
         middleware.someFlow(action)
         middleware.someFlow(action2)
@@ -161,7 +157,7 @@ internal class SideEffectTest {
 
         testSideEffectObserver1.awaitCount(3)
 
-        val testSideEffectObserver2 = middleware.container.sideEffectStream.test()
+        val testSideEffectObserver2 = middleware.container.sideEffectFlow.test()
 
         assertThat(testSideEffectObserver1.values).containsExactly(action, action2, action3)
         assertThat(testSideEffectObserver2.values).isEmpty()
@@ -179,7 +175,7 @@ internal class SideEffectTest {
 //
 //        runBlocking {
 //
-//            middleware.container.sideEffectStream.collect {
+//            middleware.container.sideEffectFlow.collect {
 //                subscribingThreadName = Thread.currentThread().name
 //                countDownLatch.countDown()
 //            }

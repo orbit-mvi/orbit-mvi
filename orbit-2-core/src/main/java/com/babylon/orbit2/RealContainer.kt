@@ -20,10 +20,11 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.channels.broadcast
 import kotlinx.coroutines.channels.produce
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flowOf
@@ -42,12 +43,12 @@ open class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
     parentScope: CoroutineScope
 ) : Container<STATE, SIDE_EFFECT> {
     private val scope = parentScope + orbitDispatcher
-    private val stateChannel = ConflatedBroadcastChannel(initialState)
+    private val internalStateFlow = MutableStateFlow(initialState)
     private val sideEffectChannel = Channel<SIDE_EFFECT>(Channel.RENDEZVOUS)
     private val sideEffectMutex = Mutex()
-    private val pluginContext = OrbitDslPlugin.ContainerContext(
+    private val pluginContext = OrbitDslPlugin.ContainerContext<STATE, SIDE_EFFECT>(
         backgroundDispatcher = backgroundDispatcher,
-        setState = stateChannel,
+        setState = { internalStateFlow.value = it },
         postSideEffect = { event: SIDE_EFFECT ->
             scope.launch {
                 // Ensure side effect ordering
@@ -68,16 +69,18 @@ open class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
     }
 
     override val currentState: STATE
-        get() = stateChannel.value
+        get() = internalStateFlow.value
 
-    override val stateStream = stateChannel.asFlow()
+    override val stateFlow = internalStateFlow
 
-    override val sideEffectStream: Flow<SIDE_EFFECT> =
-        if (settings.sideEffectCaching) {
-            sideEffectChannel.asCachingStream()
-        } else {
-            sideEffectChannel.asNonCachingStream()
-        }
+    override val sideEffectFlow: Flow<SIDE_EFFECT> =
+        sideEffectChannel.broadcast(
+            if (settings.sideEffectCaching) SIDE_EFFECT_CACHE_CAPACITY else 1
+        ).asFlow()
+
+    override val stateStream = stateFlow.asStream()
+
+    override val sideEffectStream = sideEffectFlow.asStream()
 
     override fun orbit(init: Builder<STATE, SIDE_EFFECT, Unit>.() -> Builder<STATE, SIDE_EFFECT, *>) {
         scope.launch {
@@ -105,12 +108,14 @@ open class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
             }.collect()
     }
 
-    companion object {
+    private companion object {
         // To be replaced by the new API when it hits:
         // https://github.com/Kotlin/kotlinx.coroutines/issues/261
         @Suppress("EXPERIMENTAL_API_USAGE")
-        private val DEFAULT_DISPATCHER by lazy {
+        val DEFAULT_DISPATCHER by lazy {
             newSingleThreadContext("orbit")
         }
+
+        const val SIDE_EFFECT_CACHE_CAPACITY = 100
     }
 }
