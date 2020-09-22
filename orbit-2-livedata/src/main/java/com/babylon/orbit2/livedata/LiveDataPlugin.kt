@@ -40,7 +40,7 @@ val <STATE : Any, SIDE_EFFECT : Any> Container<STATE, SIDE_EFFECT>.stateLiveData
  * instantiated with, can support side effect caching when there are no listeners (default)
  */
 @Deprecated(
-    message = "Please use sideEffectLiveData instead",
+    message = "Please use sideEffectLiveData instead. Will be removed in Orbit 1.2.0",
     replaceWith = ReplaceWith(
         "sideEffectLiveData"
     )
@@ -53,7 +53,7 @@ val <STATE : Any, SIDE_EFFECT : Any> Container<STATE, SIDE_EFFECT>.sideEffect: L
  * values (only changed states are emitted) by default.
  */
 @Deprecated(
-    message = "Please use stateLiveData instead",
+    message = "Please use stateLiveData instead. Will be removed in Orbit 1.2.0",
     replaceWith = ReplaceWith(
         "stateLiveData"
     )
