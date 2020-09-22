@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package com.babylon.orbit2.rxjava2
 
 import com.appmattus.kotlinfixture.kotlinFixture
@@ -7,7 +9,6 @@ import org.junit.jupiter.api.RepeatedTest
 import org.junit.jupiter.api.Test
 import java.io.Closeable
 
-@Suppress("DEPRECATION")
 class Rx2StreamExtensionsKtTest {
 
     private val fixture = kotlinFixture()

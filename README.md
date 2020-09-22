@@ -176,8 +176,8 @@ class CalculatorActivity: AppCompatActivity() {
 
         // NOTE: Live data support is provided by the live data module:
         // com.babylon.orbit2:orbit-livedata
-        viewModel.container.state.observe(this, Observer { render(it) })
-        viewModel.container.sideEffect.observe(this, Observer { handleSideEffect(it) })
+        viewModel.container.stateLiveData.observe(this) { render(it) }
+        viewModel.container.sideEffectLiveData.observe(this) { handleSideEffect(it) }
     }
 
     private fun render(state: CalculatorState) {

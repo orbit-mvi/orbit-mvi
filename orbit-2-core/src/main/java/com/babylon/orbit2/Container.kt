@@ -48,18 +48,20 @@ interface Container<STATE : Any, SIDE_EFFECT : Any> {
     val sideEffectFlow: Flow<SIDE_EFFECT>
 
     /**
-     * A [Flow] of state updates. Emits the latest state upon subscription and serves only distinct
+     * A [Stream] of state updates. Emits the latest state upon subscription and serves only distinct
      * values (only changed states are emitted) by default.
      */
-    @Deprecated("stateStream is deprecated, use stateFlow instead")
+    @Suppress("DEPRECATION")
+    @Deprecated("stateStream is deprecated and will be removed in Orbit 1.2.0, use stateFlow instead")
     val stateStream: Stream<STATE>
 
     /**
-     * A [Flow] of one-off side effects posted from [Builder.sideEffect].
+     * A [Stream] of one-off side effects posted from [Builder.sideEffect].
      * Depending on the [Settings] this container has been instantiated with, can support
      * side effect caching when there are no listeners (default).
      */
-    @Deprecated("sideEffectStream is deprecated, use sideEffectFlow instead")
+    @Suppress("DEPRECATION")
+    @Deprecated("sideEffectStream is deprecated and will be removed in Orbit 1.2.0, use sideEffectFlow instead")
     val sideEffectStream: Stream<SIDE_EFFECT>
 
     /**

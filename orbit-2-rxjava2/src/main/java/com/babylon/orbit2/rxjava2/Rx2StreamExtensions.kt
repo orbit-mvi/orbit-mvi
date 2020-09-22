@@ -14,6 +14,8 @@
  *  limitations under the License.
  */
 
+@file:Suppress("DEPRECATION")
+
 package com.babylon.orbit2.rxjava2
 
 import com.babylon.orbit2.Stream

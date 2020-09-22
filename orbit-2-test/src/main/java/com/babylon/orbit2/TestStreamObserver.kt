@@ -24,6 +24,7 @@ import java.io.Closeable
  *
  * @param stream The stream to observe.
  */
+@Suppress("DEPRECATION")
 class TestStreamObserver<T>(stream: Stream<T>) {
     private val _values = mutableListOf<T>()
     private val closeable: Closeable

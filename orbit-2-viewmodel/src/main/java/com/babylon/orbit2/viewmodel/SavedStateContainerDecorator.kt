@@ -14,6 +14,8 @@
  *  limitations under the License.
  */
 
+@file:Suppress("DEPRECATION")
+
 package com.babylon.orbit2.viewmodel
 
 import androidx.lifecycle.SavedStateHandle
@@ -26,7 +28,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
 import java.io.Closeable
 
-@Suppress("OverridingDeprecatedMember", "DEPRECATION")
+@Suppress("OverridingDeprecatedMember")
 internal class SavedStateContainerDecorator<STATE : Any, SIDE_EFFECT : Any>(
     override val actual: Container<STATE, SIDE_EFFECT>,
     private val savedStateHandle: SavedStateHandle

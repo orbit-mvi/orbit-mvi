@@ -18,15 +18,17 @@ package com.babylon.orbit2
 
 import androidx.annotation.CheckResult
 import java.io.Closeable
+import kotlinx.coroutines.MainCoroutineDispatcher
 
 /**
  * Represents a stream of values.
  *
- * Observing happens on the thread where [observe] is called.
+ * Observing happens on [MainCoroutineDispatcher] if one is installed, otherwise on the default dispatcher.
  *
  * The subscription can be closed using the returned [Closeable]. It is the user's responsibility
  * to manage the lifecycle of the subscription.
  */
+@Deprecated("Stream is deprecated and will be removed in Orbit 1.2.0, use stateFlow instead")
 interface Stream<T> {
 
     @CheckResult

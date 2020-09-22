@@ -18,8 +18,8 @@ The LiveData plugin provides the following
 [Container](../orbit-2-core/src/main/java/com/babylon/orbit2/Container.kt)
 extension properties:
 
-- [state](src/main/java/com/babylon/orbit2/livedata/LiveDataPlugin.kt#state)
-- [sideEffect](src/main/java/com/babylon/orbit2/livedata/LiveDataPlugin.kt#sideEffect)
+- [state](src/main/java/com/babylon/orbit2/livedata/LiveDataPlugin.kt#stateLiveData)
+- [sideEffect](src/main/java/com/babylon/orbit2/livedata/LiveDataPlugin.kt#sideEffectLiveData)
 
 Below is the recommended way to subscribe to a
 [Container](../orbit-2-core/src/main/java/com/babylon/orbit2/Container.kt) in
@@ -34,8 +34,8 @@ class ExampleActivity: AppCompatActivity() {
     override fun onCreate(savedState: Bundle?) {
         ...
 
-        viewModel.container.state.observe(this, Observer {render(it) })
-        viewModel.container.sideEffect.observe(this, Observer {handleSideEffect(it) })
+        viewModel.container.stateLiveData.observe(this) {render(it) }
+        viewModel.container.sideEffectLiveData.observe(this) {handleSideEffect(it) }
     }
 
     private fun render(state: CalculatorState) {

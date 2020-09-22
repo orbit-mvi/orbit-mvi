@@ -23,18 +23,30 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import java.io.Closeable
+import kotlin.coroutines.EmptyCoroutineContext
 
 @ExperimentalCoroutinesApi
+@Suppress("DEPRECATION")
 internal fun <T> Flow<T>.asStream(): Stream<T> {
     return object : Stream<T> {
         override fun observe(lambda: (T) -> Unit): Closeable {
 
-            val job = CoroutineScope(Dispatchers.Unconfined).launch {
+            val job = CoroutineScope(streamCollectionDispatcher).launch {
                 this@asStream.collect {
                     lambda(it)
                 }
             }
+
             return Closeable { job.cancel() }
         }
     }
 }
+
+private val streamCollectionDispatcher
+    get() = try {
+        Dispatchers.Main.also {
+            it.isDispatchNeeded(EmptyCoroutineContext) // Try to perform an operation on the dispatcher
+        }
+    } catch (ias: IllegalStateException) {
+        Dispatchers.Default
+    }

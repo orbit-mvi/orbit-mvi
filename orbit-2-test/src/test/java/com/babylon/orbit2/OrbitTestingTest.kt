@@ -81,6 +81,14 @@ class OrbitTestingTest {
             testSubject.something(action)
             testSubject.something(action2)
 
+            // Await two states before checking
+            testSubject.assert(timeoutMillis = TIMEOUT) {
+                states(
+                    { copy(count = action) },
+                    { copy(count = action2) }
+                )
+            }
+
             val throwable = assertThrows<AssertionError> {
                 testSubject.assert(timeoutMillis = TIMEOUT) {
                     states(

@@ -21,7 +21,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import com.babylon.orbit2.ContainerHost
-import com.babylon.orbit2.livedata.state
 import com.babylon.orbit2.livedata.stateLiveData
 import com.babylon.orbit2.reduce
 import com.babylon.orbit2.viewmodel.container
