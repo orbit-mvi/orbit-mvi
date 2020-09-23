@@ -128,6 +128,7 @@ fun main() {
     val container = container<ExampleState, ExampleSideEffect>(ExampleState())
 
     // subscribe to updates
+    // For Android, use `lifecycleScope.launchWhenCreated` instead
     CoroutineScope(Dispatchers.Main).launch {
         container.stateFlow.collect {
             // do something with the state
