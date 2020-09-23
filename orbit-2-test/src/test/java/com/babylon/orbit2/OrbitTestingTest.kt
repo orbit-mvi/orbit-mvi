@@ -172,6 +172,7 @@ class OrbitTestingTest {
         fun `fails if first emitted state does not match expected`(testCase: BlockingModeTests) {
             val testSubject = StateTestMiddleware().test(
                 initialState = State(),
+                isolateFlow = false,
                 blocking = testCase.blocking
             )
             val action = fixture<Int>()
@@ -201,6 +202,7 @@ class OrbitTestingTest {
         fun `fails if second emitted state does not match expected`(testCase: BlockingModeTests) {
             val testSubject = StateTestMiddleware().test(
                 initialState = State(),
+                isolateFlow = false,
                 blocking = testCase.blocking
             )
             val action = fixture<Int>()
@@ -230,6 +232,7 @@ class OrbitTestingTest {
         fun `fails if expected states are out of order`(testCase: BlockingModeTests) {
             val testSubject = StateTestMiddleware().test(
                 initialState = State(),
+                isolateFlow = false,
                 blocking = testCase.blocking
             )
             val action = fixture<Int>()
