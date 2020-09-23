@@ -25,9 +25,9 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.babylon.orbit2.livedata.stateLiveData
 import com.babylon.orbit2.sample.posts.R
 import com.babylon.orbit2.sample.posts.app.common.SeparatorDecoration
 import com.babylon.orbit2.sample.posts.app.features.postdetails.viewmodel.PostDetailState
@@ -39,6 +39,7 @@ import com.bumptech.glide.request.transition.Transition
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.kotlinandroidextensions.GroupieViewHolder
 import kotlinx.android.synthetic.main.post_details_fragment.*
+import kotlinx.coroutines.flow.collect
 import org.koin.androidx.viewmodel.ext.android.stateViewModel
 import org.koin.core.parameter.parametersOf
 
@@ -73,7 +74,9 @@ class PostDetailsFragment : Fragment() {
 
         post_comments_list.adapter = adapter
 
-        viewModel.container.stateLiveData.observe(viewLifecycleOwner) { render(it) }
+        lifecycleScope.launchWhenCreated {
+            viewModel.container.stateFlow.collect { render(it) }
+        }
     }
 
     private fun render(state: PostDetailState) {

@@ -25,38 +25,18 @@ import com.babylon.orbit2.Container.Settings
  * A [LiveData] of one-off side effects. Depending on the [Settings] this container has been
  * instantiated with, can support side effect caching when there are no listeners (default)
  */
-val <STATE : Any, SIDE_EFFECT : Any> Container<STATE, SIDE_EFFECT>.sideEffectLiveData: LiveData<SIDE_EFFECT>
-    get() = DelegatingLiveData(this.sideEffectFlow)
-
-/**
- * A [LiveData] of state updates. Emits the latest state upon subscription and serves only distinct
- * values (only changed states are emitted) by default.
- */
-val <STATE : Any, SIDE_EFFECT : Any> Container<STATE, SIDE_EFFECT>.stateLiveData: LiveData<STATE>
-    get() = stateFlow.asLiveData()
-
-/**
- * A [LiveData] of one-off side effects. Depending on the [Settings] this container has been
- * instantiated with, can support side effect caching when there are no listeners (default)
- */
 @Deprecated(
-    message = "Please use sideEffectLiveData instead. Will be removed in Orbit 1.2.0",
-    replaceWith = ReplaceWith(
-        "sideEffectLiveData"
-    )
+    message = "Please use sideEffectFlow instead. Will be removed in Orbit 1.2.0"
 )
 val <STATE : Any, SIDE_EFFECT : Any> Container<STATE, SIDE_EFFECT>.sideEffect: LiveData<SIDE_EFFECT>
-    get() = sideEffectLiveData
+    get() = DelegatingLiveData(sideEffectFlow)
 
 /**
  * A [LiveData] of state updates. Emits the latest state upon subscription and serves only distinct
  * values (only changed states are emitted) by default.
  */
 @Deprecated(
-    message = "Please use stateLiveData instead. Will be removed in Orbit 1.2.0",
-    replaceWith = ReplaceWith(
-        "stateLiveData"
-    )
+    message = "Please use stateFlow instead. Will be removed in Orbit 1.2.0"
 )
 val <STATE : Any, SIDE_EFFECT : Any> Container<STATE, SIDE_EFFECT>.state: LiveData<STATE>
-    get() = stateLiveData
+    get() = stateFlow.asLiveData()

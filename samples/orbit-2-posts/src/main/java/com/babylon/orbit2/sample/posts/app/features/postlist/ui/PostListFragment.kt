@@ -22,17 +22,19 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.babylon.orbit2.livedata.sideEffectLiveData
-import com.babylon.orbit2.livedata.stateLiveData
 import com.babylon.orbit2.sample.posts.R
+import com.babylon.orbit2.sample.posts.app.common.NavigationEvent
 import com.babylon.orbit2.sample.posts.app.common.SeparatorDecoration
 import com.babylon.orbit2.sample.posts.app.features.postlist.viewmodel.OpenPostNavigationEvent
+import com.babylon.orbit2.sample.posts.app.features.postlist.viewmodel.PostListState
 import com.babylon.orbit2.sample.posts.app.features.postlist.viewmodel.PostListViewModel
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.kotlinandroidextensions.GroupieViewHolder
 import kotlinx.android.synthetic.main.post_list_fragment.*
+import kotlinx.coroutines.flow.collect
 import org.koin.androidx.viewmodel.ext.android.stateViewModel
 
 class PostListFragment : Fragment() {
@@ -63,18 +65,33 @@ class PostListFragment : Fragment() {
 
         content.adapter = adapter
 
-        viewModel.container.stateLiveData.observe(viewLifecycleOwner) {
-            adapter.update(it.overviews.map { PostListItem(it, viewModel) })
+        lifecycleScope.launchWhenCreated {
+            viewModel.container.stateFlow.collect {
+                reduce(adapter, it)
+            }
+        }
+        lifecycleScope.launchWhenCreated {
+            viewModel.container.sideEffectFlow.collect {
+                sideEffect(it)
+            }
         }
     }
 
-    override fun onStart() {
-        super.onStart()
-        viewModel.container.sideEffectLiveData.observe(viewLifecycleOwner) {
-            when (it) {
-                is OpenPostNavigationEvent ->
-                    findNavController().navigate(PostListFragmentDirections.actionListFragmentToDetailFragment(it.post))
-            }
+    private fun sideEffect(it: NavigationEvent) {
+        when (it) {
+            is OpenPostNavigationEvent ->
+                findNavController().navigate(
+                    PostListFragmentDirections.actionListFragmentToDetailFragment(
+                        it.post
+                    )
+                )
         }
+    }
+
+    private fun reduce(
+        adapter: GroupAdapter<GroupieViewHolder>,
+        it: PostListState
+    ) {
+        adapter.update(it.overviews.map { PostListItem(it, viewModel) })
     }
 }

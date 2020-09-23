@@ -22,17 +22,17 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.babylon.orbit2.livedata.sideEffectLiveData
-import com.babylon.orbit2.livedata.stateLiveData
 import com.babylon.orbit2.sample.stocklist.R
 import com.babylon.orbit2.sample.stocklist.databinding.ListFragmentBinding
 import com.babylon.orbit2.sample.stocklist.list.business.ListSideEffect
 import com.babylon.orbit2.sample.stocklist.list.business.ListViewModel
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.GroupieViewHolder
+import kotlinx.coroutines.flow.collect
 import org.koin.androidx.viewmodel.ext.android.stateViewModel
 
 class ListFragment : Fragment() {
@@ -62,18 +62,21 @@ class ListFragment : Fragment() {
             addItemDecoration(DividerItemDecoration(context, LinearLayoutManager.VERTICAL))
         }
 
-        listViewModel.container.stateLiveData.observe(viewLifecycleOwner) {
-            val items = it.stocks.map { stock ->
-                StockItem(stock, listViewModel)
+        lifecycleScope.launchWhenCreated {
+            listViewModel.container.stateFlow.collect {
+                val items = it.stocks.map { stock ->
+                    StockItem(stock, listViewModel)
+                }
+
+                groupAdapter.update(items)
             }
-
-            groupAdapter.update(items)
         }
-
-        listViewModel.container.sideEffectLiveData.observe(viewLifecycleOwner) {
-            when (it) {
-                is ListSideEffect.NavigateToDetail ->
-                    findNavController().navigate(ListFragmentDirections.actionListFragmentToDetailFragment(it.itemName))
+        lifecycleScope.launchWhenCreated {
+            listViewModel.container.sideEffectFlow.collect {
+                when (it) {
+                    is ListSideEffect.NavigateToDetail ->
+                        findNavController().navigate(ListFragmentDirections.actionListFragmentToDetailFragment(it.itemName))
+                }
             }
         }
     }

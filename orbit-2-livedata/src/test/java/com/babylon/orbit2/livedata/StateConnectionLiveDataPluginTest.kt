@@ -32,6 +32,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
+@Suppress("DEPRECATION")
 @ExperimentalCoroutinesApi
 @ExtendWith(InstantTaskExecutorExtension::class)
 internal class StateConnectionLiveDataPluginTest {
@@ -57,7 +58,7 @@ internal class StateConnectionLiveDataPluginTest {
         val initialState = fixture<TestState>()
         val middleware = Middleware(initialState)
         val testStateObserver =
-            middleware.container.stateLiveData.test(mockLifecycleOwner)
+            middleware.container.state.test(mockLifecycleOwner)
 
         testStateObserver.awaitCount(1)
 
@@ -69,13 +70,13 @@ internal class StateConnectionLiveDataPluginTest {
         val initialState = fixture<TestState>()
         val middleware = Middleware(initialState)
         val testStateObserver =
-            middleware.container.stateLiveData.test(mockLifecycleOwner)
+            middleware.container.state.test(mockLifecycleOwner)
         val action = fixture<Int>()
         middleware.something(action)
         testStateObserver.awaitCount(2) // block until the state is updated
 
         val testStateObserver2 =
-            middleware.container.stateLiveData.test(mockLifecycleOwner)
+            middleware.container.state.test(mockLifecycleOwner)
         testStateObserver2.awaitCount(1)
 
         assertThat(testStateObserver.values).containsExactly(
@@ -93,7 +94,7 @@ internal class StateConnectionLiveDataPluginTest {
     fun `latest state is emitted on connection to the same live data`() {
         val initialState = fixture<TestState>()
         val middleware = Middleware(initialState)
-        val liveData = middleware.container.stateLiveData
+        val liveData = middleware.container.state
         val testStateObserver = liveData.test(mockLifecycleOwner)
         val action = fixture<Int>()
         middleware.something(action)
@@ -129,7 +130,7 @@ internal class StateConnectionLiveDataPluginTest {
             Middleware(initialState)
         val action = fixture<Int>()
         val testStateObserver =
-            middleware.container.stateLiveData.test(mockLifecycleOwner)
+            middleware.container.state.test(mockLifecycleOwner)
 
         middleware.something(action)
 

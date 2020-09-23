@@ -52,9 +52,11 @@ dependencies {
     implementation(project(":orbit-2-livedata"))
     implementation(project(":orbit-2-viewmodel"))
 
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.9")
     implementation("androidx.constraintlayout:constraintlayout:2.0.1")
     implementation("com.google.android.material:material:1.2.1")
     implementation("org.koin:koin-androidx-viewmodel:2.1.6")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.2.0")
 
     // Testing
     testImplementation(project(":orbit-2-test"))

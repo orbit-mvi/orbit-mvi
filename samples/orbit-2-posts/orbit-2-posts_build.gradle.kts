@@ -46,7 +46,6 @@ dependencies {
     implementation(kotlin("stdlib-jdk8"))
     implementation(project(":orbit-2-core"))
     implementation(project(":orbit-2-coroutines"))
-    implementation(project(":orbit-2-livedata"))
     implementation(project(":orbit-2-viewmodel"))
 
     // UI

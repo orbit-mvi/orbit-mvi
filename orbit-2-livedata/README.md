@@ -18,12 +18,11 @@ The LiveData plugin provides the following
 [Container](../orbit-2-core/src/main/java/com/babylon/orbit2/Container.kt)
 extension properties:
 
-- [state](src/main/java/com/babylon/orbit2/livedata/LiveDataPlugin.kt#stateLiveData)
-- [sideEffect](src/main/java/com/babylon/orbit2/livedata/LiveDataPlugin.kt#sideEffectLiveData)
+- [state](src/main/java/com/babylon/orbit2/livedata/LiveDataPlugin.kt#state)
+- [sideEffect](src/main/java/com/babylon/orbit2/livedata/LiveDataPlugin.kt#sideEffect)
 
-Below is the recommended way to subscribe to a
-[Container](../orbit-2-core/src/main/java/com/babylon/orbit2/Container.kt) in
-Android.
+These extensions will be removed in Orbit 1.2.0 due to fundamental
+incompatibility of `LiveData` design with Orbit design goals.
 
 ``` kotlin
 class ExampleActivity: AppCompatActivity() {
@@ -34,8 +33,8 @@ class ExampleActivity: AppCompatActivity() {
     override fun onCreate(savedState: Bundle?) {
         ...
 
-        viewModel.container.stateLiveData.observe(this) {render(it) }
-        viewModel.container.sideEffectLiveData.observe(this) {handleSideEffect(it) }
+        viewModel.container.state.observe(this) {render(it) }
+        viewModel.container.sideEffect.observe(this) {handleSideEffect(it) }
     }
 
     private fun render(state: CalculatorState) {

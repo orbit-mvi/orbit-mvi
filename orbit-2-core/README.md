@@ -7,6 +7,7 @@ It provides all the basic parts of Orbit.
   - [Architecture](#architecture)
     - [Orbit concepts](#orbit-concepts)
     - [Side effects](#side-effects)
+      - [Limitations](#limitations)
   - [Including the module](#including-the-module)
   - [Orbit container](#orbit-container)
     - [Subscribing to the container](#subscribing-to-the-container)
@@ -77,6 +78,17 @@ The UI does not have to be aware of all side effects (e.g. why should the UI
 care if you send analytics events?). As such you can have side effects that do
 not post any event back to the UI.
 
+Side effects are cached if there are no observers, guaranteeing critical
+events such as navigation are delivered after re-subscription.
+
+#### Limitations
+
+`Container.sideEffectFlow` is designed to be collected by only one
+observer. This ensures that side effect caching works in a predictable
+way. If your particular use case requires multi-casting use `broadcast`
+on the side effect flow, but be aware that caching will not work for the
+resulting `BroadcastChannel`.
+
 ## Including the module
 
 Orbit 2 is a modular framework. You will need this module to get started!
@@ -120,6 +132,8 @@ fun main() {
         container.stateFlow.collect {
             // do something with the state
         }
+    }
+    CoroutineScope(Dispatchers.Main).launch {
         container.sideEffectFlow.collect {
             // do something with the side effect
         }

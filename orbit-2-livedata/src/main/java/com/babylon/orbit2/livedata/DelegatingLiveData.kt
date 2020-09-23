@@ -35,13 +35,13 @@ internal class DelegatingLiveData<T>(private val flow: Flow<T>) : LiveData<T>() 
     @MainThread
     override fun observe(owner: LifecycleOwner, observer: Observer<in T>) {
         // Observe the internal MutableLiveData
-        closeables[observer] = flow.asLiveData().also {
+        closeables[observer] = flow.asLiveData(timeoutInMs = 0L).also {
             it.observe(owner, observer)
         }
     }
 
     override fun observeForever(observer: Observer<in T>) {
-        closeables[observer] = flow.asLiveData().also {
+        closeables[observer] = flow.asLiveData(timeoutInMs = 0L).also {
             it.observeForever(observer)
         }
     }

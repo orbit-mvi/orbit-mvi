@@ -80,6 +80,7 @@ dependencies {
     implementation("com.xwray:groupie-viewbinding:2.8.1")
     implementation("org.koin:koin-androidx-viewmodel:2.1.6")
     implementation("androidx.lifecycle:lifecycle-common-java8:2.2.0")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.2.0")
 
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:${Versions.desugar}")
 }

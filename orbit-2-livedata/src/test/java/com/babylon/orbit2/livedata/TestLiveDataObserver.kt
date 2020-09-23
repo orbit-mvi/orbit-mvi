@@ -45,5 +45,15 @@ class TestLiveDataObserver<T>(lifecycleOwner: LifecycleOwner, private val liveDa
         }
     }
 
+    fun awaitNoActiveObservers(timeout: Long = 5000L) {
+        val start = System.currentTimeMillis()
+        while (liveData.hasObservers()) {
+            if (System.currentTimeMillis() - start > timeout) {
+                break
+            }
+            Thread.sleep(10)
+        }
+    }
+
     fun close(): Unit = liveData.removeObserver(observer)
 }

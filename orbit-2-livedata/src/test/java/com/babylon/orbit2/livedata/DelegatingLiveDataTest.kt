@@ -18,6 +18,7 @@ package com.babylon.orbit2.livedata
 
 import androidx.lifecycle.Lifecycle
 import com.appmattus.kotlinfixture.kotlinFixture
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.GlobalScope
@@ -31,6 +32,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.EnumSource
@@ -106,7 +108,6 @@ internal class DelegatingLiveDataTest {
 
         val action = fixture<Int>()
         val action2 = fixture<Int>()
-        val action3 = fixture<Int>()
 
         val observer = DelegatingLiveData(channel.consumeAsFlow()).test(mockLifecycleOwner)
 
@@ -118,8 +119,9 @@ internal class DelegatingLiveDataTest {
         mockLifecycleOwner.dispatchEvent(Lifecycle.Event.ON_PAUSE)
         mockLifecycleOwner.dispatchEvent(Lifecycle.Event.ON_STOP)
 
-        channel.sendBlocking(action2)
-        channel.sendBlocking(action3)
+        assertThrows<CancellationException> {
+            channel.sendBlocking(action2)
+        }
 
         assertThat(observer.values).containsExactly(action)
     }
