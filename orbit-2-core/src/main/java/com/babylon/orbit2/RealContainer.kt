@@ -104,11 +104,11 @@ open class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
             }.collect()
     }
 
-    private companion object {
+    companion object {
         // To be replaced by the new API when it hits:
         // https://github.com/Kotlin/kotlinx.coroutines/issues/261
         @Suppress("EXPERIMENTAL_API_USAGE")
-        val DEFAULT_DISPATCHER by lazy {
+        private val DEFAULT_DISPATCHER by lazy {
             newSingleThreadContext("orbit")
         }
     }
