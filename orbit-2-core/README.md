@@ -345,10 +345,6 @@ done within particular `transform` blocks e.g. `transformSuspend`.
 - `transform` and `transformX` calls execute in an `IO` thread so as not to
   block the Orbit [Container](src/main/java/com/babylon/orbit2/Container.kt)
   from accepting further events.
-- Updates delivered via `Container.stateStream` and
-  `Container.sideEffectStream` come in on the main coroutine dispatcher
-  if installed, with the default dispatcher as the fallback. However,
-  the connection to the stream has to be manually managed and cancelled.
 
 ## Error handling
 

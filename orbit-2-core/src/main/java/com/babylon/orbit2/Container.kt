@@ -56,6 +56,8 @@ interface Container<STATE : Any, SIDE_EFFECT : Any> {
     /**
      * A [Stream] of state updates. Emits the latest state upon subscription and serves only distinct
      * values (only changed states are emitted) by default.
+     * Emissions come in on the main coroutine dispatcher if installed, with the default dispatcher as the fallback. However,
+     * the connection to the stream has to be manually managed and cancelled when appropriate.
      */
     @Suppress("DEPRECATION")
     @Deprecated("stateStream is deprecated and will be removed in Orbit 1.2.0, use stateFlow instead")
@@ -65,6 +67,8 @@ interface Container<STATE : Any, SIDE_EFFECT : Any> {
      * A [Stream] of one-off side effects posted from [Builder.sideEffect].
      * Depending on the [Settings] this container has been instantiated with, can support
      * side effect caching when there are no listeners (default).
+     * Emissions come in on the main coroutine dispatcher if installed, with the default dispatcher as the fallback. However,
+     * the connection to the stream has to be manually managed and cancelled when appropriate.
      */
     @Suppress("DEPRECATION")
     @Deprecated("sideEffectStream is deprecated and will be removed in Orbit 1.2.0, use sideEffectFlow instead")
