@@ -27,6 +27,7 @@ dependencies {
 
     // Testing
     testImplementation(project(":orbit-2-test"))
+    testImplementation(ProjectDependencies.kotlinCoroutinesTest)
     GroupedDependencies.testsImplementation.forEach { testImplementation(it) }
     testRuntimeOnly(ProjectDependencies.junitJupiterEngine)
 }

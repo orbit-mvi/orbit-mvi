@@ -23,10 +23,17 @@ import com.babylon.orbit2.container
 import com.babylon.orbit2.reduce
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.setMain
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
+@Suppress("DEPRECATION")
+@ExperimentalCoroutinesApi
 @ExtendWith(InstantTaskExecutorExtension::class)
 internal class StateConnectionLiveDataPluginTest {
 
@@ -34,6 +41,16 @@ internal class StateConnectionLiveDataPluginTest {
     private val mockLifecycleOwner = MockLifecycleOwner().apply {
         dispatchEvent(Lifecycle.Event.ON_CREATE)
         dispatchEvent(Lifecycle.Event.ON_START)
+    }
+
+    @BeforeEach
+    fun beforeEach() {
+        Dispatchers.setMain(Dispatchers.Unconfined)
+    }
+
+    @AfterEach
+    fun afterEach() {
+        Dispatchers.resetMain()
     }
 
     @Test

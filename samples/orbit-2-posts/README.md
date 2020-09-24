@@ -19,7 +19,7 @@ This sample implements a simple master-detail application using
   [PostListFragment](src/main/java/com/babylon/orbit2/sample/posts/app/features/postlist/ui/PostListFragment.kt)
   observes and sends to the `NavController`.
 
-- The state is accessed in the fragments through `LiveData`.
+- The state is accessed in the fragments through `Flow`.
 
 - [PostListViewModel](src/main/java/com/babylon/orbit2/sample/posts/app/features/postlist/viewmodel/PostListViewModel.kt)
   and

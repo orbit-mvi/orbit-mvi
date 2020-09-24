@@ -20,12 +20,13 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.channels.produce
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.newSingleThreadContext
 import kotlinx.coroutines.plus
@@ -41,12 +42,12 @@ open class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
     parentScope: CoroutineScope
 ) : Container<STATE, SIDE_EFFECT> {
     private val scope = parentScope + orbitDispatcher
-    private val stateChannel = ConflatedBroadcastChannel(initialState)
-    private val sideEffectChannel = Channel<SIDE_EFFECT>(Channel.RENDEZVOUS)
+    private val internalStateFlow = MutableStateFlow(initialState)
+    private val sideEffectChannel = Channel<SIDE_EFFECT>(settings.sideEffectBufferSize)
     private val sideEffectMutex = Mutex()
-    private val pluginContext = OrbitDslPlugin.ContainerContext(
+    private val pluginContext = OrbitDslPlugin.ContainerContext<STATE, SIDE_EFFECT>(
         backgroundDispatcher = backgroundDispatcher,
-        setState = stateChannel,
+        setState = { internalStateFlow.value = it },
         postSideEffect = { event: SIDE_EFFECT ->
             scope.launch {
                 // Ensure side effect ordering
@@ -67,16 +68,15 @@ open class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
     }
 
     override val currentState: STATE
-        get() = stateChannel.value
+        get() = internalStateFlow.value
 
-    override val stateStream = stateChannel.asStateStream { currentState }
+    override val stateFlow = internalStateFlow
 
-    override val sideEffectStream: Stream<SIDE_EFFECT> =
-        if (settings.sideEffectCaching) {
-            sideEffectChannel.asCachingStream(scope)
-        } else {
-            sideEffectChannel.asNonCachingStream()
-        }
+    override val sideEffectFlow: Flow<SIDE_EFFECT> get() = sideEffectChannel.receiveAsFlow()
+
+    override val stateStream = stateFlow.asStream()
+
+    override val sideEffectStream = sideEffectFlow.asStream()
 
     override fun orbit(init: Builder<STATE, SIDE_EFFECT, Unit>.() -> Builder<STATE, SIDE_EFFECT, *>) {
         scope.launch {

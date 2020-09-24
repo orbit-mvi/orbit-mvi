@@ -18,6 +18,8 @@ package com.babylon.orbit2
 
 import com.babylon.orbit2.idling.IdlingResource
 import com.babylon.orbit2.idling.NoopIdlingResource
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.Flow
 
 /**
  * The heart of the Orbit MVI system. Represents an MVI container with its input and outputs.
@@ -34,16 +36,42 @@ interface Container<STATE : Any, SIDE_EFFECT : Any> {
     val currentState: STATE
 
     /**
+     * A [Flow] of state updates. Emits the latest state upon subscription and serves only distinct
+     * values (through equality comparison).
+     */
+    val stateFlow: Flow<STATE>
+
+    /**
+     * A [Flow] of one-off side effects posted from [Builder.sideEffect]. Caches side effects when there are no collectors.
+     * The size of the cache can be controlled via Container [Settings] and determines if and when the orbit thread suspends when you
+     * post a side effect. The default is unlimited. You don't have to touch this unless you are posting many side effects which could result in
+     * [OutOfMemoryError].
+     *
+     * This is designed to be collected by one observer only in order to ensure that side effect caching works in a predictable way.
+     * If your particular use case requires multi-casting use `broadcast` on this [Flow], but be aware that caching will not work for the
+     * resulting `BroadcastChannel`.
+     */
+    val sideEffectFlow: Flow<SIDE_EFFECT>
+
+    /**
      * A [Stream] of state updates. Emits the latest state upon subscription and serves only distinct
      * values (only changed states are emitted) by default.
+     * Emissions come in on the main coroutine dispatcher if installed, with the default dispatcher as the fallback. However,
+     * the connection to the stream has to be manually managed and cancelled when appropriate.
      */
+    @Suppress("DEPRECATION")
+    @Deprecated("stateStream is deprecated and will be removed in Orbit 1.2.0, use stateFlow instead")
     val stateStream: Stream<STATE>
 
     /**
      * A [Stream] of one-off side effects posted from [Builder.sideEffect].
      * Depending on the [Settings] this container has been instantiated with, can support
      * side effect caching when there are no listeners (default).
+     * Emissions come in on the main coroutine dispatcher if installed, with the default dispatcher as the fallback. However,
+     * the connection to the stream has to be manually managed and cancelled when appropriate.
      */
+    @Suppress("DEPRECATION")
+    @Deprecated("sideEffectStream is deprecated and will be removed in Orbit 1.2.0, use sideEffectFlow instead")
     val sideEffectStream: Stream<SIDE_EFFECT>
 
     /**
@@ -59,12 +87,13 @@ interface Container<STATE : Any, SIDE_EFFECT : Any> {
     /**
      * Represents additional settings to create the container with.
      *
-     * @property sideEffectCaching When true the side effects are cached when there are no
-     * subscribers, to be emitted later upon first subscription.
-     * On by default.
+     * @property sideEffectBufferSize Defines how many side effects can be buffered before the container suspends. If you are
+     * sending many side effects and getting out of memory exceptions this can be turned down to suspend the container instead.
+     * Unlimited by default.
+     * @property idlingRegistry The registry used by the container for signalling idling for UI tests
      */
     class Settings(
-        val sideEffectCaching: Boolean = true,
+        val sideEffectBufferSize: Int = Channel.UNLIMITED,
         val idlingRegistry: IdlingResource = NoopIdlingResource()
     )
 }

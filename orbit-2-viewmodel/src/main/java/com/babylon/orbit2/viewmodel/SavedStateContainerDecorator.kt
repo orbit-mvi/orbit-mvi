@@ -14,6 +14,8 @@
  *  limitations under the License.
  */
 
+@file:Suppress("DEPRECATION")
+
 package com.babylon.orbit2.viewmodel
 
 import androidx.lifecycle.SavedStateHandle
@@ -21,14 +23,28 @@ import com.babylon.orbit2.Builder
 import com.babylon.orbit2.Container
 import com.babylon.orbit2.ContainerDecorator
 import com.babylon.orbit2.Stream
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.flow
 import java.io.Closeable
 
+@Suppress("OverridingDeprecatedMember")
 internal class SavedStateContainerDecorator<STATE : Any, SIDE_EFFECT : Any>(
     override val actual: Container<STATE, SIDE_EFFECT>,
     private val savedStateHandle: SavedStateHandle
 ) : ContainerDecorator<STATE, SIDE_EFFECT> {
     override val currentState: STATE
         get() = actual.currentState
+
+    override val stateFlow: Flow<STATE>
+        get() = flow {
+            actual.stateFlow.collect {
+                savedStateHandle[SAVED_STATE_KEY] = it
+                emit(it)
+            }
+        }
+    override val sideEffectFlow: Flow<SIDE_EFFECT>
+        get() = actual.sideEffectFlow
 
     override val stateStream: Stream<STATE>
         get() = object : Stream<STATE> {

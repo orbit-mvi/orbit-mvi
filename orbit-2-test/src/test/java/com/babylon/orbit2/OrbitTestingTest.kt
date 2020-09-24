@@ -31,7 +31,7 @@ import org.junit.jupiter.params.provider.EnumSource
 
 class OrbitTestingTest {
     companion object {
-        const val TIMEOUT = 500L
+        const val TIMEOUT = 1000L
     }
 
     val fixture = kotlinFixture()
@@ -80,6 +80,14 @@ class OrbitTestingTest {
 
             testSubject.something(action)
             testSubject.something(action2)
+
+            // Await two states before checking
+            testSubject.assert(timeoutMillis = TIMEOUT) {
+                states(
+                    { copy(count = action) },
+                    { copy(count = action2) }
+                )
+            }
 
             val throwable = assertThrows<AssertionError> {
                 testSubject.assert(timeoutMillis = TIMEOUT) {
@@ -164,6 +172,7 @@ class OrbitTestingTest {
         fun `fails if first emitted state does not match expected`(testCase: BlockingModeTests) {
             val testSubject = StateTestMiddleware().test(
                 initialState = State(),
+                isolateFlow = false,
                 blocking = testCase.blocking
             )
             val action = fixture<Int>()
@@ -193,6 +202,7 @@ class OrbitTestingTest {
         fun `fails if second emitted state does not match expected`(testCase: BlockingModeTests) {
             val testSubject = StateTestMiddleware().test(
                 initialState = State(),
+                isolateFlow = false,
                 blocking = testCase.blocking
             )
             val action = fixture<Int>()
@@ -222,6 +232,7 @@ class OrbitTestingTest {
         fun `fails if expected states are out of order`(testCase: BlockingModeTests) {
             val testSubject = StateTestMiddleware().test(
                 initialState = State(),
+                isolateFlow = false,
                 blocking = testCase.blocking
             )
             val action = fixture<Int>()

@@ -46,7 +46,7 @@ internal class RxJava3DslPluginDslThreadingTest {
         val action = fixture<Int>()
 
         val middleware = Middleware()
-        val testStreamObserver = middleware.container.stateStream.test()
+        val testStreamObserver = middleware.container.stateFlow.test()
 
         middleware.single(action)
 
@@ -59,7 +59,7 @@ internal class RxJava3DslPluginDslThreadingTest {
         val action = fixture<Int>()
 
         val middleware = Middleware()
-        val testStreamObserver = middleware.container.stateStream.test()
+        val testStreamObserver = middleware.container.stateFlow.test()
 
         middleware.maybe(action)
 
@@ -84,7 +84,7 @@ internal class RxJava3DslPluginDslThreadingTest {
         val action = fixture<Int>()
 
         val middleware = Middleware()
-        val testStreamObserver = middleware.container.stateStream.test()
+        val testStreamObserver = middleware.container.stateFlow.test()
 
         middleware.completable(action)
 
@@ -97,7 +97,7 @@ internal class RxJava3DslPluginDslThreadingTest {
         val action = fixture<Int>()
 
         val middleware = Middleware()
-        val testStreamObserver = middleware.container.stateStream.test()
+        val testStreamObserver = middleware.container.stateFlow.test()
 
         middleware.observable(action)
 

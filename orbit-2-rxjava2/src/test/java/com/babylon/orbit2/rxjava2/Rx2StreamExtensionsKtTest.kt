@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package com.babylon.orbit2.rxjava2
 
 import com.appmattus.kotlinfixture.kotlinFixture

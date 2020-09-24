@@ -1,39 +1,28 @@
-/*
- * Copyright 2020 Babylon Partners Limited
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *  http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- */
-
 package com.babylon.orbit2
 
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
-import java.io.Closeable
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
 /**
- * Allows you to record all observed values of a stream for easy testing.
+ * Allows you to record all observed values of a flow for easy testing.
  *
- * @param stream The stream to observe.
+ * @param flow The flow to observe.
  */
-@Suppress("DEPRECATION")
-class TestStreamObserver<T>(stream: Stream<T>) {
+class TestFlowObserver<T>(flow: Flow<T>) {
     private val _values = mutableListOf<T>()
-    private val closeable: Closeable
+    private val closeable: Job
     val values: List<T>
         get() = _values
 
     init {
-        closeable = stream.observe {
-            _values.add(it)
+        closeable = GlobalScope.launch {
+            flow.collect {
+                _values.add(it)
+            }
         }
     }
 
@@ -73,7 +62,7 @@ class TestStreamObserver<T>(stream: Stream<T>) {
      * Closes the subscription on the underlying stream. No further values will be received after
      * this call.
      */
-    fun close(): Unit = closeable.close()
+    fun close(): Unit = closeable.cancel()
 
     companion object {
         private const val AWAIT_TIMEOUT_MS = 10L

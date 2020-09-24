@@ -44,7 +44,7 @@ internal class CoroutineDslPluginThreadingTest {
         val action = fixture<Int>()
 
         val middleware = Middleware()
-        val testStreamObserver = middleware.container.stateStream.test()
+        val testStreamObserver = middleware.container.stateFlow.test()
 
         middleware.suspend(action)
 
@@ -57,7 +57,7 @@ internal class CoroutineDslPluginThreadingTest {
         val action = fixture<Int>()
 
         val middleware = Middleware()
-        val testStreamObserver = middleware.container.stateStream.test()
+        val testStreamObserver = middleware.container.stateFlow.test()
 
         middleware.flow(action)
 

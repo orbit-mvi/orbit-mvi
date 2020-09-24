@@ -22,14 +22,15 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
+import androidx.lifecycle.asLiveData
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
-import com.babylon.orbit2.livedata.state
 import com.babylon.orbit2.sample.stocklist.R
 import com.babylon.orbit2.sample.stocklist.databinding.DetailFragmentBinding
 import com.babylon.orbit2.sample.stocklist.detail.business.DetailViewModel
 import com.babylon.orbit2.sample.stocklist.list.ui.JobHolder
 import com.babylon.orbit2.sample.stocklist.list.ui.animateChange
+import kotlinx.coroutines.flow.collect
 import org.koin.androidx.viewmodel.ext.android.stateViewModel
 import org.koin.core.parameter.parametersOf
 
@@ -55,18 +56,17 @@ class DetailFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
 
         binding.apply {
-            state = detailViewModel.container.state
+            state = detailViewModel.container.stateFlow.asLiveData()
             lifecycleOwner = this@DetailFragment
         }
 
-        detailViewModel.container.state.observe(
-            viewLifecycleOwner,
-            Observer {
+        lifecycleScope.launchWhenCreated {
+            detailViewModel.container.stateFlow.collect {
                 it.stock?.let { stock ->
                     animateChange(binding.bid, binding.bidTick, stock.bid, bidRef)
                     animateChange(binding.ask, binding.askTick, stock.ask, askRef)
                 }
             }
-        )
+        }
     }
 }

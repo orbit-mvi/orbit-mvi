@@ -37,11 +37,11 @@ internal class BaseDslPluginThreadingTest {
     fun `reducer executes on orbit dispatcher`() {
         val action = fixture<Int>()
         val middleware = BaseDslMiddleware()
-        val testStreamObserver = middleware.container.stateStream.test()
+        val testFlowObserver = middleware.container.stateFlow.test()
 
         middleware.reducer(action)
 
-        testStreamObserver.awaitCount(2)
+        testFlowObserver.awaitCount(2)
         assertThat(middleware.threadName).startsWith(ORBIT_THREAD_PREFIX)
     }
 
@@ -49,11 +49,11 @@ internal class BaseDslPluginThreadingTest {
     fun `transformer executes on background dispatcher`() {
         val action = fixture<Int>()
         val middleware = BaseDslMiddleware()
-        val testStreamObserver = middleware.container.stateStream.test()
+        val testFlowObserver = middleware.container.stateFlow.test()
 
         middleware.transformer(action)
 
-        testStreamObserver.awaitCount(2)
+        testFlowObserver.awaitCount(2)
         assertThat(middleware.threadName).startsWith(BACKGROUND_THREAD_PREFIX)
     }
 
@@ -61,11 +61,11 @@ internal class BaseDslPluginThreadingTest {
     fun `posting side effects executes on orbit dispatcher`() {
         val action = fixture<Int>()
         val middleware = BaseDslMiddleware()
-        val testStreamObserver = middleware.container.sideEffectStream.test()
+        val testFlowObserver = middleware.container.sideEffectFlow.test()
 
         middleware.postingSideEffect(action)
 
-        testStreamObserver.awaitCount(1)
+        testFlowObserver.awaitCount(1)
         assertThat(middleware.threadName).startsWith(ORBIT_THREAD_PREFIX)
     }
 

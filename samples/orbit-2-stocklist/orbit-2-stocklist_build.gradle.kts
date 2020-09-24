@@ -22,10 +22,10 @@ plugins {
 }
 
 android {
-    compileSdkVersion(29)
+    compileSdkVersion(30)
     defaultConfig {
         minSdkVersion(21)
-        targetSdkVersion(29)
+        targetSdkVersion(30)
         versionCode = 1
         versionName = "1.0"
         applicationId = "com.babylon.orbit2.sample.stocklist"
@@ -80,6 +80,7 @@ dependencies {
     implementation("com.xwray:groupie-viewbinding:2.8.1")
     implementation("org.koin:koin-androidx-viewmodel:2.1.6")
     implementation("androidx.lifecycle:lifecycle-common-java8:2.2.0")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.2.0")
 
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:${Versions.desugar}")
 }

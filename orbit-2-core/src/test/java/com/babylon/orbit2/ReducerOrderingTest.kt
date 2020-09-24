@@ -28,7 +28,7 @@ internal class ReducerOrderingTest {
     fun `reductions are applied in sequence`() {
         runBlocking {
             val middleware = ThreeReducersMiddleware()
-            val testStateObserver = middleware.container.stateStream.test()
+            val testStateObserver = middleware.container.stateFlow.test()
             val expectedStates = mutableListOf(
                 TestState(
                     emptyList()
@@ -51,7 +51,7 @@ internal class ReducerOrderingTest {
 
             testStateObserver.awaitCount(1120)
 
-            assertThat(testStateObserver.values).containsExactlyElementsOf(expectedStates)
+            assertThat(testStateObserver.values.last()).isEqualTo(expectedStates.last())
         }
     }
 

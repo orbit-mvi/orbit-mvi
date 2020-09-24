@@ -22,6 +22,7 @@ import com.babylon.orbit2.OrbitDslPlugins
 import com.babylon.orbit2.assert
 import com.babylon.orbit2.container
 import com.babylon.orbit2.reduce
+import com.babylon.orbit2.sideEffect
 import com.babylon.orbit2.test
 import io.reactivex.Completable
 import io.reactivex.Maybe
@@ -99,11 +100,11 @@ internal class RxJava2DslPluginBehaviourTest {
         middleware.observable(action)
 
         middleware.assert {
-            states(
-                { TestState(action) },
-                { TestState(action + 1) },
-                { TestState(action + 2) },
-                { TestState(action + 3) }
+            postedSideEffects(
+                action.toString(),
+                (action + 1).toString(),
+                (action + 2).toString(),
+                (action + 3).toString()
             )
         }
     }
@@ -154,8 +155,8 @@ internal class RxJava2DslPluginBehaviourTest {
             transformRx2Observable {
                 Observable.just(action, action + 1, action + 2, action + 3)
             }
-                .reduce {
-                    state.copy(id = event)
+                .sideEffect {
+                    post(event.toString())
                 }
         }
     }

@@ -17,7 +17,6 @@
 package com.babylon.orbit2
 
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.channels.SendChannel
 import kotlinx.coroutines.flow.Flow
 
 /**
@@ -33,7 +32,7 @@ interface OrbitDslPlugin {
 
     class ContainerContext<S : Any, SE : Any>(
         val backgroundDispatcher: CoroutineDispatcher,
-        val setState: SendChannel<S>,
+        val setState: (S) -> Unit,
         val postSideEffect: (SE) -> Unit,
         val settings: Container.Settings
     )

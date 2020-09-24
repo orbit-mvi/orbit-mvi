@@ -61,7 +61,7 @@ internal class LiveDataDslPluginDslThreadingTest {
         val action = fixture<Int>()
 
         val container = scope.createContainer()
-        val sideEffects = container.sideEffectStream.test()
+        val sideEffects = container.sideEffectFlow.test()
         var threadName = ""
 
         container.orbit {

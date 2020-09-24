@@ -7,8 +7,10 @@ It provides all the basic parts of Orbit.
   - [Architecture](#architecture)
     - [Orbit concepts](#orbit-concepts)
     - [Side effects](#side-effects)
+      - [Limitations](#limitations)
   - [Including the module](#including-the-module)
   - [Orbit container](#orbit-container)
+    - [Subscribing to the container](#subscribing-to-the-container)
     - [ContainerHost](#containerhost)
   - [Core Orbit operators](#core-orbit-operators)
     - [Transform](#transform)
@@ -76,6 +78,17 @@ The UI does not have to be aware of all side effects (e.g. why should the UI
 care if you send analytics events?). As such you can have side effects that do
 not post any event back to the UI.
 
+Side effects are cached if there are no observers, guaranteeing critical
+events such as navigation are delivered after re-subscription.
+
+#### Limitations
+
+`Container.sideEffectFlow` is designed to be collected by only one
+observer. This ensures that side effect caching works in a predictable
+way. If your particular use case requires multi-casting use `broadcast`
+on the side effect flow, but be aware that caching will not work for the
+resulting `BroadcastChannel`.
+
 ## Including the module
 
 Orbit 2 is a modular framework. You will need this module to get started!
@@ -92,6 +105,43 @@ A [Container](src/main/java/com/babylon/orbit2/Container.kt) is the heart of the
 Orbit MVI system. It retains the state, allows you to listen to side effects and
 state updates and allows you to modify the state through the `orbit` function
 which executes Orbit operators of your desired business logic.
+
+### Subscribing to the container
+
+[Container](src/main/java/com/babylon/orbit2/Container.kt) exposes flows
+that emit updates to the container state and side effects.
+
+- State emissions are conflated
+- Side effects are cached by default if no observers are listening. This
+  can be changed via
+  [Container Settings](src/main/java/com/babylon/orbit2/Container.kt#Settings)
+
+``` kotlin
+data class ExampleState(val seen: List<String> = emptyList())
+
+sealed class ExampleSideEffect {
+   data class Toast(val text: String)
+}
+
+fun main() {
+    // create a container
+    val container = container<ExampleState, ExampleSideEffect>(ExampleState())
+
+    // subscribe to updates
+    // For Android, use `lifecycleScope.launchWhenCreated` instead
+    CoroutineScope(Dispatchers.Main).launch {
+        container.stateFlow.collect {
+            // do something with the state
+        }
+    }
+    CoroutineScope(Dispatchers.Main).launch {
+        container.sideEffectFlow.collect {
+            // do something with the side effect
+        }
+    }
+}
+
+```
 
 ### ContainerHost
 
@@ -122,16 +172,10 @@ Operators are invoked via the `orbit` function in a
 commonly, a [Container](src/main/java/com/babylon/orbit2/Container.kt) directly)
 
 For more information about which threads these operators run on please see
-[threading](#threading).
+[Threading](#threading).
 
 ``` kotlin
-data class ExampleState(val seen: List<String> = emptyList())
-
-sealed class ExampleSideEffect {
-   data class Toast(val text: String)
-}
-
-class ExampleViewModel : ContainerHost<ExampleState, ExampleSideEffect>, ViewModel() {
+class Example : ContainerHost<ExampleState, ExampleSideEffect> {
     override val container = container<ExampleState, ExampleSideEffect>(ExampleState())
 
     fun example(number: Int) = orbit {
@@ -152,7 +196,7 @@ easily.
 ### Transform
 
 ``` kotlin
-class ExampleViewModel : ContainerHost<ExampleState, ExampleSideEffect> {
+class Example : ContainerHost<ExampleState, ExampleSideEffect> {
     ...
 
     fun example(number: Int) = orbit {
@@ -177,7 +221,7 @@ a backend API or subscribe to a stream of location updates.
 ### Reduce
 
 ``` kotlin
-class ExampleViewModel : ContainerHost<ExampleState, ExampleSideEffect> {
+class Example : ContainerHost<ExampleState, ExampleSideEffect> {
     ...
 
     fun example(number: Int) = orbit {
@@ -204,7 +248,7 @@ upstream reduction has completed.
 ### Side effect
 
 ``` kotlin
-class ExampleViewModel : ContainerHost<ExampleState, ExampleSideEffect> {
+class Example : ContainerHost<ExampleState, ExampleSideEffect> {
     ...
 
     fun example(number: Int) = orbit {
@@ -253,7 +297,7 @@ Examples of using the exposed fields:
 
 ``` kotlin
 perform("Toast the current state")
-class ExampleViewModel : ContainerHost<ExampleState, ExampleSideEffect> {
+class Example : ContainerHost<ExampleState, ExampleSideEffect> {
     ...
 
     fun anotherExample(number: Int) = orbit {
@@ -268,7 +312,7 @@ class ExampleViewModel : ContainerHost<ExampleState, ExampleSideEffect> {
 
 ``` kotlin
 perform("Toast the current state")
-class ExampleViewModel : ContainerHost<ExampleState, ExampleSideEffect>, ViewModel() {
+class Example : ContainerHost<ExampleState, ExampleSideEffect> {
     override val container = container<ExampleState, ExampleSideEffect>(ExampleState()) {
         onCreate()
     }
@@ -302,15 +346,10 @@ done within particular `transform` blocks e.g. `transformSuspend`.
 - `transform` and `transformX` calls execute in an `IO` thread so as not to
   block the Orbit [Container](src/main/java/com/babylon/orbit2/Container.kt)
   from accepting further events.
-- Updates delivered via `Container.stateStream` and `Container.sideEffectStream`
-  come in on the same thread you call `Stream.connect` on. However the
-  connection to the stream has to be manually managed and cancelled. To make it
-  more convenient to consume a `Stream` we have created wrappers to turn it into
-  e.g. `LiveData`.
 
 ## Error handling
 
-It is good practice to handle all of your errors within your flows. Orbit  
-does not provide any built-in exception handling because it cannot make
-assumptions about how you respond to errors, avoiding putting your system in an
-undefined state.
+It is good practice to handle all of your errors within your flows.
+Orbit does not provide any built-in exception handling because it cannot
+make assumptions about how you respond to errors, avoiding putting your
+system in an undefined state.

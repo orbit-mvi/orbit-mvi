@@ -35,7 +35,7 @@ from scratch.
 
 ### Orbit ❤️ Android
 
-- Subscribe to state and side effects through LiveData
+- Subscribe to state and side effects through Flow
 - ViewModel support, along with SavedState!
 
 ### Testing 🤖
@@ -159,9 +159,13 @@ projects as well as lifecycle independent services.
 
 ## Connecting to a ViewModel
 
-Now we need to wire up the `ViewModel` to our UI. Orbit provides various methods
-of connecting via optional modules. For Android, the most convenient way to
-connect is via `LiveData`, as it manages subscription disposal automatically.
+Now we need to wire up the `ViewModel` to our UI. We expose coroutine
+`Flow`s through which one can conveniently subscribe to updates.
+Alternatively you can convert these to your preferred type using
+externally provided extension methods e.g.
+[asLiveData](https://developer.android.com/reference/kotlin/androidx/lifecycle/package-summary#(kotlinx.coroutines.flow.Flow).asLiveData(kotlin.coroutines.CoroutineContext,%20kotlin.Long))
+or
+[asObservable](https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-rx3/kotlinx.coroutines.rx3/kotlinx.coroutines.flow.-flow/as-observable.html).
 
 ``` kotlin
 class CalculatorActivity: AppCompatActivity() {
@@ -174,10 +178,12 @@ class CalculatorActivity: AppCompatActivity() {
         addButton.setOnClickListener { viewModel.add(1234) }
         subtractButton.setOnClickListener { viewModel.subtract(1234) }
 
-        // NOTE: Live data support is provided by the live data module:
-        // com.babylon.orbit2:orbit-livedata
-        viewModel.container.state.observe(this, Observer { render(it) })
-        viewModel.container.sideEffect.observe(this, Observer { handleSideEffect(it) })
+        lifecycleScope.launchWhenCreated {
+            viewModel.container.stateFlow.collect { render(it) }
+        }
+        lifecycleScope.launchWhenCreated {
+            viewModel.container.sideEffectFlow.collect { handleSideEffect(it) }
+        }
     }
 
     private fun render(state: CalculatorState) {

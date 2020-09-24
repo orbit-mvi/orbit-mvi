@@ -20,6 +20,7 @@ import com.nhaarman.mockitokotlin2.spy
 import com.nhaarman.mockitokotlin2.times
 import com.nhaarman.mockitokotlin2.verify
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -63,8 +64,8 @@ inline fun <STATE : Any, SIDE_EFFECT : Any, reified T : ContainerHost<STATE, SID
 
     TestHarness.FIXTURES[spy] = TestFixtures(
         initialState,
-        spy.container.stateStream.test(),
-        spy.container.sideEffectStream.test()
+        spy.container.stateFlow.test(),
+        spy.container.sideEffectFlow.test()
     )
 
     Mockito.clearInvocations(spy)
@@ -146,8 +147,8 @@ fun <STATE : Any, SIDE_EFFECT : Any, T : ContainerHost<STATE, SIDE_EFFECT>> T.as
 
 class TestFixtures<STATE : Any, SIDE_EFFECT : Any>(
     val initialState: STATE,
-    val stateObserver: TestStreamObserver<STATE>,
-    val sideEffectObserver: TestStreamObserver<SIDE_EFFECT>
+    val stateObserver: TestFlowObserver<STATE>,
+    val sideEffectObserver: TestFlowObserver<SIDE_EFFECT>
 )
 
 object TestHarness {
@@ -157,4 +158,10 @@ object TestHarness {
 /**
  * Allows you to put a [Stream] into test mode.
  */
+@Suppress("DEPRECATION")
 fun <T : Any> Stream<T>.test() = TestStreamObserver(this)
+
+/**
+ * Allows you to put a [Flow] into test mode.
+ */
+fun <T> Flow<T>.test() = TestFlowObserver(this)

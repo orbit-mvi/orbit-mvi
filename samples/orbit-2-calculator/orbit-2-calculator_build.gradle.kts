@@ -21,10 +21,10 @@ plugins {
 }
 
 android {
-    compileSdkVersion(29)
+    compileSdkVersion(30)
     defaultConfig {
         minSdkVersion(21)
-        targetSdkVersion(29)
+        targetSdkVersion(30)
         versionCode = 1
         versionName = "1.0"
         applicationId = "com.babylon.orbit2.sample.calculator"
@@ -52,9 +52,11 @@ dependencies {
     implementation(project(":orbit-2-livedata"))
     implementation(project(":orbit-2-viewmodel"))
 
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.9")
     implementation("androidx.constraintlayout:constraintlayout:2.0.1")
     implementation("com.google.android.material:material:1.2.1")
     implementation("org.koin:koin-androidx-viewmodel:2.1.6")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.2.0")
 
     // Testing
     testImplementation(project(":orbit-2-test"))
@@ -64,4 +66,5 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-params:5.6.2")
     testImplementation("junit:junit:4.13")
     testImplementation("com.appmattus.fixture:fixture:0.9.5")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.3.9")
 }
