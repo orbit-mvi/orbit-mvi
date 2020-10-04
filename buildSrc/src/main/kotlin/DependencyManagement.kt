@@ -16,7 +16,7 @@
 
 object Versions {
 
-    const val gradleVersionsPlugin = "0.31.0"
+    const val gradleVersionsPlugin = "0.33.0"
     const val gradleAndroidPlugin = "4.0.1"
     const val markdownLintPlugin = "0.6.0"
     const val detektPlugin = "1.12.0"
@@ -38,12 +38,12 @@ object Versions {
     const val desugar = "1.0.10"
 
     // Testing
-    const val junitPlatform = "1.6.2"
-    const val assertJ = "3.17.1"
+    const val junitPlatform = "1.7.0"
+    const val assertJ = "3.17.2"
     const val mockitoKotlin = "2.2.0"
-    const val mockito = "3.5.10"
-    const val junitRuntime = "5.6.2"
-    const val kotlinFixture = "0.9.5"
+    const val mockito = "3.5.13"
+    const val junitRuntime = "5.7.0"
+    const val kotlinFixture = "0.9.6"
     const val jacoco = "0.8.5"
     const val robolectric = "4.4"
 }
