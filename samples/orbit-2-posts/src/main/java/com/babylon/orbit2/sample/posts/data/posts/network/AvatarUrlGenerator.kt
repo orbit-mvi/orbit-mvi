@@ -17,5 +17,5 @@
 package com.babylon.orbit2.sample.posts.data.posts.network
 
 class AvatarUrlGenerator {
-    fun generateUrl(email: String) = "https://i.pravatar.cc/285?u=$email"
+    fun generateUrl(email: String) = "https://robohash.org/$email?set=set1"
 }
