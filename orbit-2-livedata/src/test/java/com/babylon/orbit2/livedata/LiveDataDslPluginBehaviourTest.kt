@@ -29,7 +29,6 @@ import com.babylon.orbit2.test
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
@@ -62,14 +61,15 @@ internal class LiveDataDslPluginBehaviourTest {
         val emission3 = fixture<Int>()
         val liveData = MutableLiveData<Int>()
         val middleware = Middleware(liveData).test(initialState = initialState, blocking = false)
+        val testObserver = middleware.container.stateFlow.test()
 
         middleware.liveData()
 
         runBlocking {
             liveData.value = emission
-            delay(300)
+            testObserver.awaitCount(2)
             liveData.value = emission2
-            delay(300)
+            testObserver.awaitCount(3)
             liveData.value = emission3
         }
 
