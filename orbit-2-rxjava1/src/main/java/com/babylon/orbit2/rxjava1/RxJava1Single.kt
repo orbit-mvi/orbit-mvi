@@ -16,11 +16,11 @@
 
 package com.babylon.orbit2.rxjava1
 
-import com.babylon.orbit2.Builder
-import com.babylon.orbit2.Operator
-import com.babylon.orbit2.Orbit2Dsl
-import com.babylon.orbit2.OrbitDslPlugins
-import com.babylon.orbit2.VolatileContext
+import com.babylon.orbit2.syntax.strict.Builder
+import com.babylon.orbit2.syntax.Operator
+import com.babylon.orbit2.syntax.Orbit2Dsl
+import com.babylon.orbit2.syntax.strict.OrbitDslPlugins
+import com.babylon.orbit2.syntax.strict.VolatileContext
 import rx.Single
 
 internal class RxJava1Single<S : Any, E, E2>(

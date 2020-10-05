@@ -16,9 +16,9 @@
 
 package com.babylon.orbit2.coroutines
 
-import com.babylon.orbit2.Operator
-import com.babylon.orbit2.OrbitDslPlugin
-import com.babylon.orbit2.VolatileContext
+import com.babylon.orbit2.syntax.Operator
+import com.babylon.orbit2.syntax.strict.OrbitDslPlugin
+import com.babylon.orbit2.syntax.strict.VolatileContext
 import com.babylon.orbit2.idling.withIdling
 import com.babylon.orbit2.idling.withIdlingFlow
 import kotlinx.coroutines.flow.Flow
@@ -45,14 +45,14 @@ object CoroutineDslPlugin : OrbitDslPlugin {
         return when (operator) {
             is TransformSuspend<*, *, *> -> flow.map {
                 containerContext.withIdling(operator as TransformSuspend<S, E, Any>) {
-                    withContext(containerContext.backgroundDispatcher) {
+                    withContext(containerContext.settings.backgroundDispatcher) {
                         createContext(it).block()
                     }
                 }
             }
             is TransformFlow<*, *, *> -> flow.flatMapConcat {
                 containerContext.withIdlingFlow(operator as TransformFlow<S, E, Any>) {
-                    createContext(it).block().flowOn(containerContext.backgroundDispatcher)
+                    createContext(it).block().flowOn(containerContext.settings.backgroundDispatcher)
                 }
             }
             else -> flow

@@ -22,7 +22,8 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import com.babylon.orbit2.ContainerHost
-import com.babylon.orbit2.reduce
+import com.babylon.orbit2.syntax.strict.orbit
+import com.babylon.orbit2.syntax.strict.reduce
 import com.babylon.orbit2.viewmodel.container
 import kotlinx.android.parcel.Parcelize
 import java.math.BigDecimal

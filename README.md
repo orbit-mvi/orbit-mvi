@@ -13,66 +13,10 @@ If you do not yet have an account with the Kotlinlang slack workspace,
 [sign up here](https://slack.kotlinlang.org).
 
 If you're looking for the original Orbit library,
-[it's available here.](https://github.com/babylonhealth/orbit-mvi/tree/orbit/main)
+[it's available
+here.](https://github.com/babylonhealth/orbit-mvi/tree/orbit/main)
 
-## Overview
-
-Orbit 2 is a simple scaffolding you can build a Redux/MVI-like architecture
-around.
-
-In Orbit 2 we have taken the best features of Orbit 1 and rewritten the rest
-from scratch.
-
-### Powerful and flexible design 🏋️‍♀️ 🤸‍♂️
-
-- Integrates best practices from our 2+ years of experience with MVI
-- Powered by coroutines
-- Easy to use, type-safe, extensible API
-
-### Works with any async/stream framework 🔀
-
-- Coroutine, RxJava (1 2 & 3!) and LiveData operator support
-
-### Orbit ❤️ Android
-
-- Subscribe to state and side effects through Flow
-- ViewModel support, along with SavedState!
-
-### Testing 🤖
-
-- Unit test framework designed in step with the framework
-- Built-in espresso idling resource support
-
-And more!...
-
-## Getting started
-
-Orbit 2 is a modular framework. The Core module provides basic Orbit
-functionality with additional features provided through optional modules.
-
-Orbit supports using various async/stream frameworks at the same time so it is
-perfect for legacy codebases. For example, it can support both RxJava 2 and
-coroutines if you are in the process of migrating from one to the other.
-
-At the very least you will need the `orbit-core` module to get started,
-alternatively include one of the other modules which already include
-`orbit-core`.
-
-```kotlin
-implementation("com.babylon.orbit2:orbit-core:<latest-version>")
-implementation("com.babylon.orbit2:orbit-coroutines:<latest-version>")
-implementation("com.babylon.orbit2:orbit-rxjava1:<latest-version>")
-implementation("com.babylon.orbit2:orbit-rxjava2:<latest-version>")
-implementation("com.babylon.orbit2:orbit-rxjava3:<latest-version>")
-implementation("com.babylon.orbit2:orbit-livedata:<latest-version>")
-implementation("com.babylon.orbit2:orbit-viewmodel:<latest-version>")
-
-testImplementation("com.babylon.orbit2:orbit-test:<latest-version>")
-```
-
-[![Download](https://api.bintray.com/packages/babylonpartners/maven/orbit-core/images/download.svg)](https://bintray.com/babylonpartners/maven/orbit-core/_latestVersion)
-
-For detailed documentation, see:
+## Documentation
 
 - [Core module and architecture overview](orbit-2-core/README.md)
 - [Coroutines](orbit-2-coroutines/README.md)
@@ -83,12 +27,23 @@ For detailed documentation, see:
 - [ViewModel](orbit-2-viewmodel/README.md)
 - [Test](orbit-2-test/README.md)
 
-## Creating a simple Orbit 2 ViewModel
+## Overview
 
-Using the core Orbit functionality, we can create a simple, functional
-ViewModel.
+Orbit 2 is a simple scaffolding you can build a Redux/MVI-like architecture
+around.
 
-### Include the dependencies
+In Orbit 2 we have taken the [best features of Orbit 1](history.md) and
+rewritten the rest from scratch.
+
+- Easy to use, type-safe, extensible API
+- Coroutine, RxJava (1 2 & 3!) and LiveData operator support
+- ViewModel support, along with SavedState!
+- Unit test framework designed in step with the framework
+- Built-in espresso idling resource support
+
+And more!...
+
+## Getting started in three simple steps
 
 ```kotlin
 implementation("com.babylon.orbit2:orbit-viewmodel:<latest-version>")
@@ -114,7 +69,8 @@ classes and objects.
 
 ### Create the ViewModel
 
-Next, we can define the ViewModel.
+Using the core Orbit functionality, we can create a simple, functional
+ViewModel.
 
 1. Implement the
    [ContainerHost](orbit-2-core/src/main/java/com/babylon/orbit2/ContainerHost.kt)
@@ -131,22 +87,12 @@ class CalculatorViewModel: ContainerHost<CalculatorState, CalculatorSideEffect>,
     // Include `orbit-viewmodel` for the factory function
     override val container = container<CalculatorState, CalculatorSideEffect>(CalculatorState())
 
-    fun add(number: Int) = orbit {
-        sideEffect {
-            post(CalculatorSideEffect.Toast("Adding $number to ${state.total}!"))
-        }
-            .reduce {
-                state.copy(total = state.total + number)
-            }
-    }
+    fun add(number: Int) = intent {
+        postSideEffect(CalculatorSideEffect.Toast("Adding $number to ${state.total}!"))
 
-    fun subtract(number: Int) = orbit {
-        sideEffect {
-            post(CalculatorSideEffect.Toast("Subtracting $number from ${state.total}!"))
+        reduce {
+            state.copy(total = state.total + number)
         }
-            .reduce {
-                state.copy(total = state.total - number)
-            }
     }
 }
 ```
@@ -157,7 +103,7 @@ requirement to do so. You can host an Orbit
 simple class if you wish. This makes it possible to use in simple Kotlin
 projects as well as lifecycle independent services.
 
-## Connecting to a ViewModel
+### Connect to the ViewModel in your Activity or Fragment
 
 Now we need to wire up the `ViewModel` to our UI. We expose coroutine
 `Flow`s through which one can conveniently subscribe to updates.
@@ -176,7 +122,6 @@ class CalculatorActivity: AppCompatActivity() {
     override fun onCreate(savedState: Bundle?) {
         ...
         addButton.setOnClickListener { viewModel.add(1234) }
-        subtractButton.setOnClickListener { viewModel.subtract(1234) }
 
         lifecycleScope.launchWhenCreated {
             viewModel.container.stateFlow.collect { render(it) }
@@ -199,37 +144,70 @@ class CalculatorActivity: AppCompatActivity() {
 
 ```
 
-## A bit of history
+## Syntax
 
-We originally set out to create Orbit with the following principles in mind:
+There are two Orbit syntaxes to choose from.
 
-- Simple
-- Flexible
-- Testable
-- Designed for, but not limited to Android
+We recommend using the [simple syntax](simple-syntax.md) if you're just
+starting out or using coroutines exclusively in your codebase. The
+[strict syntax](strict-syntax.md) is most useful when used in a codebase
+with mixed RxJava and coroutines.
 
-Orbit 1 was our first attempt at this, and while it worked well in general, it
-fell short of our expectations when it came to its flexibility and testability.
-It did not support coroutines with support hard to incorporate, as it was
-rigidly dependent on RxJava 2. The users were not shielded from this either. As
-we were migrating to coroutines ourselves, this was increasing the complexity
-of our code.
+``` kotlin
+class MyViewModel: ContainerHost<MyState, MySideEffect>, ViewModel() {
 
-We thought we had taken Orbit 1 as far as we could. Having learned a great deal
-about MVI in Orbit 1, we set out to take another shot at this. We resolved to
-keep the good things of Orbit 1 and redesign it from the ground up to live up
-to our standards as Orbit 2. We think - hopefully, finally - we hit the sweet
-spot.
+    override val container = container<MyState, MySideEffect>(MyState())
 
-We stand on the shoulders of giants:
+    // Simple
+    fun loadDataForId(id: Int) = intent {
+        postSideEffect(MySideEffect.Toast("Loading data for $id!"))
 
-- [Managing State with RxJava by Jake Wharton](https://www.reddit.com/r/androiddev/comments/656ter/managing_state_with_rxjava_by_jake_wharton/)
-- [RxFeedback](https://github.com/NoTests/RxFeedback.kt)
-- [Mosby MVI](https://github.com/sockeqwe/mosby)
-- [MvRx](https://github.com/airbnb/MvRx)
+        val result = repository.loadData(id)
 
-Thank you so much to everyone in the community for the support, whether direct
-or not.
+        reduce {
+            state.copy(data = result)
+        }
+    }
+
+    // Strict
+    fun loadDataForId(id: Int) = orbit {
+        sideEffect { post(MySideEffect.Toast("Loading data for $id!")) }
+            .transformSuspend { repository.loadData(id) }
+            .reduce {
+                state.copy(data = result)
+            }
+    }
+}
+```
+
+## Modules
+
+Orbit 2 is a modular framework. The Core module provides basic Orbit
+functionality with additional features provided through optional modules.
+
+Orbit supports using various async/stream frameworks at the same time so it is
+perfect for legacy codebases. For example, it can support both RxJava 2 and
+coroutines if you are in the process of migrating from one to the other.
+
+At the very least you will need the `orbit-core` module to get started,
+alternatively include one of the other modules which already include
+`orbit-core`.
+
+```kotlin
+implementation("com.babylon.orbit2:orbit-core:<latest-version>")
+implementation("com.babylon.orbit2:orbit-viewmodel:<latest-version>")
+
+// strict syntax DSL extensions
+implementation("com.babylon.orbit2:orbit-coroutines:<latest-version>")
+implementation("com.babylon.orbit2:orbit-rxjava1:<latest-version>")
+implementation("com.babylon.orbit2:orbit-rxjava2:<latest-version>")
+implementation("com.babylon.orbit2:orbit-rxjava3:<latest-version>")
+implementation("com.babylon.orbit2:orbit-livedata:<latest-version>")
+
+testImplementation("com.babylon.orbit2:orbit-test:<latest-version>")
+```
+
+[![Download](https://api.bintray.com/packages/babylonpartners/maven/orbit-core/images/download.svg)](https://bintray.com/babylonpartners/maven/orbit-core/_latestVersion)
 
 ## Contributing
 

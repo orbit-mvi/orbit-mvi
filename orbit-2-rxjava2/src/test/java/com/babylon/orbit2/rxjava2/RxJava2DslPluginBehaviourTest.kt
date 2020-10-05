@@ -18,11 +18,12 @@ package com.babylon.orbit2.rxjava2
 
 import com.appmattus.kotlinfixture.kotlinFixture
 import com.babylon.orbit2.ContainerHost
-import com.babylon.orbit2.OrbitDslPlugins
 import com.babylon.orbit2.assert
 import com.babylon.orbit2.container
-import com.babylon.orbit2.reduce
-import com.babylon.orbit2.sideEffect
+import com.babylon.orbit2.syntax.strict.OrbitDslPlugins
+import com.babylon.orbit2.syntax.strict.orbit
+import com.babylon.orbit2.syntax.strict.reduce
+import com.babylon.orbit2.syntax.strict.sideEffect
 import com.babylon.orbit2.test
 import io.reactivex.Completable
 import io.reactivex.Maybe

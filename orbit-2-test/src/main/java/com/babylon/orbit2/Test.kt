@@ -16,6 +16,7 @@
 
 package com.babylon.orbit2
 
+import com.babylon.orbit2.internal.LazyCreateContainerDecorator
 import com.nhaarman.mockitokotlin2.spy
 import com.nhaarman.mockitokotlin2.times
 import com.nhaarman.mockitokotlin2.verify
@@ -154,12 +155,6 @@ class TestFixtures<STATE : Any, SIDE_EFFECT : Any>(
 object TestHarness {
     val FIXTURES: MutableMap<ContainerHost<*, *>, TestFixtures<*, *>> = WeakHashMap()
 }
-
-/**
- * Allows you to put a [Stream] into test mode.
- */
-@Suppress("DEPRECATION")
-fun <T : Any> Stream<T>.test() = TestStreamObserver(this)
 
 /**
  * Allows you to put a [Flow] into test mode.

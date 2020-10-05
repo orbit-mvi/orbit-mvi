@@ -20,8 +20,9 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import com.babylon.orbit2.ContainerHost
 import com.babylon.orbit2.coroutines.transformFlow
-import com.babylon.orbit2.reduce
 import com.babylon.orbit2.sample.stocklist.streaming.stock.StockRepository
+import com.babylon.orbit2.syntax.strict.orbit
+import com.babylon.orbit2.syntax.strict.reduce
 import com.babylon.orbit2.viewmodel.container
 
 class DetailViewModel(

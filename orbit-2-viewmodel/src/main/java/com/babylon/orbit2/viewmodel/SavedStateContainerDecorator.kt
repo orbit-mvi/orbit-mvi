@@ -14,21 +14,16 @@
  *  limitations under the License.
  */
 
-@file:Suppress("DEPRECATION")
-
 package com.babylon.orbit2.viewmodel
 
 import androidx.lifecycle.SavedStateHandle
-import com.babylon.orbit2.Builder
 import com.babylon.orbit2.Container
 import com.babylon.orbit2.ContainerDecorator
-import com.babylon.orbit2.Stream
+import com.babylon.orbit2.syntax.strict.OrbitDslPlugin
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
-import java.io.Closeable
 
-@Suppress("OverridingDeprecatedMember")
 internal class SavedStateContainerDecorator<STATE : Any, SIDE_EFFECT : Any>(
     override val actual: Container<STATE, SIDE_EFFECT>,
     private val savedStateHandle: SavedStateHandle
@@ -46,20 +41,6 @@ internal class SavedStateContainerDecorator<STATE : Any, SIDE_EFFECT : Any>(
     override val sideEffectFlow: Flow<SIDE_EFFECT>
         get() = actual.sideEffectFlow
 
-    override val stateStream: Stream<STATE>
-        get() = object : Stream<STATE> {
-            override fun observe(lambda: (STATE) -> Unit): Closeable {
-                return actual.stateStream.observe {
-                    savedStateHandle[SAVED_STATE_KEY] = it
-                    lambda(it)
-                }
-            }
-        }
-
-    override val sideEffectStream: Stream<SIDE_EFFECT>
-        get() = actual.sideEffectStream
-
-    override fun orbit(
-        init: Builder<STATE, SIDE_EFFECT, Unit>.() -> Builder<STATE, SIDE_EFFECT, *>
-    ) = actual.orbit(init)
+    override fun orbit(orbitFlow: suspend OrbitDslPlugin.ContainerContext<STATE, SIDE_EFFECT>.() -> Unit) =
+        actual.orbit(orbitFlow)
 }

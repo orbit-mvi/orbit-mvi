@@ -2,8 +2,10 @@ package com.babylon.orbit2.livedata
 
 import androidx.lifecycle.liveData
 import com.babylon.orbit2.Container
+import com.babylon.orbit2.ContainerHost
 import com.babylon.orbit2.container
 import com.babylon.orbit2.idling.IdlingResource
+import com.babylon.orbit2.syntax.strict.orbit
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -45,7 +47,7 @@ class LiveDataDslPluginIdlingTest {
 
     @Test
     fun `idle when nothing running`() {
-        scope.createContainer()
+        scope.createContainerHost()
 
         assertTrue(testIdlingResource.isIdle())
     }
@@ -53,11 +55,11 @@ class LiveDataDslPluginIdlingTest {
     @Test
     fun `transformLiveData not idle when actively running`() {
         runBlocking {
-            val container = scope.createContainer()
+            val containerHost = scope.createContainerHost()
 
             val mutex = Mutex(locked = true)
 
-            container.orbit {
+            containerHost.orbit {
                 transformLiveData(registerIdling = true) {
                     liveData<Nothing> {
                         mutex.unlock()
@@ -77,11 +79,11 @@ class LiveDataDslPluginIdlingTest {
     @Test
     fun `transformLiveData idle when actively running with registration disabled`() {
         runBlocking {
-            val container = scope.createContainer()
+            val containerHost = scope.createContainerHost()
 
             val mutex = Mutex(locked = true)
 
-            container.orbit {
+            containerHost.orbit {
                 transformLiveData(registerIdling = false) {
                     liveData<Nothing> {
                         mutex.unlock()
@@ -98,11 +100,13 @@ class LiveDataDslPluginIdlingTest {
         }
     }
 
-    private fun CoroutineScope.createContainer(): Container<TestState, Int> {
-        return container(
-            initialState = TestState(0),
-            settings = Container.Settings(idlingRegistry = testIdlingResource)
-        )
+    private fun CoroutineScope.createContainerHost(): ContainerHost<TestState, Int> {
+        return object : ContainerHost<TestState, Int> {
+            override val container: Container<TestState, Int> = container(
+                initialState = TestState(0),
+                settings = Container.Settings(idlingRegistry = testIdlingResource)
+            )
+        }
     }
 
     private data class TestState(val value: Int)

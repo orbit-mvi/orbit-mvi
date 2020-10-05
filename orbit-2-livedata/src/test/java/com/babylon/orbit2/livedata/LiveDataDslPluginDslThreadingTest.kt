@@ -19,8 +19,10 @@ package com.babylon.orbit2.livedata
 import androidx.lifecycle.liveData
 import com.appmattus.kotlinfixture.kotlinFixture
 import com.babylon.orbit2.Container
-import com.babylon.orbit2.RealContainer
-import com.babylon.orbit2.sideEffect
+import com.babylon.orbit2.ContainerHost
+import com.babylon.orbit2.internal.RealContainer
+import com.babylon.orbit2.syntax.strict.orbit
+import com.babylon.orbit2.syntax.strict.sideEffect
 import com.babylon.orbit2.test
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -60,11 +62,11 @@ internal class LiveDataDslPluginDslThreadingTest {
     fun `livedata transformation runs on IO dispatcher`() {
         val action = fixture<Int>()
 
-        val container = scope.createContainer()
-        val sideEffects = container.sideEffectFlow.test()
+        val containerHost = scope.createContainerHost()
+        val sideEffects = containerHost.container.sideEffectFlow.test()
         var threadName = ""
 
-        container.orbit {
+        containerHost.orbit {
             transformLiveData {
                 liveData {
                     threadName = Thread.currentThread().name
@@ -80,12 +82,15 @@ internal class LiveDataDslPluginDslThreadingTest {
 
     private data class TestState(val id: Int)
 
-    private fun CoroutineScope.createContainer(): Container<TestState, Int> {
-        return RealContainer(
-            initialState = TestState(0),
-            settings = Container.Settings(),
-            parentScope = this,
-            backgroundDispatcher = newSingleThreadContext(BACKGROUND_THREAD_PREFIX)
-        )
+    private fun CoroutineScope.createContainerHost(): ContainerHost<TestState, Int> {
+        return object : ContainerHost<TestState, Int> {
+            override val container: Container<TestState, Int> = RealContainer(
+                initialState = TestState(0),
+                parentScope = this@createContainerHost,
+                settings = Container.Settings(
+                    backgroundDispatcher = newSingleThreadContext(BACKGROUND_THREAD_PREFIX)
+                )
+            )
+        }
     }
 }

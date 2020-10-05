@@ -1,7 +1,7 @@
 package com.babylon.orbit2.idling
 
-import com.babylon.orbit2.Operator
-import com.babylon.orbit2.OrbitDslPlugin
+import com.babylon.orbit2.syntax.Operator
+import com.babylon.orbit2.syntax.strict.OrbitDslPlugin
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onStart

@@ -16,9 +16,9 @@
 
 package com.babylon.orbit2.rxjava3
 
-import com.babylon.orbit2.Operator
-import com.babylon.orbit2.OrbitDslPlugin
-import com.babylon.orbit2.VolatileContext
+import com.babylon.orbit2.syntax.Operator
+import com.babylon.orbit2.syntax.strict.OrbitDslPlugin
+import com.babylon.orbit2.syntax.strict.VolatileContext
 import com.babylon.orbit2.idling.withIdling
 import com.babylon.orbit2.idling.withIdlingFlow
 import kotlinx.coroutines.flow.Flow
@@ -51,26 +51,26 @@ object RxJava3DslPlugin : OrbitDslPlugin {
         return when (operator) {
             is RxJava3Observable<*, *, *> -> flow.flatMapConcat {
                 containerContext.withIdlingFlow(operator as RxJava3Observable<S, E, Any>) {
-                    createContext(it).block().asFlow().flowOn(containerContext.backgroundDispatcher)
+                    createContext(it).block().asFlow().flowOn(containerContext.settings.backgroundDispatcher)
                 }
             }
             is RxJava3Single<*, *, *> -> flow.map {
                 containerContext.withIdling(operator as RxJava3Single<S, E, Any>) {
-                    withContext(containerContext.backgroundDispatcher) {
+                    withContext(containerContext.settings.backgroundDispatcher) {
                         createContext(it).block().await()
                     }
                 }
             }
             is RxJava3Maybe<*, *, *> -> flow.mapNotNull {
                 containerContext.withIdling(operator as RxJava3Maybe<S, E, Any>) {
-                    withContext(containerContext.backgroundDispatcher) {
+                    withContext(containerContext.settings.backgroundDispatcher) {
                         createContext(it).block().await()
                     }
                 }
             }
             is RxJava3Completable -> flow.onEach {
                 containerContext.withIdling(operator) {
-                    withContext(containerContext.backgroundDispatcher) {
+                    withContext(containerContext.settings.backgroundDispatcher) {
                         createContext(it).block().await()
                     }
                 }

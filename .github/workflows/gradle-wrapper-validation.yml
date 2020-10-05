@@ -5,12 +5,14 @@ on:
     branches:
       - main
       - orbit/main
+      - feature/**
     tags:
       - '*'
   pull_request:
     branches:
       - main
       - orbit/main
+      - feature/**
 
 jobs:
   validation:

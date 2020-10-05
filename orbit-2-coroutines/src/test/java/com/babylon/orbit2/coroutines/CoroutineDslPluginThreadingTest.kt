@@ -19,8 +19,9 @@ package com.babylon.orbit2.coroutines
 import com.appmattus.kotlinfixture.kotlinFixture
 import com.babylon.orbit2.Container
 import com.babylon.orbit2.ContainerHost
-import com.babylon.orbit2.RealContainer
-import com.babylon.orbit2.reduce
+import com.babylon.orbit2.internal.RealContainer
+import com.babylon.orbit2.syntax.strict.orbit
+import com.babylon.orbit2.syntax.strict.reduce
 import com.babylon.orbit2.test
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -44,11 +45,11 @@ internal class CoroutineDslPluginThreadingTest {
         val action = fixture<Int>()
 
         val middleware = Middleware()
-        val testStreamObserver = middleware.container.stateFlow.test()
+        val testFlowObserver = middleware.container.stateFlow.test()
 
         middleware.suspend(action)
 
-        testStreamObserver.awaitCount(2)
+        testFlowObserver.awaitCount(2)
         assertThat(middleware.threadName).startsWith(BACKGROUND_THREAD_PREFIX)
     }
 
@@ -57,11 +58,11 @@ internal class CoroutineDslPluginThreadingTest {
         val action = fixture<Int>()
 
         val middleware = Middleware()
-        val testStreamObserver = middleware.container.stateFlow.test()
+        val testFlowObserver = middleware.container.stateFlow.test()
 
         middleware.flow(action)
 
-        testStreamObserver.awaitCount(5)
+        testFlowObserver.awaitCount(5)
         assertThat(middleware.threadName).startsWith(BACKGROUND_THREAD_PREFIX)
     }
 
@@ -72,9 +73,10 @@ internal class CoroutineDslPluginThreadingTest {
         @Suppress("EXPERIMENTAL_API_USAGE")
         override val container = RealContainer<TestState, String>(
             initialState = TestState(42),
-            settings = Container.Settings(),
             parentScope = CoroutineScope(Dispatchers.Unconfined),
-            backgroundDispatcher = newSingleThreadContext(BACKGROUND_THREAD_PREFIX)
+            settings = Container.Settings(
+                backgroundDispatcher = newSingleThreadContext(BACKGROUND_THREAD_PREFIX)
+            )
         )
         lateinit var threadName: String
 

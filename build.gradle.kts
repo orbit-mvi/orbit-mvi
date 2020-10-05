@@ -117,10 +117,10 @@ subprojects {
         }
 
         configure<LibraryExtension> {
-            compileSdkVersion(29)
+            compileSdkVersion(30)
             defaultConfig {
                 minSdkVersion(21)
-                targetSdkVersion(29)
+                targetSdkVersion(30)
             }
 
             buildTypes {
@@ -134,7 +134,7 @@ subprojects {
 
 markdownlint {
     rules {
-        +LineLengthRule(codeBlocks = false)
+        +LineLengthRule(codeBlocks = false, tables = false)
         +ProperNamesRule(names = DefaultNames + "Orbit")
     }
 }

@@ -16,11 +16,11 @@
 
 package com.babylon.orbit2.coroutines
 
-import com.babylon.orbit2.Builder
-import com.babylon.orbit2.Operator
-import com.babylon.orbit2.Orbit2Dsl
-import com.babylon.orbit2.OrbitDslPlugins
-import com.babylon.orbit2.VolatileContext
+import com.babylon.orbit2.syntax.strict.Builder
+import com.babylon.orbit2.syntax.Operator
+import com.babylon.orbit2.syntax.Orbit2Dsl
+import com.babylon.orbit2.syntax.strict.OrbitDslPlugins
+import com.babylon.orbit2.syntax.strict.VolatileContext
 import kotlinx.coroutines.Dispatchers
 
 internal class TransformSuspend<S : Any, E, E2>(

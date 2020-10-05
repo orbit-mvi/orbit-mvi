@@ -2,8 +2,10 @@ package com.babylon.orbit2.viewmodel
 
 import androidx.test.espresso.IdlingRegistry
 import com.babylon.orbit2.Container
+import com.babylon.orbit2.ContainerHost
 import com.babylon.orbit2.container
 import com.babylon.orbit2.coroutines.transformSuspend
+import com.babylon.orbit2.syntax.strict.orbit
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
@@ -40,7 +42,7 @@ class AndroidIdlingResourceTest {
 
     @Test
     fun `idle when nothing running`() {
-        scope.createContainer()
+        scope.createContainerHost()
 
         val idlingResource = IdlingRegistry.getInstance().resources.first()
 
@@ -50,11 +52,11 @@ class AndroidIdlingResourceTest {
     @Test
     fun `not idle when actively running`() {
         runBlocking {
-            val container = scope.createContainer()
+            val containerHost = scope.createContainerHost()
 
             val mutex = Mutex(locked = true)
 
-            container.orbit {
+            containerHost.orbit {
                 transformSuspend {
                     mutex.unlock()
                     delay(200)
@@ -63,7 +65,7 @@ class AndroidIdlingResourceTest {
 
             val idlingResource = IdlingRegistry.getInstance().resources.first()
 
-            withTimeout(100) {
+            withTimeout(ASSERT_TIMEOUT) {
                 mutex.withLock {
                     assertFalse(idlingResource.isIdleNow)
                 }
@@ -74,11 +76,11 @@ class AndroidIdlingResourceTest {
     @Test
     fun `idle when actively running with registration disabled`() {
         runBlocking {
-            val container = scope.createContainer()
+            val containerHost = scope.createContainerHost()
 
             val mutex = Mutex(locked = true)
 
-            container.orbit {
+            containerHost.orbit {
                 transformSuspend(registerIdling = false) {
                     mutex.unlock()
                     delay(200)
@@ -87,7 +89,7 @@ class AndroidIdlingResourceTest {
 
             val idlingResource = IdlingRegistry.getInstance().resources.first()
 
-            withTimeout(100) {
+            withTimeout(ASSERT_TIMEOUT) {
                 mutex.withLock {
                     assertTrue(idlingResource.isIdleNow)
                 }
@@ -98,11 +100,11 @@ class AndroidIdlingResourceTest {
     @Test
     fun `not idle directly after running`() {
         runBlocking {
-            val container = scope.createContainer()
+            val containerHost = scope.createContainerHost()
 
             val mutex = Mutex(locked = true)
 
-            container.orbit {
+            containerHost.orbit {
                 transformSuspend {
                     mutex.unlock()
                 }
@@ -110,7 +112,7 @@ class AndroidIdlingResourceTest {
 
             val idlingResource = IdlingRegistry.getInstance().resources.first()
 
-            withTimeout(100) {
+            withTimeout(ASSERT_TIMEOUT) {
                 mutex.withLock {
                     assertFalse(idlingResource.isIdleNow)
                 }
@@ -121,11 +123,11 @@ class AndroidIdlingResourceTest {
     @Test
     fun `idle shortly after running`() {
         runBlocking {
-            val container = scope.createContainer()
+            val containerHost = scope.createContainerHost()
 
             val mutex = Mutex(locked = true)
 
-            container.orbit {
+            containerHost.orbit {
                 transformSuspend {
                     mutex.unlock()
                 }
@@ -150,19 +152,19 @@ class AndroidIdlingResourceTest {
     @Test
     fun `not idle when two actively running`() {
         runBlocking {
-            val container = scope.createContainer()
+            val containerHost = scope.createContainerHost()
 
             val mutex1 = Mutex(locked = true)
             val mutex2 = Mutex(locked = true)
 
-            container.orbit {
+            containerHost.orbit {
                 transformSuspend {
                     mutex1.unlock()
                     delay(200)
                 }
             }
 
-            container.orbit {
+            containerHost.orbit {
                 transformSuspend {
                     mutex2.unlock()
                     delay(200)
@@ -171,7 +173,7 @@ class AndroidIdlingResourceTest {
 
             val idlingResource = IdlingRegistry.getInstance().resources.first()
 
-            withTimeout(100) {
+            withTimeout(ASSERT_TIMEOUT) {
                 mutex1.withLock {
                     mutex2.withLock {
                         assertFalse(idlingResource.isIdleNow)
@@ -184,12 +186,12 @@ class AndroidIdlingResourceTest {
     @Test
     fun `not idle when one of two actively running`() {
         runBlocking {
-            val container = scope.createContainer()
+            val containerHost = scope.createContainerHost()
 
             val mutex1 = Mutex(locked = true)
             val mutex2 = Mutex(locked = true)
 
-            container.orbit {
+            containerHost.orbit {
                 transformSuspend {
                     delay(50)
                 }.transformSuspend(registerIdling = false) {
@@ -197,7 +199,7 @@ class AndroidIdlingResourceTest {
                 }
             }
 
-            container.orbit {
+            containerHost.orbit {
                 transformSuspend {
                     mutex2.unlock()
                     delay(200)
@@ -206,7 +208,7 @@ class AndroidIdlingResourceTest {
 
             val idlingResource = IdlingRegistry.getInstance().resources.first()
 
-            withTimeout(100) {
+            withTimeout(ASSERT_TIMEOUT) {
                 mutex1.withLock {
                     mutex2.withLock {
                         assertFalse(idlingResource.isIdleNow)
@@ -219,18 +221,18 @@ class AndroidIdlingResourceTest {
     @Test
     fun `not idle directly after two running`() {
         runBlocking {
-            val container = scope.createContainer()
+            val containerHost = scope.createContainerHost()
 
             val mutex1 = Mutex(locked = true)
             val mutex2 = Mutex(locked = true)
 
-            container.orbit {
+            containerHost.orbit {
                 transformSuspend {
                     mutex1.unlock()
                 }
             }
 
-            container.orbit {
+            containerHost.orbit {
                 transformSuspend {
                     mutex2.unlock()
                 }
@@ -238,7 +240,7 @@ class AndroidIdlingResourceTest {
 
             val idlingResource = IdlingRegistry.getInstance().resources.first()
 
-            withTimeout(100) {
+            withTimeout(ASSERT_TIMEOUT) {
                 mutex1.withLock {
                     mutex2.withLock {
                         assertFalse(idlingResource.isIdleNow)
@@ -251,18 +253,18 @@ class AndroidIdlingResourceTest {
     @Test
     fun `idle shortly after two running`() {
         runBlocking {
-            val container = scope.createContainer()
+            val containerHost = scope.createContainerHost()
 
             val mutex1 = Mutex(locked = true)
             val mutex2 = Mutex(locked = true)
 
-            container.orbit {
+            containerHost.orbit {
                 transformSuspend {
                     mutex1.unlock()
                 }
             }
 
-            container.orbit {
+            containerHost.orbit {
                 transformSuspend {
                     mutex2.unlock()
                 }
@@ -291,7 +293,7 @@ class AndroidIdlingResourceTest {
         runBlocking {
             val scope = CoroutineScope(Dispatchers.Unconfined)
 
-            scope.createContainer()
+            scope.createContainerHost()
 
             assertEquals(1, IdlingRegistry.getInstance().resources.size)
 
@@ -303,12 +305,18 @@ class AndroidIdlingResourceTest {
         }
     }
 
-    private fun CoroutineScope.createContainer(): Container<TestState, Int> {
-        return container(
-            initialState = TestState(0),
-            settings = Container.Settings(idlingRegistry = AndroidIdlingResource())
-        )
+    private fun CoroutineScope.createContainerHost(): ContainerHost<TestState, Int> {
+        return object : ContainerHost<TestState, Int> {
+            override val container: Container<TestState, Int> = container(
+                initialState = TestState(0),
+                settings = Container.Settings(idlingRegistry = AndroidIdlingResource())
+            )
+        }
     }
 
     data class TestState(val value: Int)
+
+    private companion object {
+        const val ASSERT_TIMEOUT = 200L
+    }
 }

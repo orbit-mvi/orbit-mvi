@@ -19,8 +19,9 @@ package com.babylon.orbit2.rxjava2
 import com.appmattus.kotlinfixture.kotlinFixture
 import com.babylon.orbit2.Container
 import com.babylon.orbit2.ContainerHost
-import com.babylon.orbit2.RealContainer
-import com.babylon.orbit2.reduce
+import com.babylon.orbit2.internal.RealContainer
+import com.babylon.orbit2.syntax.strict.orbit
+import com.babylon.orbit2.syntax.strict.reduce
 import com.babylon.orbit2.test
 import io.reactivex.Completable
 import io.reactivex.Maybe
@@ -46,11 +47,11 @@ internal class RxJava2DslPluginDslThreadingTest {
         val action = fixture<Int>()
 
         val middleware = Middleware()
-        val testStreamObserver = middleware.container.stateFlow.test()
+        val testFlowObserver = middleware.container.stateFlow.test()
 
         middleware.single(action)
 
-        testStreamObserver.awaitCount(2)
+        testFlowObserver.awaitCount(2)
         assertThat(middleware.threadName).startsWith(BACKGROUND_THREAD_PREFIX)
     }
 
@@ -59,11 +60,11 @@ internal class RxJava2DslPluginDslThreadingTest {
         val action = fixture<Int>()
 
         val middleware = Middleware()
-        val testStreamObserver = middleware.container.stateFlow.test()
+        val testFlowObserver = middleware.container.stateFlow.test()
 
         middleware.maybe(action)
 
-        testStreamObserver.awaitCount(2)
+        testFlowObserver.awaitCount(2)
         assertThat(middleware.threadName).startsWith(BACKGROUND_THREAD_PREFIX)
     }
 
@@ -84,11 +85,11 @@ internal class RxJava2DslPluginDslThreadingTest {
         val action = fixture<Int>()
 
         val middleware = Middleware()
-        val testStreamObserver = middleware.container.stateFlow.test()
+        val testFlowObserver = middleware.container.stateFlow.test()
 
         middleware.completable(action)
 
-        testStreamObserver.awaitCount(2)
+        testFlowObserver.awaitCount(2)
         assertThat(middleware.threadName).startsWith(BACKGROUND_THREAD_PREFIX)
     }
 
@@ -97,11 +98,11 @@ internal class RxJava2DslPluginDslThreadingTest {
         val action = fixture<Int>()
 
         val middleware = Middleware()
-        val testStreamObserver = middleware.container.stateFlow.test()
+        val testFlowObserver = middleware.container.stateFlow.test()
 
         middleware.observable(action)
 
-        testStreamObserver.awaitCount(5)
+        testFlowObserver.awaitCount(5)
         assertThat(middleware.threadName).startsWith(BACKGROUND_THREAD_PREFIX)
     }
 
@@ -112,9 +113,10 @@ internal class RxJava2DslPluginDslThreadingTest {
         @Suppress("EXPERIMENTAL_API_USAGE")
         override val container = RealContainer<TestState, String>(
             initialState = TestState(42),
-            settings = Container.Settings(),
             parentScope = CoroutineScope(Dispatchers.Unconfined),
-            backgroundDispatcher = newSingleThreadContext(BACKGROUND_THREAD_PREFIX)
+            settings = Container.Settings(
+                backgroundDispatcher = newSingleThreadContext(BACKGROUND_THREAD_PREFIX)
+            )
         )
         lateinit var threadName: String
         val latch = CountDownLatch(1)
