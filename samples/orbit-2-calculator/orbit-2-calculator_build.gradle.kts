@@ -60,11 +60,11 @@ dependencies {
 
     // Testing
     testImplementation(project(":orbit-2-test"))
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.6.2")
-    testImplementation("org.junit.platform:junit-platform-console:1.6.2")
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.6.2")
-    testImplementation("org.junit.jupiter:junit-jupiter-params:5.6.2")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.7.0")
+    testImplementation("org.junit.platform:junit-platform-console:1.7.0")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.7.0")
+    testImplementation("org.junit.jupiter:junit-jupiter-params:5.7.0")
     testImplementation("junit:junit:4.13")
-    testImplementation("com.appmattus.fixture:fixture:0.9.5")
+    testImplementation("com.appmattus.fixture:fixture:0.9.6")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.3.9")
 }

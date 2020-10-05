@@ -58,10 +58,10 @@ dependencies {
     implementation("androidx.navigation:navigation-ui-ktx:2.3.0")
 
     // Networking
-    implementation("com.squareup.okhttp3:okhttp:4.8.1")
+    implementation("com.squareup.okhttp3:okhttp:4.9.0")
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-jackson:2.9.0")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.11.2")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.11.3")
     // reflect set to override version from jackson
     implementation(kotlin("reflect"))
 
@@ -70,13 +70,13 @@ dependencies {
 
     // Testing
     testImplementation(project(":orbit-2-test"))
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.6.2")
-    testImplementation("org.junit.platform:junit-platform-console:1.6.2")
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.6.2")
-    testImplementation("org.junit.jupiter:junit-jupiter-params:5.6.2")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.7.0")
+    testImplementation("org.junit.platform:junit-platform-console:1.7.0")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.7.0")
+    testImplementation("org.junit.jupiter:junit-jupiter-params:5.7.0")
     testImplementation("junit:junit:4.13")
     testImplementation("com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0")
-    testImplementation("org.mockito:mockito-inline:3.5.10")
-    testImplementation("com.appmattus.fixture:fixture:0.9.5")
+    testImplementation("org.mockito:mockito-inline:3.5.13")
+    testImplementation("com.appmattus.fixture:fixture:0.9.6")
     testImplementation("com.squareup.retrofit2:retrofit-mock:2.9.0")
 }
