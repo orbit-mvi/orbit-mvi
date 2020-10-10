@@ -6,7 +6,7 @@ The module provides a simple unit testing framework for your Orbit 2
 ## Including the module
 
 ```kotlin
-testImplementation("com.babylon orbit2:orbit-test:<latest-version>")
+testImplementation("com.babylon.orbit2:orbit-test:<latest-version>")
 ```
 
 ## Testing goals
