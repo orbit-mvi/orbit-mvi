@@ -128,8 +128,6 @@ internal class SideEffectTest {
             }
         }
 
-        Thread.sleep(200)
-
         val testSideEffectObserver2 = container.sideEffectFlow.test()
         testSideEffectObserver2.awaitCount(1000)
 

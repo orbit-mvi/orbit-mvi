@@ -38,6 +38,7 @@ class PostListViewModelTest {
     @Test
     fun `loads post overviews from repository if no overviews present`() {
         val overviews = fixture<List<PostOverview>>()
+        val initialState = PostListState()
 
         // given we mock the repository
         runBlocking {
@@ -46,12 +47,12 @@ class PostListViewModelTest {
 
         // when we observe details from the view model
         val viewModel = PostListViewModel(SavedStateHandle(), repository).test(
-            initialState = PostListState(),
+            initialState = initialState,
             runOnCreate = true
         )
 
         // then the view model loads the overviews
-        viewModel.assert {
+        viewModel.assert(initialState) {
             states(
                 { copy(overviews = overviews) }
             )
@@ -61,6 +62,7 @@ class PostListViewModelTest {
     @Test
     fun `does not load post overviews from repository if already populated`() {
         val overviews = fixture<List<PostOverview>>()
+        val initialState = PostListState(overviews)
 
         // given we mock the repository
         runBlocking {
@@ -69,27 +71,28 @@ class PostListViewModelTest {
 
         // when we observe details from the view model
         val viewModel = PostListViewModel(SavedStateHandle(), repository).test(
-            initialState = PostListState(overviews),
+            initialState = initialState,
             runOnCreate = true
         )
 
         // then the view model loads the overviews
-        viewModel.assert {}
+        viewModel.assert(initialState)
     }
 
     @Test
     fun `navigates to detail screen`() {
         val overviews = fixture<List<PostOverview>>()
         val detailTarget = overviews.random()
+        val initialState = PostListState(overviews)
 
         // given we have already loaded the overviews
-        val viewModel = PostListViewModel(SavedStateHandle(), repository).test(initialState = PostListState(overviews))
+        val viewModel = PostListViewModel(SavedStateHandle(), repository).test(initialState = initialState)
 
         // when we click a post
         viewModel.onPostClicked(detailTarget)
 
         // then the view model loads the overviews
-        viewModel.assert {
+        viewModel.assert(initialState) {
             postedSideEffects(OpenPostNavigationEvent(detailTarget))
         }
     }

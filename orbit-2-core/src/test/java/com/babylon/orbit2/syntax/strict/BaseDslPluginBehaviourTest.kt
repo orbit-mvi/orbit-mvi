@@ -37,7 +37,7 @@ internal class BaseDslPluginBehaviourTest {
 
         middleware.reducer(action)
 
-        middleware.assert {
+        middleware.assert(initialState) {
             states(
                 { TestState(action) }
             )
@@ -51,7 +51,7 @@ internal class BaseDslPluginBehaviourTest {
 
         middleware.transformer(action)
 
-        middleware.assert {
+        middleware.assert(initialState) {
             states(
                 { TestState(action + 5) }
             )
@@ -65,7 +65,7 @@ internal class BaseDslPluginBehaviourTest {
 
         middleware.postingSideEffect(action)
 
-        middleware.assert {
+        middleware.assert(initialState) {
             postedSideEffects(action.toString())
         }
     }
@@ -77,7 +77,7 @@ internal class BaseDslPluginBehaviourTest {
 
         middleware.sideEffect(action)
 
-        middleware.assert {}
+        middleware.assert(initialState) {}
     }
 
     @Test
@@ -87,7 +87,7 @@ internal class BaseDslPluginBehaviourTest {
 
         middleware.allowsNulls(action)
 
-        middleware.assert {
+        middleware.assert(initialState) {
             postedSideEffects(action.toString())
         }
     }

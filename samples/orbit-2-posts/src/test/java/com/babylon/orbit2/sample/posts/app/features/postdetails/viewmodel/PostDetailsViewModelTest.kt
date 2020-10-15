@@ -45,6 +45,7 @@ class PostDetailsViewModelTest {
         val details = fixture<PostDetail> {
             property(PostDetail::id) { overview.id }
         }
+        val initialState = PostDetailState.NoDetailsAvailable(overview)
 
         // given we mock the repository
         runBlocking {
@@ -53,12 +54,12 @@ class PostDetailsViewModelTest {
 
         // when we observe details from the view model
         val viewModel = PostDetailsViewModel(SavedStateHandle(), repository, overview).test(
-            initialState = PostDetailState.NoDetailsAvailable(overview),
+            initialState = initialState,
             runOnCreate = true
         )
 
         // then the view model loads the details
-        viewModel.assert {
+        viewModel.assert(initialState) {
             states(
                 { PostDetailState.Details(postOverview, details) }
             )
@@ -81,8 +82,8 @@ class PostDetailsViewModelTest {
             runOnCreate = true
         )
 
-        // then the view model does nothing
-        viewModel.assert {}
+        // then the view model only emits initial state
+        viewModel.assert(initialState)
         verifyZeroInteractions(repository)
     }
 
@@ -90,6 +91,7 @@ class PostDetailsViewModelTest {
     fun `no details available on failure`() {
         val overview = fixture<PostOverview>()
         val exception = IOException()
+        val initialState = PostDetailState.NoDetailsAvailable(overview)
 
         // given we mock the repository
         runBlocking {
@@ -98,12 +100,12 @@ class PostDetailsViewModelTest {
 
         // when we observe details from the view model
         val viewModel = PostDetailsViewModel(SavedStateHandle(), repository, overview).test(
-            initialState = PostDetailState.NoDetailsAvailable(overview),
+            initialState = initialState,
             runOnCreate = true
         )
 
         // then the view model shows no details
-        viewModel.assert {
+        viewModel.assert(initialState) {
             states(
                 { PostDetailState.NoDetailsAvailable(postOverview) }
             )

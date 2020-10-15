@@ -73,7 +73,7 @@ internal class LiveDataDslPluginBehaviourTest {
             liveData.value = emission3
         }
 
-        middleware.assert {
+        middleware.assert(initialState) {
             states(
                 { TestState(emission) },
                 { TestState(emission2) },

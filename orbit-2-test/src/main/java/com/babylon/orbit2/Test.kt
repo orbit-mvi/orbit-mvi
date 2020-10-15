@@ -37,7 +37,8 @@ import kotlin.test.assertEquals
  *  tests with many states/side effects being emitted.
  *
  * @param initialState The state to initialize the test container with
- * @param isolateFlow Whether the flow should be isolated.
+ * @param isolateFlow Whether the flow should be isolated
+ * @param runOnCreate Whether to run the container's create lambda
  * @return Your [ContainerHost] in test mode.
  */
 inline fun <STATE : Any, SIDE_EFFECT : Any, reified T : ContainerHost<STATE, SIDE_EFFECT>> T.test(
@@ -64,9 +65,9 @@ inline fun <STATE : Any, SIDE_EFFECT : Any, reified T : ContainerHost<STATE, SID
     val spy = spy(this)
 
     TestHarness.FIXTURES[spy] = TestFixtures(
-        initialState,
         spy.container.stateFlow.test(),
-        spy.container.sideEffectFlow.test()
+        spy.container.sideEffectFlow.test(),
+        blocking
     )
 
     Mockito.clearInvocations(spy)
@@ -93,8 +94,9 @@ fun <STATE : Any, SIDE_EFFECT : Any> Container<STATE, SIDE_EFFECT>.findOnCreate(
  * @param block The block containing assertions for your [ContainerHost].
  */
 fun <STATE : Any, SIDE_EFFECT : Any, T : ContainerHost<STATE, SIDE_EFFECT>> T.assert(
+    initialState: STATE,
     timeoutMillis: Long = 5000L,
-    block: OrbitVerification<T, STATE, SIDE_EFFECT>.() -> Unit
+    block: OrbitVerification<T, STATE, SIDE_EFFECT>.() -> Unit = {}
 ) {
     val mockingDetails = Mockito.mockingDetails(this)
     if (!mockingDetails.isSpy) {
@@ -106,30 +108,32 @@ fun <STATE : Any, SIDE_EFFECT : Any, T : ContainerHost<STATE, SIDE_EFFECT>> T.as
         .apply(block)
 
     @Suppress("UNCHECKED_CAST")
-    val testFixtures =
-        TestHarness.FIXTURES[this] as TestFixtures<STATE, SIDE_EFFECT>
+    val testFixtures = TestHarness.FIXTURES[this] as TestFixtures<STATE, SIDE_EFFECT>
 
-    runBlocking {
-        joinAll(
-            launch(Dispatchers.IO) {
-                testFixtures.stateObserver.awaitCountSuspending(verification.expectedStateChanges.size + 1, timeoutMillis)
-            },
-            launch(Dispatchers.IO) {
-                testFixtures.sideEffectObserver.awaitCountSuspending(verification.expectedSideEffects.size, timeoutMillis)
-            }
-        )
+    if (!testFixtures.blocking) {
+        // With non-blocking mode await for expected states
+        runBlocking {
+            joinAll(
+                launch(Dispatchers.IO) {
+                    testFixtures.stateObserver.awaitCountSuspending(verification.expectedStateChanges.size + 1, timeoutMillis)
+                },
+                launch(Dispatchers.IO) {
+                    testFixtures.sideEffectObserver.awaitCountSuspending(verification.expectedSideEffects.size, timeoutMillis)
+                }
+            )
+        }
     }
 
     // sanity check the initial state
     assertEquals(
-        testFixtures.initialState,
+        initialState,
         testFixtures.stateObserver.values.firstOrNull()
     )
 
     assertStatesInOrder(
         testFixtures.stateObserver.values.drop(1),
         verification.expectedStateChanges,
-        testFixtures.initialState
+        initialState
     )
 
     assertEquals(
@@ -147,9 +151,9 @@ fun <STATE : Any, SIDE_EFFECT : Any, T : ContainerHost<STATE, SIDE_EFFECT>> T.as
 }
 
 class TestFixtures<STATE : Any, SIDE_EFFECT : Any>(
-    val initialState: STATE,
     val stateObserver: TestFlowObserver<STATE>,
-    val sideEffectObserver: TestFlowObserver<SIDE_EFFECT>
+    val sideEffectObserver: TestFlowObserver<SIDE_EFFECT>,
+    val blocking: Boolean
 )
 
 object TestHarness {

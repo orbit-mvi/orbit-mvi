@@ -63,13 +63,13 @@ testSubject.countToFour()
 
 ### Asserting states
 
-Having done the above, we can move to assertions. We do not need to assert for
-the initial state, this is done automatically as a sanity check.
+Having done the above, we can move to assertions. The initial state has
+to be explicitly asserted first, as a sanity check.
 
 ```kotlin
-testSubject.assert {
+testSubject.assert(State()) {
     states(
-        { Toast(1) },
+        { copy(count = 1) },
         { copy(count = 2) },
         { copy(count = 3) },
         { copy(count = 4) }
@@ -83,7 +83,7 @@ receives the previous state as the receiver to easily accumulate state changes.
 ### Asserting posted side effects
 
 ```kotlin
-testSubject.assert {
+testSubject.assert(State()) {
     postedSideEffects(
         Toast(1),
         Toast(2),
@@ -98,7 +98,7 @@ The side effect list must match exactly the side effects that are emitted.
 ### Asserting loopbacks
 
 ```kotlin
-testSubject.assert {
+testSubject.assert(State()) {
     loopBack { doSomething() }
     loopBack { doSomethingElse(2) }
 }
@@ -116,9 +116,9 @@ val testSubject = ExampleViewModel().test(State())
 
 testSubject.countToFour()
 
-testSubject.assert {
+testSubject.assert(State()) {
     states(
-        { Toast(1) },
+        { copy(count = 1) },
         { copy(count = 2) },
         { copy(count = 3) },
         { copy(count = 4) }

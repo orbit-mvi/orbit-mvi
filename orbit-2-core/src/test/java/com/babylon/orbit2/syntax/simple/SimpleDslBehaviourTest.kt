@@ -38,7 +38,7 @@ internal class SimpleDslBehaviourTest {
 
         middleware.reducer(action)
 
-        middleware.assert {
+        middleware.assert(initialState) {
             states(
                 { TestState(action) }
             )
@@ -52,7 +52,7 @@ internal class SimpleDslBehaviourTest {
 
         middleware.transformer(action)
 
-        middleware.assert {
+        middleware.assert(initialState) {
             states(
                 { TestState(action + 5) }
             )
@@ -66,7 +66,7 @@ internal class SimpleDslBehaviourTest {
 
         middleware.postingSideEffect(action)
 
-        middleware.assert {
+        middleware.assert(initialState) {
             postedSideEffects(action.toString())
         }
     }

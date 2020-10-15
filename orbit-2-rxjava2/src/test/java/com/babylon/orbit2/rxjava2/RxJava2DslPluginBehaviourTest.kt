@@ -50,7 +50,7 @@ internal class RxJava2DslPluginBehaviourTest {
 
         middleware.single(action)
 
-        middleware.assert {
+        middleware.assert(initialState) {
             states(
                 { TestState(action + 5) }
             )
@@ -64,7 +64,7 @@ internal class RxJava2DslPluginBehaviourTest {
 
         middleware.maybe(action)
 
-        middleware.assert {
+        middleware.assert(initialState) {
             states(
                 { TestState(action + 5) }
             )
@@ -86,7 +86,7 @@ internal class RxJava2DslPluginBehaviourTest {
 
         middleware.completable(action)
 
-        middleware.assert {
+        middleware.assert(initialState) {
             states(
                 { TestState(action) }
             )
@@ -100,7 +100,7 @@ internal class RxJava2DslPluginBehaviourTest {
 
         middleware.observable(action)
 
-        middleware.assert {
+        middleware.assert(initialState) {
             postedSideEffects(
                 action.toString(),
                 (action + 1).toString(),

@@ -46,14 +46,53 @@ class OrbitTestingTest {
         NON_BLOCKING(false)
     }
 
+    private val initialState = fixture<State>()
+
     @Nested
     inner class StateTests {
 
         @ParameterizedTest
         @EnumSource(BlockingModeTests::class)
+        fun `succeeds if initial state matches expected state`(testCase: BlockingModeTests) {
+            val testSubject = StateTestMiddleware().test(
+                initialState = initialState,
+                isolateFlow = false,
+                blocking = testCase.blocking
+            )
+
+            val testStateObserver = testSubject.container.stateFlow.test()
+            testStateObserver.awaitCount(1)
+
+            testSubject.assert(initialState)
+        }
+
+        @ParameterizedTest
+        @EnumSource(BlockingModeTests::class)
+        fun `fails if initial state does not match expected state`(testCase: BlockingModeTests) {
+            val testSubject = StateTestMiddleware().test(
+                initialState = initialState,
+                isolateFlow = false,
+                blocking = testCase.blocking
+            )
+            val someRandomState = State(fixture())
+
+            val testStateObserver = testSubject.container.stateFlow.test()
+            testStateObserver.awaitCount(1)
+
+            val throwable = assertThrows<AssertionError> {
+                testSubject.assert(someRandomState)
+            }
+
+            assertThat(throwable.message).contains(
+                "Expected <$someRandomState>, actual <$initialState>."
+            )
+        }
+
+        @ParameterizedTest
+        @EnumSource(BlockingModeTests::class)
         fun `succeeds if emitted states match expected states`(testCase: BlockingModeTests) {
             val testSubject = StateTestMiddleware().test(
-                initialState = State(),
+                initialState = initialState,
                 isolateFlow = false,
                 blocking = testCase.blocking
             )
@@ -66,7 +105,7 @@ class OrbitTestingTest {
             testSubject.something(action2)
             testStateObserver.awaitCount(3)
 
-            testSubject.assert(timeoutMillis = TIMEOUT) {
+            testSubject.assert(initialState, timeoutMillis = TIMEOUT) {
                 states(
                     { copy(count = action) },
                     { copy(count = action2) }
@@ -78,7 +117,7 @@ class OrbitTestingTest {
         @EnumSource(BlockingModeTests::class)
         fun `fails if more states emitted than expected`(testCase: BlockingModeTests) {
             val testSubject = StateTestMiddleware().test(
-                initialState = State(),
+                initialState = initialState,
                 isolateFlow = false,
                 blocking = testCase.blocking
             )
@@ -92,7 +131,7 @@ class OrbitTestingTest {
             testStateObserver.awaitCount(3)
 
             val throwable = assertThrows<AssertionError> {
-                testSubject.assert(timeoutMillis = TIMEOUT) {
+                testSubject.assert(initialState, timeoutMillis = TIMEOUT) {
                     states(
                         { copy(count = action) }
                     )
@@ -109,7 +148,7 @@ class OrbitTestingTest {
         @EnumSource(BlockingModeTests::class)
         fun `fails if one more state expected than emitted`(testCase: BlockingModeTests) {
             val testSubject = StateTestMiddleware().test(
-                initialState = State(),
+                initialState = initialState,
                 isolateFlow = false,
                 blocking = testCase.blocking
             )
@@ -124,7 +163,7 @@ class OrbitTestingTest {
             testStateObserver.awaitCount(3)
 
             val throwable = assertThrows<AssertionError> {
-                testSubject.assert(timeoutMillis = 1000L) {
+                testSubject.assert(initialState, timeoutMillis = 1000L) {
                     states(
                         { copy(count = action) },
                         { copy(count = action2) },
@@ -143,7 +182,7 @@ class OrbitTestingTest {
         @EnumSource(BlockingModeTests::class)
         fun `fails if two more states expected than emitted`(testCase: BlockingModeTests) {
             val testSubject = StateTestMiddleware().test(
-                initialState = State(),
+                initialState = initialState,
                 isolateFlow = false,
                 blocking = testCase.blocking
             )
@@ -159,7 +198,7 @@ class OrbitTestingTest {
             testStateObserver.awaitCount(3)
 
             val throwable = assertThrows<AssertionError> {
-                testSubject.assert(timeoutMillis = 1000L) {
+                testSubject.assert(initialState, timeoutMillis = 1000L) {
                     states(
                         { copy(count = action) },
                         { copy(count = action2) },
@@ -179,7 +218,7 @@ class OrbitTestingTest {
         @EnumSource(BlockingModeTests::class)
         fun `fails if first emitted state does not match expected`(testCase: BlockingModeTests) {
             val testSubject = StateTestMiddleware().test(
-                initialState = State(),
+                initialState = initialState,
                 isolateFlow = false,
                 blocking = testCase.blocking
             )
@@ -194,7 +233,7 @@ class OrbitTestingTest {
             testStateObserver.awaitCount(3)
 
             val throwable = assertThrows<AssertionError> {
-                testSubject.assert(timeoutMillis = TIMEOUT) {
+                testSubject.assert(initialState, timeoutMillis = TIMEOUT) {
                     states(
                         { copy(count = action2) },
                         { copy(count = action3) }
@@ -212,7 +251,7 @@ class OrbitTestingTest {
         @EnumSource(BlockingModeTests::class)
         fun `fails if second emitted state does not match expected`(testCase: BlockingModeTests) {
             val testSubject = StateTestMiddleware().test(
-                initialState = State(),
+                initialState = initialState,
                 isolateFlow = false,
                 blocking = testCase.blocking
             )
@@ -227,7 +266,7 @@ class OrbitTestingTest {
             testStateObserver.awaitCount(3)
 
             val throwable = assertThrows<AssertionError> {
-                testSubject.assert(timeoutMillis = TIMEOUT) {
+                testSubject.assert(initialState, timeoutMillis = TIMEOUT) {
                     states(
                         { copy(count = action2) },
                         { copy(count = action3) }
@@ -245,7 +284,7 @@ class OrbitTestingTest {
         @EnumSource(BlockingModeTests::class)
         fun `fails if expected states are out of order`(testCase: BlockingModeTests) {
             val testSubject = StateTestMiddleware().test(
-                initialState = State(),
+                initialState = initialState,
                 isolateFlow = false,
                 blocking = testCase.blocking
             )
@@ -259,7 +298,7 @@ class OrbitTestingTest {
             testStateObserver.awaitCount(3)
 
             val throwable = assertThrows<AssertionError> {
-                testSubject.assert(timeoutMillis = TIMEOUT) {
+                testSubject.assert(initialState, timeoutMillis = TIMEOUT) {
                     states(
                         { copy(count = action2) },
                         { copy(count = action) }
@@ -277,7 +316,7 @@ class OrbitTestingTest {
         @EnumSource(BlockingModeTests::class)
         fun `succeeds with dropped assertions`(testCase: BlockingModeTests) {
             val testSubject = StateTestMiddleware().test(
-                initialState = State(),
+                initialState = initialState,
                 isolateFlow = false,
                 blocking = testCase.blocking
             )
@@ -293,7 +332,7 @@ class OrbitTestingTest {
             testSubject.something(action3)
             testStateObserver.awaitCount(4)
 
-            testSubject.assert(timeoutMillis = 2000L) {
+            testSubject.assert(initialState, timeoutMillis = 2000L) {
                 states(
                     { copy(count = action) },
                     { copy(count = action2) },
@@ -307,7 +346,7 @@ class OrbitTestingTest {
         @EnumSource(BlockingModeTests::class)
         fun `fails if dropped assertions mean extra states are observed`(testCase: BlockingModeTests) {
             val testSubject = StateTestMiddleware().test(
-                initialState = State(),
+                initialState = initialState,
                 isolateFlow = false,
                 blocking = testCase.blocking
             )
@@ -321,9 +360,9 @@ class OrbitTestingTest {
             testStateObserver.awaitCount(3)
 
             val throwable = assertThrows<AssertionError> {
-                testSubject.assert(timeoutMillis = TIMEOUT) {
+                testSubject.assert(initialState, timeoutMillis = TIMEOUT) {
                     states(
-                        { copy(count = 0) },
+                        { initialState },
                         { copy(count = action) }
                     )
                 }
@@ -340,7 +379,7 @@ class OrbitTestingTest {
         private inner class StateTestMiddleware :
             ContainerHost<State, Nothing> {
             override val container =
-                CoroutineScope(Dispatchers.Unconfined).container<State, Nothing>(State())
+                CoroutineScope(Dispatchers.Unconfined).container<State, Nothing>(initialState)
 
             fun something(action: Int): Unit = orbit {
                 transform {
@@ -359,7 +398,7 @@ class OrbitTestingTest {
         @EnumSource(BlockingModeTests::class)
         fun `succeeds if posted side effects match expected side effects`(testCase: BlockingModeTests) {
             val testSubject = SideEffectTestMiddleware().test(
-                initialState = State(),
+                initialState = initialState,
                 isolateFlow = false,
                 blocking = testCase.blocking
             )
@@ -367,7 +406,7 @@ class OrbitTestingTest {
 
             sideEffects.forEach { testSubject.something(it) }
 
-            testSubject.assert(timeoutMillis = TIMEOUT) {
+            testSubject.assert(initialState, timeoutMillis = TIMEOUT) {
                 postedSideEffects(sideEffects)
             }
         }
@@ -376,7 +415,7 @@ class OrbitTestingTest {
         @EnumSource(BlockingModeTests::class)
         fun `fails if posted side effects do not match expected side effects`(testCase: BlockingModeTests) {
             val testSubject = SideEffectTestMiddleware().test(
-                initialState = State(),
+                initialState = initialState,
                 isolateFlow = false,
                 blocking = testCase.blocking
             )
@@ -386,7 +425,7 @@ class OrbitTestingTest {
             sideEffects.forEach { testSubject.something(it) }
 
             val throwable = assertThrows<AssertionError> {
-                testSubject.assert(timeoutMillis = TIMEOUT) {
+                testSubject.assert(initialState, timeoutMillis = TIMEOUT) {
                     postedSideEffects(sideEffects2)
                 }
             }
@@ -400,7 +439,7 @@ class OrbitTestingTest {
         @EnumSource(BlockingModeTests::class)
         fun `succeeds if loopbacks match`(testCase: BlockingModeTests) {
             val testSubject = SideEffectTestMiddleware().test(
-                initialState = State(),
+                initialState = initialState,
                 isolateFlow = false,
                 blocking = testCase.blocking
             )
@@ -408,7 +447,7 @@ class OrbitTestingTest {
 
             sideEffects.forEach { testSubject.something(it) }
 
-            testSubject.assert(timeoutMillis = TIMEOUT) {
+            testSubject.assert(initialState, timeoutMillis = TIMEOUT) {
                 postedSideEffects(sideEffects)
 
                 sideEffects.forEach {
@@ -421,7 +460,7 @@ class OrbitTestingTest {
         @EnumSource(BlockingModeTests::class)
         fun `fails if loopbacks do not match`(testCase: BlockingModeTests) {
             val testSubject = SideEffectTestMiddleware().test(
-                initialState = State(),
+                initialState = initialState,
                 isolateFlow = false,
                 blocking = testCase.blocking
             )
@@ -431,7 +470,7 @@ class OrbitTestingTest {
             sideEffects.forEach { testSubject.something(it) }
 
             assertThrows<AssertionError> {
-                testSubject.assert(timeoutMillis = TIMEOUT) {
+                testSubject.assert(initialState, timeoutMillis = TIMEOUT) {
                     postedSideEffects(sideEffects)
 
                     sideEffects2.forEach {
@@ -443,7 +482,7 @@ class OrbitTestingTest {
 
         private inner class SideEffectTestMiddleware :
             ContainerHost<State, Int> {
-            override val container = CoroutineScope(Dispatchers.Unconfined).container<State, Int>(State())
+            override val container = CoroutineScope(Dispatchers.Unconfined).container<State, Int>(initialState)
 
             fun something(action: Int): Unit = orbit {
                 sideEffect {
@@ -469,7 +508,7 @@ class OrbitTestingTest {
             val mockDependency = mock<BogusDependency>()
             val testSubject = GeneralTestMiddleware(mockDependency)
 
-            val spy = testSubject.test(State())
+            val spy = testSubject.test(initialState)
 
             verify(spy, never()).created()
         }
@@ -480,7 +519,7 @@ class OrbitTestingTest {
             val mockDependency = mock<BogusDependency>()
             val testSubject = GeneralTestMiddleware(mockDependency)
 
-            testSubject.test(initialState = State(), runOnCreate = true)
+            testSubject.test(initialState = initialState, runOnCreate = true)
 
             verify(mockDependency).create()
         }
@@ -491,7 +530,7 @@ class OrbitTestingTest {
             val mockDependency = mock<BogusDependency>()
             val testSubject = GeneralTestMiddleware(mockDependency)
 
-            val spy = testSubject.test(State())
+            val spy = testSubject.test(initialState)
 
             spy.something()
 
@@ -502,7 +541,7 @@ class OrbitTestingTest {
         private inner class GeneralTestMiddleware(private val dependency: BogusDependency) :
             ContainerHost<State, Nothing> {
             override val container =
-                CoroutineScope(Dispatchers.Unconfined).container<State, Nothing>(State()) {
+                CoroutineScope(Dispatchers.Unconfined).container<State, Nothing>(initialState) {
                     created()
                 }
 

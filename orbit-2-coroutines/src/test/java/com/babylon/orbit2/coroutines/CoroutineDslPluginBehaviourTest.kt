@@ -54,7 +54,7 @@ internal class CoroutineDslPluginBehaviourTest {
 
         middleware.suspend(action)
 
-        middleware.assert {
+        middleware.assert(initialState) {
             states(
                 { TestState(action + 5) }
             )
@@ -68,7 +68,7 @@ internal class CoroutineDslPluginBehaviourTest {
 
         middleware.flow(action)
 
-        middleware.assert {
+        middleware.assert(initialState) {
             states(
                 { TestState(action) },
                 { TestState(action + 1) },
@@ -91,7 +91,7 @@ internal class CoroutineDslPluginBehaviourTest {
         channel.sendBlocking(action + 2)
         channel.sendBlocking(action + 3)
 
-        middleware.assert {
+        middleware.assert(initialState) {
             postedSideEffects(
                 action.toString(),
                 (action + 1).toString(),
