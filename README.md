@@ -49,6 +49,8 @@ And more!...
 implementation("com.babylon.orbit2:orbit-viewmodel:<latest-version>")
 ```
 
+[![Download](https://api.bintray.com/packages/babylonpartners/maven/orbit-core/images/download.svg)](https://bintray.com/babylonpartners/maven/orbit-core/_latestVersion)
+
 ### Define the contract
 
 First, we need to define its state and declared side effects.
