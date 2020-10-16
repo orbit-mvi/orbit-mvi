@@ -112,7 +112,6 @@ subprojects {
     }
     plugins.withId("com.android.library") {
         plugins.withType<org.jetbrains.kotlin.gradle.plugin.KotlinAndroidPluginWrapper> {
-            println(this)
             configure<org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension> {
                 // for strict mode
                 explicitApi()
