@@ -19,12 +19,11 @@ package com.babylon.orbit2.sample.posts.app.features.postdetails.viewmodel
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import com.babylon.orbit2.ContainerHost
-import com.babylon.orbit2.coroutines.transformSuspend
 import com.babylon.orbit2.sample.posts.domain.repositories.PostOverview
 import com.babylon.orbit2.sample.posts.domain.repositories.PostRepository
 import com.babylon.orbit2.sample.posts.domain.repositories.Status
-import com.babylon.orbit2.syntax.strict.orbit
-import com.babylon.orbit2.syntax.strict.reduce
+import com.babylon.orbit2.syntax.simple.intent
+import com.babylon.orbit2.syntax.simple.reduce
 import com.babylon.orbit2.viewmodel.container
 
 class PostDetailsViewModel(
@@ -39,11 +38,11 @@ class PostDetailsViewModel(
         }
     }
 
-    private fun loadDetails() = orbit {
-        transformSuspend {
-            postRepository.getDetail(postOverview.id)
-        }.reduce {
-            when (val status = event) {
+    private fun loadDetails() = intent {
+        val status = postRepository.getDetail(postOverview.id)
+
+        reduce {
+            when (status) {
                 is Status.Success -> PostDetailState.Details(state.postOverview, status.data)
                 is Status.Failure -> PostDetailState.NoDetailsAvailable(state.postOverview)
             }

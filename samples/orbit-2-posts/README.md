@@ -3,6 +3,8 @@
 This sample implements a simple master-detail application using
 [Orbit MVI](https://github.com/babylonhealth/orbit-mvi).
 
+- The application uses the [simple syntax](../../simple-syntax.md).
+
 - The application uses Koin for dependency injection which is initialised in
   [PostsApplication](src/main/java/com/babylon/orbit2/sample/posts/app//PostsApplication.kt).
 

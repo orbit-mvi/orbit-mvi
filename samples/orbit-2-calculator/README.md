@@ -2,6 +2,8 @@
 
 This sample implements a simple calculator using [Orbit MVI](https://github.com/babylonhealth/orbit-mvi).
 
+- The application uses the [simple syntax](../../simple-syntax.md).
+
 - The application uses Koin for dependency injection which is initialised in
   [CalculatorApplication](src/main/java/com/babylon/orbit2/sample/calculator/CalculatorApplication.kt).
 
