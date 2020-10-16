@@ -20,10 +20,10 @@ import com.babylon.orbit2.syntax.Orbit2Dsl
 import com.babylon.orbit2.syntax.strict.OrbitDslPlugin
 
 @Orbit2Dsl
-class SimpleSyntax<S : Any, SE : Any>(internal val containerContext: OrbitDslPlugin.ContainerContext<S, SE>) {
+public class SimpleSyntax<S : Any, SE : Any>(internal val containerContext: OrbitDslPlugin.ContainerContext<S, SE>) {
 
     /**
      * The current state which can change throughout execution of the orbit block
      */
-    val state: S get() = containerContext.state
+    public val state: S get() = containerContext.state
 }

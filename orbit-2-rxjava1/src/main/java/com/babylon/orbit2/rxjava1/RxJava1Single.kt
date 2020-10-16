@@ -16,9 +16,9 @@
 
 package com.babylon.orbit2.rxjava1
 
-import com.babylon.orbit2.syntax.strict.Builder
 import com.babylon.orbit2.syntax.Operator
 import com.babylon.orbit2.syntax.Orbit2Dsl
+import com.babylon.orbit2.syntax.strict.Builder
 import com.babylon.orbit2.syntax.strict.OrbitDslPlugins
 import com.babylon.orbit2.syntax.strict.VolatileContext
 import rx.Single
@@ -26,7 +26,7 @@ import rx.Single
 internal class RxJava1Single<S : Any, E, E2>(
     override val registerIdling: Boolean,
     val block: VolatileContext<S, E>.() -> Single<E2>
-) : Operator<S, E>
+) : Operator<S, E2>
 
 /**
  * The observable transformer flat maps incoming [VolatileContext] for every event into a [Single] of
@@ -38,12 +38,10 @@ internal class RxJava1Single<S : Any, E, E2>(
  * @param block the lambda returning a new [Single] given the current state and event
  */
 @Orbit2Dsl
-fun <S : Any, SE : Any, E, E2> Builder<S, SE, E>.transformRx1Single(
+public fun <S : Any, SE : Any, E, E2> Builder<S, SE, E>.transformRx1Single(
     registerIdling: Boolean = true,
     block: VolatileContext<S, E>.() -> Single<E2>
 ): Builder<S, SE, E2> {
     OrbitDslPlugins.register(RxJava1DslPlugin)
-    return Builder(
-        stack + RxJava1Single(registerIdling, block)
-    )
+    return add(RxJava1Single(registerIdling, block))
 }

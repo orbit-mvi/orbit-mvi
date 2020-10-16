@@ -39,7 +39,7 @@ import kotlinx.coroutines.withContext
  * * [transformRx3Maybe]
  * * [transformRx3Completable]
  */
-object RxJava3DslPlugin : OrbitDslPlugin {
+public object RxJava3DslPlugin : OrbitDslPlugin {
 
     @Suppress("UNCHECKED_CAST", "EXPERIMENTAL_API_USAGE")
     override fun <S : Any, E, SE : Any> apply(

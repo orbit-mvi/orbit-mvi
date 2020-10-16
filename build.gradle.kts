@@ -102,11 +102,21 @@ subprojects {
     plugins.withId("com.android.application") {
         apply(from = "$rootDir/gradle/scripts/jacoco-android.gradle.kts")
     }
-    plugins.withId("org.jetbrains.kotlin.jvm") {
+    plugins.withType<org.jetbrains.kotlin.gradle.plugin.KotlinPluginWrapper> {
         apply(from = "$rootDir/gradle/scripts/jacoco.gradle.kts")
         apply(from = "$rootDir/gradle/scripts/bintray.gradle.kts")
+        configure<org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension> {
+            // for strict mode
+            explicitApi()
+        }
     }
     plugins.withId("com.android.library") {
+        plugins.withType<org.jetbrains.kotlin.gradle.plugin.KotlinAndroidPluginWrapper> {
+            configure<org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension> {
+                // for strict mode
+                explicitApi()
+            }
+        }
         apply(from = "$rootDir/gradle/scripts/jacoco-android.gradle.kts")
         apply(from = "$rootDir/gradle/scripts/bintray.gradle.kts")
 

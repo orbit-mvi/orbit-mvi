@@ -27,7 +27,7 @@ import com.babylon.orbit2.syntax.Orbit2Dsl
  * @param reducer the lambda reducing the current state and incoming event to produce a new state
  */
 @Orbit2Dsl
-suspend fun <S : Any, SE : Any> SimpleSyntax<S, SE>.reduce(reducer: SimpleContext<S>.() -> S) {
+public suspend fun <S : Any, SE : Any> SimpleSyntax<S, SE>.reduce(reducer: SimpleContext<S>.() -> S) {
     containerContext.apply {
         reduce { reducerState ->
             object : SimpleContext<S> {
@@ -45,7 +45,7 @@ suspend fun <S : Any, SE : Any> SimpleSyntax<S, SE>.reduce(reducer: SimpleContex
  * @param sideEffect the side effect to post through the side effect flow
  */
 @Orbit2Dsl
-suspend fun <S : Any, SE : Any> SimpleSyntax<S, SE>.postSideEffect(sideEffect: SE) {
+public suspend fun <S : Any, SE : Any> SimpleSyntax<S, SE>.postSideEffect(sideEffect: SE) {
     containerContext.postSideEffect(sideEffect)
 }
 
@@ -56,10 +56,10 @@ suspend fun <S : Any, SE : Any> SimpleSyntax<S, SE>.postSideEffect(sideEffect: S
  * @param transformer lambda representing the transformer
  */
 @Orbit2Dsl
-fun <STATE : Any, SIDE_EFFECT : Any> ContainerHost<STATE, SIDE_EFFECT>.intent(
+public fun <STATE : Any, SIDE_EFFECT : Any> ContainerHost<STATE, SIDE_EFFECT>.intent(
     registerIdling: Boolean = true,
     transformer: suspend SimpleSyntax<STATE, SIDE_EFFECT>.() -> Unit
-) =
+): Unit =
     container.orbit {
         withIdling(registerIdling) {
             SimpleSyntax(this).transformer()

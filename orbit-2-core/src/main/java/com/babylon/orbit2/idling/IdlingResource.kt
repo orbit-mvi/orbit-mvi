@@ -1,7 +1,7 @@
 package com.babylon.orbit2.idling
 
-interface IdlingResource {
-    fun increment()
-    fun decrement()
-    fun close()
+public interface IdlingResource {
+    public fun increment()
+    public fun decrement()
+    public fun close()
 }

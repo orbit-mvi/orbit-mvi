@@ -21,7 +21,6 @@ import com.nhaarman.mockitokotlin2.spy
 import com.nhaarman.mockitokotlin2.times
 import com.nhaarman.mockitokotlin2.verify
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -41,7 +40,7 @@ import kotlin.test.assertEquals
  * @param runOnCreate Whether to run the container's create lambda
  * @return Your [ContainerHost] in test mode.
  */
-inline fun <STATE : Any, SIDE_EFFECT : Any, reified T : ContainerHost<STATE, SIDE_EFFECT>> T.test(
+public fun <STATE : Any, SIDE_EFFECT : Any, T : ContainerHost<STATE, SIDE_EFFECT>> T.test(
     initialState: STATE,
     isolateFlow: Boolean = true,
     runOnCreate: Boolean = false,
@@ -79,7 +78,7 @@ inline fun <STATE : Any, SIDE_EFFECT : Any, reified T : ContainerHost<STATE, SID
     return spy
 }
 
-fun <STATE : Any, SIDE_EFFECT : Any> Container<STATE, SIDE_EFFECT>.findOnCreate(): (STATE) -> Unit {
+private fun <STATE : Any, SIDE_EFFECT : Any> Container<STATE, SIDE_EFFECT>.findOnCreate(): (STATE) -> Unit {
     return (this as? LazyCreateContainerDecorator<STATE, SIDE_EFFECT>)?.onCreate
         ?: (this as? ContainerDecorator<STATE, SIDE_EFFECT>)?.actual?.findOnCreate()
         ?: {}
@@ -93,7 +92,7 @@ fun <STATE : Any, SIDE_EFFECT : Any> Container<STATE, SIDE_EFFECT>.findOnCreate(
  *
  * @param block The block containing assertions for your [ContainerHost].
  */
-fun <STATE : Any, SIDE_EFFECT : Any, T : ContainerHost<STATE, SIDE_EFFECT>> T.assert(
+public fun <STATE : Any, SIDE_EFFECT : Any, T : ContainerHost<STATE, SIDE_EFFECT>> T.assert(
     initialState: STATE,
     timeoutMillis: Long = 5000L,
     block: OrbitVerification<T, STATE, SIDE_EFFECT>.() -> Unit = {}
@@ -150,17 +149,12 @@ fun <STATE : Any, SIDE_EFFECT : Any, T : ContainerHost<STATE, SIDE_EFFECT>> T.as
     }
 }
 
-class TestFixtures<STATE : Any, SIDE_EFFECT : Any>(
+private class TestFixtures<STATE : Any, SIDE_EFFECT : Any>(
     val stateObserver: TestFlowObserver<STATE>,
     val sideEffectObserver: TestFlowObserver<SIDE_EFFECT>,
     val blocking: Boolean
 )
 
-object TestHarness {
+private object TestHarness {
     val FIXTURES: MutableMap<ContainerHost<*, *>, TestFixtures<*, *>> = WeakHashMap()
 }
-
-/**
- * Allows you to put a [Flow] into test mode.
- */
-fun <T> Flow<T>.test() = TestFlowObserver(this)

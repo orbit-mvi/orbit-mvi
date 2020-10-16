@@ -26,7 +26,7 @@ import io.reactivex.rxjava3.core.Observable
 internal class RxJava3Observable<S : Any, E, E2 : Any>(
     override val registerIdling: Boolean,
     val block: VolatileContext<S, E>.() -> Observable<E2>
-) : Operator<S, E>
+) : Operator<S, E2>
 
 /**
  * The observable transformer flat maps incoming [VolatileContext] for every event into an [Observable] of
@@ -38,10 +38,10 @@ internal class RxJava3Observable<S : Any, E, E2 : Any>(
  * @param block the lambda returning a new observable of events given the current state and event
  */
 @Orbit2Dsl
-fun <S : Any, SE : Any, E : Any, E2 : Any> Builder<S, SE, E>.transformRx3Observable(
+public fun <S : Any, SE : Any, E : Any, E2 : Any> Builder<S, SE, E>.transformRx3Observable(
     registerIdling: Boolean = false,
     block: VolatileContext<S, E>.() -> Observable<E2>
 ): Builder<S, SE, E2> {
     OrbitDslPlugins.register(RxJava3DslPlugin)
-    return Builder(stack + RxJava3Observable(registerIdling, block))
+    return add(RxJava3Observable(registerIdling, block))
 }

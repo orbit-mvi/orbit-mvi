@@ -16,9 +16,9 @@
 
 package com.babylon.orbit2.coroutines
 
-import com.babylon.orbit2.syntax.strict.Builder
 import com.babylon.orbit2.syntax.Operator
 import com.babylon.orbit2.syntax.Orbit2Dsl
+import com.babylon.orbit2.syntax.strict.Builder
 import com.babylon.orbit2.syntax.strict.OrbitDslPlugins
 import com.babylon.orbit2.syntax.strict.VolatileContext
 import kotlinx.coroutines.Dispatchers
@@ -38,10 +38,10 @@ internal class TransformSuspend<S : Any, E, E2>(
  * @param block the suspending lambda returning a new event given the current state and event
  */
 @Orbit2Dsl
-fun <S : Any, SE : Any, E, E2> Builder<S, SE, E>.transformSuspend(
+public fun <S : Any, SE : Any, E, E2> Builder<S, SE, E>.transformSuspend(
     registerIdling: Boolean = true,
     block: suspend VolatileContext<S, E>.() -> E2
 ): Builder<S, SE, E2> {
     OrbitDslPlugins.register(CoroutineDslPlugin)
-    return Builder(stack + TransformSuspend(registerIdling, block))
+    return add(TransformSuspend(registerIdling, block))
 }

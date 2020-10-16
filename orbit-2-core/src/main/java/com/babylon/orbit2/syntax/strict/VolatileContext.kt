@@ -23,9 +23,9 @@ import com.babylon.orbit2.syntax.Orbit2Dsl
  * Represents the current context in which an [Operator] is executing with access to the [volatileState].
  */
 @Orbit2Dsl
-interface VolatileContext<STATE : Any, EVENT> : Context<STATE, EVENT> {
+public interface VolatileContext<STATE : Any, EVENT> : Context<STATE, EVENT> {
     /**
      * The current state which can change throughout execution of the operator
      */
-    fun volatileState(): STATE
+    public fun volatileState(): STATE
 }

@@ -22,9 +22,14 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 
 @Orbit2Dsl
-class Builder<S : Any, SE : Any, E>(val stack: List<Operator<S, *>> = emptyList()) {
+public class Builder<S : Any, SE : Any, E>(private val stack: List<Operator<S, *>> = emptyList()) {
+
+    public fun <E2> add(operator: Operator<S, E2>): Builder<S, SE, E2> {
+        return Builder(stack + operator)
+    }
+
     @Suppress("UNCHECKED_CAST")
-    fun build(
+    internal fun build(
         pluginContext: OrbitDslPlugin.ContainerContext<S, SE>
     ): Flow<Any?> {
         return stack.fold(flowOf(Unit)) { flow: Flow<Any?>, operator: Operator<S, *> ->

@@ -16,7 +16,7 @@
 
 package com.babylon.orbit2
 
-class OrbitVerification<HOST : ContainerHost<STATE, SIDE_EFFECT>, STATE : Any, SIDE_EFFECT : Any> {
+public class OrbitVerification<HOST : ContainerHost<STATE, SIDE_EFFECT>, STATE : Any, SIDE_EFFECT : Any> {
     internal var expectedSideEffects = emptyList<SIDE_EFFECT>()
     internal var expectedStateChanges = emptyList<STATE.() -> STATE>()
     internal var expectedLoopBacks = mutableListOf<Times<HOST, STATE, SIDE_EFFECT>>()
@@ -45,7 +45,7 @@ class OrbitVerification<HOST : ContainerHost<STATE, SIDE_EFFECT>, STATE : Any, S
      * @param expectedStateChanges A list of expected state _changes_. Each lambda has the
      * previous state as the receiver.
      */
-    fun states(vararg expectedStateChanges: STATE.() -> STATE) {
+    public fun states(vararg expectedStateChanges: STATE.() -> STATE) {
         this.expectedStateChanges = expectedStateChanges.toList()
     }
 
@@ -54,7 +54,7 @@ class OrbitVerification<HOST : ContainerHost<STATE, SIDE_EFFECT>, STATE : Any, S
      *
      * @param expectedSideEffects Expected side effects.
      */
-    fun postedSideEffects(vararg expectedSideEffects: SIDE_EFFECT) {
+    public fun postedSideEffects(vararg expectedSideEffects: SIDE_EFFECT) {
         this.expectedSideEffects = expectedSideEffects.toList()
     }
 
@@ -63,7 +63,7 @@ class OrbitVerification<HOST : ContainerHost<STATE, SIDE_EFFECT>, STATE : Any, S
      *
      * @param expectedSideEffects Expected side effects.
      */
-    fun postedSideEffects(expectedSideEffects: Iterable<SIDE_EFFECT>) {
+    public fun postedSideEffects(expectedSideEffects: Iterable<SIDE_EFFECT>) {
         this.expectedSideEffects = expectedSideEffects.toList()
     }
 
@@ -80,7 +80,7 @@ class OrbitVerification<HOST : ContainerHost<STATE, SIDE_EFFECT>, STATE : Any, S
      * @param times The number of times the function has been called
      * @param block The function call
      */
-    fun loopBack(times: Int = 1, block: HOST.() -> Unit) {
+    public fun loopBack(times: Int = 1, block: HOST.() -> Unit) {
         this.expectedLoopBacks.add(
             Times(
                 times,

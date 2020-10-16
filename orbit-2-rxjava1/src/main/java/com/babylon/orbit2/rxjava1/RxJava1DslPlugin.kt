@@ -48,7 +48,7 @@ import kotlin.coroutines.resumeWithException
  * * [transformRx1Single]
  * * [transformRx1Completable]
  */
-object RxJava1DslPlugin : OrbitDslPlugin {
+public object RxJava1DslPlugin : OrbitDslPlugin {
 
     @Suppress("UNCHECKED_CAST", "EXPERIMENTAL_API_USAGE")
     override fun <S : Any, E, SE : Any> apply(

@@ -32,17 +32,17 @@ import kotlinx.coroutines.flow.Flow
  * @param SIDE_EFFECT The type of side effects posted by this container. Can be [Nothing] if this
  * container never posts side effects.
  */
-interface Container<STATE : Any, SIDE_EFFECT : Any> {
+public interface Container<STATE : Any, SIDE_EFFECT : Any> {
     /**
      * The container's current state.
      */
-    val currentState: STATE
+    public val currentState: STATE
 
     /**
      * A [Flow] of state updates. Emits the latest state upon subscription and serves only distinct
      * values (through equality comparison).
      */
-    val stateFlow: Flow<STATE>
+    public val stateFlow: Flow<STATE>
 
     /**
      * A [Flow] of one-off side effects posted from [Container]. Caches side effects when there are no collectors.
@@ -54,14 +54,14 @@ interface Container<STATE : Any, SIDE_EFFECT : Any> {
      * If your particular use case requires multi-casting use `broadcast` on this [Flow], but be aware that caching will not work for the
      * resulting `BroadcastChannel`.
      */
-    val sideEffectFlow: Flow<SIDE_EFFECT>
+    public val sideEffectFlow: Flow<SIDE_EFFECT>
 
     /**
      * Executes an orbit flow. The flows are built in the [ContainerHost] using your chosen syntax.
      *
      * @param orbitFlow lambda returning the suspend function representing the flow
      */
-    fun orbit(orbitFlow: suspend OrbitDslPlugin.ContainerContext<STATE, SIDE_EFFECT>.() -> Unit)
+    public fun orbit(orbitFlow: suspend OrbitDslPlugin.ContainerContext<STATE, SIDE_EFFECT>.() -> Unit)
 
     /**
      * Represents additional settings to create the container with.
@@ -73,10 +73,10 @@ interface Container<STATE : Any, SIDE_EFFECT : Any> {
      * @property orbitDispatcher The dispatcher used for handling incoming [orbit] flows
      * @property backgroundDispatcher The dispatcher used for background operations (depending on syntax)
      */
-    class Settings(
-        val sideEffectBufferSize: Int = Channel.UNLIMITED,
-        val idlingRegistry: IdlingResource = NoopIdlingResource(),
-        val orbitDispatcher: CoroutineDispatcher = Dispatchers.Default,
-        val backgroundDispatcher: CoroutineDispatcher = Dispatchers.IO,
+    public class Settings(
+        public val sideEffectBufferSize: Int = Channel.UNLIMITED,
+        public val idlingRegistry: IdlingResource = NoopIdlingResource(),
+        public val orbitDispatcher: CoroutineDispatcher = Dispatchers.Default,
+        public val backgroundDispatcher: CoroutineDispatcher = Dispatchers.IO,
     )
 }

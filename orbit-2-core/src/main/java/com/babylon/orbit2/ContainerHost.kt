@@ -23,7 +23,7 @@ package com.babylon.orbit2
  * Extension functions `intent` and `orbit` are provided as a convenient way of launching orbit
  * flows on the container.
  */
-interface ContainerHost<STATE : Any, SIDE_EFFECT : Any> {
+public interface ContainerHost<STATE : Any, SIDE_EFFECT : Any> {
     /**
      * The orbit [Container] instance.
      *
@@ -33,5 +33,5 @@ interface ContainerHost<STATE : Any, SIDE_EFFECT : Any> {
      * override val container = scope.container<MyState, MySideEffect>(initialState)
      * ```
      */
-    val container: Container<STATE, SIDE_EFFECT>
+    public val container: Container<STATE, SIDE_EFFECT>
 }

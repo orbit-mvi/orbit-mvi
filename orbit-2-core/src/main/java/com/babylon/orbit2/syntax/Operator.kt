@@ -16,6 +16,6 @@
 
 package com.babylon.orbit2.syntax
 
-interface Operator<S : Any, E> {
-    val registerIdling: Boolean
+public interface Operator<S : Any, E> {
+    public val registerIdling: Boolean
 }

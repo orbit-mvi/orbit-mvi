@@ -24,6 +24,7 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.channels.produce
 import kotlinx.coroutines.channels.sendBlocking
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
@@ -32,7 +33,7 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
 @Suppress("EXPERIMENTAL_API_USAGE")
-open class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
+public open class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
     initialState: STATE,
     parentScope: CoroutineScope,
     private val settings: Container.Settings
@@ -44,12 +45,12 @@ open class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
     private val internalStateFlow = MutableStateFlow(initialState)
     override val currentState: STATE
         get() = internalStateFlow.value
-    override val stateFlow = internalStateFlow
+    override val stateFlow: Flow<STATE> = internalStateFlow
 
     private val sideEffectChannel = Channel<SIDE_EFFECT>(settings.sideEffectBufferSize)
-    override val sideEffectFlow = sideEffectChannel.receiveAsFlow()
+    override val sideEffectFlow: Flow<SIDE_EFFECT> = sideEffectChannel.receiveAsFlow()
 
-    protected val pluginContext = OrbitDslPlugin.ContainerContext<STATE, SIDE_EFFECT>(
+    protected val pluginContext: OrbitDslPlugin.ContainerContext<STATE, SIDE_EFFECT> = OrbitDslPlugin.ContainerContext(
         settings = settings,
         postSideEffect = { sideEffectChannel.send(it) },
         getState = {

@@ -16,6 +16,7 @@
 
 package com.babylon.orbit2
 
+import com.babylon.orbit2.Container.Settings
 import com.babylon.orbit2.internal.LazyCreateContainerDecorator
 import com.babylon.orbit2.internal.RealContainer
 import kotlinx.coroutines.CoroutineScope
@@ -29,9 +30,9 @@ import kotlinx.coroutines.CoroutineScope
  * executed in a lazy manner when the container is first interacted with in any way.
  * @return A [Container] implementation
  */
-fun <STATE : Any, SIDE_EFFECT : Any> CoroutineScope.container(
+public fun <STATE : Any, SIDE_EFFECT : Any> CoroutineScope.container(
     initialState: STATE,
-    settings: Container.Settings = Container.Settings(),
+    settings: Settings = Settings(),
     onCreate: ((state: STATE) -> Unit)? = null
 ): Container<STATE, SIDE_EFFECT> =
     if (onCreate == null) {
