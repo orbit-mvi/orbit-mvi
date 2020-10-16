@@ -46,11 +46,11 @@ internal class Reduce<S : Any, E>(override val registerIdling: Boolean, val bloc
  * @param block the lambda returning a new event given the current state and event
  */
 @Orbit2Dsl
-fun <S : Any, SE : Any, E, E2> Builder<S, SE, E>.transform(
+public fun <S : Any, SE : Any, E, E2> Builder<S, SE, E>.transform(
     registerIdling: Boolean = true,
     block: VolatileContext<S, E>.() -> E2
 ): Builder<S, SE, E2> {
-    return Builder(stack + Transform(registerIdling, block))
+    return add(Transform(registerIdling, block))
 }
 
 /**
@@ -69,11 +69,11 @@ fun <S : Any, SE : Any, E, E2> Builder<S, SE, E>.transform(
  * @param block the lambda executing side effects given the current state and event
  */
 @Orbit2Dsl
-fun <S : Any, SE : Any, E> Builder<S, SE, E>.sideEffect(
+public fun <S : Any, SE : Any, E> Builder<S, SE, E>.sideEffect(
     registerIdling: Boolean = true,
     block: suspend SideEffectContext<S, SE, E>.() -> Unit
 ): Builder<S, SE, E> {
-    return Builder(stack + SideEffect(registerIdling, block))
+    return add(SideEffect(registerIdling, block))
 }
 
 /**
@@ -86,11 +86,11 @@ fun <S : Any, SE : Any, E> Builder<S, SE, E>.sideEffect(
  * @param block the lambda reducing the current state and incoming event to produce a new state
  */
 @Orbit2Dsl
-fun <S : Any, SE : Any, E> Builder<S, SE, E>.reduce(
+public fun <S : Any, SE : Any, E> Builder<S, SE, E>.reduce(
     registerIdling: Boolean = true,
     block: Context<S, E>.() -> S
 ): Builder<S, SE, E> {
-    return Builder(stack + Reduce(registerIdling, block))
+    return add(Reduce(registerIdling, block))
 }
 
 /**
@@ -100,7 +100,7 @@ fun <S : Any, SE : Any, E> Builder<S, SE, E>.reduce(
  * * [sideEffect]
  * * [reduce]
  */
-object BaseDslPlugin : OrbitDslPlugin {
+public object BaseDslPlugin : OrbitDslPlugin {
     override fun <S : Any, E, SE : Any> apply(
         containerContext: OrbitDslPlugin.ContainerContext<S, SE>,
         flow: Flow<E>,

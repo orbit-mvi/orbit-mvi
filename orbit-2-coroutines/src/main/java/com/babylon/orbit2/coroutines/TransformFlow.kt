@@ -27,7 +27,7 @@ import kotlinx.coroutines.flow.Flow
 internal class TransformFlow<S : Any, E, E2>(
     override val registerIdling: Boolean,
     val block: suspend VolatileContext<S, E>.() -> Flow<E2>
-) : Operator<S, E>
+) : Operator<S, E2>
 
 /**
  * The flow transformer flat maps incoming [VolatileContext] for every event into coroutine flows.
@@ -38,10 +38,10 @@ internal class TransformFlow<S : Any, E, E2>(
  * @param block the suspending lambda returning a new flow of events given the current state and event
  */
 @Orbit2Dsl
-fun <S : Any, SE : Any, E, E2> Builder<S, SE, E>.transformFlow(
+public fun <S : Any, SE : Any, E, E2> Builder<S, SE, E>.transformFlow(
     registerIdling: Boolean = false,
     block: suspend VolatileContext<S, E>.() -> Flow<E2>
 ): Builder<S, SE, E2> {
     OrbitDslPlugins.register(CoroutineDslPlugin)
-    return Builder(stack + TransformFlow(registerIdling, block))
+    return add(TransformFlow(registerIdling, block))
 }

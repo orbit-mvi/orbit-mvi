@@ -26,7 +26,7 @@ import io.reactivex.Maybe
 internal class RxJava2Maybe<S : Any, E, E2 : Any>(
     override val registerIdling: Boolean,
     val block: VolatileContext<S, E>.() -> Maybe<E2>
-) : Operator<S, E>
+) : Operator<S, E2>
 
 /**
  * The maybe transformer flat maps incoming [VolatileContext] for every event into a [Maybe] of
@@ -38,10 +38,10 @@ internal class RxJava2Maybe<S : Any, E, E2 : Any>(
  * @param block the lambda returning a new [Maybe] given the current state and event
  */
 @Orbit2Dsl
-fun <S : Any, SE : Any, E : Any, E2 : Any> Builder<S, SE, E>.transformRx2Maybe(
+public fun <S : Any, SE : Any, E : Any, E2 : Any> Builder<S, SE, E>.transformRx2Maybe(
     registerIdling: Boolean = true,
     block: VolatileContext<S, E>.() -> Maybe<E2>
 ): Builder<S, SE, E2> {
     OrbitDslPlugins.register(RxJava2DslPlugin)
-    return Builder(stack + RxJava2Maybe(registerIdling, block))
+    return add(RxJava2Maybe(registerIdling, block))
 }

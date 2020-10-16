@@ -24,6 +24,6 @@ import com.babylon.orbit2.syntax.Orbit2Dsl
  * @property state The current state of the container
  */
 @Orbit2Dsl
-interface SimpleContext<STATE : Any> {
-    val state: STATE
+public interface SimpleContext<STATE : Any> {
+    public val state: STATE
 }

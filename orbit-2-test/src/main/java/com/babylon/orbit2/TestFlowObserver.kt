@@ -15,10 +15,10 @@ import kotlinx.coroutines.withContext
  *
  * @param flow The flow to observe.
  */
-class TestFlowObserver<T>(flow: Flow<T>) {
+public class TestFlowObserver<T>(flow: Flow<T>) {
     private val _values = mutableListOf<T>()
     private val scope = CoroutineScope(Dispatchers.Unconfined)
-    val values: List<T>
+    public val values: List<T>
         get() = _values
 
     init {
@@ -35,7 +35,7 @@ class TestFlowObserver<T>(flow: Flow<T>) {
      * @param timeout How long to wait for in milliseconds
      * @param condition The awaited condition
      */
-    suspend fun awaitFor(timeout: Long = 5000L, condition: TestFlowObserver<T>.() -> Boolean) {
+    public suspend fun awaitFor(timeout: Long = 5000L, condition: TestFlowObserver<T>.() -> Boolean) {
         val start = System.currentTimeMillis()
         while (!this.condition()) {
             if (System.currentTimeMillis() - start > timeout) {
@@ -51,7 +51,7 @@ class TestFlowObserver<T>(flow: Flow<T>) {
      * @param count The awaited element count.
      * @param timeout How long to wait for in milliseconds
      */
-    fun awaitCount(count: Int, timeout: Long = 5000L) {
+    public fun awaitCount(count: Int, timeout: Long = 5000L) {
         runBlocking {
             withContext(Dispatchers.Default) {
                 awaitFor(timeout) { values.size == count }
@@ -65,15 +65,20 @@ class TestFlowObserver<T>(flow: Flow<T>) {
      * @param count The awaited element count.
      * @param timeout How long to wait for in milliseconds
      */
-    suspend fun awaitCountSuspending(count: Int, timeout: Long = 5000L) = awaitFor(timeout) { values.size == count }
+    public suspend fun awaitCountSuspending(count: Int, timeout: Long = 5000L): Unit = awaitFor(timeout) { values.size == count }
 
     /**
      * Closes the subscription on the underlying stream. No further values will be received after
      * this call.
      */
-    fun close(): Unit = scope.cancel()
+    public fun close(): Unit = scope.cancel()
 
-    companion object {
+    public companion object {
         private const val AWAIT_TIMEOUT_MS = 10L
     }
 }
+
+/**
+ * Allows you to put a [Flow] into test mode.
+ */
+public fun <T> Flow<T>.test(): TestFlowObserver<T> = TestFlowObserver(this)

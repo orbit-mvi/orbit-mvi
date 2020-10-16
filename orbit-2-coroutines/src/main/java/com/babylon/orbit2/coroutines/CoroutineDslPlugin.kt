@@ -33,7 +33,7 @@ import kotlinx.coroutines.withContext
  * * [transformSuspend]
  * * [transformFlow]
  */
-object CoroutineDslPlugin : OrbitDslPlugin {
+public object CoroutineDslPlugin : OrbitDslPlugin {
 
     @Suppress("UNCHECKED_CAST", "EXPERIMENTAL_API_USAGE")
     override fun <S : Any, E, SE : Any> apply(

@@ -12,9 +12,9 @@ import kotlinx.coroutines.flow.collect
  * @param init lambda returning the operator chain that represents the flow
  */
 @Orbit2Dsl
-fun <STATE : Any, SIDE_EFFECT : Any> ContainerHost<STATE, SIDE_EFFECT>.orbit(
+public fun <STATE : Any, SIDE_EFFECT : Any> ContainerHost<STATE, SIDE_EFFECT>.orbit(
     init: Builder<STATE, SIDE_EFFECT, Unit>.() -> Builder<STATE, SIDE_EFFECT, *>
-) = container.orbit {
+): Unit = container.orbit {
     Builder<STATE, SIDE_EFFECT, Unit>()
         .init()
         .build(this)

@@ -26,7 +26,7 @@ import com.babylon.orbit2.syntax.Orbit2Dsl
  * @property event The current event being processed
  */
 @Orbit2Dsl
-interface Context<STATE : Any, EVENT> {
-    val state: STATE
-    val event: EVENT
+public interface Context<STATE : Any, EVENT> {
+    public val state: STATE
+    public val event: EVENT
 }

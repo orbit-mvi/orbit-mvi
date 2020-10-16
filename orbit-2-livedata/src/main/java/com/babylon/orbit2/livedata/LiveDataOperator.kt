@@ -17,16 +17,16 @@
 package com.babylon.orbit2.livedata
 
 import androidx.lifecycle.LiveData
-import com.babylon.orbit2.syntax.strict.Builder
 import com.babylon.orbit2.syntax.Operator
 import com.babylon.orbit2.syntax.Orbit2Dsl
+import com.babylon.orbit2.syntax.strict.Builder
 import com.babylon.orbit2.syntax.strict.OrbitDslPlugins
 import com.babylon.orbit2.syntax.strict.VolatileContext
 
 internal class LiveDataOperator<S : Any, E, E2 : Any>(
     override val registerIdling: Boolean,
     val block: VolatileContext<S, E>.() -> LiveData<E2>
-) : Operator<S, E>
+) : Operator<S, E2>
 
 /**
  * The transformer flat maps incoming [VolatileContext] for every event into a [LiveData] of
@@ -43,8 +43,8 @@ fun <S : Any, SE : Any, E : Any, E2 : Any> Builder<S, SE, E>.transformLiveData(
     block: VolatileContext<S, E>.() -> LiveData<E2>
 ): Builder<S, SE, E2> {
     OrbitDslPlugins.register(LiveDataDslPlugin)
-    return Builder(
-        stack + LiveDataOperator(
+    return add(
+        LiveDataOperator(
             registerIdling,
             block
         )

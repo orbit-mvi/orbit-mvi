@@ -38,10 +38,10 @@ internal class RxJava3Completable<S : Any, E : Any>(
  * @param block the lambda returning a new [Completable] given the current state and event
  */
 @Orbit2Dsl
-fun <S : Any, SE : Any, E : Any> Builder<S, SE, E>.transformRx3Completable(
+public fun <S : Any, SE : Any, E : Any> Builder<S, SE, E>.transformRx3Completable(
     registerIdling: Boolean = true,
     block: VolatileContext<S, E>.() -> Completable
 ): Builder<S, SE, E> {
     OrbitDslPlugins.register(RxJava3DslPlugin)
-    return Builder(stack + RxJava3Completable(registerIdling, block))
+    return add(RxJava3Completable(registerIdling, block))
 }

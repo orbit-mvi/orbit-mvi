@@ -23,9 +23,9 @@ package com.babylon.orbit2
  * @param SIDE_EFFECT The type of side effects posted by this container. Can be [Nothing] if this
  * container never posts side effects.
  */
-interface ContainerDecorator<STATE : Any, SIDE_EFFECT : Any> : Container<STATE, SIDE_EFFECT> {
+public interface ContainerDecorator<STATE : Any, SIDE_EFFECT : Any> : Container<STATE, SIDE_EFFECT> {
     /**
      * The wrapped container.
      */
-    val actual: Container<STATE, SIDE_EFFECT>
+    public val actual: Container<STATE, SIDE_EFFECT>
 }

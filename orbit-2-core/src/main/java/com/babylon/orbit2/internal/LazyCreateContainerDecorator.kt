@@ -24,9 +24,9 @@ import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.flow
 import java.util.concurrent.atomic.AtomicBoolean
 
-class LazyCreateContainerDecorator<STATE : Any, SIDE_EFFECT : Any>(
+public class LazyCreateContainerDecorator<STATE : Any, SIDE_EFFECT : Any>(
     override val actual: Container<STATE, SIDE_EFFECT>,
-    val onCreate: (state: STATE) -> Unit
+    public val onCreate: (state: STATE) -> Unit
 ) : ContainerDecorator<STATE, SIDE_EFFECT> {
     private val created = AtomicBoolean(false)
 

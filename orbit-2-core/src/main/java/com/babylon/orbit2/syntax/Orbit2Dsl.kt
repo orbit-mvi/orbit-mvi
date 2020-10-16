@@ -17,4 +17,4 @@
 package com.babylon.orbit2.syntax
 
 @DslMarker
-annotation class Orbit2Dsl
+public annotation class Orbit2Dsl

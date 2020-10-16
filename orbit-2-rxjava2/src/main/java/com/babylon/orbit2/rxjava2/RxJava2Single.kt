@@ -26,7 +26,7 @@ import io.reactivex.Single
 internal class RxJava2Single<S : Any, E, E2 : Any>(
     override val registerIdling: Boolean,
     val block: VolatileContext<S, E>.() -> Single<E2>
-) : Operator<S, E>
+) : Operator<S, E2>
 
 /**
  * The observable transformer flat maps incoming [VolatileContext] for every event into a [Single] of
@@ -38,10 +38,10 @@ internal class RxJava2Single<S : Any, E, E2 : Any>(
  * @param block the lambda returning a new [Single] given the current state and event
  */
 @Orbit2Dsl
-fun <S : Any, SE : Any, E : Any, E2 : Any> Builder<S, SE, E>.transformRx2Single(
+public fun <S : Any, SE : Any, E : Any, E2 : Any> Builder<S, SE, E>.transformRx2Single(
     registerIdling: Boolean = true,
     block: VolatileContext<S, E>.() -> Single<E2>
 ): Builder<S, SE, E2> {
     OrbitDslPlugins.register(RxJava2DslPlugin)
-    return Builder(stack + RxJava2Single(registerIdling, block))
+    return add(RxJava2Single(registerIdling, block))
 }

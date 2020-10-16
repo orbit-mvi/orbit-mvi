@@ -23,7 +23,7 @@ package com.babylon.orbit2.syntax.strict
  * The base DSL provided by [BaseDslPlugin] does not have to be registered as it is registered
  * implicitly, even after a [reset].
  */
-object OrbitDslPlugins {
+public object OrbitDslPlugins {
 
     internal var plugins: Set<OrbitDslPlugin> = setOf(BaseDslPlugin)
         private set
@@ -33,7 +33,7 @@ object OrbitDslPlugins {
      *
      * @param plugin The DSL plugin to register
      */
-    fun register(plugin: OrbitDslPlugin) {
+    public fun register(plugin: OrbitDslPlugin) {
         if (!plugins.contains(plugin)) {
             plugins = plugins + plugin
         }
@@ -42,7 +42,7 @@ object OrbitDslPlugins {
     /**
      * Clears all registered plugins apart from the [BaseDslPlugin].
      */
-    fun reset() {
+    public fun reset() {
         plugins = setOf(BaseDslPlugin)
     }
 }

@@ -23,21 +23,21 @@ import kotlinx.coroutines.flow.Flow
 /**
  * Extend this interface to create your own DSL plugin.
  */
-interface OrbitDslPlugin {
-    fun <S : Any, E, SE : Any> apply(
+public interface OrbitDslPlugin {
+    public fun <S : Any, E, SE : Any> apply(
         containerContext: ContainerContext<S, SE>,
         flow: Flow<E>,
         operator: Operator<S, E>,
         createContext: (event: E) -> VolatileContext<S, E>
     ): Flow<Any?>
 
-    class ContainerContext<S : Any, SE : Any>(
-        val settings: Container.Settings,
-        val postSideEffect: suspend (SE) -> Unit,
+    public class ContainerContext<S : Any, SE : Any>(
+        public val settings: Container.Settings,
+        public val postSideEffect: suspend (SE) -> Unit,
         private val getState: () -> S,
-        val reduce: suspend ((S) -> S) -> Unit
+        public val reduce: suspend ((S) -> S) -> Unit
     ) {
-        val state: S
+        public val state: S
             get() = getState()
     }
 }

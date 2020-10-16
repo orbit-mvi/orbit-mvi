@@ -24,7 +24,7 @@ import kotlinx.coroutines.newSingleThreadContext
 import kotlinx.coroutines.runBlocking
 import java.util.concurrent.atomic.AtomicBoolean
 
-class TestContainer<STATE : Any, SIDE_EFFECT : Any>(
+internal class TestContainer<STATE : Any, SIDE_EFFECT : Any>(
     initialState: STATE,
     private val isolateFlow: Boolean,
     private val blocking: Boolean
