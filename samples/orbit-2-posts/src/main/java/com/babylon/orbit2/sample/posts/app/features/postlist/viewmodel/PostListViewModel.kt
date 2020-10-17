@@ -19,13 +19,12 @@ package com.babylon.orbit2.sample.posts.app.features.postlist.viewmodel
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import com.babylon.orbit2.ContainerHost
-import com.babylon.orbit2.coroutines.transformSuspend
 import com.babylon.orbit2.sample.posts.app.common.NavigationEvent
 import com.babylon.orbit2.sample.posts.domain.repositories.PostOverview
 import com.babylon.orbit2.sample.posts.domain.repositories.PostRepository
-import com.babylon.orbit2.syntax.strict.orbit
-import com.babylon.orbit2.syntax.strict.reduce
-import com.babylon.orbit2.syntax.strict.sideEffect
+import com.babylon.orbit2.syntax.simple.intent
+import com.babylon.orbit2.syntax.simple.postSideEffect
+import com.babylon.orbit2.syntax.simple.reduce
 import com.babylon.orbit2.viewmodel.container
 
 class PostListViewModel(
@@ -39,17 +38,15 @@ class PostListViewModel(
         }
     }
 
-    private fun loadOverviews() = orbit {
-        transformSuspend {
-            postRepository.getOverviews()
-        }.reduce {
-            state.copy(overviews = event)
+    private fun loadOverviews() = intent {
+        val overviews = postRepository.getOverviews()
+
+        reduce {
+            state.copy(overviews = overviews)
         }
     }
 
-    fun onPostClicked(post: PostOverview) = orbit {
-        sideEffect {
-            post(OpenPostNavigationEvent(post))
-        }
+    fun onPostClicked(post: PostOverview) = intent {
+        postSideEffect(OpenPostNavigationEvent(post))
     }
 }

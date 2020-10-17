@@ -2,6 +2,8 @@
 
 This sample implements a stock list using [Orbit MVI](https://github.com/babylonhealth/orbit-mvi).
 
+- The application uses the [strict syntax](../../strict-syntax.md).
+
 - The application uses Koin for dependency injection which is initialised in
   [StockListApplication](src/main/java/com/babylon/orbit2/sample/stocklist/StockListApplication.kt).
 

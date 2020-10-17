@@ -22,8 +22,8 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import com.babylon.orbit2.ContainerHost
-import com.babylon.orbit2.syntax.strict.orbit
-import com.babylon.orbit2.syntax.strict.reduce
+import com.babylon.orbit2.syntax.simple.intent
+import com.babylon.orbit2.syntax.simple.reduce
 import com.babylon.orbit2.viewmodel.container
 import kotlinx.android.parcel.Parcelize
 import java.math.BigDecimal
@@ -39,61 +39,61 @@ class CalculatorViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
     @Suppress("UNCHECKED_CAST")
     val state: LiveData<CalculatorState> = host.container.stateFlow.asLiveData() as LiveData<CalculatorState>
 
-    fun clear() = host.orbit {
+    fun clear() = host.intent {
         reduce {
             CalculatorStateImpl()
         }
     }
 
     fun digit(digit: Int) {
-        host.orbit {
+        host.intent {
             reduce {
                 state.copy(xRegister = state.xRegister.appendDigit(digit))
             }
         }
     }
 
-    fun period() = host.orbit {
+    fun period() = host.intent {
         reduce {
             state.copy(xRegister = state.xRegister.appendPeriod())
         }
     }
 
-    fun add() = host.orbit {
+    fun add() = host.intent {
         reduce {
             val yRegister = if (state.xRegister.isEmpty()) state.yRegister else state.xRegister
             state.copy(lastOperator = CalculatorStateImpl.Operator.Add, xRegister = Register(), yRegister = yRegister)
         }
     }
 
-    fun subtract() = host.orbit {
+    fun subtract() = host.intent {
         reduce {
             val yRegister = if (state.xRegister.isEmpty()) state.yRegister else state.xRegister
             state.copy(lastOperator = CalculatorStateImpl.Operator.Subtract, xRegister = Register(), yRegister = yRegister)
         }
     }
 
-    fun multiply() = host.orbit {
+    fun multiply() = host.intent {
         reduce {
             val yRegister = if (state.xRegister.isEmpty()) state.yRegister else state.xRegister
             state.copy(lastOperator = CalculatorStateImpl.Operator.Multiply, xRegister = Register(), yRegister = yRegister)
         }
     }
 
-    fun divide() = host.orbit {
+    fun divide() = host.intent {
         reduce {
             val yRegister = if (state.xRegister.isEmpty()) state.yRegister else state.xRegister
             state.copy(lastOperator = CalculatorStateImpl.Operator.Divide, xRegister = Register(), yRegister = yRegister)
         }
     }
 
-    fun plusMinus() = host.orbit {
+    fun plusMinus() = host.intent {
         reduce {
             state.copy(xRegister = state.xRegister.plusMinus())
         }
     }
 
-    fun percentage() = host.orbit {
+    fun percentage() = host.intent {
         reduce {
             if (state.xRegister.isEmpty()) {
                 state
@@ -107,7 +107,7 @@ class CalculatorViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
         }
     }
 
-    fun equals() = host.orbit {
+    fun equals() = host.intent {
         reduce {
             try {
                 if (!state.yRegister.isEmpty()) {
