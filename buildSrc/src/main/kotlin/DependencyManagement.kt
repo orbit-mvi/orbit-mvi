@@ -17,11 +17,11 @@
 object Versions {
 
     const val gradleVersionsPlugin = "0.33.0"
-    const val gradleAndroidPlugin = "4.0.1"
+    const val gradleAndroidPlugin = "4.1.0"
     const val markdownLintPlugin = "0.6.0"
-    const val detektPlugin = "1.12.0"
+    const val detektPlugin = "1.14.1"
     const val bintray = "1.8.5"
-    const val safeargs = "2.3.0"
+    const val safeargs = "2.3.1"
 
     const val kotlin = "1.4.10"
     const val coroutines = "1.3.9"
@@ -32,8 +32,8 @@ object Versions {
     const val androidxEspresso = "3.3.0"
 
     const val rxJava1 = "1.3.8"
-    const val rxJava2 = "2.2.19"
-    const val rxJava3 = "3.0.6"
+    const val rxJava2 = "2.2.20"
+    const val rxJava3 = "3.0.7"
 
     const val desugar = "1.0.10"
 

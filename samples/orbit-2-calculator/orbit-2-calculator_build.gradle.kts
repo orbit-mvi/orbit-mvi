@@ -53,7 +53,7 @@ dependencies {
     implementation(project(":orbit-2-viewmodel"))
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.9")
-    implementation("androidx.constraintlayout:constraintlayout:2.0.1")
+    implementation("androidx.constraintlayout:constraintlayout:2.0.2")
     implementation("com.google.android.material:material:1.2.1")
     implementation("org.koin:koin-androidx-viewmodel:2.1.6")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.2.0")
@@ -64,7 +64,7 @@ dependencies {
     testImplementation("org.junit.platform:junit-platform-console:1.7.0")
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.7.0")
     testImplementation("org.junit.jupiter:junit-jupiter-params:5.7.0")
-    testImplementation("junit:junit:4.13")
+    testImplementation("junit:junit:4.13.1")
     testImplementation("com.appmattus.fixture:fixture:0.9.6")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.3.9")
 }
