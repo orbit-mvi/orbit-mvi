@@ -36,7 +36,7 @@ android {
         }
     }
     compileOptions {
-        coreLibraryDesugaringEnabled = true
+        isCoreLibraryDesugaringEnabled = true
 
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
@@ -70,10 +70,10 @@ dependencies {
     implementation(project(":orbit-2-viewmodel"))
     implementation(project(":orbit-2-coroutines"))
 
-    implementation("androidx.constraintlayout:constraintlayout:2.0.1")
+    implementation("androidx.constraintlayout:constraintlayout:2.0.2")
     implementation("com.google.android.material:material:1.2.1")
-    implementation("androidx.navigation:navigation-fragment-ktx:2.3.0")
-    implementation("androidx.navigation:navigation-ui-ktx:2.3.0")
+    implementation("androidx.navigation:navigation-fragment-ktx:2.3.1")
+    implementation("androidx.navigation:navigation-ui-ktx:2.3.1")
     implementation("com.lightstreamer:ls-android-client:4.2.1")
     implementation("com.xwray:groupie:2.8.1")
     implementation("com.xwray:groupie-kotlin-android-extensions:2.8.1")

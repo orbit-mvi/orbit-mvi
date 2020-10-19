@@ -49,13 +49,13 @@ dependencies {
     implementation(project(":orbit-2-viewmodel"))
 
     // UI
-    implementation("androidx.constraintlayout:constraintlayout:2.0.1")
+    implementation("androidx.constraintlayout:constraintlayout:2.0.2")
     implementation("com.google.android.material:material:1.2.1")
     implementation("com.github.bumptech.glide:glide:4.11.0")
     implementation("com.xwray:groupie:2.8.1")
     implementation("com.xwray:groupie-kotlin-android-extensions:2.8.1")
-    implementation("androidx.navigation:navigation-fragment-ktx:2.3.0")
-    implementation("androidx.navigation:navigation-ui-ktx:2.3.0")
+    implementation("androidx.navigation:navigation-fragment-ktx:2.3.1")
+    implementation("androidx.navigation:navigation-ui-ktx:2.3.1")
 
     // Networking
     implementation("com.squareup.okhttp3:okhttp:4.9.0")
@@ -74,7 +74,7 @@ dependencies {
     testImplementation("org.junit.platform:junit-platform-console:1.7.0")
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.7.0")
     testImplementation("org.junit.jupiter:junit-jupiter-params:5.7.0")
-    testImplementation("junit:junit:4.13")
+    testImplementation("junit:junit:4.13.1")
     testImplementation("com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0")
     testImplementation("org.mockito:mockito-inline:3.5.13")
     testImplementation("com.appmattus.fixture:fixture:0.9.6")
