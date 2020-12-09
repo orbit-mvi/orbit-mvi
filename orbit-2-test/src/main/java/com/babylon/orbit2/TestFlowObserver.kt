@@ -1,30 +1,33 @@
 package com.babylon.orbit2
 
-import kotlinx.coroutines.CoroutineScope
+import kotlinx.atomicfu.atomic
+import kotlinx.atomicfu.getAndUpdate
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.cancel
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
+import java.io.Closeable
 
 /**
  * Allows you to record all observed values of a flow for easy testing.
  *
  * @param flow The flow to observe.
  */
-public class TestFlowObserver<T>(flow: Flow<T>) {
-    private val _values = mutableListOf<T>()
-    private val scope = CoroutineScope(Dispatchers.Unconfined)
+public class TestFlowObserver<T>(flow: Flow<T>) : Closeable {
+    private val _values = atomic(emptyList<T>())
+    private val job = Job()
     public val values: List<T>
-        get() = _values
+        get() = _values.value
 
     init {
-        scope.launch {
-            flow.collect {
-                _values.add(it)
+        GlobalScope.launch(job) {
+            flow.collect { emission ->
+                _values.getAndUpdate { it + emission }
             }
         }
     }
@@ -71,7 +74,7 @@ public class TestFlowObserver<T>(flow: Flow<T>) {
      * Closes the subscription on the underlying stream. No further values will be received after
      * this call.
      */
-    public fun close(): Unit = scope.cancel()
+    public override fun close(): Unit = job.cancel()
 
     public companion object {
         private const val AWAIT_TIMEOUT_MS = 10L
