@@ -19,16 +19,16 @@ package com.babylon.orbit2.internal
 import com.babylon.orbit2.Container
 import com.babylon.orbit2.ContainerDecorator
 import com.babylon.orbit2.syntax.strict.OrbitDslPlugin
+import kotlinx.atomicfu.atomic
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.flow
-import java.util.concurrent.atomic.AtomicBoolean
 
 public class LazyCreateContainerDecorator<STATE : Any, SIDE_EFFECT : Any>(
     override val actual: Container<STATE, SIDE_EFFECT>,
     public val onCreate: (state: STATE) -> Unit
 ) : ContainerDecorator<STATE, SIDE_EFFECT> {
-    private val created = AtomicBoolean(false)
+    private val created = atomic<Int>(0)
 
     override val currentState: STATE
         get() = actual.currentState
@@ -46,7 +46,7 @@ public class LazyCreateContainerDecorator<STATE : Any, SIDE_EFFECT : Any>(
         }
 
     private fun runOnCreate() {
-        if (created.compareAndSet(false, true)) {
+        if (created.compareAndSet(0, 1)) {
             onCreate(actual.currentState)
         }
     }

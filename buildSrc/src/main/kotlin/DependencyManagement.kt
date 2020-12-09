@@ -22,6 +22,7 @@ object Versions {
     const val detektPlugin = "1.14.1"
     const val bintray = "1.8.5"
     const val safeargs = "2.3.2"
+    const val atomicfu = "0.14.4"
 
     const val kotlin = "1.4.21"
     const val coroutines = "1.4.2"
@@ -93,6 +94,7 @@ object PluginDependencies {
     const val detekt = "io.gitlab.arturbosch.detekt:detekt-gradle-plugin:${Versions.detektPlugin}"
     const val bintray = "com.jfrog.bintray.gradle:gradle-bintray-plugin:${Versions.bintray}"
     const val safeargs = "androidx.navigation:navigation-safe-args-gradle-plugin:${Versions.safeargs}"
+    const val atomicfu = "org.jetbrains.kotlinx:atomicfu-gradle-plugin:${Versions.atomicfu}"
 }
 
 object GroupedDependencies {

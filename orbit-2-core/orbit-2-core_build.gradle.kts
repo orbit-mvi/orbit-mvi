@@ -18,6 +18,7 @@ plugins {
     id("java-library")
     kotlin("jvm")
 }
+apply<kotlinx.atomicfu.plugin.gradle.AtomicFUGradlePlugin>()
 
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
