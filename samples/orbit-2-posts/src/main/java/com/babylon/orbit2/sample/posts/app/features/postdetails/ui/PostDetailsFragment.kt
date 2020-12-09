@@ -40,13 +40,13 @@ import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.kotlinandroidextensions.GroupieViewHolder
 import kotlinx.android.synthetic.main.post_details_fragment.*
 import kotlinx.coroutines.flow.collect
-import org.koin.androidx.viewmodel.ext.android.stateViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
 class PostDetailsFragment : Fragment() {
 
     private val args: PostDetailsFragmentArgs by navArgs()
-    private val viewModel: PostDetailsViewModel by stateViewModel { parametersOf(args.overview) }
+    private val viewModel: PostDetailsViewModel by viewModel { parametersOf(args.overview) }
     private var initialised: Boolean = false
     private val adapter = GroupAdapter<GroupieViewHolder>()
 

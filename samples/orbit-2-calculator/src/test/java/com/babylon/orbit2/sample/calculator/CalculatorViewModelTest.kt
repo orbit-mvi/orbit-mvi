@@ -46,14 +46,15 @@ class CalculatorViewModelTest {
 
     private val viewModel by lazy { CalculatorViewModel(SavedStateHandle()) }
 
-    private val mockLifecycleOwner = MockLifecycleOwner().also {
-        it.dispatchEvent(Lifecycle.Event.ON_CREATE)
-        it.dispatchEvent(Lifecycle.Event.ON_START)
-    }
+    private val mockLifecycleOwner = MockLifecycleOwner()
 
     @BeforeEach
     fun beforeEach() {
         Dispatchers.setMain(Dispatchers.Unconfined)
+        mockLifecycleOwner.let {
+            it.dispatchEvent(Lifecycle.Event.ON_CREATE)
+            it.dispatchEvent(Lifecycle.Event.ON_START)
+        }
     }
 
     @AfterEach

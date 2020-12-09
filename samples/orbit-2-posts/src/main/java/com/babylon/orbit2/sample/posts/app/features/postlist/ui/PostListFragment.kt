@@ -35,11 +35,11 @@ import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.kotlinandroidextensions.GroupieViewHolder
 import kotlinx.android.synthetic.main.post_list_fragment.*
 import kotlinx.coroutines.flow.collect
-import org.koin.androidx.viewmodel.ext.android.stateViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class PostListFragment : Fragment() {
 
-    private val viewModel: PostListViewModel by stateViewModel()
+    private val viewModel: PostListViewModel by viewModel()
 
     override fun onCreateView(
         inflater: LayoutInflater,

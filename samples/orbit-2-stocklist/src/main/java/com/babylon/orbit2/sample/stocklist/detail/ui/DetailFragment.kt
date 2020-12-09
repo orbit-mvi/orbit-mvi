@@ -31,13 +31,13 @@ import com.babylon.orbit2.sample.stocklist.detail.business.DetailViewModel
 import com.babylon.orbit2.sample.stocklist.list.ui.JobHolder
 import com.babylon.orbit2.sample.stocklist.list.ui.animateChange
 import kotlinx.coroutines.flow.collect
-import org.koin.androidx.viewmodel.ext.android.stateViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
 class DetailFragment : Fragment() {
 
     private val args: DetailFragmentArgs by navArgs()
-    private val detailViewModel by stateViewModel<DetailViewModel> { parametersOf(args.itemName) }
+    private val detailViewModel by viewModel<DetailViewModel> { parametersOf(args.itemName) }
     private lateinit var binding: DetailFragmentBinding
 
     private val bidRef = JobHolder()

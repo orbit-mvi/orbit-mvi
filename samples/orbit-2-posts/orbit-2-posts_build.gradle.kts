@@ -49,24 +49,24 @@ dependencies {
     implementation(project(":orbit-2-viewmodel"))
 
     // UI
-    implementation("androidx.constraintlayout:constraintlayout:2.0.2")
+    implementation("androidx.constraintlayout:constraintlayout:2.0.4")
     implementation("com.google.android.material:material:1.2.1")
     implementation("com.github.bumptech.glide:glide:4.11.0")
     implementation("com.xwray:groupie:2.8.1")
     implementation("com.xwray:groupie-kotlin-android-extensions:2.8.1")
-    implementation("androidx.navigation:navigation-fragment-ktx:2.3.1")
-    implementation("androidx.navigation:navigation-ui-ktx:2.3.1")
+    implementation("androidx.navigation:navigation-fragment-ktx:2.3.2")
+    implementation("androidx.navigation:navigation-ui-ktx:2.3.2")
 
     // Networking
     implementation("com.squareup.okhttp3:okhttp:4.9.0")
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-jackson:2.9.0")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.11.3")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.12.0")
     // reflect set to override version from jackson
     implementation(kotlin("reflect"))
 
     // Dependency Injection
-    implementation("org.koin:koin-androidx-viewmodel:2.1.6")
+    implementation("org.koin:koin-androidx-viewmodel:2.2.1")
 
     // Testing
     testImplementation(project(":orbit-2-test"))
@@ -76,7 +76,7 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-params:5.7.0")
     testImplementation("junit:junit:4.13.1")
     testImplementation("com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0")
-    testImplementation("org.mockito:mockito-inline:3.5.13")
-    testImplementation("com.appmattus.fixture:fixture:0.9.6")
+    testImplementation("org.mockito:mockito-inline:3.6.28")
+    testImplementation("com.appmattus.fixture:fixture:1.0.0")
     testImplementation("com.squareup.retrofit2:retrofit-mock:2.9.0")
 }
