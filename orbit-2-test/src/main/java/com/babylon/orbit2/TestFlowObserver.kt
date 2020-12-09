@@ -11,14 +11,13 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
-import java.io.Closeable
 
 /**
  * Allows you to record all observed values of a flow for easy testing.
  *
  * @param flow The flow to observe.
  */
-public class TestFlowObserver<T>(flow: Flow<T>) : Closeable {
+public class TestFlowObserver<T>(flow: Flow<T>) {
     private val _values = atomic(emptyList<T>())
     private val job = Job()
     public val values: List<T>
@@ -74,7 +73,7 @@ public class TestFlowObserver<T>(flow: Flow<T>) : Closeable {
      * Closes the subscription on the underlying stream. No further values will be received after
      * this call.
      */
-    public override fun close(): Unit = job.cancel()
+    public fun close(): Unit = job.cancel()
 
     public companion object {
         private const val AWAIT_TIMEOUT_MS = 10L
