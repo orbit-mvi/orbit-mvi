@@ -23,7 +23,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.channels.produce
-import kotlinx.coroutines.channels.sendBlocking
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -39,7 +38,7 @@ public open class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
     private val settings: Container.Settings
 ) : Container<STATE, SIDE_EFFECT> {
     private val scope = parentScope + settings.orbitDispatcher
-    private val dispatchChannel = Channel<suspend OrbitDslPlugin.ContainerContext<STATE, SIDE_EFFECT>.() -> Unit>(Channel.BUFFERED)
+    private val dispatchChannel = Channel<suspend OrbitDslPlugin.ContainerContext<STATE, SIDE_EFFECT>.() -> Unit>(Channel.UNLIMITED)
     private val mutex = Mutex()
 
     private val internalStateFlow = MutableStateFlow(initialState)
@@ -77,6 +76,6 @@ public open class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
     }
 
     override fun orbit(orbitFlow: suspend OrbitDslPlugin.ContainerContext<STATE, SIDE_EFFECT>.() -> Unit) {
-        dispatchChannel.sendBlocking(orbitFlow)
+        dispatchChannel.offer(orbitFlow)
     }
 }
