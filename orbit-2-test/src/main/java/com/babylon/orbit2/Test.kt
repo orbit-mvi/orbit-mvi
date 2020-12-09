@@ -17,21 +17,17 @@
 package com.babylon.orbit2
 
 import com.babylon.orbit2.internal.LazyCreateContainerDecorator
-import com.nhaarman.mockitokotlin2.spy
-import com.nhaarman.mockitokotlin2.times
-import com.nhaarman.mockitokotlin2.verify
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import org.mockito.Mockito
 import java.util.WeakHashMap
 import kotlin.test.assertEquals
 
 /**
  *  Switches your [ContainerHost] into test mode. Allows you to isolate the flow to the next one
  *  called (default) i.e. method calls on the container beyond the first will be registered but not
- *  actually execute. This allows you to assert any loopbacks using [OrbitVerification.loopBack]
+ *  actually execute. This allows you to assert any loopbacks
  *  while keeping your test isolated to the flow you are testing, thus avoiding overly complex
  *  tests with many states/side effects being emitted.
  *
@@ -61,21 +57,17 @@ public fun <STATE : Any, SIDE_EFFECT : Any, T : ContainerHost<STATE, SIDE_EFFECT
         set(this@test, testContainer)
     }
 
-    val spy = spy(this)
-
-    TestHarness.FIXTURES[spy] = TestFixtures(
-        spy.container.stateFlow.test(),
-        spy.container.sideEffectFlow.test(),
+    TestHarness.FIXTURES[this] = TestFixtures(
+        container.stateFlow.test(),
+        container.sideEffectFlow.test(),
         blocking
     )
-
-    Mockito.clearInvocations(spy)
 
     if (runOnCreate) {
         onCreate(initialState)
     }
 
-    return spy
+    return this
 }
 
 private fun <STATE : Any, SIDE_EFFECT : Any> Container<STATE, SIDE_EFFECT>.findOnCreate(): (STATE) -> Unit {
@@ -92,18 +84,12 @@ private fun <STATE : Any, SIDE_EFFECT : Any> Container<STATE, SIDE_EFFECT>.findO
  *
  * @param block The block containing assertions for your [ContainerHost].
  */
-public fun <STATE : Any, SIDE_EFFECT : Any, T : ContainerHost<STATE, SIDE_EFFECT>> T.assert(
+public fun <STATE : Any, SIDE_EFFECT : Any> ContainerHost<STATE, SIDE_EFFECT>.assert(
     initialState: STATE,
     timeoutMillis: Long = 5000L,
-    block: OrbitVerification<T, STATE, SIDE_EFFECT>.() -> Unit = {}
+    block: OrbitVerification<STATE, SIDE_EFFECT>.() -> Unit = {}
 ) {
-    val mockingDetails = Mockito.mockingDetails(this)
-    if (!mockingDetails.isSpy) {
-        throw IllegalArgumentException(
-            "The container is not in test mode! Please call [ContainerHost.test()] first!"
-        )
-    }
-    val verification = OrbitVerification<T, STATE, SIDE_EFFECT>()
+    val verification = OrbitVerification<STATE, SIDE_EFFECT>()
         .apply(block)
 
     @Suppress("UNCHECKED_CAST")
@@ -139,14 +125,6 @@ public fun <STATE : Any, SIDE_EFFECT : Any, T : ContainerHost<STATE, SIDE_EFFECT
         verification.expectedSideEffects,
         testFixtures.sideEffectObserver.values
     )
-
-    verification.expectedLoopBacks.forEach {
-        val f = it.invocation
-        verify(
-            this,
-            times(it.times)
-        ).f()
-    }
 }
 
 private class TestFixtures<STATE : Any, SIDE_EFFECT : Any>(

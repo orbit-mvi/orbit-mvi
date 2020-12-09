@@ -16,10 +16,9 @@
 
 package com.babylon.orbit2
 
-public class OrbitVerification<HOST : ContainerHost<STATE, SIDE_EFFECT>, STATE : Any, SIDE_EFFECT : Any> {
+public class OrbitVerification<STATE : Any, SIDE_EFFECT : Any> {
     internal var expectedSideEffects = emptyList<SIDE_EFFECT>()
     internal var expectedStateChanges = emptyList<STATE.() -> STATE>()
-    internal var expectedLoopBacks = mutableListOf<Times<HOST, STATE, SIDE_EFFECT>>()
 
     /**
      * Assert that the expected sequence of state changes has been emitted.
@@ -66,31 +65,4 @@ public class OrbitVerification<HOST : ContainerHost<STATE, SIDE_EFFECT>, STATE :
     public fun postedSideEffects(expectedSideEffects: Iterable<SIDE_EFFECT>) {
         this.expectedSideEffects = expectedSideEffects.toList()
     }
-
-    /**
-     * Assert whether other public functions of your host have been called as part of the
-     * execution.
-     *
-     * ``` kotlin
-     * testSubject.assert {
-     *     loopBack { someFunction(123) }
-     * }
-     * ```
-     *
-     * @param times The number of times the function has been called
-     * @param block The function call
-     */
-    public fun loopBack(times: Int = 1, block: HOST.() -> Unit) {
-        this.expectedLoopBacks.add(
-            Times(
-                times,
-                block
-            )
-        )
-    }
-
-    internal data class Times<HOST : ContainerHost<STATE, SIDE_EFFECT>, STATE : Any, SIDE_EFFECT : Any>(
-        val times: Int = 1,
-        val invocation: HOST.() -> Unit
-    )
 }

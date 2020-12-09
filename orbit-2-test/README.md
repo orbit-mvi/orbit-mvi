@@ -25,11 +25,11 @@ Things that we consider important to test:
 - Loopbacks i.e. flow A calling flow B from a `sideEffect`
 - Potentially dependencies being called
 
-The last item on the list is outside of the scope of this library and can be
-easily tested using a mocking framework like `mockito`.
+The last two items on the list are outside of the scope of this library
+and can be easily tested using a mocking framework like `mockito`.
 
-For the first three things we have created utilities that should make them easy
-to test.
+For the first two things we have created utilities that should make them
+easy to test.
 
 ### Additional constraints
 
@@ -97,14 +97,16 @@ The side effect list must match exactly the side effects that are emitted.
 
 ### Asserting loopbacks
 
-```kotlin
-testSubject.assert(State()) {
-    loopBack { doSomething() }
-    loopBack { doSomethingElse(2) }
-}
-```
+Loopbacks can be tested using a mocking framework like `Mockito` which
+will allow you to spy on your `ContainerHost`. It is not the
+responsibility of this library to provide this functionality.
 
-Each loopback is asserted individually.
+```kotlin
+val testSubject = spy(SomeClass())
+
+verify(testSubject).doSomething()
+verify(testSubject).doSomethingElse(2)
+```
 
 ### Putting it all together
 
@@ -112,7 +114,7 @@ Since all of the assertions need to be done within the same `assert` block
 here's what it looks like once we put it together.
 
 ```kotlin
-val testSubject = ExampleViewModel().test(State())
+val testSubject = spy(ExampleViewModel()).test(State()
 
 testSubject.countToFour()
 
@@ -130,8 +132,8 @@ testSubject.assert(State()) {
         Toast(3),
         Toast(4)
     )
-
-    loopBack { doSomething() }
-    loopBack { doSomethingElse(2) }
 }
+
+verify(testSubject).doSomething()
+verify(testSubject).doSomethingElse(2)
 ```
