@@ -24,7 +24,7 @@ public class TestFlowObserver<T>(flow: Flow<T>) {
         get() = _values.value
 
     init {
-        GlobalScope.launch(job) {
+        GlobalScope.launch(Dispatchers.Unconfined + job) {
             flow.collect { emission ->
                 _values.getAndUpdate { it + emission }
             }
