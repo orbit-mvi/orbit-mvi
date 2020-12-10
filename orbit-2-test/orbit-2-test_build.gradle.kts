@@ -24,7 +24,6 @@ dependencies {
     implementation(kotlin("stdlib-jdk8"))
     implementation(ProjectDependencies.kotlinCoroutines)
     implementation(ProjectDependencies.kotlinTest)
-    implementation(ProjectDependencies.mockitoKotlin)
 
     api(project(":orbit-2-core"))
 
