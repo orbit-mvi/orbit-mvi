@@ -291,7 +291,7 @@ class AndroidIdlingResourceTest {
     @Test
     fun `cancelling scope removes IdlingResource`() {
         runBlocking {
-            val scope = CoroutineScope(Dispatchers.Unconfined)
+            val scope = CoroutineScope(Dispatchers.Default)
 
             scope.createContainerHost()
 
