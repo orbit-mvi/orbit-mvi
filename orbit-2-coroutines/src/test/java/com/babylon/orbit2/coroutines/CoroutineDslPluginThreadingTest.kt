@@ -16,7 +16,6 @@
 
 package com.babylon.orbit2.coroutines
 
-import com.appmattus.kotlinfixture.kotlinFixture
 import com.babylon.orbit2.Container
 import com.babylon.orbit2.ContainerHost
 import com.babylon.orbit2.internal.RealContainer
@@ -31,6 +30,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.newSingleThreadContext
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import kotlin.random.Random
 
 internal class CoroutineDslPluginThreadingTest {
 
@@ -38,11 +38,9 @@ internal class CoroutineDslPluginThreadingTest {
         const val BACKGROUND_THREAD_PREFIX = "IO"
     }
 
-    private val fixture = kotlinFixture()
-
     @Test
     fun `suspend transformation runs on IO dispatcher`() {
-        val action = fixture<Int>()
+        val action = Random.nextInt()
 
         val middleware = Middleware()
         val testFlowObserver = middleware.container.stateFlow.test()
@@ -55,7 +53,7 @@ internal class CoroutineDslPluginThreadingTest {
 
     @Test
     fun `flow transformation runs on IO dispatcher`() {
-        val action = fixture<Int>()
+        val action = Random.nextInt()
 
         val middleware = Middleware()
         val testFlowObserver = middleware.container.stateFlow.test()

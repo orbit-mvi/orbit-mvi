@@ -19,7 +19,6 @@ package com.babylon.orbit2.viewmodel
 import android.os.Parcelable
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import com.appmattus.kotlinfixture.kotlinFixture
 import com.babylon.orbit2.ContainerHost
 import com.babylon.orbit2.syntax.strict.orbit
 import com.babylon.orbit2.syntax.strict.reduce
@@ -27,14 +26,13 @@ import com.babylon.orbit2.test
 import kotlinx.android.parcel.Parcelize
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import kotlin.random.Random
 
 class ViewModelExtensionsKtTest {
-    private val fixture = kotlinFixture()
-
     @Test
     fun `When saved state is present it is read`() {
-        val initialState = fixture<TestState>()
-        val savedState = fixture<TestState>()
+        val initialState = TestState()
+        val savedState = TestState()
         val savedStateHandle = SavedStateHandle(mapOf(SAVED_STATE_KEY to savedState))
 
         val middleware = Middleware(savedStateHandle, initialState)
@@ -44,7 +42,7 @@ class ViewModelExtensionsKtTest {
 
     @Test
     fun `When saved state is not present the initial state is unchanged`() {
-        val initialState = fixture<TestState>()
+        val initialState = TestState()
         val savedStateHandle = SavedStateHandle()
 
         val middleware = Middleware(savedStateHandle, initialState)
@@ -54,8 +52,8 @@ class ViewModelExtensionsKtTest {
 
     @Test
     fun `Modified state is saved in the saved state handle for stateFlow`() {
-        val initialState = fixture<TestState>()
-        val something = fixture<Int>()
+        val initialState = TestState()
+        val something = Random.nextInt()
         val savedStateHandle = SavedStateHandle()
         val middleware = Middleware(savedStateHandle, initialState)
         val testStateObserver = middleware.container.stateFlow.test()
@@ -71,8 +69,8 @@ class ViewModelExtensionsKtTest {
 
     @Test
     fun `When saved state is present calls onCreate with true`() {
-        val initialState = fixture<TestState>()
-        val savedState = fixture<TestState>()
+        val initialState = TestState()
+        val savedState = TestState()
         val savedStateHandle = SavedStateHandle(mapOf(SAVED_STATE_KEY to savedState))
         var onCreateState: TestState? = null
 
@@ -88,7 +86,7 @@ class ViewModelExtensionsKtTest {
 
     @Test
     fun `When saved state is not present calls onCreate with false`() {
-        val initialState = fixture<TestState>()
+        val initialState = TestState()
         val savedStateHandle = SavedStateHandle()
         var onCreateState: TestState? = null
 
@@ -121,5 +119,5 @@ class ViewModelExtensionsKtTest {
     }
 
     @Parcelize
-    data class TestState(val id: Int) : Parcelable
+    data class TestState(val id: Int = Random.nextInt()) : Parcelable
 }

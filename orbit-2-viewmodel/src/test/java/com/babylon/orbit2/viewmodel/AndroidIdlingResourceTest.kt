@@ -299,7 +299,7 @@ class AndroidIdlingResourceTest {
 
             scope.cancel()
 
-            delay(50)
+            delay(200)
 
             assertEquals(0, IdlingRegistry.getInstance().resources.size)
         }

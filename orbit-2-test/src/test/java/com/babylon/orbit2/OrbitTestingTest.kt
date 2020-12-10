@@ -16,7 +16,6 @@
 
 package com.babylon.orbit2
 
-import com.appmattus.kotlinfixture.kotlinFixture
 import com.babylon.orbit2.syntax.strict.orbit
 import com.babylon.orbit2.syntax.strict.reduce
 import com.babylon.orbit2.syntax.strict.sideEffect
@@ -33,13 +32,13 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.EnumSource
+import kotlin.random.Random
 
+@ExperimentalStdlibApi
 class OrbitTestingTest {
     companion object {
         const val TIMEOUT = 5000L
     }
-
-    val fixture = kotlinFixture()
 
     @Suppress("unused")
     enum class BlockingModeTests(val blocking: Boolean) {
@@ -47,7 +46,7 @@ class OrbitTestingTest {
         NON_BLOCKING(false)
     }
 
-    private val initialState = fixture<State>()
+    private val initialState = State()
 
     @Nested
     inner class StateTests {
@@ -75,7 +74,7 @@ class OrbitTestingTest {
                 isolateFlow = false,
                 blocking = testCase.blocking
             )
-            val someRandomState = State(fixture())
+            val someRandomState = State()
 
             val testStateObserver = testSubject.container.stateFlow.test()
             testStateObserver.awaitCount(1)
@@ -97,8 +96,8 @@ class OrbitTestingTest {
                 isolateFlow = false,
                 blocking = testCase.blocking
             )
-            val action = fixture<Int>()
-            val action2 = fixture<Int>()
+            val action = Random.nextInt()
+            val action2 = Random.nextInt()
 
             val testStateObserver = testSubject.container.stateFlow.test()
             testSubject.something(action)
@@ -122,8 +121,8 @@ class OrbitTestingTest {
                 isolateFlow = false,
                 blocking = testCase.blocking
             )
-            val action = fixture<Int>()
-            val action2 = fixture<Int>()
+            val action = Random.nextInt()
+            val action2 = Random.nextInt()
 
             val testStateObserver = testSubject.container.stateFlow.test()
             testSubject.something(action)
@@ -153,9 +152,9 @@ class OrbitTestingTest {
                 isolateFlow = false,
                 blocking = testCase.blocking
             )
-            val action = fixture<Int>()
-            val action2 = fixture<Int>()
-            val action3 = fixture<Int>()
+            val action = Random.nextInt()
+            val action2 = Random.nextInt()
+            val action3 = Random.nextInt()
 
             val testStateObserver = testSubject.container.stateFlow.test()
             testSubject.something(action)
@@ -187,10 +186,10 @@ class OrbitTestingTest {
                 isolateFlow = false,
                 blocking = testCase.blocking
             )
-            val action = fixture<Int>()
-            val action2 = fixture<Int>()
-            val action3 = fixture<Int>()
-            val action4 = fixture<Int>()
+            val action = Random.nextInt()
+            val action2 = Random.nextInt()
+            val action3 = Random.nextInt()
+            val action4 = Random.nextInt()
 
             val testStateObserver = testSubject.container.stateFlow.test()
             testSubject.something(action)
@@ -223,9 +222,9 @@ class OrbitTestingTest {
                 isolateFlow = false,
                 blocking = testCase.blocking
             )
-            val action = fixture<Int>()
-            val action2 = fixture<Int>()
-            val action3 = fixture<Int>()
+            val action = Random.nextInt()
+            val action2 = Random.nextInt()
+            val action3 = Random.nextInt()
 
             val testStateObserver = testSubject.container.stateFlow.test()
             testSubject.something(action)
@@ -256,9 +255,9 @@ class OrbitTestingTest {
                 isolateFlow = false,
                 blocking = testCase.blocking
             )
-            val action = fixture<Int>()
-            val action2 = fixture<Int>()
-            val action3 = fixture<Int>()
+            val action = Random.nextInt()
+            val action2 = Random.nextInt()
+            val action3 = Random.nextInt()
 
             val testStateObserver = testSubject.container.stateFlow.test()
             testSubject.something(action)
@@ -289,8 +288,8 @@ class OrbitTestingTest {
                 isolateFlow = false,
                 blocking = testCase.blocking
             )
-            val action = fixture<Int>()
-            val action2 = fixture<Int>()
+            val action = Random.nextInt()
+            val action2 = Random.nextInt()
 
             val testStateObserver = testSubject.container.stateFlow.test()
             testSubject.something(action)
@@ -321,9 +320,9 @@ class OrbitTestingTest {
                 isolateFlow = false,
                 blocking = testCase.blocking
             )
-            val action = fixture<Int>()
-            val action2 = fixture<Int>()
-            val action3 = fixture<Int>()
+            val action = Random.nextInt()
+            val action2 = Random.nextInt()
+            val action3 = Random.nextInt()
 
             val testStateObserver = testSubject.container.stateFlow.test()
             testSubject.something(action)
@@ -351,8 +350,8 @@ class OrbitTestingTest {
                 isolateFlow = false,
                 blocking = testCase.blocking
             )
-            val action = fixture<Int>()
-            val action2 = fixture<Int>()
+            val action = Random.nextInt()
+            val action2 = Random.nextInt()
 
             val testStateObserver = testSubject.container.stateFlow.test()
             testSubject.something(action)
@@ -403,7 +402,7 @@ class OrbitTestingTest {
                 isolateFlow = false,
                 blocking = testCase.blocking
             )
-            val sideEffects = fixture<List<Int>>()
+            val sideEffects = buildList<Int>(Random.nextInt(1, 5)) { Random.nextInt() }
 
             sideEffects.forEach { testSubject.something(it) }
 
@@ -420,8 +419,8 @@ class OrbitTestingTest {
                 isolateFlow = false,
                 blocking = testCase.blocking
             )
-            val sideEffects = fixture<List<Int>>()
-            val sideEffects2 = fixture<List<Int>>()
+            val sideEffects = List(Random.nextInt(1, 5)) { Random.nextInt() }
+            val sideEffects2 = List(Random.nextInt(1, 5)) { Random.nextInt() }
 
             sideEffects.forEach { testSubject.something(it) }
 
@@ -517,7 +516,7 @@ class OrbitTestingTest {
         }
     }
 
-    private data class State(val count: Int = 0)
+    private data class State(val count: Int = Random.nextInt())
 
     private interface BogusDependency {
         fun create()

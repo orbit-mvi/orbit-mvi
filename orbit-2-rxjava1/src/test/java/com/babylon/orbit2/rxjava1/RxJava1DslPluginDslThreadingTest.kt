@@ -16,7 +16,6 @@
 
 package com.babylon.orbit2.rxjava1
 
-import com.appmattus.kotlinfixture.kotlinFixture
 import com.babylon.orbit2.Container
 import com.babylon.orbit2.ContainerHost
 import com.babylon.orbit2.internal.RealContainer
@@ -31,6 +30,7 @@ import org.junit.jupiter.api.Test
 import rx.Completable
 import rx.Observable
 import rx.Single
+import kotlin.random.Random
 
 internal class RxJava1DslPluginDslThreadingTest {
 
@@ -38,11 +38,9 @@ internal class RxJava1DslPluginDslThreadingTest {
         const val BACKGROUND_THREAD_PREFIX = "IO"
     }
 
-    private val fixture = kotlinFixture()
-
     @Test
     fun `single transformation runs on IO dispatcher`() {
-        val action = fixture<Int>()
+        val action = Random.nextInt()
 
         val middleware = Middleware()
         val testFlowObserver = middleware.container.stateFlow.test()
@@ -55,7 +53,7 @@ internal class RxJava1DslPluginDslThreadingTest {
 
     @Test
     fun `completable transformation runs on IO dispatcher`() {
-        val action = fixture<Int>()
+        val action = Random.nextInt()
 
         val middleware = Middleware()
         val testFlowObserver = middleware.container.stateFlow.test()
@@ -68,7 +66,7 @@ internal class RxJava1DslPluginDslThreadingTest {
 
     @Test
     fun `observable transformation runs on IO dispatcher`() {
-        val action = fixture<Int>()
+        val action = Random.nextInt()
 
         val middleware = Middleware()
         val testFlowObserver = middleware.container.stateFlow.test()

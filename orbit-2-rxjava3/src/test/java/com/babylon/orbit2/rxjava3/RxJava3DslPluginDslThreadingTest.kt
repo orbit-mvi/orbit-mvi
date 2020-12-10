@@ -16,7 +16,6 @@
 
 package com.babylon.orbit2.rxjava3
 
-import com.appmattus.kotlinfixture.kotlinFixture
 import com.babylon.orbit2.Container
 import com.babylon.orbit2.ContainerHost
 import com.babylon.orbit2.internal.RealContainer
@@ -33,6 +32,7 @@ import kotlinx.coroutines.newSingleThreadContext
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.util.concurrent.CountDownLatch
+import kotlin.random.Random
 
 internal class RxJava3DslPluginDslThreadingTest {
 
@@ -40,11 +40,9 @@ internal class RxJava3DslPluginDslThreadingTest {
         const val BACKGROUND_THREAD_PREFIX = "IO"
     }
 
-    private val fixture = kotlinFixture()
-
     @Test
     fun `single transformation runs on IO dispatcher`() {
-        val action = fixture<Int>()
+        val action = Random.nextInt()
 
         val middleware = Middleware()
         val testFlowObserver = middleware.container.stateFlow.test()
@@ -57,7 +55,7 @@ internal class RxJava3DslPluginDslThreadingTest {
 
     @Test
     fun `non empty maybe transformation runs on IO dispatcher`() {
-        val action = fixture<Int>()
+        val action = Random.nextInt()
 
         val middleware = Middleware()
         val testFlowObserver = middleware.container.stateFlow.test()
@@ -70,7 +68,7 @@ internal class RxJava3DslPluginDslThreadingTest {
 
     @Test
     fun `empty maybe transformation runs on IO dispatcher`() {
-        val action = fixture<Int>()
+        val action = Random.nextInt()
 
         val middleware = Middleware()
 
@@ -82,7 +80,7 @@ internal class RxJava3DslPluginDslThreadingTest {
 
     @Test
     fun `completable transformation runs on IO dispatcher`() {
-        val action = fixture<Int>()
+        val action = Random.nextInt()
 
         val middleware = Middleware()
         val testFlowObserver = middleware.container.stateFlow.test()
@@ -95,7 +93,7 @@ internal class RxJava3DslPluginDslThreadingTest {
 
     @Test
     fun `observable transformation runs on IO dispatcher`() {
-        val action = fixture<Int>()
+        val action = Random.nextInt()
 
         val middleware = Middleware()
         val testFlowObserver = middleware.container.stateFlow.test()

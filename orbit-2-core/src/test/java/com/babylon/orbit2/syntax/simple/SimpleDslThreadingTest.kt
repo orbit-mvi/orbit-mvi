@@ -16,7 +16,6 @@
 
 package com.babylon.orbit2.syntax.simple
 
-import com.appmattus.kotlinfixture.kotlinFixture
 import com.babylon.orbit2.Container
 import com.babylon.orbit2.ContainerHost
 import com.babylon.orbit2.internal.RealContainer
@@ -27,6 +26,7 @@ import kotlinx.coroutines.newSingleThreadContext
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.util.concurrent.CountDownLatch
+import kotlin.random.Random
 
 internal class SimpleDslThreadingTest {
 
@@ -35,11 +35,9 @@ internal class SimpleDslThreadingTest {
         const val BACKGROUND_THREAD_PREFIX = "IO"
     }
 
-    private val fixture = kotlinFixture()
-
     @Test
     fun `reducer executes on orbit dispatcher`() {
-        val action = fixture<Int>()
+        val action = Random.nextInt()
         val middleware = BaseDslMiddleware()
         val testFlowObserver = middleware.container.stateFlow.test()
 
@@ -51,7 +49,7 @@ internal class SimpleDslThreadingTest {
 
     @Test
     fun `transformer executes on orbit dispatcher`() {
-        val action = fixture<Int>()
+        val action = Random.nextInt()
         val middleware = BaseDslMiddleware()
         val testFlowObserver = middleware.container.stateFlow.test()
 

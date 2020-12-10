@@ -44,7 +44,6 @@ object Versions {
     const val mockitoKotlin = "2.2.0"
     const val mockito = "3.6.28"
     const val junitRuntime = "5.7.0"
-    const val kotlinFixture = "1.0.0"
     const val jacoco = "0.8.5"
     const val robolectric = "4.4"
 }
@@ -81,7 +80,6 @@ object ProjectDependencies {
     const val assertJ = "org.assertj:assertj-core:${Versions.assertJ}"
     const val mockitoKotlin = "com.nhaarman.mockitokotlin2:mockito-kotlin:${Versions.mockitoKotlin}"
     const val mockitoInline = "org.mockito:mockito-inline:${Versions.mockito}"
-    const val kotlinFixture = "com.appmattus.fixture:fixture:${Versions.kotlinFixture}"
     const val junitJupiterEngine = "org.junit.jupiter:junit-jupiter-engine:${Versions.junitRuntime}"
     const val junitJupiterApi = "org.junit.jupiter:junit-jupiter-api:${Versions.junitRuntime}"
     const val junitJupiterParams = "org.junit.jupiter:junit-jupiter-params:${Versions.junitRuntime}"
@@ -104,7 +102,6 @@ object GroupedDependencies {
         ProjectDependencies.junitJupiterParams,
         ProjectDependencies.mockitoKotlin,
         ProjectDependencies.mockitoInline,
-        ProjectDependencies.kotlinFixture,
         ProjectDependencies.assertJ
     )
 }

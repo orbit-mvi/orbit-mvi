@@ -16,7 +16,6 @@
 
 package com.babylon.orbit2.syntax.strict
 
-import com.appmattus.kotlinfixture.kotlinFixture
 import com.babylon.orbit2.syntax.Operator
 import kotlinx.coroutines.flow.Flow
 import org.assertj.core.api.Assertions.assertThat
@@ -24,7 +23,6 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 
 internal class OrbitDslPluginsTest {
-    val fixture = kotlinFixture()
 
     @AfterEach
     fun afterEach() {
