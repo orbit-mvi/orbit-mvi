@@ -552,6 +552,5 @@ class OrbitTestingTest {
         override fun something2() {
             something2CallCount++
         }
-
     }
 }
