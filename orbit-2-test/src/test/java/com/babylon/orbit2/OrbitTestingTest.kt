@@ -20,10 +20,6 @@ import com.babylon.orbit2.syntax.strict.orbit
 import com.babylon.orbit2.syntax.strict.reduce
 import com.babylon.orbit2.syntax.strict.sideEffect
 import com.babylon.orbit2.syntax.strict.transform
-import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.never
-import com.nhaarman.mockitokotlin2.spy
-import com.nhaarman.mockitokotlin2.verify
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import org.assertj.core.api.Assertions.assertThat
@@ -33,6 +29,7 @@ import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.EnumSource
 import kotlin.random.Random
+import kotlin.test.assertEquals
 
 @ExperimentalStdlibApi
 class OrbitTestingTest {
@@ -460,37 +457,49 @@ class OrbitTestingTest {
         @Test
         fun `created is not invoked by default`() {
 
-            val mockDependency = mock<BogusDependency>()
-            val testSubject = spy(GeneralTestMiddleware(mockDependency))
+            val mockDependency = FakeDependency()
+            val testSubject = GeneralTestMiddleware(mockDependency)
 
-            val spy = testSubject.test(initialState)
+            testSubject.test(initialState)
 
-            verify(spy, never()).created()
+            assertEquals(
+                0,
+                mockDependency.createCallCount
+            )
         }
 
         @Test
         fun `created is invoked upon request`() {
 
-            val mockDependency = mock<BogusDependency>()
+            val mockDependency = FakeDependency()
             val testSubject = GeneralTestMiddleware(mockDependency)
 
             testSubject.test(initialState = initialState, runOnCreate = true)
 
-            verify(mockDependency).create()
+            assertEquals(
+                1,
+                mockDependency.createCallCount
+            )
         }
 
         @Test
         fun `first flow is isolated by default`() {
 
-            val mockDependency = mock<BogusDependency>()
+            val mockDependency = FakeDependency()
             val testSubject = GeneralTestMiddleware(mockDependency)
 
             val spy = testSubject.test(initialState)
 
             spy.something()
 
-            verify(mockDependency).something1()
-            verify(mockDependency, never()).something2()
+            assertEquals(
+                1,
+                mockDependency.something1CallCount
+            )
+            assertEquals(
+                0,
+                mockDependency.something2CallCount
+            )
         }
 
         private inner class GeneralTestMiddleware(private val dependency: BogusDependency) :
@@ -522,5 +531,27 @@ class OrbitTestingTest {
         fun create()
         fun something1()
         fun something2()
+    }
+
+    private class FakeDependency : BogusDependency {
+        var createCallCount = 0
+            private set
+        var something1CallCount = 0
+            private set
+        var something2CallCount = 0
+            private set
+
+        override fun create() {
+            createCallCount++
+        }
+
+        override fun something1() {
+            something1CallCount++
+        }
+
+        override fun something2() {
+            something2CallCount++
+        }
+
     }
 }

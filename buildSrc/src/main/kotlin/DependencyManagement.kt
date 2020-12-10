@@ -100,8 +100,6 @@ object GroupedDependencies {
         ProjectDependencies.junitPlatformConsole,
         ProjectDependencies.junitJupiterApi,
         ProjectDependencies.junitJupiterParams,
-        ProjectDependencies.mockitoKotlin,
-        ProjectDependencies.mockitoInline,
         ProjectDependencies.assertJ
     )
 }
