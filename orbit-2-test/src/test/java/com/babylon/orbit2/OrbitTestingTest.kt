@@ -31,7 +31,6 @@ import org.junit.jupiter.params.provider.EnumSource
 import kotlin.random.Random
 import kotlin.test.assertEquals
 
-@ExperimentalStdlibApi
 class OrbitTestingTest {
     companion object {
         const val TIMEOUT = 5000L
@@ -399,7 +398,7 @@ class OrbitTestingTest {
                 isolateFlow = false,
                 blocking = testCase.blocking
             )
-            val sideEffects = buildList<Int>(Random.nextInt(1, 5)) { Random.nextInt() }
+            val sideEffects = List(Random.nextInt(1, 5)) { Random.nextInt() }
 
             sideEffects.forEach { testSubject.something(it) }
 

@@ -312,8 +312,6 @@ class AndroidIdlingResourceTest {
 
             scope.cancel()
 
-            awaitIdlingResourceUnregistration(500L)
-
             assertEquals(0, IdlingRegistry.getInstance().resources.size)
         }
     }
