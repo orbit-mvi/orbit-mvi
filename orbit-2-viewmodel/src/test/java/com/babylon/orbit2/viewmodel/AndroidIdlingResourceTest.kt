@@ -30,14 +30,29 @@ class AndroidIdlingResourceTest {
 
     @BeforeEach
     fun before() {
-        IdlingRegistry.getInstance().resources.forEach {
-            IdlingRegistry.getInstance().unregister(it)
+        IdlingRegistry.getInstance().apply {
+            unregister(*resources.toTypedArray())
         }
     }
 
     @AfterEach
     fun after() {
         scope.cancel()
+
+        // Await for the idling resource to unregister
+        runBlocking {
+            awaitIdlingResourceUnregistration()
+        }
+    }
+
+    private suspend fun awaitIdlingResourceUnregistration(timeoutMillis: Long = 200L) {
+        runCatching {
+            withTimeout(timeoutMillis) {
+                while (IdlingRegistry.getInstance().resources.isNotEmpty()) {
+                    delay(20)
+                }
+            }
+        }
     }
 
     @Test
@@ -291,15 +306,11 @@ class AndroidIdlingResourceTest {
     @Test
     fun `cancelling scope removes IdlingResource`() {
         runBlocking {
-            val scope = CoroutineScope(Dispatchers.Unconfined)
-
             scope.createContainerHost()
 
             assertEquals(1, IdlingRegistry.getInstance().resources.size)
 
             scope.cancel()
-
-            delay(50)
 
             assertEquals(0, IdlingRegistry.getInstance().resources.size)
         }

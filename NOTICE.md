@@ -17,8 +17,5 @@ This software uses the following open source works:
 - [RxJava](https://github.com/ReactiveX/RxJava)
 - [JUnit](https://junit.org/)
 - [AssertJ](https://assertj.github.io/doc/)
-- [Mockito](https://site.mockito.org)
-- [Mockito-Kotlin](https://github.com/nhaarman/mockito-kotlin)
-- [Kotlin Fixture](https://github.com/appmattus/kotlinfixture/)
 
 See individual sample projects for their notices.

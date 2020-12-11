@@ -16,7 +16,6 @@
 
 package com.babylon.orbit2.internal
 
-import com.appmattus.kotlinfixture.kotlinFixture
 import com.babylon.orbit2.Container
 import com.babylon.orbit2.container
 import com.babylon.orbit2.test
@@ -26,10 +25,9 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import kotlin.random.Random
 
 internal class SideEffectTest {
-
-    private val fixture = kotlinFixture()
 
     @Test
     fun `side effects are emitted in order`() {
@@ -48,9 +46,9 @@ internal class SideEffectTest {
 
     @Test
     fun `side effects are not multicast`() {
-        val action = fixture<Int>()
-        val action2 = fixture<Int>()
-        val action3 = fixture<Int>()
+        val action = Random.nextInt()
+        val action2 = Random.nextInt()
+        val action3 = Random.nextInt()
         val container = CoroutineScope(Dispatchers.Unconfined).container<Unit, Int>(Unit)
 
         val testSideEffectObserver1 = container.sideEffectFlow.test()
@@ -73,9 +71,9 @@ internal class SideEffectTest {
 
     @Test
     fun `side effects are cached when there are no subscribers`() {
-        val action = fixture<Int>()
-        val action2 = fixture<Int>()
-        val action3 = fixture<Int>()
+        val action = Random.nextInt()
+        val action2 = Random.nextInt()
+        val action3 = Random.nextInt()
         val container = CoroutineScope(Dispatchers.Unconfined).container<Unit, Int>(Unit)
 
         container.someFlow(action)
@@ -91,9 +89,9 @@ internal class SideEffectTest {
 
     @Test
     fun `consumed side effects are not resent`() {
-        val action = fixture<Int>()
-        val action2 = fixture<Int>()
-        val action3 = fixture<Int>()
+        val action = Random.nextInt()
+        val action2 = Random.nextInt()
+        val action3 = Random.nextInt()
         val container = CoroutineScope(Dispatchers.Unconfined).container<Unit, Int>(Unit)
         val testSideEffectObserver1 = container.sideEffectFlow.test()
 
@@ -112,7 +110,7 @@ internal class SideEffectTest {
 
     @Test
     fun `only new side effects are emitted when resubscribing`() {
-        val action = fixture<Int>()
+        val action = Random.nextInt()
         val container = CoroutineScope(Dispatchers.Unconfined).container<Unit, Int>(Unit)
 
         val testSideEffectObserver1 = container.sideEffectFlow.test()

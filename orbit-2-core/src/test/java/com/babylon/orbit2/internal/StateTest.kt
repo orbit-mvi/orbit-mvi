@@ -16,7 +16,6 @@
 
 package com.babylon.orbit2.internal
 
-import com.appmattus.kotlinfixture.kotlinFixture
 import com.babylon.orbit2.ContainerHost
 import com.babylon.orbit2.container
 import com.babylon.orbit2.syntax.strict.orbit
@@ -26,14 +25,13 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import kotlin.random.Random
 
 internal class StateTest {
 
-    private val fixture = kotlinFixture()
-
     @Test
     fun `initial state is emitted on connection`() {
-        val initialState = fixture<TestState>()
+        val initialState = TestState()
         val middleware = Middleware(initialState)
         val testStateObserver = middleware.container.stateFlow.test()
 
@@ -44,10 +42,10 @@ internal class StateTest {
 
     @Test
     fun `latest state is emitted on connection`() {
-        val initialState = fixture<TestState>()
+        val initialState = TestState()
         val middleware = Middleware(initialState)
         val testStateObserver = middleware.container.stateFlow.test()
-        val action = fixture<Int>()
+        val action = Random.nextInt()
         middleware.something(action)
         testStateObserver.awaitCount(2) // block until the state is updated
 
@@ -67,7 +65,7 @@ internal class StateTest {
 
     @Test
     fun `current state is set to the initial state after instantiation`() {
-        val initialState = fixture<TestState>()
+        val initialState = TestState()
         val middleware = Middleware(initialState)
 
         assertThat(middleware.container.currentState).isEqualTo(initialState)
@@ -75,9 +73,9 @@ internal class StateTest {
 
     @Test
     fun `current state is up to date after modification`() {
-        val initialState = fixture<TestState>()
+        val initialState = TestState()
         val middleware = Middleware(initialState)
-        val action = fixture<Int>()
+        val action = Random.nextInt()
         val testStateObserver = middleware.container.stateFlow.test()
 
         middleware.something(action)
@@ -87,7 +85,7 @@ internal class StateTest {
         assertThat(middleware.container.currentState).isEqualTo(testStateObserver.values.last())
     }
 
-    private data class TestState(val id: Int)
+    private data class TestState(val id: Int = Random.nextInt())
 
     private class Middleware(initialState: TestState) : ContainerHost<TestState, String> {
         override val container =

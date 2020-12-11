@@ -63,7 +63,7 @@ public open class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
     )
 
     init {
-        scope.produce<Unit> {
+        scope.produce<Unit>(Dispatchers.Unconfined) {
             awaitClose {
                 settings.idlingRegistry.close()
             }

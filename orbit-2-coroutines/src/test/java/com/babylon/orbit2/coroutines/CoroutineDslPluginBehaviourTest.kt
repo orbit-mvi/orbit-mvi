@@ -16,7 +16,6 @@
 
 package com.babylon.orbit2.coroutines
 
-import com.appmattus.kotlinfixture.kotlinFixture
 import com.babylon.orbit2.ContainerHost
 import com.babylon.orbit2.assert
 import com.babylon.orbit2.container
@@ -37,10 +36,10 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.onEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import kotlin.random.Random
 
 internal class CoroutineDslPluginBehaviourTest {
-    private val fixture = kotlinFixture()
-    private val initialState = fixture<TestState>()
+    private val initialState = TestState()
 
     @BeforeEach
     fun beforeEach() {
@@ -49,7 +48,7 @@ internal class CoroutineDslPluginBehaviourTest {
 
     @Test
     fun `suspend transformation maps`() {
-        val action = fixture<Int>()
+        val action = Random.nextInt()
         val middleware = Middleware().test(initialState)
 
         middleware.suspend(action)
@@ -63,7 +62,7 @@ internal class CoroutineDslPluginBehaviourTest {
 
     @Test
     fun `flow transformation flatmaps`() {
-        val action = fixture<Int>()
+        val action = Random.nextInt()
         val middleware = Middleware().test(initialState)
 
         middleware.flow(action)
@@ -80,7 +79,7 @@ internal class CoroutineDslPluginBehaviourTest {
 
     @Test
     fun `hot flow transformation flatmaps`() {
-        val action = fixture<Int>()
+        val action = Random.nextInt()
         val channel = Channel<Int>(100)
         val middleware = Middleware(channel.consumeAsFlow()).test(initialState = initialState, blocking = false)
 
@@ -101,7 +100,7 @@ internal class CoroutineDslPluginBehaviourTest {
         }
     }
 
-    private data class TestState(val id: Int)
+    private data class TestState(val id: Int = Random.nextInt())
 
     private class Middleware(val hotFlow: Flow<Int> = emptyFlow()) : ContainerHost<TestState, String> {
 

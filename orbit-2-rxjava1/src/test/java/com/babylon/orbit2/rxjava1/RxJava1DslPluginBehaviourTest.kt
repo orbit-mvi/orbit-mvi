@@ -16,7 +16,6 @@
 
 package com.babylon.orbit2.rxjava1
 
-import com.appmattus.kotlinfixture.kotlinFixture
 import com.babylon.orbit2.ContainerHost
 import com.babylon.orbit2.assert
 import com.babylon.orbit2.container
@@ -32,10 +31,10 @@ import org.junit.jupiter.api.Test
 import rx.Completable
 import rx.Observable
 import rx.Single
+import kotlin.random.Random
 
 internal class RxJava1DslPluginBehaviourTest {
-    private val fixture = kotlinFixture()
-    private val initialState = fixture<TestState>()
+    private val initialState = TestState()
 
     @BeforeEach
     fun beforeEach() {
@@ -44,7 +43,7 @@ internal class RxJava1DslPluginBehaviourTest {
 
     @Test
     fun `single transformation flatmaps`() {
-        val action = fixture<Int>()
+        val action = Random.nextInt()
         val middleware = Middleware().test(initialState)
 
         middleware.single(action)
@@ -58,7 +57,7 @@ internal class RxJava1DslPluginBehaviourTest {
 
     @Test
     fun `completable transformation flatmaps`() {
-        val action = fixture<Int>()
+        val action = Random.nextInt()
         val middleware = Middleware().test(initialState)
 
         middleware.completable(action)
@@ -72,7 +71,7 @@ internal class RxJava1DslPluginBehaviourTest {
 
     @Test
     fun `observable transformation flatmaps`() {
-        val action = fixture<Int>()
+        val action = Random.nextInt()
         val middleware = Middleware().test(initialState)
 
         middleware.observable(action)
@@ -87,7 +86,7 @@ internal class RxJava1DslPluginBehaviourTest {
         }
     }
 
-    private data class TestState(val id: Int)
+    private data class TestState(val id: Int = Random.nextInt())
 
     private class Middleware : ContainerHost<TestState, String> {
 

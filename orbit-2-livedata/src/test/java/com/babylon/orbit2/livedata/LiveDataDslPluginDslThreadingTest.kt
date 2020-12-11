@@ -17,7 +17,6 @@
 package com.babylon.orbit2.livedata
 
 import androidx.lifecycle.liveData
-import com.appmattus.kotlinfixture.kotlinFixture
 import com.babylon.orbit2.Container
 import com.babylon.orbit2.ContainerHost
 import com.babylon.orbit2.internal.RealContainer
@@ -35,6 +34,7 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import kotlin.random.Random
 
 @Suppress("EXPERIMENTAL_API_USAGE")
 @ExtendWith(InstantTaskExecutorExtension::class)
@@ -45,7 +45,6 @@ internal class LiveDataDslPluginDslThreadingTest {
     }
 
     private val scope = CoroutineScope(Dispatchers.Unconfined)
-    private val fixture = kotlinFixture()
 
     @BeforeEach
     fun beforeEach() {
@@ -60,7 +59,7 @@ internal class LiveDataDslPluginDslThreadingTest {
 
     @Test
     fun `livedata transformation runs on IO dispatcher`() {
-        val action = fixture<Int>()
+        val action = Random.nextInt()
 
         val containerHost = scope.createContainerHost()
         val sideEffects = containerHost.container.sideEffectFlow.test()

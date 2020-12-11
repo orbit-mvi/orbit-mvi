@@ -17,7 +17,6 @@
 package com.babylon.orbit2.livedata
 
 import androidx.lifecycle.Lifecycle
-import com.appmattus.kotlinfixture.kotlinFixture
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -36,11 +35,11 @@ import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.EnumSource
+import kotlin.random.Random
 
 @ExperimentalCoroutinesApi
 @ExtendWith(InstantTaskExecutorExtension::class)
 internal class DelegatingLiveDataTest {
-    private val fixture = kotlinFixture()
     private val mockLifecycleOwner = MockLifecycleOwner().also {
         it.dispatchEvent(Lifecycle.Event.ON_CREATE)
     }
@@ -86,7 +85,7 @@ internal class DelegatingLiveDataTest {
     @EnumSource(TestCase::class)
     fun `observer does not subscribe until onStart`(testCase: TestCase) {
         val channel = Channel<Int>()
-        val action = fixture<Int>()
+        val action = Random.nextInt()
         mockLifecycleOwner.currentState = testCase.state
         val observer = DelegatingLiveData(channel.consumeAsFlow()).test(mockLifecycleOwner)
 
@@ -106,8 +105,8 @@ internal class DelegatingLiveDataTest {
     fun `observer is unsubscribed after the lifecycle is stopped`() {
         val channel = Channel<Int>()
 
-        val action = fixture<Int>()
-        val action2 = fixture<Int>()
+        val action = Random.nextInt()
+        val action2 = Random.nextInt()
 
         val observer = DelegatingLiveData(channel.consumeAsFlow()).test(mockLifecycleOwner)
 
@@ -129,7 +128,7 @@ internal class DelegatingLiveDataTest {
     @Test
     fun `the current value cannot be retrieved and returns nulls instead`() {
         val channel = Channel<Int>()
-        val action = fixture<Int>()
+        val action = Random.nextInt()
         val liveData = DelegatingLiveData(channel.consumeAsFlow())
         val observer = liveData.test(mockLifecycleOwner)
         mockLifecycleOwner.dispatchEvent(Lifecycle.Event.ON_START)

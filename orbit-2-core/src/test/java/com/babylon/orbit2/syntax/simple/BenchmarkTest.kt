@@ -16,7 +16,6 @@
 
 package com.babylon.orbit2.syntax.simple
 
-import com.appmattus.kotlinfixture.kotlinFixture
 import com.babylon.orbit2.ContainerHost
 import com.babylon.orbit2.container
 import com.babylon.orbit2.test
@@ -27,11 +26,10 @@ import kotlinx.coroutines.launch
 import org.junit.jupiter.api.Test
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
+import kotlin.random.Random
 import kotlin.system.measureTimeMillis
 
 internal class BenchmarkTest {
-
-    private val fixture = kotlinFixture()
 
     @Test
     fun benchmark() {
@@ -39,7 +37,7 @@ internal class BenchmarkTest {
         val middleware = BenchmarkMiddleware(x)
         val testFlowObserver = middleware.container.stateFlow.test()
 
-        val actions = fixture.asSequence<Int>().distinct().take(100_000)
+        val actions = List(100_000) { Random.nextInt() }
 
         GlobalScope.launch {
             actions.forEach {

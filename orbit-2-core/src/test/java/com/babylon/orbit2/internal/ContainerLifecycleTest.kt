@@ -16,7 +16,6 @@
 
 package com.babylon.orbit2.internal
 
-import com.appmattus.kotlinfixture.kotlinFixture
 import com.babylon.orbit2.ContainerHost
 import com.babylon.orbit2.container
 import com.babylon.orbit2.syntax.strict.orbit
@@ -26,14 +25,13 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import kotlin.random.Random
 
 internal class ContainerLifecycleTest {
 
-    private val fixture = kotlinFixture()
-
     @Test
     fun `onCreate is called once after connecting to the container`() {
-        val initialState = fixture<TestState>()
+        val initialState = TestState()
         val middleware = Middleware(initialState)
         val testStateObserver = middleware.container.stateFlow.test()
         val testSideEffectObserver = middleware.container.sideEffectFlow.test()
@@ -45,7 +43,7 @@ internal class ContainerLifecycleTest {
         assertThat(testSideEffectObserver.values).containsExactly(initialState.id.toString())
     }
 
-    private data class TestState(val id: Int)
+    private data class TestState(val id: Int = Random.nextInt())
 
     private class Middleware(initialState: TestState) : ContainerHost<TestState, String> {
 

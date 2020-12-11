@@ -18,7 +18,6 @@ package com.babylon.orbit2.livedata
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.appmattus.kotlinfixture.kotlinFixture
 import com.babylon.orbit2.ContainerHost
 import com.babylon.orbit2.assert
 import com.babylon.orbit2.container
@@ -36,12 +35,12 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import kotlin.random.Random
 
 @ExperimentalCoroutinesApi
 @ExtendWith(InstantTaskExecutorExtension::class)
 internal class LiveDataDslPluginBehaviourTest {
-    private val fixture = kotlinFixture()
-    private val initialState = fixture<TestState>()
+    private val initialState = TestState()
 
     @BeforeEach
     fun beforeEach() {
@@ -56,9 +55,9 @@ internal class LiveDataDslPluginBehaviourTest {
 
     @Test
     fun `livedata transformation flatmaps`() {
-        val emission = fixture<Int>()
-        val emission2 = fixture<Int>()
-        val emission3 = fixture<Int>()
+        val emission = Random.nextInt()
+        val emission2 = Random.nextInt()
+        val emission3 = Random.nextInt()
         val liveData = MutableLiveData<Int>()
         val middleware = Middleware(liveData).test(initialState = initialState, blocking = false)
         val testObserver = middleware.container.stateFlow.test()
@@ -82,7 +81,7 @@ internal class LiveDataDslPluginBehaviourTest {
         }
     }
 
-    private data class TestState(val id: Int)
+    private data class TestState(val id: Int = Random.nextInt())
 
     private inner class Middleware(val liveData: LiveData<Int>) : ContainerHost<TestState, String> {
 

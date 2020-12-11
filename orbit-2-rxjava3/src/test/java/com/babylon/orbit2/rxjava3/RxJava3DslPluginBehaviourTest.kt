@@ -16,7 +16,6 @@
 
 package com.babylon.orbit2.rxjava3
 
-import com.appmattus.kotlinfixture.kotlinFixture
 import com.babylon.orbit2.ContainerHost
 import com.babylon.orbit2.assert
 import com.babylon.orbit2.container
@@ -33,10 +32,10 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import kotlin.random.Random
 
 internal class RxJava3DslPluginBehaviourTest {
-    private val fixture = kotlinFixture()
-    private val initialState = fixture<TestState>()
+    private val initialState = TestState()
 
     @BeforeEach
     fun beforeEach() {
@@ -45,7 +44,7 @@ internal class RxJava3DslPluginBehaviourTest {
 
     @Test
     fun `single transformation flatmaps`() {
-        val action = fixture<Int>()
+        val action = Random.nextInt()
         val middleware = Middleware().test(initialState)
 
         middleware.single(action)
@@ -59,7 +58,7 @@ internal class RxJava3DslPluginBehaviourTest {
 
     @Test
     fun `non empty maybe transformation flatmaps`() {
-        val action = fixture<Int>()
+        val action = Random.nextInt()
         val middleware = Middleware().test(initialState)
 
         middleware.maybe(action)
@@ -73,7 +72,7 @@ internal class RxJava3DslPluginBehaviourTest {
 
     @Test
     fun `empty maybe transformation flatmaps`() {
-        val action = fixture<Int>()
+        val action = Random.nextInt()
         val middleware = Middleware().test(initialState)
 
         middleware.maybeNot(action)
@@ -81,7 +80,7 @@ internal class RxJava3DslPluginBehaviourTest {
 
     @Test
     fun `completable transformation flatmaps`() {
-        val action = fixture<Int>()
+        val action = Random.nextInt()
         val middleware = Middleware().test(initialState)
 
         middleware.completable(action)
@@ -95,7 +94,7 @@ internal class RxJava3DslPluginBehaviourTest {
 
     @Test
     fun `observable transformation flatmaps`() {
-        val action = fixture<Int>()
+        val action = Random.nextInt()
         val middleware = Middleware().test(initialState)
 
         middleware.observable(action)
@@ -110,7 +109,7 @@ internal class RxJava3DslPluginBehaviourTest {
         }
     }
 
-    private data class TestState(val id: Int)
+    private data class TestState(val id: Int = Random.nextInt())
 
     private class Middleware : ContainerHost<TestState, String> {
 
