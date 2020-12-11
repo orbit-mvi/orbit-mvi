@@ -38,6 +38,21 @@ class AndroidIdlingResourceTest {
     @AfterEach
     fun after() {
         scope.cancel()
+
+        // Await for the idling resource to unregister
+        runBlocking {
+            awaitIdlingResourceUnregistration()
+        }
+    }
+
+    private suspend fun awaitIdlingResourceUnregistration(timeoutMillis: Long = 200L) {
+        runCatching {
+            withTimeout(timeoutMillis) {
+                while (IdlingRegistry.getInstance().resources.isNotEmpty()) {
+                    delay(20)
+                }
+            }
+        }
     }
 
     @Test
@@ -297,11 +312,7 @@ class AndroidIdlingResourceTest {
 
             scope.cancel()
 
-            withTimeout(5000L) {
-                while (IdlingRegistry.getInstance().resources.isNotEmpty()) {
-                    delay(20)
-                }
-            }
+            awaitIdlingResourceUnregistration(500L)
 
             assertEquals(0, IdlingRegistry.getInstance().resources.size)
         }
