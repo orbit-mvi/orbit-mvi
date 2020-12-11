@@ -21,9 +21,10 @@ import com.babylon.orbit2.container
 import com.babylon.orbit2.syntax.strict.orbit
 import com.babylon.orbit2.syntax.strict.reduce
 import com.babylon.orbit2.test
+import io.kotest.matchers.collections.shouldContainExactly
+import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import kotlin.random.Random
 
@@ -37,7 +38,7 @@ internal class StateTest {
 
         testStateObserver.awaitCount(1)
 
-        assertThat(testStateObserver.values).containsExactly(initialState)
+        testStateObserver.values.shouldContainExactly(initialState)
     }
 
     @Test
@@ -52,11 +53,11 @@ internal class StateTest {
         val testStateObserver2 = middleware.container.stateFlow.test()
         testStateObserver2.awaitCount(1)
 
-        assertThat(testStateObserver.values).containsExactly(
+        testStateObserver.values.shouldContainExactly(
             initialState,
             TestState(action)
         )
-        assertThat(testStateObserver2.values).containsExactly(
+        testStateObserver2.values.shouldContainExactly(
             TestState(
                 action
             )
@@ -68,7 +69,7 @@ internal class StateTest {
         val initialState = TestState()
         val middleware = Middleware(initialState)
 
-        assertThat(middleware.container.currentState).isEqualTo(initialState)
+        middleware.container.currentState.shouldBe(initialState)
     }
 
     @Test
@@ -82,7 +83,7 @@ internal class StateTest {
 
         testStateObserver.awaitCount(2)
 
-        assertThat(middleware.container.currentState).isEqualTo(testStateObserver.values.last())
+        middleware.container.currentState.shouldBe(testStateObserver.values.last())
     }
 
     private data class TestState(val id: Int = Random.nextInt())

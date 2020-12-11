@@ -16,9 +16,9 @@
 
 package com.babylon.orbit2
 
-import org.assertj.core.api.Assertions.assertThat
+import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.matchers.throwable.shouldHaveMessage
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 
 class OrbitAssertionsTest {
     @Test
@@ -33,20 +33,19 @@ class OrbitAssertionsTest {
         )
 
         // When I assert the state list
-        val throwable = assertThrows<AssertionError> {
+        val throwable = shouldThrow<AssertionError> {
             assertStatesInOrder(stateList, assertions, TestState())
         }
 
         // Then The failure message points us to the failed assertion
-        assertThat(throwable)
-            .hasMessage(
-                "Failed assertions at indices 0..2, expected states but never received:\n" +
-                        "[" +
-                        "TestState(label=foobar, index=1), " +
-                        "TestState(label=foobarbaz, index=1), " +
-                        "TestState(label=foobarbaz, index=2)" +
-                        "]"
-            )
+        throwable.shouldHaveMessage(
+            "Failed assertions at indices 0..2, expected states but never received:\n" +
+                    "[" +
+                    "TestState(label=foobar, index=1), " +
+                    "TestState(label=foobarbaz, index=1), " +
+                    "TestState(label=foobarbaz, index=2)" +
+                    "]"
+        )
     }
 
     @Test
@@ -140,16 +139,15 @@ class OrbitAssertionsTest {
         )
 
         // When I assert the state list
-        val throwable = assertThrows<AssertionError> {
+        val throwable = shouldThrow<AssertionError> {
             assertStatesInOrder(stateList, assertions, TestState())
         }
 
         // Then The failure message points us to the failed assertion
-        assertThat(throwable)
-            .hasMessage(
-                "Expected 3 states but more were emitted:\n" +
-                        "[TestState(label=foobarbaz, index=4), TestState(label=foobarbaz, index=6)]"
-            )
+        throwable.shouldHaveMessage(
+            "Expected 3 states but more were emitted:\n" +
+                    "[TestState(label=foobarbaz, index=4), TestState(label=foobarbaz, index=6)]"
+        )
     }
 
     @Test
@@ -168,16 +166,15 @@ class OrbitAssertionsTest {
         )
 
         // When I assert the state list
-        val throwable = assertThrows<AssertionError> {
+        val throwable = shouldThrow<AssertionError> {
             assertStatesInOrder(stateList, assertions, TestState())
         }
 
         // Then The failure message points us to the failed assertion
-        assertThat(throwable)
-            .hasMessage(
-                "Failed assertion at index 0. Expected <TestState(label=foobaz, index=1)>, " +
-                        "actual <TestState(label=foobar, index=1)>."
-            )
+        throwable.shouldHaveMessage(
+            "Failed assertion at index 0. Expected <TestState(label=foobaz, index=1)>, " +
+                    "actual <TestState(label=foobar, index=1)>."
+        )
     }
 
     @Test
@@ -201,7 +198,7 @@ class OrbitAssertionsTest {
                 )
 
                 // Then The assertion fails
-                assertThrows<AssertionError> {
+                shouldThrow<AssertionError> {
                     assertStatesInOrder(stateList, assertions, TestState())
                 }
             }
@@ -229,7 +226,7 @@ class OrbitAssertionsTest {
                 val assertions: List<TestState.() -> TestState> = it
 
                 // Then The assertion fails
-                assertThrows<AssertionError> {
+                shouldThrow<AssertionError> {
                     assertStatesInOrder(stateList, assertions, TestState())
                 }
             }

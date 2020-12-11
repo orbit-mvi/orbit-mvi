@@ -22,10 +22,10 @@ import com.babylon.orbit2.internal.RealContainer
 import com.babylon.orbit2.syntax.strict.orbit
 import com.babylon.orbit2.syntax.strict.reduce
 import com.babylon.orbit2.test
+import io.kotest.matchers.string.shouldStartWith
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.newSingleThreadContext
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import rx.Completable
 import rx.Observable
@@ -48,7 +48,7 @@ internal class RxJava1DslPluginDslThreadingTest {
         middleware.single(action)
 
         testFlowObserver.awaitCount(2)
-        assertThat(middleware.threadName).startsWith(BACKGROUND_THREAD_PREFIX)
+        middleware.threadName.shouldStartWith(BACKGROUND_THREAD_PREFIX)
     }
 
     @Test
@@ -61,7 +61,7 @@ internal class RxJava1DslPluginDslThreadingTest {
         middleware.completable(action)
 
         testFlowObserver.awaitCount(2)
-        assertThat(middleware.threadName).startsWith(BACKGROUND_THREAD_PREFIX)
+        middleware.threadName.shouldStartWith(BACKGROUND_THREAD_PREFIX)
     }
 
     @Test
@@ -74,7 +74,7 @@ internal class RxJava1DslPluginDslThreadingTest {
         middleware.observable(action)
 
         testFlowObserver.awaitCount(5)
-        assertThat(middleware.threadName).startsWith(BACKGROUND_THREAD_PREFIX)
+        middleware.threadName.shouldStartWith(BACKGROUND_THREAD_PREFIX)
     }
 
     private data class TestState(val id: Int)

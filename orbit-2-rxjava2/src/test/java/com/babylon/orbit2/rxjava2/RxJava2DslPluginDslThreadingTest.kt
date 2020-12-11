@@ -22,6 +22,7 @@ import com.babylon.orbit2.internal.RealContainer
 import com.babylon.orbit2.syntax.strict.orbit
 import com.babylon.orbit2.syntax.strict.reduce
 import com.babylon.orbit2.test
+import io.kotest.matchers.string.shouldStartWith
 import io.reactivex.Completable
 import io.reactivex.Maybe
 import io.reactivex.Observable
@@ -29,9 +30,11 @@ import io.reactivex.Single
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.newSingleThreadContext
-import org.assertj.core.api.Assertions.assertThat
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.withTimeout
 import org.junit.jupiter.api.Test
-import java.util.concurrent.CountDownLatch
 import kotlin.random.Random
 
 internal class RxJava2DslPluginDslThreadingTest {
@@ -50,7 +53,7 @@ internal class RxJava2DslPluginDslThreadingTest {
         middleware.single(action)
 
         testFlowObserver.awaitCount(2)
-        assertThat(middleware.threadName).startsWith(BACKGROUND_THREAD_PREFIX)
+        middleware.threadName.shouldStartWith(BACKGROUND_THREAD_PREFIX)
     }
 
     @Test
@@ -63,7 +66,7 @@ internal class RxJava2DslPluginDslThreadingTest {
         middleware.maybe(action)
 
         testFlowObserver.awaitCount(2)
-        assertThat(middleware.threadName).startsWith(BACKGROUND_THREAD_PREFIX)
+        middleware.threadName.shouldStartWith(BACKGROUND_THREAD_PREFIX)
     }
 
     @Test
@@ -74,8 +77,13 @@ internal class RxJava2DslPluginDslThreadingTest {
 
         middleware.maybeNot(action)
 
-        middleware.latch.await()
-        assertThat(middleware.threadName).startsWith(BACKGROUND_THREAD_PREFIX)
+        runBlocking {
+            withTimeout(1000) {
+                middleware.mutex.withLock {
+                    middleware.threadName.shouldStartWith(BACKGROUND_THREAD_PREFIX)
+                }
+            }
+        }
     }
 
     @Test
@@ -88,7 +96,7 @@ internal class RxJava2DslPluginDslThreadingTest {
         middleware.completable(action)
 
         testFlowObserver.awaitCount(2)
-        assertThat(middleware.threadName).startsWith(BACKGROUND_THREAD_PREFIX)
+        middleware.threadName.shouldStartWith(BACKGROUND_THREAD_PREFIX)
     }
 
     @Test
@@ -101,7 +109,7 @@ internal class RxJava2DslPluginDslThreadingTest {
         middleware.observable(action)
 
         testFlowObserver.awaitCount(5)
-        assertThat(middleware.threadName).startsWith(BACKGROUND_THREAD_PREFIX)
+        middleware.threadName.shouldStartWith(BACKGROUND_THREAD_PREFIX)
     }
 
     private data class TestState(val id: Int)
@@ -117,7 +125,7 @@ internal class RxJava2DslPluginDslThreadingTest {
             )
         )
         lateinit var threadName: String
-        val latch = CountDownLatch(1)
+        val mutex = Mutex(locked = true)
 
         fun single(action: Int) = orbit {
             transformRx2Single {
@@ -143,7 +151,7 @@ internal class RxJava2DslPluginDslThreadingTest {
             transformRx2Maybe {
                 Maybe.empty<Int>()
                     .doOnSubscribe { threadName = Thread.currentThread().name }
-                    .doOnSubscribe { latch.countDown() }
+                    .doOnSubscribe { mutex.unlock() }
             }
                 .reduce {
                     state.copy(id = action)

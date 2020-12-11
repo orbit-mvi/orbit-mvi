@@ -22,6 +22,7 @@ import com.babylon.orbit2.internal.RealContainer
 import com.babylon.orbit2.syntax.strict.orbit
 import com.babylon.orbit2.syntax.strict.reduce
 import com.babylon.orbit2.test
+import io.kotest.matchers.string.shouldStartWith
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Maybe
 import io.reactivex.rxjava3.core.Observable
@@ -29,7 +30,6 @@ import io.reactivex.rxjava3.core.Single
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.newSingleThreadContext
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.util.concurrent.CountDownLatch
 import kotlin.random.Random
@@ -50,7 +50,7 @@ internal class RxJava3DslPluginDslThreadingTest {
         middleware.single(action)
 
         testFlowObserver.awaitCount(2)
-        assertThat(middleware.threadName).startsWith(BACKGROUND_THREAD_PREFIX)
+        middleware.threadName.shouldStartWith(BACKGROUND_THREAD_PREFIX)
     }
 
     @Test
@@ -63,7 +63,7 @@ internal class RxJava3DslPluginDslThreadingTest {
         middleware.maybe(action)
 
         testFlowObserver.awaitCount(2)
-        assertThat(middleware.threadName).startsWith(BACKGROUND_THREAD_PREFIX)
+        middleware.threadName.shouldStartWith(BACKGROUND_THREAD_PREFIX)
     }
 
     @Test
@@ -75,7 +75,7 @@ internal class RxJava3DslPluginDslThreadingTest {
         middleware.maybeNot(action)
 
         middleware.latch.await()
-        assertThat(middleware.threadName).startsWith(BACKGROUND_THREAD_PREFIX)
+        middleware.threadName.shouldStartWith(BACKGROUND_THREAD_PREFIX)
     }
 
     @Test
@@ -88,7 +88,7 @@ internal class RxJava3DslPluginDslThreadingTest {
         middleware.completable(action)
 
         testFlowObserver.awaitCount(2)
-        assertThat(middleware.threadName).startsWith(BACKGROUND_THREAD_PREFIX)
+        middleware.threadName.shouldStartWith(BACKGROUND_THREAD_PREFIX)
     }
 
     @Test
@@ -101,7 +101,7 @@ internal class RxJava3DslPluginDslThreadingTest {
         middleware.observable(action)
 
         testFlowObserver.awaitCount(5)
-        assertThat(middleware.threadName).startsWith(BACKGROUND_THREAD_PREFIX)
+        middleware.threadName.shouldStartWith(BACKGROUND_THREAD_PREFIX)
     }
 
     private data class TestState(val id: Int)

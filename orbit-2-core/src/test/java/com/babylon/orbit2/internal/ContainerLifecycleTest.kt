@@ -21,9 +21,9 @@ import com.babylon.orbit2.container
 import com.babylon.orbit2.syntax.strict.orbit
 import com.babylon.orbit2.syntax.strict.sideEffect
 import com.babylon.orbit2.test
+import io.kotest.matchers.collections.shouldContainExactly
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import kotlin.random.Random
 
@@ -39,8 +39,8 @@ internal class ContainerLifecycleTest {
         testStateObserver.awaitCount(1)
         testSideEffectObserver.awaitCount(1)
 
-        assertThat(testStateObserver.values).containsExactly(initialState)
-        assertThat(testSideEffectObserver.values).containsExactly(initialState.id.toString())
+        testStateObserver.values.shouldContainExactly(initialState)
+        testSideEffectObserver.values.shouldContainExactly(initialState.id.toString())
     }
 
     private data class TestState(val id: Int = Random.nextInt())

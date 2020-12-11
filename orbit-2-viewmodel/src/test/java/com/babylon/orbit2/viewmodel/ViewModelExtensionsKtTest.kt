@@ -23,8 +23,8 @@ import com.babylon.orbit2.ContainerHost
 import com.babylon.orbit2.syntax.strict.orbit
 import com.babylon.orbit2.syntax.strict.reduce
 import com.babylon.orbit2.test
+import io.kotest.matchers.shouldBe
 import kotlinx.android.parcel.Parcelize
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import kotlin.random.Random
 
@@ -37,7 +37,7 @@ class ViewModelExtensionsKtTest {
 
         val middleware = Middleware(savedStateHandle, initialState)
 
-        assertThat(middleware.container.currentState).isEqualTo(savedState)
+        middleware.container.currentState.shouldBe(savedState)
     }
 
     @Test
@@ -47,7 +47,7 @@ class ViewModelExtensionsKtTest {
 
         val middleware = Middleware(savedStateHandle, initialState)
 
-        assertThat(middleware.container.currentState).isEqualTo(initialState)
+        middleware.container.currentState.shouldBe(initialState)
     }
 
     @Test
@@ -62,9 +62,7 @@ class ViewModelExtensionsKtTest {
 
         testStateObserver.awaitCount(2)
 
-        assertThat(savedStateHandle.get<TestState?>(SAVED_STATE_KEY)).isEqualTo(
-            TestState(something)
-        )
+        savedStateHandle.get<TestState?>(SAVED_STATE_KEY).shouldBe(TestState(something))
     }
 
     @Test
@@ -81,7 +79,7 @@ class ViewModelExtensionsKtTest {
         // Used to trigger execution of onCreate
         middleware.container.stateFlow.test().awaitCount(1)
 
-        assertThat(onCreateState).isEqualTo(savedState)
+        onCreateState.shouldBe(savedState)
     }
 
     @Test
@@ -97,7 +95,7 @@ class ViewModelExtensionsKtTest {
         // Used to trigger execution of onCreate
         middleware.container.stateFlow.test().awaitCount(1)
 
-        assertThat(onCreateState).isEqualTo(initialState)
+        onCreateState.shouldBe(initialState)
     }
 
     private class Middleware(

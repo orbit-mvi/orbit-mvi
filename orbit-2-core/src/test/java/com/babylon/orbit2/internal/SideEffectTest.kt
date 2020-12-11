@@ -19,11 +19,13 @@ package com.babylon.orbit2.internal
 import com.babylon.orbit2.Container
 import com.babylon.orbit2.container
 import com.babylon.orbit2.test
+import io.kotest.matchers.collections.shouldBeEmpty
+import io.kotest.matchers.collections.shouldContainExactly
+import io.kotest.matchers.collections.shouldNotContainExactly
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import kotlin.random.Random
 
@@ -41,7 +43,7 @@ internal class SideEffectTest {
 
         testSideEffectObserver1.awaitCount(1000)
 
-        assertThat(testSideEffectObserver1.values).containsSequence(0..999)
+        testSideEffectObserver1.values.shouldContainExactly((0..999).toList())
     }
 
     @Test
@@ -64,9 +66,9 @@ internal class SideEffectTest {
         testSideEffectObserver2.awaitCount(3, timeout)
         testSideEffectObserver3.awaitCount(3, timeout)
 
-        assertThat(testSideEffectObserver1.values).doesNotContainSequence(action, action2, action3)
-        assertThat(testSideEffectObserver2.values).doesNotContainSequence(action, action2, action3)
-        assertThat(testSideEffectObserver3.values).doesNotContainSequence(action, action2, action3)
+        testSideEffectObserver1.values.shouldNotContainExactly(action, action2, action3)
+        testSideEffectObserver2.values.shouldNotContainExactly(action, action2, action3)
+        testSideEffectObserver3.values.shouldNotContainExactly(action, action2, action3)
     }
 
     @Test
@@ -84,7 +86,7 @@ internal class SideEffectTest {
 
         testSideEffectObserver1.awaitCount(3)
 
-        assertThat(testSideEffectObserver1.values).containsExactly(action, action2, action3)
+        testSideEffectObserver1.values.shouldContainExactly(action, action2, action3)
     }
 
     @Test
@@ -105,7 +107,7 @@ internal class SideEffectTest {
 
         testSideEffectObserver1.awaitCount(3, 10L)
 
-        assertThat(testSideEffectObserver2.values).isEmpty()
+        testSideEffectObserver2.values.shouldBeEmpty()
     }
 
     @Test
@@ -129,8 +131,8 @@ internal class SideEffectTest {
         val testSideEffectObserver2 = container.sideEffectFlow.test()
         testSideEffectObserver2.awaitCount(1000)
 
-        assertThat(testSideEffectObserver1.values).containsExactly(action)
-        assertThat(testSideEffectObserver2.values).containsExactlyElementsOf((0..999).toList())
+        testSideEffectObserver1.values.shouldContainExactly(action)
+        testSideEffectObserver2.values.shouldContainExactly((0..999).toList())
     }
 
     private fun Container<Unit, Int>.someFlow(action: Int) = orbit {

@@ -40,12 +40,10 @@ object Versions {
 
     // Testing
     const val junitPlatform = "1.7.0"
-    const val assertJ = "3.18.1"
-    const val mockitoKotlin = "2.2.0"
-    const val mockito = "3.6.28"
     const val junitRuntime = "5.7.0"
     const val jacoco = "0.8.5"
     const val robolectric = "4.4"
+    const val kotest = "4.3.1"
 }
 
 object ProjectDependencies {
@@ -56,6 +54,7 @@ object ProjectDependencies {
     const val kotlinCoroutinesRx2 = "org.jetbrains.kotlinx:kotlinx-coroutines-rx2:${Versions.coroutines}"
     const val kotlinCoroutinesRx3 = "org.jetbrains.kotlinx:kotlinx-coroutines-rx3:${Versions.coroutines}"
     const val kotlinTest = "org.jetbrains.kotlin:kotlin-test:${Versions.kotlin}"
+    const val kotestAssertions = "io.kotest:kotest-assertions-core:${Versions.kotest}"
 
     // AndroidX
     const val androidxAnnotation = "androidx.annotation:annotation:${Versions.androidxAnnotation}"
@@ -77,9 +76,6 @@ object ProjectDependencies {
     // Test prerequisites
     const val androidxTesting = "androidx.arch.core:core-testing:${Versions.androidxTesting}"
     const val junitPlatformConsole = "org.junit.platform:junit-platform-console:${Versions.junitPlatform}"
-    const val assertJ = "org.assertj:assertj-core:${Versions.assertJ}"
-    const val mockitoKotlin = "com.nhaarman.mockitokotlin2:mockito-kotlin:${Versions.mockitoKotlin}"
-    const val mockitoInline = "org.mockito:mockito-inline:${Versions.mockito}"
     const val junitJupiterEngine = "org.junit.jupiter:junit-jupiter-engine:${Versions.junitRuntime}"
     const val junitJupiterApi = "org.junit.jupiter:junit-jupiter-api:${Versions.junitRuntime}"
     const val junitJupiterParams = "org.junit.jupiter:junit-jupiter-params:${Versions.junitRuntime}"
@@ -100,6 +96,7 @@ object GroupedDependencies {
         ProjectDependencies.junitPlatformConsole,
         ProjectDependencies.junitJupiterApi,
         ProjectDependencies.junitJupiterParams,
-        ProjectDependencies.assertJ
+        ProjectDependencies.kotlinTest,
+        ProjectDependencies.kotestAssertions
     )
 }

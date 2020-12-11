@@ -18,12 +18,12 @@ package com.babylon.orbit2.internal
 
 import com.babylon.orbit2.Container
 import com.babylon.orbit2.test
+import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.util.concurrent.CountDownLatch
 import kotlin.coroutines.EmptyCoroutineContext
@@ -62,7 +62,7 @@ internal class ReducerThreadingTest {
 
             testStateObserver.awaitFor { values.last().ids.size == ITEM_COUNT }
 
-            assertThat(testStateObserver.values.last()).isEqualTo(expectedStates.last())
+            testStateObserver.values.last().shouldBe(expectedStates.last())
         }
     }
 
@@ -99,8 +99,8 @@ internal class ReducerThreadingTest {
 
             testStateObserver.awaitFor { values.last().ids.size == ITEM_COUNT }
 
-            assertThat(testStateObserver.values.last().ids.count { it == 1 }).isEqualTo(ITEM_COUNT / 3)
-            assertThat(testStateObserver.values.last().ids.count { it == 2 }).isEqualTo(ITEM_COUNT / 3)
+            testStateObserver.values.last().ids.count { it == 1 }.shouldBe(ITEM_COUNT / 3)
+            testStateObserver.values.last().ids.count { it == 2 }.shouldBe(ITEM_COUNT / 3)
         }
     }
 

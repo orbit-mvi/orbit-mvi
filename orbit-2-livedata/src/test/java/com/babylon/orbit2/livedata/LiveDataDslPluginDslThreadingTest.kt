@@ -23,13 +23,13 @@ import com.babylon.orbit2.internal.RealContainer
 import com.babylon.orbit2.syntax.strict.orbit
 import com.babylon.orbit2.syntax.strict.sideEffect
 import com.babylon.orbit2.test
+import io.kotest.matchers.string.shouldStartWith
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.newSingleThreadContext
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -76,7 +76,8 @@ internal class LiveDataDslPluginDslThreadingTest {
         }
 
         sideEffects.awaitCount(1)
-        assertThat(threadName).startsWith(BACKGROUND_THREAD_PREFIX)
+
+        threadName.shouldStartWith(BACKGROUND_THREAD_PREFIX)
     }
 
     private data class TestState(val id: Int)

@@ -17,8 +17,8 @@
 package com.babylon.orbit2.syntax.strict
 
 import com.babylon.orbit2.syntax.Operator
+import io.kotest.matchers.collections.shouldContainExactly
 import kotlinx.coroutines.flow.Flow
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 
@@ -31,7 +31,7 @@ internal class OrbitDslPluginsTest {
 
     @Test
     fun `base plugin is present by default`() {
-        assertThat(OrbitDslPlugins.plugins).containsExactly(BaseDslPlugin)
+        OrbitDslPlugins.plugins.shouldContainExactly(BaseDslPlugin)
     }
 
     @Test
@@ -39,7 +39,7 @@ internal class OrbitDslPluginsTest {
 
         OrbitDslPlugins.register(TestPlugin)
 
-        assertThat(OrbitDslPlugins.plugins).containsExactly(BaseDslPlugin, TestPlugin)
+        OrbitDslPlugins.plugins.shouldContainExactly(BaseDslPlugin, TestPlugin)
     }
 
     private object TestPlugin : OrbitDslPlugin {

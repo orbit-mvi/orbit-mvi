@@ -20,10 +20,10 @@ import com.babylon.orbit2.Container
 import com.babylon.orbit2.ContainerHost
 import com.babylon.orbit2.internal.RealContainer
 import com.babylon.orbit2.test
+import io.kotest.matchers.string.shouldStartWith
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.newSingleThreadContext
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.util.concurrent.CountDownLatch
 import kotlin.random.Random
@@ -44,7 +44,7 @@ internal class BaseDslPluginThreadingTest {
         middleware.reducer(action)
 
         testFlowObserver.awaitCount(2)
-        assertThat(middleware.threadName).startsWith(ORBIT_THREAD_PREFIX)
+        middleware.threadName.shouldStartWith(ORBIT_THREAD_PREFIX)
     }
 
     @Test
@@ -56,7 +56,7 @@ internal class BaseDslPluginThreadingTest {
         middleware.transformer(action)
 
         testFlowObserver.awaitCount(2)
-        assertThat(middleware.threadName).startsWith(BACKGROUND_THREAD_PREFIX)
+        middleware.threadName.shouldStartWith(BACKGROUND_THREAD_PREFIX)
     }
 
     @Test
@@ -68,7 +68,7 @@ internal class BaseDslPluginThreadingTest {
         middleware.postingSideEffect(action)
 
         testFlowObserver.awaitCount(1)
-        assertThat(middleware.threadName).startsWith(ORBIT_THREAD_PREFIX)
+        middleware.threadName.shouldStartWith(ORBIT_THREAD_PREFIX)
     }
 
     @Test
@@ -80,7 +80,7 @@ internal class BaseDslPluginThreadingTest {
 
         middleware.latch.await()
 
-        assertThat(middleware.threadName).startsWith(ORBIT_THREAD_PREFIX)
+        middleware.threadName.shouldStartWith(ORBIT_THREAD_PREFIX)
     }
 
     private data class TestState(val id: Int)

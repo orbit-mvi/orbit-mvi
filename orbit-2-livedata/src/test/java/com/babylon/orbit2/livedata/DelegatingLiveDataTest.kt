@@ -17,6 +17,10 @@
 package com.babylon.orbit2.livedata
 
 import androidx.lifecycle.Lifecycle
+import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.matchers.collections.shouldBeEmpty
+import io.kotest.matchers.collections.shouldContainExactly
+import io.kotest.matchers.nulls.shouldBeNull
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -27,11 +31,9 @@ import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.EnumSource
@@ -95,9 +97,9 @@ internal class DelegatingLiveDataTest {
 
         if (testCase.expectedSubscription) {
             observer.awaitCount(1)
-            assertThat(observer.values).containsExactly(action)
+            observer.values.shouldContainExactly(action)
         } else {
-            assertThat(observer.values).isEmpty()
+            observer.values.shouldBeEmpty()
         }
     }
 
@@ -118,11 +120,11 @@ internal class DelegatingLiveDataTest {
         mockLifecycleOwner.dispatchEvent(Lifecycle.Event.ON_PAUSE)
         mockLifecycleOwner.dispatchEvent(Lifecycle.Event.ON_STOP)
 
-        assertThrows<CancellationException> {
+        shouldThrow<CancellationException> {
             channel.sendBlocking(action2)
         }
 
-        assertThat(observer.values).containsExactly(action)
+        observer.values.shouldContainExactly(action)
     }
 
     @Test
@@ -136,7 +138,7 @@ internal class DelegatingLiveDataTest {
 
         channel.sendBlocking(action)
 
-        assertThat(observer.values).containsExactly(action)
-        assertThat(liveData.value).isNull()
+        observer.values.shouldContainExactly(action)
+        liveData.value.shouldBeNull()
     }
 }

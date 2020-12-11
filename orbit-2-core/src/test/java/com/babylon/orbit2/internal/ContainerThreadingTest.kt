@@ -18,10 +18,10 @@ package com.babylon.orbit2.internal
 
 import com.babylon.orbit2.Container
 import com.babylon.orbit2.test
+import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import kotlin.random.Random
 
@@ -41,6 +41,6 @@ internal class ContainerThreadingTest {
         }
 
         observer.awaitCount(2)
-        assertThat(container.currentState).isEqualTo(newState)
+        container.currentState.shouldBe(newState)
     }
 }

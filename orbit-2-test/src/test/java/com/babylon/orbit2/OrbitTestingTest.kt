@@ -20,16 +20,16 @@ import com.babylon.orbit2.syntax.strict.orbit
 import com.babylon.orbit2.syntax.strict.reduce
 import com.babylon.orbit2.syntax.strict.sideEffect
 import com.babylon.orbit2.syntax.strict.transform
+import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.string.shouldContain
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.EnumSource
 import kotlin.random.Random
-import kotlin.test.assertEquals
 
 class OrbitTestingTest {
     companion object {
@@ -75,11 +75,11 @@ class OrbitTestingTest {
             val testStateObserver = testSubject.container.stateFlow.test()
             testStateObserver.awaitCount(1)
 
-            val throwable = assertThrows<AssertionError> {
+            val throwable = shouldThrow<AssertionError> {
                 testSubject.assert(someRandomState)
             }
 
-            assertThat(throwable.message).contains(
+            throwable.message.shouldContain(
                 "Expected <$someRandomState>, actual <$initialState>."
             )
         }
@@ -126,7 +126,7 @@ class OrbitTestingTest {
             testSubject.something(action2)
             testStateObserver.awaitCount(3)
 
-            val throwable = assertThrows<AssertionError> {
+            val throwable = shouldThrow<AssertionError> {
                 testSubject.assert(initialState, timeoutMillis = TIMEOUT) {
                     states(
                         { copy(count = action) }
@@ -134,7 +134,7 @@ class OrbitTestingTest {
                 }
             }
 
-            assertThat(throwable.message).contains(
+            throwable.message.shouldContain(
                 "Expected 1 states but more were emitted:\n" +
                         "[State(count=$action2)]"
             )
@@ -158,7 +158,7 @@ class OrbitTestingTest {
             testSubject.something(action2)
             testStateObserver.awaitCount(3)
 
-            val throwable = assertThrows<AssertionError> {
+            val throwable = shouldThrow<AssertionError> {
                 testSubject.assert(initialState, timeoutMillis = 1000L) {
                     states(
                         { copy(count = action) },
@@ -168,7 +168,7 @@ class OrbitTestingTest {
                 }
             }
 
-            assertThat(throwable.message).contains(
+            throwable.message.shouldContain(
                 "Failed assertions at indices 2..2, expected states but never received:\n" +
                         "[State(count=$action3)]"
             )
@@ -193,7 +193,7 @@ class OrbitTestingTest {
             testSubject.something(action2)
             testStateObserver.awaitCount(3)
 
-            val throwable = assertThrows<AssertionError> {
+            val throwable = shouldThrow<AssertionError> {
                 testSubject.assert(initialState, timeoutMillis = 1000L) {
                     states(
                         { copy(count = action) },
@@ -204,7 +204,7 @@ class OrbitTestingTest {
                 }
             }
 
-            assertThat(throwable.message).contains(
+            throwable.message.shouldContain(
                 "Failed assertions at indices 2..3, expected states but never received:\n" +
                         "[State(count=$action3), State(count=$action4)]"
             )
@@ -228,7 +228,7 @@ class OrbitTestingTest {
             testSubject.something(action2)
             testStateObserver.awaitCount(3)
 
-            val throwable = assertThrows<AssertionError> {
+            val throwable = shouldThrow<AssertionError> {
                 testSubject.assert(initialState, timeoutMillis = TIMEOUT) {
                     states(
                         { copy(count = action2) },
@@ -237,7 +237,7 @@ class OrbitTestingTest {
                 }
             }
 
-            assertThat(throwable.message).contains(
+            throwable.message.shouldContain(
                 "Failed assertion at index 0. " +
                         "Expected <State(count=$action2)>, actual <State(count=$action)>."
             )
@@ -261,7 +261,7 @@ class OrbitTestingTest {
             testSubject.something(action2)
             testStateObserver.awaitCount(3)
 
-            val throwable = assertThrows<AssertionError> {
+            val throwable = shouldThrow<AssertionError> {
                 testSubject.assert(initialState, timeoutMillis = TIMEOUT) {
                     states(
                         { copy(count = action2) },
@@ -270,7 +270,7 @@ class OrbitTestingTest {
                 }
             }
 
-            assertThat(throwable.message).contains(
+            throwable.message.shouldContain(
                 "Failed assertion at index 0. " +
                         "Expected <State(count=$action2)>, actual <State(count=$action)>."
             )
@@ -293,7 +293,7 @@ class OrbitTestingTest {
             testSubject.something(action2)
             testStateObserver.awaitCount(3)
 
-            val throwable = assertThrows<AssertionError> {
+            val throwable = shouldThrow<AssertionError> {
                 testSubject.assert(initialState, timeoutMillis = TIMEOUT) {
                     states(
                         { copy(count = action2) },
@@ -302,7 +302,7 @@ class OrbitTestingTest {
                 }
             }
 
-            assertThat(throwable.message).contains(
+            throwable.message.shouldContain(
                 "Failed assertion at index 0. " +
                         "Expected <State(count=$action2)>, actual <State(count=$action)>."
             )
@@ -355,7 +355,7 @@ class OrbitTestingTest {
             testSubject.something(action2)
             testStateObserver.awaitCount(3)
 
-            val throwable = assertThrows<AssertionError> {
+            val throwable = shouldThrow<AssertionError> {
                 testSubject.assert(initialState, timeoutMillis = TIMEOUT) {
                     states(
                         { initialState },
@@ -364,7 +364,7 @@ class OrbitTestingTest {
                 }
             }
 
-            assertThat(throwable.message).contains(
+            throwable.message.shouldContain(
                 "Expected 2 states but more were emitted:\n" +
                         "[State(count=$action2)]\n\n" +
                         "Caution: 1 assertions were dropped as they encountered a current state " +
@@ -420,13 +420,13 @@ class OrbitTestingTest {
 
             sideEffects.forEach { testSubject.something(it) }
 
-            val throwable = assertThrows<AssertionError> {
+            val throwable = shouldThrow<AssertionError> {
                 testSubject.assert(initialState, timeoutMillis = TIMEOUT) {
                     postedSideEffects(sideEffects2)
                 }
             }
 
-            assertThat(throwable.message).contains(
+            throwable.message.shouldContain(
                 "Expected <$sideEffects2>, actual <$sideEffects>."
             )
         }
@@ -461,10 +461,7 @@ class OrbitTestingTest {
 
             testSubject.test(initialState)
 
-            assertEquals(
-                0,
-                mockDependency.createCallCount
-            )
+            mockDependency.createCallCount.shouldBe(0)
         }
 
         @Test
@@ -475,10 +472,7 @@ class OrbitTestingTest {
 
             testSubject.test(initialState = initialState, runOnCreate = true)
 
-            assertEquals(
-                1,
-                mockDependency.createCallCount
-            )
+            mockDependency.createCallCount.shouldBe(1)
         }
 
         @Test
@@ -491,14 +485,8 @@ class OrbitTestingTest {
 
             spy.something()
 
-            assertEquals(
-                1,
-                mockDependency.something1CallCount
-            )
-            assertEquals(
-                0,
-                mockDependency.something2CallCount
-            )
+            mockDependency.something1CallCount.shouldBe(1)
+            mockDependency.something2CallCount.shouldBe(0)
         }
 
         private inner class GeneralTestMiddleware(private val dependency: BogusDependency) :

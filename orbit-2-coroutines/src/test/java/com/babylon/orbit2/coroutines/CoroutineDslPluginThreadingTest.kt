@@ -22,13 +22,13 @@ import com.babylon.orbit2.internal.RealContainer
 import com.babylon.orbit2.syntax.strict.orbit
 import com.babylon.orbit2.syntax.strict.reduce
 import com.babylon.orbit2.test
+import io.kotest.matchers.string.shouldStartWith
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.newSingleThreadContext
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import kotlin.random.Random
 
@@ -48,7 +48,7 @@ internal class CoroutineDslPluginThreadingTest {
         middleware.suspend(action)
 
         testFlowObserver.awaitCount(2)
-        assertThat(middleware.threadName).startsWith(BACKGROUND_THREAD_PREFIX)
+        middleware.threadName.shouldStartWith(BACKGROUND_THREAD_PREFIX)
     }
 
     @Test
@@ -61,7 +61,7 @@ internal class CoroutineDslPluginThreadingTest {
         middleware.flow(action)
 
         testFlowObserver.awaitCount(5)
-        assertThat(middleware.threadName).startsWith(BACKGROUND_THREAD_PREFIX)
+        middleware.threadName.shouldStartWith(BACKGROUND_THREAD_PREFIX)
     }
 
     private data class TestState(val id: Int)
