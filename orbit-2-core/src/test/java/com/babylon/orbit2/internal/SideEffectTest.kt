@@ -26,8 +26,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import org.junit.jupiter.api.Test
 import kotlin.random.Random
+import kotlin.test.Test
 
 internal class SideEffectTest {
 

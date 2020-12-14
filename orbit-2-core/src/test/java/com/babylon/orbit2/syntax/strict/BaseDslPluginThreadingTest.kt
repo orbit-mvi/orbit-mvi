@@ -24,9 +24,9 @@ import io.kotest.matchers.string.shouldStartWith
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.newSingleThreadContext
-import org.junit.jupiter.api.Test
 import java.util.concurrent.CountDownLatch
 import kotlin.random.Random
+import kotlin.test.Test
 
 internal class BaseDslPluginThreadingTest {
 

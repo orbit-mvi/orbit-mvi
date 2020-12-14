@@ -19,12 +19,12 @@ package com.babylon.orbit2.syntax.strict
 import com.babylon.orbit2.syntax.Operator
 import io.kotest.matchers.collections.shouldContainExactly
 import kotlinx.coroutines.flow.Flow
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.Test
+import kotlin.test.AfterTest
+import kotlin.test.Test
 
 internal class OrbitDslPluginsTest {
 
-    @AfterEach
+    @AfterTest
     fun afterEach() {
         OrbitDslPlugins.reset()
     }

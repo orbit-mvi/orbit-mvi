@@ -20,6 +20,8 @@ import com.babylon.orbit2.Container
 import com.babylon.orbit2.ContainerHost
 import com.babylon.orbit2.container
 import com.babylon.orbit2.idling.IdlingResource
+import io.kotest.matchers.booleans.shouldBeFalse
+import io.kotest.matchers.booleans.shouldBeTrue
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
@@ -29,17 +31,15 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withTimeout
 import kotlinx.coroutines.yield
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.Assertions.assertFalse
-import org.junit.jupiter.api.Assertions.assertTrue
-import org.junit.jupiter.api.Test
+import kotlin.test.AfterTest
+import kotlin.test.Test
 
 class SimpleDslIdlingTest {
 
     private val scope = CoroutineScope(Dispatchers.Unconfined)
     private val testIdlingResource = TestIdlingResource()
 
-    @AfterEach
+    @AfterTest
     fun after() {
         scope.cancel()
     }
@@ -51,7 +51,7 @@ class SimpleDslIdlingTest {
             delay(50)
         }
 
-        assertTrue(testIdlingResource.isIdle())
+        testIdlingResource.isIdle().shouldBeTrue()
     }
 
     @Test
@@ -68,7 +68,7 @@ class SimpleDslIdlingTest {
 
             withTimeout(TIMEOUT) {
                 mutex.withLock {
-                    assertFalse(testIdlingResource.isIdle())
+                    testIdlingResource.isIdle().shouldBeFalse()
                 }
             }
         }
@@ -88,7 +88,7 @@ class SimpleDslIdlingTest {
 
             withTimeout(TIMEOUT) {
                 mutex.withLock {
-                    assertTrue(testIdlingResource.isIdle())
+                    testIdlingResource.isIdle().shouldBeTrue()
                 }
             }
         }
@@ -107,7 +107,7 @@ class SimpleDslIdlingTest {
 
             mutex.withLock {
                 assertEventually {
-                    assertTrue(testIdlingResource.isIdle())
+                    testIdlingResource.isIdle().shouldBeTrue()
                 }
             }
         }

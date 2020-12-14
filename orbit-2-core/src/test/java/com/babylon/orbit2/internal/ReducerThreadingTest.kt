@@ -24,10 +24,10 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import org.junit.jupiter.api.Test
 import java.util.concurrent.CountDownLatch
 import kotlin.coroutines.EmptyCoroutineContext
 import kotlin.random.Random
+import kotlin.test.Test
 
 internal class ReducerThreadingTest {
 

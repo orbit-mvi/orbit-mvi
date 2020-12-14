@@ -22,8 +22,8 @@ import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
-import org.junit.jupiter.api.Test
 import kotlin.random.Random
+import kotlin.test.Test
 
 internal class ContainerThreadingTest {
 

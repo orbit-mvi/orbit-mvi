@@ -18,7 +18,7 @@ package com.babylon.orbit2
 
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.throwable.shouldHaveMessage
-import org.junit.jupiter.api.Test
+import kotlin.test.Test
 
 class OrbitAssertionsTest {
     @Test
@@ -172,8 +172,9 @@ class OrbitAssertionsTest {
 
         // Then The failure message points us to the failed assertion
         throwable.shouldHaveMessage(
-            "Failed assertion at index 0. Expected <TestState(label=foobaz, index=1)>, " +
-                    "actual <TestState(label=foobar, index=1)>."
+            "Failed assertion at index 0 " +
+                    "expected:<TestState(label=foobaz, index=1)> " +
+                    "but was:<TestState(label=foobar, index=1)>"
         )
     }
 

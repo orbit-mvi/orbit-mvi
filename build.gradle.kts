@@ -79,10 +79,12 @@ subprojects {
 
     tasks.withType<Test> {
         @Suppress("UnstableApiUsage")
-        useJUnitPlatform {
-            includeEngines(
-                "junit-jupiter"
-            )
+        if (project.name !in listOf("orbit-2-core", "orbit-2-test")) {
+            useJUnitPlatform {
+                includeEngines(
+                    "junit-jupiter"
+                )
+            }
         }
         testLogging {
             events("passed", "skipped", "failed")

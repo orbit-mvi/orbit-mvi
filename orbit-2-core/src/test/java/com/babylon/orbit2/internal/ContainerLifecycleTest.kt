@@ -24,8 +24,8 @@ import com.babylon.orbit2.test
 import io.kotest.matchers.collections.shouldContainExactly
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import org.junit.jupiter.api.Test
 import kotlin.random.Random
+import kotlin.test.Test
 
 internal class ContainerLifecycleTest {
 

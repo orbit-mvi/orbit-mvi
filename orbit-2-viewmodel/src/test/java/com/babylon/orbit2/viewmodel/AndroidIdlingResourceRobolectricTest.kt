@@ -4,11 +4,11 @@ import androidx.test.espresso.Espresso
 import androidx.test.espresso.idling.CountingIdlingResource
 import com.babylon.orbit2.Container
 import com.babylon.orbit2.container
+import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
 import org.junit.After
-import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
@@ -40,7 +40,7 @@ class AndroidIdlingResourceRobolectricTest {
         forceIdlingResourceSync()
 
         @Suppress("DEPRECATION")
-        assertEquals(2, Espresso.getIdlingResources().size)
+        Espresso.getIdlingResources().size.shouldBe(2)
     }
 
     /**

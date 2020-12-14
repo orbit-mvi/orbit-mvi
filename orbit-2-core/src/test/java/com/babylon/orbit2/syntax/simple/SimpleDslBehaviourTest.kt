@@ -23,8 +23,8 @@ import com.babylon.orbit2.test
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
-import org.junit.jupiter.api.Test
 import kotlin.random.Random
+import kotlin.test.Test
 
 internal class SimpleDslBehaviourTest {
 

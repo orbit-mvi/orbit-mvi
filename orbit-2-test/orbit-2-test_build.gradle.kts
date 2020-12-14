@@ -23,13 +23,14 @@ apply<kotlinx.atomicfu.plugin.gradle.AtomicFUGradlePlugin>()
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
     implementation(ProjectDependencies.kotlinCoroutines)
-    implementation(ProjectDependencies.kotlinTest)
+    implementation(kotlin("test"))
 
     api(project(":orbit-2-core"))
 
     // Testing
-    GroupedDependencies.testsImplementation.forEach { testImplementation(it) }
-    testRuntimeOnly(ProjectDependencies.junitJupiterEngine)
+    testImplementation(kotlin("test"))
+    testImplementation(kotlin("test-junit"))
+    testImplementation(ProjectDependencies.kotestAssertions)
 }
 
 // Fix lack of source code when publishing pure Kotlin projects
