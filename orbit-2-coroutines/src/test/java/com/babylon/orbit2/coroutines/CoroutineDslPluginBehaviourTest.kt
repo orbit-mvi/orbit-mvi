@@ -24,8 +24,9 @@ import com.babylon.orbit2.syntax.strict.orbit
 import com.babylon.orbit2.syntax.strict.reduce
 import com.babylon.orbit2.syntax.strict.sideEffect
 import com.babylon.orbit2.test
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.sendBlocking
 import kotlinx.coroutines.delay
@@ -34,12 +35,22 @@ import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.test.TestCoroutineScope
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import kotlin.random.Random
 
+@ExperimentalCoroutinesApi
 internal class CoroutineDslPluginBehaviourTest {
     private val initialState = TestState()
+    private val scope = TestCoroutineScope(Job())
+
+    @AfterEach
+    fun afterEach() {
+        scope.cleanupTestCoroutines()
+        scope.cancel()
+    }
 
     @BeforeEach
     fun beforeEach() {
@@ -102,9 +113,9 @@ internal class CoroutineDslPluginBehaviourTest {
 
     private data class TestState(val id: Int = Random.nextInt())
 
-    private class Middleware(val hotFlow: Flow<Int> = emptyFlow()) : ContainerHost<TestState, String> {
+    private inner class Middleware(val hotFlow: Flow<Int> = emptyFlow()) : ContainerHost<TestState, String> {
 
-        override val container = CoroutineScope(Dispatchers.Unconfined).container<TestState, String>(TestState(42))
+        override val container = scope.container<TestState, String>(TestState(42))
 
         fun suspend(action: Int) = orbit {
             transformSuspend {

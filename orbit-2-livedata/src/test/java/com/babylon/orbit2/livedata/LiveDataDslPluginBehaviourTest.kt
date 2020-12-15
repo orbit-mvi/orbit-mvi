@@ -25,10 +25,12 @@ import com.babylon.orbit2.syntax.strict.OrbitDslPlugins
 import com.babylon.orbit2.syntax.strict.orbit
 import com.babylon.orbit2.syntax.strict.reduce
 import com.babylon.orbit2.test
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.TestCoroutineScope
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
 import org.junit.jupiter.api.AfterEach
@@ -41,6 +43,7 @@ import kotlin.random.Random
 @ExtendWith(InstantTaskExecutorExtension::class)
 internal class LiveDataDslPluginBehaviourTest {
     private val initialState = TestState()
+    private val scope = TestCoroutineScope(Job())
 
     @BeforeEach
     fun beforeEach() {
@@ -50,6 +53,8 @@ internal class LiveDataDslPluginBehaviourTest {
 
     @AfterEach
     fun afterEach() {
+        scope.cleanupTestCoroutines()
+        scope.cancel()
         Dispatchers.resetMain()
     }
 
@@ -85,7 +90,7 @@ internal class LiveDataDslPluginBehaviourTest {
 
     private inner class Middleware(val liveData: LiveData<Int>) : ContainerHost<TestState, String> {
 
-        override val container = CoroutineScope(Dispatchers.Unconfined).container<TestState, String>(TestState(42))
+        override val container = scope.container<TestState, String>(TestState(42))
 
         fun liveData() = orbit {
             transformLiveData {

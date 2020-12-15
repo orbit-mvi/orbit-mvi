@@ -14,27 +14,20 @@
  *  limitations under the License.
  */
 
-package com.babylon.orbit2.livedata
+package com.babylon.orbit2.test
 
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.LifecycleRegistry
+import kotlinx.coroutines.withTimeout
+import kotlinx.coroutines.yield
 
-internal class MockLifecycleOwner : LifecycleOwner {
-    private val registry = LifecycleRegistry(this)
-
-    var currentState: Lifecycle.State
-        get() = registry.currentState
-        set(value) {
-            registry.currentState = value
+public suspend fun assertEventually(timeout: Long = 2000L, block: suspend () -> Unit) {
+    withTimeout(timeout) {
+        while (true) {
+            try {
+                block()
+                break
+            } catch (ignored: Throwable) {
+                yield()
+            }
         }
-
-    val hasObservers: Boolean
-        get() = registry.observerCount > 0
-
-    fun dispatchEvent(event: Lifecycle.Event) {
-        registry.handleLifecycleEvent(event)
     }
-
-    override fun getLifecycle(): Lifecycle = registry
 }

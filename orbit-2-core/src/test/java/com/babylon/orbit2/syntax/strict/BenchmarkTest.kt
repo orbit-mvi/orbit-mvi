@@ -19,17 +19,29 @@ package com.babylon.orbit2.syntax.strict
 import com.babylon.orbit2.ContainerHost
 import com.babylon.orbit2.container
 import com.babylon.orbit2.test
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.TestCoroutineScope
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 import kotlin.random.Random
 import kotlin.system.measureTimeMillis
+import kotlin.test.AfterTest
 import kotlin.test.Test
 
+@ExperimentalCoroutinesApi
 internal class BenchmarkTest {
+
+    private val scope = TestCoroutineScope(Job())
+
+    @AfterTest
+    fun afterTest() {
+        scope.cleanupTestCoroutines()
+        scope.cancel()
+    }
 
     @Test
     fun benchmark() {
@@ -57,9 +69,8 @@ internal class BenchmarkTest {
 
     private data class TestState(val id: Int)
 
-    private class BenchmarkMiddleware(count: Int) : ContainerHost<TestState, String> {
-        override val container =
-            CoroutineScope(Dispatchers.Unconfined).container<TestState, String>(TestState(42))
+    private inner class BenchmarkMiddleware(count: Int) : ContainerHost<TestState, String> {
+        override val container = scope.container<TestState, String>(TestState(42))
 
         val latch = CountDownLatch(count)
 

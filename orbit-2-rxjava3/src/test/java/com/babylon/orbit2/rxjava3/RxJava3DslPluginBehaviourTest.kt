@@ -28,18 +28,29 @@ import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Maybe
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.test.TestCoroutineScope
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import kotlin.random.Random
 
+@ExperimentalCoroutinesApi
 internal class RxJava3DslPluginBehaviourTest {
     private val initialState = TestState()
+    private val scope = TestCoroutineScope(Job())
 
     @BeforeEach
     fun beforeEach() {
         OrbitDslPlugins.reset() // Test for proper registration
+    }
+
+    @AfterEach
+    fun afterEach() {
+        scope.cleanupTestCoroutines()
+        scope.cancel()
     }
 
     @Test
@@ -111,9 +122,9 @@ internal class RxJava3DslPluginBehaviourTest {
 
     private data class TestState(val id: Int = Random.nextInt())
 
-    private class Middleware : ContainerHost<TestState, String> {
+    private inner class Middleware : ContainerHost<TestState, String> {
 
-        override val container = CoroutineScope(Dispatchers.Unconfined).container<TestState, String>(TestState(42))
+        override val container = scope.container<TestState, String>(TestState(42))
 
         fun single(action: Int) = orbit {
             transformRx3Single {

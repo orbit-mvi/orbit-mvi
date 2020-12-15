@@ -22,18 +22,30 @@ import com.babylon.orbit2.test
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.collections.shouldNotContainExactly
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.TestCoroutineScope
 import kotlin.random.Random
+import kotlin.test.AfterTest
 import kotlin.test.Test
 
+@ExperimentalCoroutinesApi
 internal class SideEffectTest {
+
+    private val scope = TestCoroutineScope(Job())
+
+    @AfterTest
+    fun afterTest() {
+        scope.cleanupTestCoroutines()
+        scope.cancel()
+    }
 
     @Test
     fun `side effects are emitted in order`() {
-        val container = CoroutineScope(Dispatchers.Unconfined).container<Unit, Int>(Unit)
+        val container = scope.container<Unit, Int>(Unit)
 
         val testSideEffectObserver1 = container.sideEffectFlow.test()
 
@@ -51,7 +63,7 @@ internal class SideEffectTest {
         val action = Random.nextInt()
         val action2 = Random.nextInt()
         val action3 = Random.nextInt()
-        val container = CoroutineScope(Dispatchers.Unconfined).container<Unit, Int>(Unit)
+        val container = scope.container<Unit, Int>(Unit)
 
         val testSideEffectObserver1 = container.sideEffectFlow.test()
         val testSideEffectObserver2 = container.sideEffectFlow.test()
@@ -76,7 +88,7 @@ internal class SideEffectTest {
         val action = Random.nextInt()
         val action2 = Random.nextInt()
         val action3 = Random.nextInt()
-        val container = CoroutineScope(Dispatchers.Unconfined).container<Unit, Int>(Unit)
+        val container = scope.container<Unit, Int>(Unit)
 
         container.someFlow(action)
         container.someFlow(action2)
@@ -94,7 +106,7 @@ internal class SideEffectTest {
         val action = Random.nextInt()
         val action2 = Random.nextInt()
         val action3 = Random.nextInt()
-        val container = CoroutineScope(Dispatchers.Unconfined).container<Unit, Int>(Unit)
+        val container = scope.container<Unit, Int>(Unit)
         val testSideEffectObserver1 = container.sideEffectFlow.test()
 
         container.someFlow(action)
@@ -113,7 +125,7 @@ internal class SideEffectTest {
     @Test
     fun `only new side effects are emitted when resubscribing`() {
         val action = Random.nextInt()
-        val container = CoroutineScope(Dispatchers.Unconfined).container<Unit, Int>(Unit)
+        val container = scope.container<Unit, Int>(Unit)
 
         val testSideEffectObserver1 = container.sideEffectFlow.test()
 

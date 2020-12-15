@@ -5,6 +5,7 @@ import com.babylon.orbit2.ContainerHost
 import com.babylon.orbit2.container
 import com.babylon.orbit2.idling.IdlingResource
 import com.babylon.orbit2.syntax.strict.orbit
+import com.babylon.orbit2.test.assertEventually
 import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.booleans.shouldBeTrue
 import io.reactivex.Completable
@@ -12,24 +13,27 @@ import io.reactivex.Maybe
 import io.reactivex.Observable
 import io.reactivex.Single
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.test.TestCoroutineScope
 import kotlinx.coroutines.withTimeout
-import kotlinx.coroutines.yield
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 
-class RxJava2DslPluginIdlingTest {
+@ExperimentalCoroutinesApi
+internal class RxJava2DslPluginIdlingTest {
 
-    private val scope = CoroutineScope(Dispatchers.Unconfined)
+    private val scope = TestCoroutineScope(Job())
     private val testIdlingResource = TestIdlingResource()
 
     @AfterEach
     fun after() {
+        scope.cleanupTestCoroutines()
         scope.cancel()
     }
 
@@ -340,19 +344,6 @@ class RxJava2DslPluginIdlingTest {
         }
     }
 
-    private suspend fun assertEventually(block: suspend () -> Unit) {
-        withTimeout(TIMEOUT) {
-            while (true) {
-                try {
-                    block()
-                    break
-                } catch (ignored: Throwable) {
-                    yield()
-                }
-            }
-        }
-    }
-
     private fun CoroutineScope.createContainerHost(): ContainerHost<TestState, Int> {
         return object : ContainerHost<TestState, Int> {
             override val container: Container<TestState, Int> = container(
@@ -381,6 +372,6 @@ class RxJava2DslPluginIdlingTest {
     }
 
     companion object {
-        private const val TIMEOUT = 500L
+        private const val TIMEOUT = 2000L
     }
 }

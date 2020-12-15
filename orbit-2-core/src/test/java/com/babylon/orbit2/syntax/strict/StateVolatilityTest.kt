@@ -22,25 +22,29 @@ import com.babylon.orbit2.container
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.test.TestCoroutineScope
 import kotlinx.coroutines.withTimeout
 import kotlin.test.AfterTest
 import kotlin.test.Test
 
-class StateVolatilityTest {
+@ExperimentalCoroutinesApi
+internal class StateVolatilityTest {
     companion object {
         private const val TIMEOUT = 5000L
     }
 
-    private val scope = CoroutineScope(Dispatchers.IO)
+    private val scope = TestCoroutineScope(Job())
 
     @AfterTest
-    fun after() {
+    fun afterTest() {
+        scope.cleanupTestCoroutines()
         scope.cancel()
     }
 

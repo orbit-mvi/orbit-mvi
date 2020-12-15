@@ -28,6 +28,7 @@ dependencies {
 
     // Testing
     testImplementation(project(":orbit-2-test"))
+    testImplementation(project(":test-common"))
     GroupedDependencies.testsImplementation.forEach { testImplementation(it) }
     testRuntimeOnly(ProjectDependencies.junitJupiterEngine)
 }

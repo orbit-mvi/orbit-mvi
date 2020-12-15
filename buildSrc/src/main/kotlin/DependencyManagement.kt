@@ -97,6 +97,7 @@ object GroupedDependencies {
         ProjectDependencies.junitJupiterApi,
         ProjectDependencies.junitJupiterParams,
         ProjectDependencies.kotlinTest,
+        ProjectDependencies.kotlinCoroutinesTest,
         ProjectDependencies.kotestAssertions
     )
 }

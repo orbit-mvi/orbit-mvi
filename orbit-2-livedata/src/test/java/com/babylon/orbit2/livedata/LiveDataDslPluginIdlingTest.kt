@@ -11,11 +11,13 @@ import io.kotest.matchers.booleans.shouldBeTrue
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.test.TestCoroutineScope
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
 import kotlinx.coroutines.withTimeout
@@ -28,7 +30,7 @@ import org.junit.jupiter.api.extension.ExtendWith
 @ExtendWith(InstantTaskExecutorExtension::class)
 class LiveDataDslPluginIdlingTest {
 
-    private val scope = CoroutineScope(Dispatchers.Unconfined)
+    private val scope = TestCoroutineScope(Job())
     private val testIdlingResource = TestIdlingResource()
 
     @BeforeEach
@@ -39,6 +41,7 @@ class LiveDataDslPluginIdlingTest {
     @AfterEach
     fun after() {
         runBlocking {
+            scope.cleanupTestCoroutines()
             scope.cancel()
             delay(50)
             Dispatchers.resetMain()

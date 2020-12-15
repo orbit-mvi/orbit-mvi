@@ -16,9 +16,11 @@
 
 package com.babylon.orbit2
 
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlin.test.Test
 
-class StateTest {
+@ExperimentalCoroutinesApi
+internal class StateTest {
 
     @Test
     fun `BLOCKING - succeeds if initial state matches expected state`() {

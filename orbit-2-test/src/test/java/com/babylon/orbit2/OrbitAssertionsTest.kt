@@ -20,7 +20,7 @@ import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.throwable.shouldHaveMessage
 import kotlin.test.Test
 
-class OrbitAssertionsTest {
+internal class OrbitAssertionsTest {
     @Test
     fun `FAIL - No states emitted`() {
         // Given Empty state list

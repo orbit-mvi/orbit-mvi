@@ -5,30 +5,34 @@ import com.babylon.orbit2.ContainerHost
 import com.babylon.orbit2.container
 import com.babylon.orbit2.idling.IdlingResource
 import com.babylon.orbit2.syntax.strict.orbit
+import com.babylon.orbit2.test.assertEventually
 import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.booleans.shouldBeTrue
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.test.TestCoroutineScope
 import kotlinx.coroutines.withTimeout
-import kotlinx.coroutines.yield
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import rx.Completable
 import rx.Observable
 import rx.Single
 
-class RxJava1DslPluginIdlingTest {
+@ExperimentalCoroutinesApi
+internal class RxJava1DslPluginIdlingTest {
 
-    private val scope = CoroutineScope(Dispatchers.Unconfined)
+    private val scope = TestCoroutineScope(Job())
     private val testIdlingResource = TestIdlingResource()
 
     @AfterEach
     fun after() {
+        scope.cleanupTestCoroutines()
         scope.cancel()
     }
 
@@ -260,19 +264,6 @@ class RxJava1DslPluginIdlingTest {
             mutex.withLock {
                 assertEventually {
                     testIdlingResource.isIdle().shouldBeTrue()
-                }
-            }
-        }
-    }
-
-    private suspend fun assertEventually(block: suspend () -> Unit) {
-        withTimeout(TIMEOUT) {
-            while (true) {
-                try {
-                    block()
-                    break
-                } catch (ignored: Throwable) {
-                    yield()
                 }
             }
         }

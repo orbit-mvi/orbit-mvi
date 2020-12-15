@@ -18,28 +18,8 @@ plugins {
     id("java-library")
     kotlin("jvm")
 }
-apply<kotlinx.atomicfu.plugin.gradle.AtomicFUGradlePlugin>()
 
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
     implementation(ProjectDependencies.kotlinCoroutines)
-
-    compileOnly(ProjectDependencies.androidxAnnotation)
-
-    // Testing
-    testImplementation(project(":orbit-2-test"))
-    testImplementation(project(":test-common"))
-    testImplementation(kotlin("test"))
-    testImplementation(kotlin("test-junit"))
-    testImplementation(ProjectDependencies.kotlinCoroutinesTest)
-    testImplementation(ProjectDependencies.kotestAssertions)
-}
-
-// Fix lack of source code when publishing pure Kotlin projects
-// See https://github.com/novoda/bintray-release/issues/262
-tasks.whenTaskAdded {
-    if (name == "generateSourcesJarForMavenPublication") {
-        this as Jar
-        from(sourceSets.main.get().allSource)
-    }
 }

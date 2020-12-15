@@ -16,71 +16,132 @@
 
 package com.babylon.orbit2.coroutines
 
-import com.babylon.orbit2.Container
 import com.babylon.orbit2.ContainerHost
-import com.babylon.orbit2.internal.RealContainer
+import com.babylon.orbit2.container
 import com.babylon.orbit2.syntax.strict.orbit
 import com.babylon.orbit2.syntax.strict.reduce
 import com.babylon.orbit2.test
-import io.kotest.matchers.string.shouldStartWith
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
+import io.kotest.matchers.collections.shouldContainExactly
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.newSingleThreadContext
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.test.TestCoroutineScope
+import kotlinx.coroutines.withTimeout
+import kotlinx.coroutines.yield
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import kotlin.random.Random
 
+@ExperimentalCoroutinesApi
 internal class CoroutineDslPluginThreadingTest {
+    private val scope = TestCoroutineScope(Job())
 
-    companion object {
-        const val BACKGROUND_THREAD_PREFIX = "IO"
+    @AfterEach
+    fun afterEach() {
+        scope.cleanupTestCoroutines()
+        scope.cancel()
     }
 
     @Test
-    fun `suspend transformation runs on IO dispatcher`() {
-        val action = Random.nextInt()
+    fun `blocking suspend does not block the container from receiving further intents`() {
+        `blocking dsl function does not block the container from receiving further intents`(
+            call = { blockingSuspend() },
+            mutex = { suspendMutex }
+        )
+    }
 
+    @Test
+    fun `blocking suspend does not block the reducer`() {
+        `blocking dsl function does not block the reducer`(
+            call = { blockingSuspend() },
+            mutex = { suspendMutex }
+        )
+    }
+
+    @Test
+    fun `blocking flow does not block the container from receiving further intents`() {
+        `blocking dsl function does not block the container from receiving further intents`(
+            call = { blockingFlow() },
+            mutex = { flowMutex }
+        )
+    }
+
+    @Test
+    fun `blocking flow does not block the reducer`() {
+        `blocking dsl function does not block the reducer`(
+            call = { blockingFlow() },
+            mutex = { flowMutex }
+        )
+    }
+
+    private fun `blocking dsl function does not block the container from receiving further intents`(
+        call: Middleware.() -> Unit,
+        mutex: Middleware.() -> Mutex
+    ) {
+        val action = Random.nextInt()
         val middleware = Middleware()
         val testFlowObserver = middleware.container.stateFlow.test()
 
+        middleware.call()
+        runBlocking {
+            withTimeout(1000L) {
+                middleware.mutex().withLock { }
+                delay(20)
+            }
+        }
         middleware.suspend(action)
 
         testFlowObserver.awaitCount(2)
-        middleware.threadName.shouldStartWith(BACKGROUND_THREAD_PREFIX)
+        testFlowObserver.values.shouldContainExactly(
+            TestState(42),
+            TestState(action + 5)
+        )
     }
 
-    @Test
-    fun `flow transformation runs on IO dispatcher`() {
+    private fun `blocking dsl function does not block the reducer`(
+        call: Middleware.() -> Unit,
+        mutex: Middleware.() -> Mutex
+    ) {
         val action = Random.nextInt()
-
         val middleware = Middleware()
         val testFlowObserver = middleware.container.stateFlow.test()
 
-        middleware.flow(action)
+        middleware.call()
+        runBlocking {
+            withTimeout(1000L) {
+                middleware.mutex().withLock { }
+                delay(20)
+            }
+        }
 
-        testFlowObserver.awaitCount(5)
-        middleware.threadName.shouldStartWith(BACKGROUND_THREAD_PREFIX)
+        middleware.reducer(action)
+
+        testFlowObserver.awaitCount(2)
+        testFlowObserver.values.shouldContainExactly(TestState(42), TestState(action))
     }
 
     private data class TestState(val id: Int)
 
-    private class Middleware : ContainerHost<TestState, String> {
+    @Suppress("UNREACHABLE_CODE")
+    private inner class Middleware : ContainerHost<TestState, String> {
 
         @Suppress("EXPERIMENTAL_API_USAGE")
-        override val container = RealContainer<TestState, String>(
-            initialState = TestState(42),
-            parentScope = CoroutineScope(Dispatchers.Unconfined),
-            settings = Container.Settings(
-                backgroundDispatcher = newSingleThreadContext(BACKGROUND_THREAD_PREFIX)
-            )
-        )
-        lateinit var threadName: String
+        override val container = scope.container<TestState, String>(TestState(42))
+        val suspendMutex = Mutex(locked = true)
+        val flowMutex = Mutex(locked = true)
+
+        fun reducer(action: Int) = orbit {
+            reduce {
+                state.copy(id = action)
+            }
+        }
 
         fun suspend(action: Int) = orbit {
             transformSuspend {
-                threadName = Thread.currentThread().name
                 delay(50)
                 action + 5
             }
@@ -89,11 +150,28 @@ internal class CoroutineDslPluginThreadingTest {
                 }
         }
 
-        fun flow(action: Int) = orbit {
+        fun blockingSuspend() = orbit {
+            transformSuspend {
+                suspendMutex.unlock()
+                while (true) {
+                    yield()
+                }
+                1
+            }
+                .reduce {
+                    state.copy(id = event)
+                }
+        }
+
+        fun blockingFlow() = orbit {
             transformFlow {
-                flowOf(action, action + 1, action + 2, action + 3)
-                    .onEach { delay(50) }
-                    .onEach { threadName = Thread.currentThread().name }
+                kotlinx.coroutines.flow.flow {
+                    flowMutex.unlock()
+                    while (true) {
+                        yield()
+                    }
+                    emit(1)
+                }
             }
                 .reduce {
                     state.copy(id = event)

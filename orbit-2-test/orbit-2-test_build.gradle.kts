@@ -31,6 +31,7 @@ dependencies {
     testImplementation(kotlin("test"))
     testImplementation(kotlin("test-junit"))
     testImplementation(ProjectDependencies.kotestAssertions)
+    testImplementation(ProjectDependencies.kotlinCoroutinesTest)
 }
 
 // Fix lack of source code when publishing pure Kotlin projects

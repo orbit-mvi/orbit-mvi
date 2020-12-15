@@ -20,21 +20,32 @@ import com.babylon.orbit2.syntax.strict.orbit
 import com.babylon.orbit2.syntax.strict.sideEffect
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.throwable.shouldHaveMessage
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.test.TestCoroutineScope
 import kotlin.random.Random
+import kotlin.test.AfterTest
 
-class ParameterisedSideEffectTest(blocking: Boolean) {
+@ExperimentalCoroutinesApi
+internal class ParameterisedSideEffectTest(blocking: Boolean) {
     companion object {
         const val TIMEOUT = 1000L
     }
 
     private val initialState = State()
+    private val scope = TestCoroutineScope(Job())
     private val testSubject = SideEffectTestMiddleware().test(
         initialState = initialState,
         isolateFlow = false,
         blocking = blocking
     )
+
+    @AfterTest
+    fun afterTest() {
+        scope.cleanupTestCoroutines()
+        scope.cancel()
+    }
 
     fun `succeeds if posted side effects match expected side effects`() {
         val sideEffects = List(Random.nextInt(1, 5)) { Random.nextInt() }
@@ -65,7 +76,7 @@ class ParameterisedSideEffectTest(blocking: Boolean) {
 
     private inner class SideEffectTestMiddleware :
         ContainerHost<State, Int> {
-        override val container = CoroutineScope(Dispatchers.Unconfined).container<State, Int>(initialState)
+        override val container = scope.container<State, Int>(initialState)
 
         fun something(action: Int): Unit = orbit {
             sideEffect {

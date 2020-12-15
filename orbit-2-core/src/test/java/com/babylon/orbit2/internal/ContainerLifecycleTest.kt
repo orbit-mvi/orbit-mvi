@@ -22,12 +22,24 @@ import com.babylon.orbit2.syntax.strict.orbit
 import com.babylon.orbit2.syntax.strict.sideEffect
 import com.babylon.orbit2.test
 import io.kotest.matchers.collections.shouldContainExactly
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.test.TestCoroutineScope
 import kotlin.random.Random
+import kotlin.test.AfterTest
 import kotlin.test.Test
 
+@ExperimentalCoroutinesApi
 internal class ContainerLifecycleTest {
+
+    private val scope = TestCoroutineScope(Job())
+
+    @AfterTest
+    fun afterTest() {
+        scope.cleanupTestCoroutines()
+        scope.cancel()
+    }
 
     @Test
     fun `onCreate is called once after connecting to the container`() {
@@ -45,10 +57,9 @@ internal class ContainerLifecycleTest {
 
     private data class TestState(val id: Int = Random.nextInt())
 
-    private class Middleware(initialState: TestState) : ContainerHost<TestState, String> {
+    private inner class Middleware(initialState: TestState) : ContainerHost<TestState, String> {
 
-        override val container =
-            CoroutineScope(Dispatchers.Unconfined).container<TestState, String>(initialState) {
+        override val container = scope.container<TestState, String>(initialState) {
                 onCreate(it)
             }
 

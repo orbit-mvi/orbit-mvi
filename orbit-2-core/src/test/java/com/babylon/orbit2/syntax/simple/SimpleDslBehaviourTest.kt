@@ -20,13 +20,25 @@ import com.babylon.orbit2.ContainerHost
 import com.babylon.orbit2.assert
 import com.babylon.orbit2.container
 import com.babylon.orbit2.test
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.test.TestCoroutineScope
 import kotlin.random.Random
+import kotlin.test.AfterTest
 import kotlin.test.Test
 
+@ExperimentalCoroutinesApi
 internal class SimpleDslBehaviourTest {
+
+    private val scope = TestCoroutineScope(Job())
+
+    @AfterTest
+    fun afterTest() {
+        scope.cleanupTestCoroutines()
+        scope.cancel()
+    }
 
     private val initialState = TestState()
 
@@ -72,10 +84,8 @@ internal class SimpleDslBehaviourTest {
 
     private data class TestState(val id: Int = Random.nextInt())
 
-    private class BaseDslMiddleware : ContainerHost<TestState, String> {
-        override val container = CoroutineScope(Dispatchers.Unconfined).container<TestState, String>(
-            TestState(42)
-        )
+    private inner class BaseDslMiddleware : ContainerHost<TestState, String> {
+        override val container = scope.container<TestState, String>(TestState(42))
 
         fun reducer(action: Int) = intent {
             reduce {

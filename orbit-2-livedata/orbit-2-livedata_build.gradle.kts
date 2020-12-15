@@ -30,6 +30,7 @@ dependencies {
 
     // Testing
     testImplementation(project(":orbit-2-test"))
+    testImplementation(project(":test-common"))
     testImplementation(ProjectDependencies.androidxTesting)
     testImplementation(ProjectDependencies.kotlinCoroutines)
     testImplementation(ProjectDependencies.kotlinCoroutinesTest)

@@ -19,13 +19,24 @@ package com.babylon.orbit2
 import com.babylon.orbit2.syntax.strict.orbit
 import com.babylon.orbit2.syntax.strict.sideEffect
 import io.kotest.matchers.shouldBe
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.test.TestCoroutineScope
 import kotlin.random.Random
+import kotlin.test.AfterTest
 import kotlin.test.Test
 
-class GeneralTest {
+@ExperimentalCoroutinesApi
+internal class GeneralTest {
     private val initialState = State()
+    private val scope by lazy { TestCoroutineScope(Job()) }
+
+    @AfterTest
+    fun afterTest() {
+        scope.cleanupTestCoroutines()
+        scope.cancel()
+    }
 
     @Test
     fun `created is not invoked by default`() {
@@ -65,8 +76,7 @@ class GeneralTest {
 
     private inner class GeneralTestMiddleware(private val dependency: BogusDependency) :
         ContainerHost<State, Nothing> {
-        override val container =
-            CoroutineScope(Dispatchers.Unconfined).container<State, Nothing>(initialState) {
+        override val container = scope.container<State, Nothing>(initialState) {
                 created()
             }
 

@@ -16,9 +16,11 @@
 
 package com.babylon.orbit2
 
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlin.test.Test
 
-class SideEffectTest {
+@ExperimentalCoroutinesApi
+internal class SideEffectTest {
     @Test
     fun `BLOCKING - succeeds if posted side effects match expected side effects`() {
         ParameterisedSideEffectTest(blocking = true)

@@ -21,7 +21,6 @@ import com.babylon.orbit2.syntax.strict.OrbitDslPlugin
 import kotlinx.atomicfu.atomic
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.newSingleThreadContext
 import kotlinx.coroutines.runBlocking
 
 internal class TestContainer<STATE : Any, SIDE_EFFECT : Any>(
@@ -33,7 +32,7 @@ internal class TestContainer<STATE : Any, SIDE_EFFECT : Any>(
     parentScope = CoroutineScope(Dispatchers.Unconfined),
     settings = Container.Settings(
         orbitDispatcher =
-        @Suppress("EXPERIMENTAL_API_USAGE") if (blocking) Dispatchers.Unconfined else newSingleThreadContext("orbit"),
+        @Suppress("EXPERIMENTAL_API_USAGE") if (blocking) Dispatchers.Unconfined else Dispatchers.Default,
         backgroundDispatcher = Dispatchers.Unconfined
     )
 ) {

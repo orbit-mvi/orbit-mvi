@@ -32,6 +32,7 @@ dependencies {
 
     // Testing
     testImplementation(project(":orbit-2-test"))
+    testImplementation(project(":test-common"))
     testImplementation(project(":orbit-2-coroutines"))
     testImplementation(ProjectDependencies.androidxEspressoCore)
     testImplementation(ProjectDependencies.robolectric)
