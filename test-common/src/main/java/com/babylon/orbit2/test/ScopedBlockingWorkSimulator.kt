@@ -21,9 +21,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.channels.produce
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.yield
 
 @Suppress("EXPERIMENTAL_API_USAGE")
 public class ScopedBlockingWorkSimulator(private val scope: CoroutineScope) {
@@ -38,13 +39,13 @@ public class ScopedBlockingWorkSimulator(private val scope: CoroutineScope) {
         }
     }
 
+    @Suppress("ControlFlowWithEmptyBody", "EmptyWhileBlock")
     public fun simulateWork() {
         if (job != null) {
             throw IllegalStateException("Can be invoked only once")
         }
         job = scope.launch {
-            while (true) {
-                yield()
+            while (currentCoroutineContext().isActive) {
             }
         }
         runBlocking(job!!) { job!!.join() }

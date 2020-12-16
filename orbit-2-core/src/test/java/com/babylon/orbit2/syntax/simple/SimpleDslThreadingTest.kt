@@ -27,14 +27,15 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.test.TestCoroutineScope
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeout
-import kotlinx.coroutines.yield
 import kotlin.random.Random
 import kotlin.test.AfterTest
 import kotlin.test.Test
@@ -90,7 +91,6 @@ internal class SimpleDslThreadingTest {
     @Test
     fun `blocking intent without context switch blocks the reducer`() {
         val action = Random.nextInt()
-        val middleware = BaseDslMiddleware()
         val testFlowObserver = middleware.container.stateFlow.test()
 
         middleware.blockingIntent()
@@ -110,7 +110,6 @@ internal class SimpleDslThreadingTest {
 
     @Test
     fun `blocking reducer blocks an intent`() {
-        val middleware = BaseDslMiddleware()
         middleware.container.stateFlow.test()
 
         middleware.blockingReducer()
@@ -133,6 +132,7 @@ internal class SimpleDslThreadingTest {
 
     private data class TestState(val id: Int)
 
+    @Suppress("ControlFlowWithEmptyBody", "EmptyWhileBlock")
     private inner class BaseDslMiddleware : ContainerHost<TestState, String> {
 
         @Suppress("EXPERIMENTAL_API_USAGE")
@@ -159,16 +159,14 @@ internal class SimpleDslThreadingTest {
         fun backgroundIntent() = intent {
             intentMutex.unlock()
             withContext(Dispatchers.Default) {
-                while (true) {
-                    yield()
+                while (currentCoroutineContext().isActive) {
                 }
             }
         }
 
         fun blockingIntent() = intent {
             intentMutex.unlock()
-            while (true) {
-                yield()
+            while (currentCoroutineContext().isActive) {
             }
         }
 

@@ -30,7 +30,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -38,14 +40,13 @@ import kotlinx.coroutines.test.TestCoroutineScope
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
 import kotlinx.coroutines.withTimeout
-import kotlinx.coroutines.yield
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import kotlin.random.Random
 
-@Suppress("EXPERIMENTAL_API_USAGE", "UNREACHABLE_CODE")
+@Suppress("EXPERIMENTAL_API_USAGE", "UNREACHABLE_CODE", "ControlFlowWithEmptyBody", "EmptyWhileBlock")
 @ExtendWith(InstantTaskExecutorExtension::class)
 internal class LiveDataDslPluginDslThreadingTest {
 
@@ -74,8 +75,7 @@ internal class LiveDataDslPluginDslThreadingTest {
             transformLiveData {
                 liveData {
                     mutex.unlock()
-                    while (true) {
-                        yield()
+                    while (currentCoroutineContext().isActive) {
                     }
                     emit(1)
                 }
@@ -109,8 +109,7 @@ internal class LiveDataDslPluginDslThreadingTest {
             transformLiveData {
                 liveData {
                     mutex.unlock()
-                    while (true) {
-                        yield()
+                    while (currentCoroutineContext().isActive) {
                     }
 
                     emit(1)
@@ -147,6 +146,6 @@ internal class LiveDataDslPluginDslThreadingTest {
     }
 
     companion object {
-        const val TIMEOUT = 3000L
+        const val TIMEOUT = 1000L
     }
 }

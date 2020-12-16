@@ -25,13 +25,14 @@ import io.kotest.matchers.collections.shouldContainExactly
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.test.TestCoroutineScope
 import kotlinx.coroutines.withTimeout
-import kotlinx.coroutines.yield
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import kotlin.random.Random
@@ -126,7 +127,7 @@ internal class CoroutineDslPluginThreadingTest {
 
     private data class TestState(val id: Int)
 
-    @Suppress("UNREACHABLE_CODE")
+    @Suppress("UNREACHABLE_CODE", "ControlFlowWithEmptyBody", "EmptyWhileBlock")
     private inner class Middleware : ContainerHost<TestState, String> {
 
         @Suppress("EXPERIMENTAL_API_USAGE")
@@ -153,8 +154,7 @@ internal class CoroutineDslPluginThreadingTest {
         fun blockingSuspend() = orbit {
             transformSuspend {
                 suspendMutex.unlock()
-                while (true) {
-                    yield()
+                while (currentCoroutineContext().isActive) {
                 }
                 1
             }
@@ -167,8 +167,7 @@ internal class CoroutineDslPluginThreadingTest {
             transformFlow {
                 kotlinx.coroutines.flow.flow {
                     flowMutex.unlock()
-                    while (true) {
-                        yield()
+                    while (currentCoroutineContext().isActive) {
                     }
                     emit(1)
                 }
