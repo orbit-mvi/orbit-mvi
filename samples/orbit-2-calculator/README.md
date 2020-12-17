@@ -5,18 +5,18 @@ This sample implements a simple calculator using [Orbit MVI](https://github.com/
 - The application uses the [simple syntax](../../simple-syntax.md).
 
 - The application uses Koin for dependency injection which is initialised in
-  [CalculatorApplication](src/main/java/com/babylon/orbit2/sample/calculator/CalculatorApplication.kt).
+  [CalculatorApplication](src/main/kotlin/com/babylon/orbit2/sample/calculator/CalculatorApplication.kt).
 
-- [CalculatorActivity](src/main/java/com/babylon/orbit2/sample/calculator/CalculatorActivity.kt)
+- [CalculatorActivity](src/main/kotlin/com/babylon/orbit2/sample/calculator/CalculatorActivity.kt)
   uses the [Data Binding Library](https://developer.android.com/topic/libraries/data-binding)
-  to provide the [CalculatorViewModel](src/main/java/com/babylon/orbit2/sample/calculator/CalculatorViewModel.kt)
+  to provide the [CalculatorViewModel](src/main/kotlin/com/babylon/orbit2/sample/calculator/CalculatorViewModel.kt)
   to the layout [activity_main.xml](src/main/res/layout/activity_main.xml). The
   layout accesses the current state through LiveData.
 
-- [CalculatorViewModel](src/main/java/com/babylon/orbit2/sample/calculator/CalculatorViewModel.kt)
+- [CalculatorViewModel](src/main/kotlin/com/babylon/orbit2/sample/calculator/CalculatorViewModel.kt)
   uses a `SavedStateHandle` for retaining the current state. It implements a
-  private [ContainerHost](../../orbit-2-core/src/main/java/com/babylon/orbit2/ContainerHost.kt)
-  so the internal implementation of [CalculatorState](src/main/java/com/babylon/orbit2/sample/calculator/CalculatorState.kt)
+  private [ContainerHost](../../orbit-2-core/src/main/kotlin/com/babylon/orbit2/ContainerHost.kt)
+  so the internal implementation of [CalculatorState](src/main/kotlin/com/babylon/orbit2/sample/calculator/CalculatorState.kt)
   is not exposed.
 
 ## How the calculator works

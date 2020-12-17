@@ -75,13 +75,13 @@ Using the core Orbit functionality, we can create a simple, functional
 ViewModel.
 
 1. Implement the
-   [ContainerHost](orbit-2-core/src/main/java/com/babylon/orbit2/ContainerHost.kt)
+   [ContainerHost](orbit-2-core/src/main/kotlin/com/babylon/orbit2/ContainerHost.kt)
    interface
 1. Override the `container` field and use the `ViewModel.container` factory
    function to build an Orbit
-   [Container](orbit-2-core/src/main/java/com/babylon/orbit2/Container.kt) in
+   [Container](orbit-2-core/src/main/kotlin/com/babylon/orbit2/Container.kt) in
    your
-   [ContainerHost](orbit-2-core/src/main/java/com/babylon/orbit2/ContainerHost.kt)
+   [ContainerHost](orbit-2-core/src/main/kotlin/com/babylon/orbit2/ContainerHost.kt)
 
 ``` kotlin
 class CalculatorViewModel: ContainerHost<CalculatorState, CalculatorSideEffect>, ViewModel() {
@@ -101,7 +101,7 @@ class CalculatorViewModel: ContainerHost<CalculatorState, CalculatorSideEffect>,
 
 We have used an Android `ViewModel` as the most common example, but there is no
 requirement to do so. You can host an Orbit
-[Container](orbit-2-core/src/main/java/com/babylon/orbit2/Container.kt) in a
+[Container](orbit-2-core/src/main/kotlin/com/babylon/orbit2/Container.kt) in a
 simple class if you wish. This makes it possible to use in simple Kotlin
 projects as well as lifecycle independent services.
 

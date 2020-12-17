@@ -48,12 +48,12 @@ by itself. It should know only how to render itself based on the input state.
 We can map the above logic onto real components.
 
 1. UI invokes functions on a class implementing the
-   [ContainerHost](src/main/java/com/babylon/orbit2/ContainerHost.kt) interface.
-   Typically in Android this might be an Activity, Fragment or a simple View.
-   However, an Orbit system can also be run without any UI, for example as a
-   background service.
+   [ContainerHost](src/main/kotlin/com/babylon/orbit2/ContainerHost.kt)
+   interface. Typically in Android this might be an Activity, Fragment
+   or a simple View. However, an Orbit system can also be run without
+   any UI, for example as a background service.
 1. The functions call through to a
-   [Container](src/main/java/com/babylon/orbit2/Container.kt) instance through
+   [Container](src/main/kotlin/com/babylon/orbit2/Container.kt) instance through
    the `orbit` or `intent` block which applies Orbit operators
 1. Transformer operators apply business logic that transforms function
    parameters into single or multiple events
@@ -70,7 +70,7 @@ Notes:
 In the real world such a system cannot exist without side effects. Side effects
 are commonly truly one-off events like navigation, logging, analytics, toasts
 etc that do not alter the state of the Orbit
-[Container](src/main/java/com/babylon/orbit2/Container.kt). As such there's a
+[Container](src/main/kotlin/com/babylon/orbit2/Container.kt). As such there's a
 third Orbit operator that can deal with side effects.
 
 ![Orbit 2 overview 3](docs/orbit-2-overview-3.svg)
@@ -102,20 +102,21 @@ implementation("com.babylon.orbit2:orbit-core:<latest-version>")
 
 ## Orbit container
 
-A [Container](src/main/java/com/babylon/orbit2/Container.kt) is the heart of the
-Orbit MVI system. It retains the state, allows you to listen to side effects and
-state updates and allows you to modify the state through the `orbit` function
-which executes Orbit operators of your desired business logic.
+A [Container](src/main/kotlin/com/babylon/orbit2/Container.kt) is the
+heart of the Orbit MVI system. It retains the state, allows you to
+listen to side effects and state updates and allows you to modify the
+state through the `orbit` function which executes Orbit operators of
+your desired business logic.
 
 ### Subscribing to the container
 
-[Container](src/main/java/com/babylon/orbit2/Container.kt) exposes flows
+[Container](src/main/kotlin/com/babylon/orbit2/Container.kt) exposes flows
 that emit updates to the container state and side effects.
 
 - State emissions are conflated
 - Side effects are cached by default if no observers are listening. This
   can be changed via
-  [Container Settings](src/main/java/com/babylon/orbit2/Container.kt#Settings)
+  [Container Settings](src/main/kotlin/com/babylon/orbit2/Container.kt#Settings)
 
 ``` kotlin
 data class ExampleState(val seen: List<String> = emptyList())
@@ -146,19 +147,19 @@ fun main() {
 
 ### ContainerHost
 
-A [ContainerHost](src/main/java/com/babylon/orbit2/ContainerHost.kt) is not
+A [ContainerHost](src/main/kotlin/com/babylon/orbit2/ContainerHost.kt) is not
 strictly required to work with an Orbit
-[Container](src/main/java/com/babylon/orbit2/Container.kt). However, Orbit's
+[Container](src/main/kotlin/com/babylon/orbit2/Container.kt). However, Orbit's
 syntax is defined as an extension on this class. Additionally it simplifies
 and organises your business logic and so is highly recommended. A
-[ContainerHost](src/main/java/com/babylon/orbit2/ContainerHost.kt) typically
+[ContainerHost](src/main/kotlin/com/babylon/orbit2/ContainerHost.kt) typically
 defines MVI flows (your business logic and Orbit operators to be invoked on the
-[Container](src/main/java/com/babylon/orbit2/Container.kt)) as functions that
+[Container](src/main/kotlin/com/babylon/orbit2/Container.kt)) as functions that
 can be called by e.g. the UI.
 
 In a typical implementation you would subclass Android's `ViewModel` and
 implement
-[ContainerHost](src/main/java/com/babylon/orbit2/ContainerHost.kt) in
+[ContainerHost](src/main/kotlin/com/babylon/orbit2/ContainerHost.kt) in
 order to create an Orbit-enabled Android `ViewModel`.
 
 ## Core Orbit operators
@@ -173,7 +174,7 @@ The Core module contains built-in Orbit operators:
 | reduction          | `reduce { ... }`           | `reduce { ... }`      |
 
 Operators are invoked through the block function in a
-[ContainerHost](src/main/java/com/babylon/orbit2/ContainerHost.kt). For more
+[ContainerHost](src/main/kotlin/com/babylon/orbit2/ContainerHost.kt). For more
 information about which threads these operators run on please see
 [Threading](#threading).
 
@@ -260,7 +261,7 @@ This functionality is commonly used for things like truly one-off events,
 navigation, logging, analytics etc.
 
 You may post the side effect in order to send it to a
-[Container](src/main/java/com/babylon/orbit2/Container.kt)'s side effect flow.
+[Container](src/main/kotlin/com/babylon/orbit2/Container.kt)'s side effect flow.
 Use this for view-related side effects like Toasts, Navigation, etc.
 
 **Note:** With the [strict syntax](../strict-syntax.md) side effects are
@@ -273,7 +274,7 @@ upstream events.
 
 Each simple syntax operator lambda has a receiver that exposes the
 current state of the
-[Container](src/main/java/com/babylon/orbit2/Container.kt) as `state`
+[Container](src/main/kotlin/com/babylon/orbit2/Container.kt) as `state`
 
 ``` kotlin
 perform("Toast the current state")
@@ -292,7 +293,7 @@ class Example : ContainerHost<ExampleState, ExampleSideEffect> {
 
 Commonly in an operator you need two things:
 
-- The current state of the [Container](src/main/java/com/babylon/orbit2/Container.kt)
+- The current state of the [Container](src/main/kotlin/com/babylon/orbit2/Container.kt)
 - The upstream event
 
 Each Orbit operator lambda has a receiver that exposes the above as fields:
@@ -335,11 +336,11 @@ class Example : ContainerHost<ExampleState, ExampleSideEffect> {
 
 Containers are typically not created directly but through convenient factory
 functions. This allows you to pass through extra settings or a lambda to invoke
-when the [Container](src/main/java/com/babylon/orbit2/Container.kt) is first
+when the [Container](src/main/kotlin/com/babylon/orbit2/Container.kt) is first
 created (important for containers that can be recreated from a saved state or
 live longer than the UI).
 
-Extra [Container](src/main/java/com/babylon/orbit2/Container.kt) factory
+Extra [Container](src/main/kotlin/com/babylon/orbit2/Container.kt) factory
 functionality is provided via extension functions. One example is `ViewModel`
 saved state support via a `SavedStateHandle`.
 
@@ -355,7 +356,7 @@ done within particular `transform` blocks e.g. `transformSuspend`.
 - Calls to `Container.orbit` or `Container.intent` do not block the caller. The
   operations within are offloaded to a background thread.
 - `transform` and `transformX` calls execute in an `IO` thread so as not to
-  block the Orbit [Container](src/main/java/com/babylon/orbit2/Container.kt)
+  block the Orbit [Container](src/main/kotlin/com/babylon/orbit2/Container.kt)
   from accepting further events.
 
 ## Error handling
