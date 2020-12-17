@@ -32,7 +32,7 @@ class PostListViewModel(
     private val postRepository: PostRepository
 ) : ViewModel(), ContainerHost<PostListState, NavigationEvent> {
 
-    override val container = container<PostListState, NavigationEvent>(PostListState(), savedStateHandle) {
+    override var container = container<PostListState, NavigationEvent>(PostListState(), savedStateHandle) {
         if (it.overviews.isEmpty()) {
             loadOverviews()
         }

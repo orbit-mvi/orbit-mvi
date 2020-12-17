@@ -30,7 +30,7 @@ container.
 ``` kotlin
 class ExampleViewModel : ContainerHost<ExampleState, Nothing>, ViewModel() {
 
-    override val container = container<ExampleState, Nothing>(ExampleState())
+    override var container = container<ExampleState, Nothing>(ExampleState())
 
     ...
 }
@@ -71,7 +71,7 @@ private val viewModel by stateViewModel<TodoViewModel>()
 // Pass the SavedStateHandle to  your ViewModel
 class ExampleViewModel(savedStateHandle: SavedStateHandle) : ContainerHost<ExampleState, Nothing>, ViewModel() {
 
-    override val container = container<ExampleState, Nothing>(
+    override var container = container<ExampleState, Nothing>(
         ExampleState(),
         savedStateHandle
     )

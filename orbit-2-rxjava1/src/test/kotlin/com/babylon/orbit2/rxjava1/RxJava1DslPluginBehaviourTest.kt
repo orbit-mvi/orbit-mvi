@@ -101,7 +101,7 @@ internal class RxJava1DslPluginBehaviourTest {
 
     private inner class Middleware : ContainerHost<TestState, String> {
 
-        override val container = scope.container<TestState, String>(TestState(42))
+        override var container = scope.container<TestState, String>(TestState(42))
 
         fun single(action: Int) = orbit {
             transformRx1Single {

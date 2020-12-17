@@ -165,7 +165,7 @@ internal class RxJava3DslPluginDslThreadingTest {
     private inner class Middleware : ContainerHost<TestState, String> {
 
         @Suppress("EXPERIMENTAL_API_USAGE")
-        override val container = scope.container<TestState, String>(TestState(42))
+        override var container = scope.container<TestState, String>(TestState(42))
         val singleMutex = Mutex(locked = true)
         val maybeMutex = Mutex(locked = true)
         val completableMutex = Mutex(locked = true)

@@ -31,7 +31,7 @@ class DetailViewModel(
     private val stockRepository: StockRepository
 ) : ViewModel(), ContainerHost<DetailState, Nothing> {
 
-    override val container =
+    override var container =
         container<DetailState, Nothing>(DetailState(), savedStateHandle) { requestStock() }
 
     private fun requestStock(): Unit = orbit {

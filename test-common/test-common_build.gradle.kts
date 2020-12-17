@@ -15,10 +15,22 @@
  */
 
 plugins {
-    kotlin("jvm")
+    kotlin("multiplatform")
 }
 
-dependencies {
-    implementation(kotlin("stdlib-jdk8"))
-    implementation(ProjectDependencies.kotlinCoroutines)
+kotlin {
+    jvm()
+    ios()
+    sourceSets {
+        commonMain {
+            dependencies {
+                implementation(ProjectDependencies.kotlinCoroutines)
+                kotlin("stdlib-common")
+            }
+        }
+        val jvmMain by getting {
+        }
+        val iosMain by getting {
+        }
+    }
 }

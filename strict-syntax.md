@@ -3,7 +3,7 @@
 ``` kotlin
 class MyViewModel: ContainerHost<MyState, MySideEffect>, ViewModel() {
 
-    override val container = container<MyState, MySideEffect>(MyState())
+    override var container = container<MyState, MySideEffect>(MyState())
 
     fun loadDataForId(id: Int) = orbit {
         sideEffect { post(MySideEffect.Toast("Loading data for $id!")) }

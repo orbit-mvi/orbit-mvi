@@ -87,7 +87,7 @@ ViewModel.
 class CalculatorViewModel: ContainerHost<CalculatorState, CalculatorSideEffect>, ViewModel() {
 
     // Include `orbit-viewmodel` for the factory function
-    override val container = container<CalculatorState, CalculatorSideEffect>(CalculatorState())
+    override var container = container<CalculatorState, CalculatorSideEffect>(CalculatorState())
 
     fun add(number: Int) = intent {
         postSideEffect(CalculatorSideEffect.Toast("Adding $number to ${state.total}!"))
@@ -158,7 +158,7 @@ with mixed RxJava and coroutines.
 ``` kotlin
 class MyViewModel: ContainerHost<MyState, MySideEffect>, ViewModel() {
 
-    override val container = container<MyState, MySideEffect>(MyState())
+    override var container = container<MyState, MySideEffect>(MyState())
 
     // Simple
     fun loadDataForId(id: Int) = intent {

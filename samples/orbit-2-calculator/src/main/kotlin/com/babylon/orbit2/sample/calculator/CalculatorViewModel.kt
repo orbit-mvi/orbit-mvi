@@ -33,7 +33,7 @@ class CalculatorViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
 
     // private ContainerHost to not expose the caller to the internal implementation of CalculatorState
     private val host = object : ContainerHost<CalculatorStateImpl, Nothing> {
-        override val container = container<CalculatorStateImpl, Nothing>(CalculatorStateImpl(), savedStateHandle)
+        override var container = container<CalculatorStateImpl, Nothing>(CalculatorStateImpl(), savedStateHandle)
     }
 
     @Suppress("UNCHECKED_CAST")

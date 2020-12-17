@@ -346,7 +346,7 @@ internal class RxJava3DslPluginIdlingTest {
 
     private fun CoroutineScope.createContainerHost(): ContainerHost<TestState, Int> {
         return object : ContainerHost<TestState, Int> {
-            override val container: Container<TestState, Int> = container(
+            override var container: Container<TestState, Int> = container(
                 initialState = TestState(0),
                 settings = Container.Settings(idlingRegistry = testIdlingResource)
             )

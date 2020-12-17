@@ -115,7 +115,7 @@ internal class CoroutineDslPluginBehaviourTest {
 
     private inner class Middleware(val hotFlow: Flow<Int> = emptyFlow()) : ContainerHost<TestState, String> {
 
-        override val container = scope.container<TestState, String>(TestState(42))
+        override var container = scope.container<TestState, String>(TestState(42))
 
         fun suspend(action: Int) = orbit {
             transformSuspend {

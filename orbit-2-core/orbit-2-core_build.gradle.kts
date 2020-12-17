@@ -15,30 +15,53 @@
  */
 
 plugins {
-    kotlin("jvm")
+    kotlin("multiplatform")
 }
 apply<kotlinx.atomicfu.plugin.gradle.AtomicFUGradlePlugin>()
 
-dependencies {
-    implementation(kotlin("stdlib-jdk8"))
-    implementation(ProjectDependencies.kotlinCoroutines)
+kotlin {
+    jvm()
+    ios()
+    sourceSets {
+        commonMain {
+            dependencies {
+                implementation(ProjectDependencies.kotlinCoroutines)
+                implementation(kotlin("stdlib-common"))
+            }
+        }
+        commonTest {
+            dependencies {
+                implementation(kotlin("test-common"))
+                implementation(kotlin("test-annotations-common"))
+                implementation(project(":test-common"))
+                implementation(project(":orbit-2-test"))
+                implementation(ProjectDependencies.kotestAssertions)
+            }
+        }
 
-    compileOnly(ProjectDependencies.androidxAnnotation)
+        val jvmMain by getting {
+        }
+        val jvmTest by getting {
+            dependencies {
+//                implementation(kotlin("test"))
+//                implementation(kotlin("test-junit5"))
+            }
+        }
 
-    // Testing
-    testImplementation(project(":orbit-2-test"))
-    testImplementation(project(":test-common"))
-    testImplementation(kotlin("test"))
-    testImplementation(kotlin("test-junit"))
-    testImplementation(ProjectDependencies.kotlinCoroutinesTest)
-    testImplementation(ProjectDependencies.kotestAssertions)
-}
+        val iosMain by getting {
+        }
 
-// Fix lack of source code when publishing pure Kotlin projects
-// See https://github.com/novoda/bintray-release/issues/262
-tasks.whenTaskAdded {
-    if (name == "generateSourcesJarForMavenPublication") {
-        this as Jar
-        from(sourceSets.main.get().allSource)
+        val iosTest by getting {
+
+        }
     }
 }
+
+//// Fix lack of source code when publishing pure Kotlin projects
+//// See https://github.com/novoda/bintray-release/issues/262
+//tasks.whenTaskAdded {
+//    if (name == "generateSourcesJarForMavenPublication") {
+//        this as Jar
+//        from(sourceSets.main.get().allSource)
+//    }
+//}

@@ -15,29 +15,64 @@
  */
 
 plugins {
-    kotlin("jvm")
+    kotlin("multiplatform")
 }
 apply<kotlinx.atomicfu.plugin.gradle.AtomicFUGradlePlugin>()
 
-dependencies {
-    implementation(kotlin("stdlib-jdk8"))
-    implementation(ProjectDependencies.kotlinCoroutines)
-    implementation(kotlin("test"))
+kotlin {
+    jvm()
+    ios()
+    sourceSets {
+        commonMain {
+            dependencies {
+                implementation(kotlin("stdlib-common"))
+                implementation(kotlin("test-common"))
+                implementation(ProjectDependencies.kotlinCoroutines)
+                implementation(project(":test-common"))
 
-    api(project(":orbit-2-core"))
+                api(project(":orbit-2-core"))
+            }
+        }
+        commonTest {
+            dependencies {
+                implementation(kotlin("test-common"))
+                implementation(kotlin("test-annotations-common"))
+                implementation(ProjectDependencies.kotestAssertions)
+            }
+        }
 
-    // Testing
-    testImplementation(kotlin("test"))
-    testImplementation(kotlin("test-junit"))
-    testImplementation(ProjectDependencies.kotestAssertions)
-    testImplementation(ProjectDependencies.kotlinCoroutinesTest)
-}
+        val iosMain by getting {
+            dependencies {
+                implementation(ProjectDependencies.kotlinCoroutines)
+            }
+        }
 
-// Fix lack of source code when publishing pure Kotlin projects
-// See https://github.com/novoda/bintray-release/issues/262
-tasks.whenTaskAdded {
-    if (name == "generateSourcesJarForMavenPublication") {
-        this as Jar
-        from(sourceSets.main.get().allSource)
+        val jvmMain by getting {
+            dependencies {
+                implementation(kotlin("test-junit"))
+                implementation(ProjectDependencies.kotlinCoroutines)
+            }
+        }
+
+        val jvmTest by getting {
+            dependencies {
+
+            }
+        }
+
+        val iosTest by getting {
+            dependencies {
+
+            }
+        }
     }
 }
+
+//// Fix lack of source code when publishing pure Kotlin projects
+//// See https://github.com/novoda/bintray-release/issues/262
+//tasks.whenTaskAdded {
+//    if (name == "generateSourcesJarForMavenPublication") {
+//        this as Jar
+//        from(sourceSets.main.get().allSource)
+//    }
+//}
