@@ -34,9 +34,9 @@ import retrofit2.Retrofit
 import retrofit2.converter.jackson.JacksonConverterFactory
 
 fun module() = module {
-    viewModel { (savedStateHandle: SavedStateHandle) -> PostListViewModel(savedStateHandle, get()) }
+    viewModel { PostListViewModel(get(), get()) }
 
-    viewModel { (savedStateHandle: SavedStateHandle, postOverview: PostOverview) -> PostDetailsViewModel(savedStateHandle, get(), postOverview) }
+    viewModel { (postOverview: PostOverview) -> PostDetailsViewModel(get(), get(), postOverview) }
 
     single {
         ObjectMapper().registerKotlinModule().configure(FAIL_ON_UNKNOWN_PROPERTIES, false)

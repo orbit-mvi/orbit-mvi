@@ -43,7 +43,7 @@ class StockListApplication : Application() {
         single { StreamingClient() }
         single { StockRepository(get()) }
 
-        viewModel { (savedStateHandle: SavedStateHandle) -> ListViewModel(savedStateHandle, get()) }
-        viewModel { (savedStateHandle: SavedStateHandle, itemName: String) -> DetailViewModel(savedStateHandle, itemName, get()) }
+        viewModel { ListViewModel(get(), get()) }
+        viewModel { (itemName: String) -> DetailViewModel(get(), itemName, get()) }
     }
 }
