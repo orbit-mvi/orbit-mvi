@@ -36,10 +36,8 @@ repositories {
 val tag = (System.getenv("GITHUB_REF") ?: System.getProperty("GITHUB_REF"))
     ?.replaceFirst("refs/tags/", "")
 
-val split = tag?.split("/")
-val tagVersion = split?.get(1)
-val projectGroupId = "com.babylon.orbit2"
-val projectArtifactId = project.name.replace("2-", "")
+val projectGroupId = "org.orbit-mvi"
+val projectArtifactId = project.name
 
 apply<BintrayPlugin>()
 apply<MavenPublishPlugin>()
@@ -62,7 +60,7 @@ afterEvaluate {
 
                 groupId = projectGroupId
                 artifactId = projectArtifactId
-                version = tagVersion
+                version = tag
 
                 afterEvaluate {
                     if (project.plugins.hasPlugin("com.android.library")) {
@@ -73,10 +71,10 @@ afterEvaluate {
                 pom {
                     groupId = projectGroupId
                     artifactId = projectArtifactId
-                    version = tagVersion
+                    version = tag
 
                     name.set(project.name)
-                    url.set("https://github.com/babylonhealth/orbit-mvi")
+                    url.set("https://github.com/orbit-mvi/orbit-mvi")
                 }
             }
         }
@@ -97,15 +95,15 @@ configure<BintrayExtension> {
         userOrg = "babylonpartners"
         name = projectArtifactId
         desc = "Orbit MVI for Kotlin and Android"
-        websiteUrl = "https://github.com/babylonhealth/orbit-mvi"
-        issueTrackerUrl = "https://github.com/babylonhealth/orbit-mvi/issues"
-        vcsUrl = "https://github.com/babylonhealth/orbit-mvi"
-        githubRepo = "babylonhealth/orbit-mvi"
+        websiteUrl = "https://github.com/orbit-mvi/orbit-mvi"
+        issueTrackerUrl = "https://github.com/orbit-mvi/orbit-mvi/issues"
+        vcsUrl = "https://github.com/orbit-mvi/orbit-mvi"
+        githubRepo = "orbit-mvi/orbit-mvi"
 
         setLicenses("Apache-2.0")
 
         version.apply {
-            name = tagVersion
+            name = tag
             vcsTag = tag
         }
     }

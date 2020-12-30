@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/listFragment">
+
+    <fragment
+        android:id="@+id/listFragment"
+        android:name="org.orbitmvi.orbit.sample.stocklist.list.ui.ListFragment"
+        android:label="@string/app_name"
+        tools:layout="@layout/list_fragment">
+        <action
+            android:id="@+id/action_listFragment_to_detailFragment"
+            app:destination="@id/detailFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+    </fragment>
+    <fragment
+        android:id="@+id/detailFragment"
+        android:name="org.orbitmvi.orbit.sample.stocklist.detail.ui.DetailFragment"
+        android:label="@string/app_name"
+        tools:layout="@layout/detail_fragment">
+        <argument
+            android:name="itemName"
+            app:argType="string" />
+    </fragment>
+</navigation>

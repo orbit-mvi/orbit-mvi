@@ -15,17 +15,17 @@
  */
 
 include(
-    "orbit-2-core",
-    "orbit-2-coroutines",
-    "orbit-2-livedata",
-    "orbit-2-rxjava1",
-    "orbit-2-rxjava2",
-    "orbit-2-rxjava3",
-    "orbit-2-test",
-    "orbit-2-viewmodel",
-    "samples:orbit-2-calculator",
-    "samples:orbit-2-posts",
-    "samples:orbit-2-stocklist",
+    "orbit-core",
+    "orbit-coroutines",
+    "orbit-livedata",
+    "orbit-rxjava1",
+    "orbit-rxjava2",
+    "orbit-rxjava3",
+    "orbit-test",
+    "orbit-viewmodel",
+    "samples:orbit-calculator",
+    "samples:orbit-posts",
+    "samples:orbit-stocklist",
     "test-common"
 )
 

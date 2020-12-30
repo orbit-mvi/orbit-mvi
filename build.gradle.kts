@@ -79,7 +79,7 @@ subprojects {
 
     tasks.withType<Test> {
         @Suppress("UnstableApiUsage")
-        if (project.name !in listOf("orbit-2-core", "orbit-2-test")) {
+        if (project.name !in listOf("orbit-core", "orbit-test")) {
             useJUnitPlatform {
                 includeEngines(
                     "junit-jupiter"
@@ -104,6 +104,12 @@ subprojects {
     }
     plugins.withId("com.android.application") {
         apply(from = "$rootDir/gradle/scripts/jacoco-android.gradle.kts")
+        configure<com.android.build.gradle.AppExtension> {
+            sourceSets {
+                get("main").java.srcDir("src/main/kotlin")
+                get("test").java.srcDir("src/test/kotlin")
+            }
+        }
     }
     plugins.withType<org.jetbrains.kotlin.gradle.plugin.KotlinPluginWrapper> {
         apply(from = "$rootDir/gradle/scripts/jacoco.gradle.kts")
@@ -140,6 +146,11 @@ subprojects {
                 getByName("release") {
                     isMinifyEnabled = false
                 }
+            }
+
+            sourceSets {
+                get("main").java.srcDir("src/main/kotlin")
+                get("test").java.srcDir("src/test/kotlin")
             }
         }
     }
