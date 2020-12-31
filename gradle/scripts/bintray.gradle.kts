@@ -1,4 +1,5 @@
 /*
+ * Copyright 2021 Mikolaj Leszczynski & Matthew Dolan
  * Copyright 2020 Babylon Partners Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -92,7 +93,7 @@ configure<BintrayExtension> {
 
     pkg.apply {
         repo = "maven"
-        userOrg = "babylonpartners"
+        userOrg = "orbitmvi"
         name = projectArtifactId
         desc = "Orbit MVI for Kotlin and Android"
         websiteUrl = "https://github.com/orbit-mvi/orbit-mvi"

@@ -1,4 +1,5 @@
 /*
+ * Copyright 2021 Mikolaj Leszczynski & Matthew Dolan
  * Copyright 2020 Babylon Partners Limited
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,7 +18,7 @@
 package org.orbitmvi.orbit.syntax.strict
 
 import org.orbitmvi.orbit.syntax.Operator
-import org.orbitmvi.orbit.syntax.Orbit2Dsl
+import org.orbitmvi.orbit.syntax.OrbitDsl
 
 /**
  * Represents the current context in which an [Operator] is executing.
@@ -25,7 +26,7 @@ import org.orbitmvi.orbit.syntax.Orbit2Dsl
  * @property state The state captured at the point when the operator is executed
  * @property event The current event being processed
  */
-@Orbit2Dsl
+@OrbitDsl
 public interface Context<STATE : Any, EVENT> {
     public val state: STATE
     public val event: EVENT

@@ -1,4 +1,5 @@
 /*
+ * Copyright 2021 Mikolaj Leszczynski & Matthew Dolan
  * Copyright 2020 Babylon Partners Limited
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,14 +20,14 @@ package org.orbitmvi.orbit.syntax.simple
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.idling.withIdling
-import org.orbitmvi.orbit.syntax.Orbit2Dsl
+import org.orbitmvi.orbit.syntax.OrbitDsl
 
 /**
  * Reducers reduce the current state and incoming events to produce a new state.
  *
  * @param reducer the lambda reducing the current state and incoming event to produce a new state
  */
-@Orbit2Dsl
+@OrbitDsl
 public suspend fun <S : Any, SE : Any> SimpleSyntax<S, SE>.reduce(reducer: SimpleContext<S>.() -> S) {
     containerContext.apply {
         reduce { reducerState ->
@@ -44,7 +45,7 @@ public suspend fun <S : Any, SE : Any> SimpleSyntax<S, SE>.reduce(reducer: Simpl
  *
  * @param sideEffect the side effect to post through the side effect flow
  */
-@Orbit2Dsl
+@OrbitDsl
 public suspend fun <S : Any, SE : Any> SimpleSyntax<S, SE>.postSideEffect(sideEffect: SE) {
     containerContext.postSideEffect(sideEffect)
 }
@@ -55,7 +56,7 @@ public suspend fun <S : Any, SE : Any> SimpleSyntax<S, SE>.postSideEffect(sideEf
  * @param registerIdling whether to register an idling resource when executing this intent. Defaults to true.
  * @param transformer lambda representing the transformer
  */
-@Orbit2Dsl
+@OrbitDsl
 public fun <STATE : Any, SIDE_EFFECT : Any> ContainerHost<STATE, SIDE_EFFECT>.intent(
     registerIdling: Boolean = true,
     transformer: suspend SimpleSyntax<STATE, SIDE_EFFECT>.() -> Unit

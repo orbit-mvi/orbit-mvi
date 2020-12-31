@@ -1,4 +1,5 @@
 /*
+ * Copyright 2021 Mikolaj Leszczynski & Matthew Dolan
  * Copyright 2020 Babylon Partners Limited
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,7 +19,7 @@ package org.orbitmvi.orbit.coroutines
 
 import org.orbitmvi.orbit.syntax.strict.Builder
 import org.orbitmvi.orbit.syntax.Operator
-import org.orbitmvi.orbit.syntax.Orbit2Dsl
+import org.orbitmvi.orbit.syntax.OrbitDsl
 import org.orbitmvi.orbit.syntax.strict.OrbitDslPlugins
 import org.orbitmvi.orbit.syntax.strict.VolatileContext
 import kotlinx.coroutines.Dispatchers
@@ -37,7 +38,7 @@ internal class TransformFlow<S : Any, E, E2>(
  * @param registerIdling When true tracks the block's idling state, default: false
  * @param block the suspending lambda returning a new flow of events given the current state and event
  */
-@Orbit2Dsl
+@OrbitDsl
 public fun <S : Any, SE : Any, E, E2> Builder<S, SE, E>.transformFlow(
     registerIdling: Boolean = false,
     block: suspend VolatileContext<S, E>.() -> Flow<E2>

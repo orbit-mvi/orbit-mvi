@@ -1,4 +1,5 @@
 /*
+ * Copyright 2021 Mikolaj Leszczynski & Matthew Dolan
  * Copyright 2020 Babylon Partners Limited
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,14 +17,14 @@
 
 package org.orbitmvi.orbit.syntax.simple
 
-import org.orbitmvi.orbit.syntax.Orbit2Dsl
+import org.orbitmvi.orbit.syntax.OrbitDsl
 
 /**
  * Represents the current context in which a simple orbit is executing.
  *
  * @property state The current state of the container
  */
-@Orbit2Dsl
+@OrbitDsl
 public interface SimpleContext<STATE : Any> {
     public val state: STATE
 }

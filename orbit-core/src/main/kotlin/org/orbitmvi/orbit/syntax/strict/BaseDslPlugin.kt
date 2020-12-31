@@ -1,4 +1,5 @@
 /*
+ * Copyright 2021 Mikolaj Leszczynski & Matthew Dolan
  * Copyright 2020 Babylon Partners Limited
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,7 +20,7 @@ package org.orbitmvi.orbit.syntax.strict
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.idling.withIdling
 import org.orbitmvi.orbit.syntax.Operator
-import org.orbitmvi.orbit.syntax.Orbit2Dsl
+import org.orbitmvi.orbit.syntax.OrbitDsl
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
@@ -45,7 +46,7 @@ internal class Reduce<S : Any, E>(override val registerIdling: Boolean, val bloc
  * @param registerIdling When true tracks the block's idling state, default: true
  * @param block the lambda returning a new event given the current state and event
  */
-@Orbit2Dsl
+@OrbitDsl
 public fun <S : Any, SE : Any, E, E2> Builder<S, SE, E>.transform(
     registerIdling: Boolean = true,
     block: VolatileContext<S, E>.() -> E2
@@ -68,7 +69,7 @@ public fun <S : Any, SE : Any, E, E2> Builder<S, SE, E>.transform(
  * @param registerIdling When true tracks the block's idling state, default: true
  * @param block the lambda executing side effects given the current state and event
  */
-@Orbit2Dsl
+@OrbitDsl
 public fun <S : Any, SE : Any, E> Builder<S, SE, E>.sideEffect(
     registerIdling: Boolean = true,
     block: suspend SideEffectContext<S, SE, E>.() -> Unit
@@ -85,7 +86,7 @@ public fun <S : Any, SE : Any, E> Builder<S, SE, E>.sideEffect(
  * @param registerIdling When true tracks the block's idling state, default: true
  * @param block the lambda reducing the current state and incoming event to produce a new state
  */
-@Orbit2Dsl
+@OrbitDsl
 public fun <S : Any, SE : Any, E> Builder<S, SE, E>.reduce(
     registerIdling: Boolean = true,
     block: Context<S, E>.() -> S

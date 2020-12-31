@@ -1,8 +1,8 @@
-# Orbit 2 for Kotlin and Android
+# Orbit for Kotlin and Android
 
-[![CI status](https://github.com/babylonhealth/orbit-mvi/workflows/Android%20CI/badge.svg)](https://github.com/babylonhealth/orbit-mvi/actions)
-[![codecov](https://codecov.io/gh/babylonhealth/orbit-mvi/branch/main/graph/badge.svg)](https://codecov.io/gh/babylonhealth/orbit-mvi)
-[![Download](https://api.bintray.com/packages/babylonpartners/maven/orbit-core/images/download.svg)](https://bintray.com/babylonpartners/maven/orbit-core/_latestVersion)
+[![CI status](https://github.com/orbit-mvi/orbit-mvi/workflows/Android%20CI/badge.svg)](https://github.com/orbit-mvi/orbit-mvi/actions)
+[![codecov](https://codecov.io/gh/orbit-mvi/orbit-mvi/branch/main/graph/badge.svg)](https://codecov.io/gh/orbit-mvi/orbit-mvi)
+[![Download](https://api.bintray.com/packages/orbitmvi/maven/orbit-core/images/download.svg)](https://bintray.com/orbitmvi/maven/orbit-core/_latestVersion)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE.md)
 
 ![Logo](images/logo.png)
@@ -14,7 +14,7 @@ If you do not yet have an account with the Kotlinlang slack workspace,
 
 This library was originally developed at [Babylon Health](https://github.com/babylonhealth/orbit-mvi).
 However, as its development over there ceased, further development
-has been moved to this fork maintained by the original authors.
+has been moved to this project maintained by the original authors.
 
 ## Documentation
 
@@ -43,10 +43,10 @@ And more!...
 ## Getting started in three simple steps
 
 ```kotlin
-implementation("org.orbitmvi.orbit:orbit-viewmodel:<latest-version>")
+implementation("org.orbit-mvi.orbit:orbit-viewmodel:<latest-version>")
 ```
 
-[![Download](https://api.bintray.com/packages/babylonpartners/maven/orbit-core/images/download.svg)](https://bintray.com/babylonpartners/maven/orbit-core/_latestVersion)
+[![Download](https://api.bintray.com/packages/orbitmvi/maven/orbit-core/images/download.svg)](https://bintray.com/orbitmvi/maven/orbit-core/_latestVersion)
 
 ### Define the contract
 
@@ -193,20 +193,20 @@ alternatively include one of the other modules which already include
 `orbit-core`.
 
 ```kotlin
-implementation("org.orbitmvi.orbit:orbit-core:<latest-version>")
-implementation("org.orbitmvi.orbit:orbit-viewmodel:<latest-version>")
+implementation("org.orbit-mvi.orbit:orbit-core:<latest-version>")
+implementation("org.orbit-mvi.orbit:orbit-viewmodel:<latest-version>")
 
 // strict syntax DSL extensions
-implementation("org.orbitmvi.orbit:orbit-coroutines:<latest-version>")
-implementation("org.orbitmvi.orbit:orbit-rxjava1:<latest-version>")
-implementation("org.orbitmvi.orbit:orbit-rxjava2:<latest-version>")
-implementation("org.orbitmvi.orbit:orbit-rxjava3:<latest-version>")
-implementation("org.orbitmvi.orbit:orbit-livedata:<latest-version>")
+implementation("org.orbit-mvi.orbit:orbit-coroutines:<latest-version>")
+implementation("org.orbit-mvi.orbit:orbit-rxjava1:<latest-version>")
+implementation("org.orbit-mvi.orbit:orbit-rxjava2:<latest-version>")
+implementation("org.orbit-mvi.orbit:orbit-rxjava3:<latest-version>")
+implementation("org.orbit-mvi.orbit:orbit-livedata:<latest-version>")
 
-testImplementation("org.orbitmvi.orbit:orbit-test:<latest-version>")
+testImplementation("org.orbit-mvi.orbit:orbit-test:<latest-version>")
 ```
 
-[![Download](https://api.bintray.com/packages/babylonpartners/maven/orbit-core/images/download.svg)](https://bintray.com/babylonpartners/maven/orbit-core/_latestVersion)
+[![Download](https://api.bintray.com/packages/orbitmvi/maven/orbit-core/images/download.svg)](https://bintray.com/orbitmvi/maven/orbit-core/_latestVersion)
 
 ## Contributing
 
@@ -217,7 +217,7 @@ requests to us.
 ## Versioning
 
 We use [SemVer](http://semver.org/) for versioning. For the versions
-available, see the [tags on this repository](https://github.com/babylonhealth/orbit-mvi/tags).
+available, see the [tags on this repository](https://github.com/orbit-mvi/orbit-mvi/tags).
 
 ## License
 

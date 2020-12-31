@@ -8,7 +8,7 @@
 The RxJava1 plugin provides RxJava 1 operators.
 
 ```kotlin
-implementation("org.orbitmvi.orbit:orbit-rxjava1:<latest-version>")
+implementation("org.orbit-mvi.orbit:orbit-rxjava1:<latest-version>")
 ```
 
 ## transformRx1Observable

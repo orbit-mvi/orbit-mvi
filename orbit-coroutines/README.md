@@ -7,7 +7,7 @@
 The coroutine plugin provides Coroutine Orbit operators.
 
 ```kotlin
-implementation("org.orbitmvi.orbit:orbit-coroutines:<latest-version>")
+implementation("org.orbit-mvi.orbit:orbit-coroutines:<latest-version>")
 ```
 
 ## transformSuspend

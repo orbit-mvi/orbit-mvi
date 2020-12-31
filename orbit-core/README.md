@@ -97,7 +97,7 @@ Orbit is a modular framework. You will need this module to get started!
 Additional functionality is provided through optional modules.
 
 ```kotlin
-implementation("org.orbitmvi.orbit:orbit-core:<latest-version>")
+implementation("org.orbit-mvi.orbit:orbit-core:<latest-version>")
 ```
 
 ## Orbit container

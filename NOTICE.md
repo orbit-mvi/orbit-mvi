@@ -2,6 +2,7 @@
 
 ## Orbit MVI
 
+Copyright &copy; 2021 Mikolaj Leszczynski & Matthew Dolan.
 Copyright &copy; 2020 Babylon Partners Limited.
 
 This product includes software developed at [Babylon Health](http://www.babylonhealth.com/).

@@ -17,7 +17,7 @@ The plugin provides [Container](../orbit-core/src/main/kotlin/org/orbitmvi/orbit
 ## Including the module
 
 ```kotlin
-implementation("org.orbitmvi.orbit:orbit-viewmodel:<latest-version>")
+implementation("org.orbit-mvi.orbit:orbit-viewmodel:<latest-version>")
 ```
 
 ## Creating a container in a ViewModel

@@ -9,7 +9,7 @@
 The RxJava2 plugin provides RxJava 2 operators.
 
 ```kotlin
-implementation("org.orbitmvi.orbit:orbit-rxjava2:<latest-version>")
+implementation("org.orbit-mvi.orbit:orbit-rxjava2:<latest-version>")
 ```
 
 ## transformRx2Observable

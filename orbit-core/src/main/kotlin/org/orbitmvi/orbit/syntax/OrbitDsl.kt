@@ -1,4 +1,5 @@
 /*
+ * Copyright 2021 Mikolaj Leszczynski & Matthew Dolan
  * Copyright 2020 Babylon Partners Limited
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,4 +18,4 @@
 package org.orbitmvi.orbit.syntax
 
 @DslMarker
-public annotation class Orbit2Dsl
+public annotation class OrbitDsl

@@ -1,4 +1,5 @@
 /*
+ * Copyright 2021 Mikolaj Leszczynski & Matthew Dolan
  * Copyright 2020 Babylon Partners Limited
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,7 +19,7 @@ package org.orbitmvi.orbit.rxjava1
 
 import org.orbitmvi.orbit.syntax.strict.Builder
 import org.orbitmvi.orbit.syntax.Operator
-import org.orbitmvi.orbit.syntax.Orbit2Dsl
+import org.orbitmvi.orbit.syntax.OrbitDsl
 import org.orbitmvi.orbit.syntax.strict.OrbitDslPlugins
 import org.orbitmvi.orbit.syntax.strict.VolatileContext
 import rx.Observable
@@ -37,7 +38,7 @@ internal class RxJava1Observable<S : Any, E, E2>(
  * @param registerIdling When true tracks the block's idling state, default: false
  * @param block the lambda returning a new observable of events given the current state and event
  */
-@Orbit2Dsl
+@OrbitDsl
 public fun <S : Any, SE : Any, E, E2> Builder<S, SE, E>.transformRx1Observable(
     registerIdling: Boolean = false,
     block: VolatileContext<S, E>.() -> Observable<E2>

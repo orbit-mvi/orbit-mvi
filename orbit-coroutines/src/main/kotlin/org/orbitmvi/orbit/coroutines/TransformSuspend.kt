@@ -1,4 +1,5 @@
 /*
+ * Copyright 2021 Mikolaj Leszczynski & Matthew Dolan
  * Copyright 2020 Babylon Partners Limited
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,7 +18,7 @@
 package org.orbitmvi.orbit.coroutines
 
 import org.orbitmvi.orbit.syntax.Operator
-import org.orbitmvi.orbit.syntax.Orbit2Dsl
+import org.orbitmvi.orbit.syntax.OrbitDsl
 import org.orbitmvi.orbit.syntax.strict.Builder
 import org.orbitmvi.orbit.syntax.strict.OrbitDslPlugins
 import org.orbitmvi.orbit.syntax.strict.VolatileContext
@@ -37,7 +38,7 @@ internal class TransformSuspend<S : Any, E, E2>(
  * @param registerIdling When true tracks the block's idling state, default: true
  * @param block the suspending lambda returning a new event given the current state and event
  */
-@Orbit2Dsl
+@OrbitDsl
 public fun <S : Any, SE : Any, E, E2> Builder<S, SE, E>.transformSuspend(
     registerIdling: Boolean = true,
     block: suspend VolatileContext<S, E>.() -> E2

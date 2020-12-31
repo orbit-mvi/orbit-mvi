@@ -2,7 +2,7 @@ package org.orbitmvi.orbit.syntax.strict
 
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
-import org.orbitmvi.orbit.syntax.Orbit2Dsl
+import org.orbitmvi.orbit.syntax.OrbitDsl
 import kotlinx.coroutines.flow.collect
 
 /**
@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.collect
  *
  * @param init lambda returning the operator chain that represents the flow
  */
-@Orbit2Dsl
+@OrbitDsl
 public fun <STATE : Any, SIDE_EFFECT : Any> ContainerHost<STATE, SIDE_EFFECT>.orbit(
     init: Builder<STATE, SIDE_EFFECT, Unit>.() -> Builder<STATE, SIDE_EFFECT, *>
 ): Unit = container.orbit {

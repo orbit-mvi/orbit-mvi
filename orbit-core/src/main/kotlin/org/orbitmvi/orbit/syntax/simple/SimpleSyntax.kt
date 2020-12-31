@@ -1,4 +1,5 @@
 /*
+ * Copyright 2021 Mikolaj Leszczynski & Matthew Dolan
  * Copyright 2020 Babylon Partners Limited
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,10 +17,10 @@
 
 package org.orbitmvi.orbit.syntax.simple
 
-import org.orbitmvi.orbit.syntax.Orbit2Dsl
+import org.orbitmvi.orbit.syntax.OrbitDsl
 import org.orbitmvi.orbit.syntax.strict.OrbitDslPlugin
 
-@Orbit2Dsl
+@OrbitDsl
 public class SimpleSyntax<S : Any, SE : Any>(internal val containerContext: OrbitDslPlugin.ContainerContext<S, SE>) {
 
     /**

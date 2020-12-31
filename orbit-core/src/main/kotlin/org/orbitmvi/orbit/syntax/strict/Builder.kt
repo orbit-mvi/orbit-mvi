@@ -1,4 +1,5 @@
 /*
+ * Copyright 2021 Mikolaj Leszczynski & Matthew Dolan
  * Copyright 2020 Babylon Partners Limited
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,11 +18,11 @@
 package org.orbitmvi.orbit.syntax.strict
 
 import org.orbitmvi.orbit.syntax.Operator
-import org.orbitmvi.orbit.syntax.Orbit2Dsl
+import org.orbitmvi.orbit.syntax.OrbitDsl
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 
-@Orbit2Dsl
+@OrbitDsl
 public class Builder<S : Any, SE : Any, E>(private val stack: List<Operator<S, *>> = emptyList()) {
 
     public fun <E2> add(operator: Operator<S, E2>): Builder<S, SE, E2> {
