@@ -21,7 +21,6 @@
 package org.orbitmvi.orbit.sample.calculator
 
 import android.app.Application
-import androidx.lifecycle.SavedStateHandle
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.context.startKoin
@@ -40,6 +39,6 @@ class CalculatorApplication : Application() {
     }
 
     private val mainModule = module {
-        viewModel { (savedStateHandle: SavedStateHandle) -> CalculatorViewModel(savedStateHandle) }
+        viewModel { CalculatorViewModel(get()) }
     }
 }
