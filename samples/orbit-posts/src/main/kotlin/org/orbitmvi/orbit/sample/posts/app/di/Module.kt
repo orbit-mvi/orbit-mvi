@@ -20,7 +20,11 @@
 
 package org.orbitmvi.orbit.sample.posts.app.di
 
-import androidx.lifecycle.SavedStateHandle
+import com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.registerKotlinModule
+import org.koin.androidx.viewmodel.dsl.viewModel
+import org.koin.dsl.module
 import org.orbitmvi.orbit.sample.posts.app.features.postdetails.viewmodel.PostDetailsViewModel
 import org.orbitmvi.orbit.sample.posts.app.features.postlist.viewmodel.PostListViewModel
 import org.orbitmvi.orbit.sample.posts.data.posts.PostDataRepository
@@ -29,11 +33,6 @@ import org.orbitmvi.orbit.sample.posts.data.posts.network.PostNetworkDataSource
 import org.orbitmvi.orbit.sample.posts.data.posts.network.TypicodeService
 import org.orbitmvi.orbit.sample.posts.domain.repositories.PostOverview
 import org.orbitmvi.orbit.sample.posts.domain.repositories.PostRepository
-import com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.registerKotlinModule
-import org.koin.androidx.viewmodel.dsl.viewModel
-import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.converter.jackson.JacksonConverterFactory
 

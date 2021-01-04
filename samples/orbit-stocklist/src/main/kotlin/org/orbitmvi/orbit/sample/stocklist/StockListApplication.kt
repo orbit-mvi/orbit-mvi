@@ -21,15 +21,14 @@
 package org.orbitmvi.orbit.sample.stocklist
 
 import android.app.Application
-import androidx.lifecycle.SavedStateHandle
-import org.orbitmvi.orbit.sample.stocklist.detail.business.DetailViewModel
-import org.orbitmvi.orbit.sample.stocklist.list.business.ListViewModel
-import org.orbitmvi.orbit.sample.stocklist.streaming.StreamingClient
-import org.orbitmvi.orbit.sample.stocklist.streaming.stock.StockRepository
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.context.startKoin
 import org.koin.dsl.module
+import org.orbitmvi.orbit.sample.stocklist.detail.business.DetailViewModel
+import org.orbitmvi.orbit.sample.stocklist.list.business.ListViewModel
+import org.orbitmvi.orbit.sample.stocklist.streaming.StreamingClient
+import org.orbitmvi.orbit.sample.stocklist.streaming.stock.StockRepository
 
 @Suppress("unused")
 class StockListApplication : Application() {
