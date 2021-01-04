@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <dimen name="separator_margin_start">16dp</dimen>
-    <dimen name="separator_margin_start_icon">72dp</dimen>
-    <dimen name="separator_margin_end">16dp</dimen>
-    <dimen name="separator_thickness">1dp</dimen>
-    <dimen name="toolbar_logo_size">24dp</dimen>
-    <dimen name="toolbar_logo_padding_end">24dp</dimen>
-</resources>
