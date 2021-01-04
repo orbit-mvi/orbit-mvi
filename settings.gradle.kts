@@ -1,31 +1,35 @@
 /*
+ * Copyright 2021 Mikołaj Leszczyński & Appmattus Limited
  * Copyright 2020 Babylon Partners Limited
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * File modified by Mikołaj Leszczyński & Appmattus Limited
+ * See: https://github.com/orbit-mvi/orbit-mvi/compare/c5b8b3f2b83b5972ba2ad98f73f75086a89653d3...main
  */
 
 include(
-    "orbit-2-core",
-    "orbit-2-coroutines",
-    "orbit-2-livedata",
-    "orbit-2-rxjava1",
-    "orbit-2-rxjava2",
-    "orbit-2-rxjava3",
-    "orbit-2-test",
-    "orbit-2-viewmodel",
-    "samples:orbit-2-calculator",
-    "samples:orbit-2-posts",
-    "samples:orbit-2-stocklist",
+    "orbit-core",
+    "orbit-coroutines",
+    "orbit-livedata",
+    "orbit-rxjava1",
+    "orbit-rxjava2",
+    "orbit-rxjava3",
+    "orbit-test",
+    "orbit-viewmodel",
+    "samples:orbit-calculator",
+    "samples:orbit-posts",
+    "samples:orbit-stocklist",
     "test-common"
 )
 
