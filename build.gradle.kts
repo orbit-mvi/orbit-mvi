@@ -117,7 +117,9 @@ subprojects {
     }
     plugins.withType<org.jetbrains.kotlin.gradle.plugin.KotlinPluginWrapper> {
         apply(from = "$rootDir/gradle/scripts/jacoco.gradle.kts")
-        apply(from = "$rootDir/gradle/scripts/bintray.gradle.kts")
+        if (project.name !in listOf("test-common")) {
+            apply(from = "$rootDir/gradle/scripts/bintray.gradle.kts")
+        }
         configure<org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension> {
             // for strict mode
             explicitApi()
