@@ -8,7 +8,7 @@ The LiveData plugin provides
 operators.
 
 ```kotlin
-implementation("org.orbit-mvi.orbit:orbit-livedata:<latest-version>")
+implementation("org.orbit-mvi:orbit-livedata:<latest-version>")
 ```
 
 ## transformLiveData

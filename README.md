@@ -43,7 +43,7 @@ And more!...
 ## Getting started in three simple steps
 
 ```kotlin
-implementation("org.orbit-mvi.orbit:orbit-viewmodel:<latest-version>")
+implementation("org.orbit-mvi:orbit-viewmodel:<latest-version>")
 ```
 
 [![Download](https://api.bintray.com/packages/orbitmvi/maven/orbit-core/images/download.svg)](https://bintray.com/orbitmvi/maven/orbit-core/_latestVersion)
@@ -193,17 +193,17 @@ alternatively include one of the other modules which already include
 `orbit-core`.
 
 ```kotlin
-implementation("org.orbit-mvi.orbit:orbit-core:<latest-version>")
-implementation("org.orbit-mvi.orbit:orbit-viewmodel:<latest-version>")
+implementation("org.orbit-mvi:orbit-core:<latest-version>")
+implementation("org.orbit-mvi:orbit-viewmodel:<latest-version>")
 
 // strict syntax DSL extensions
-implementation("org.orbit-mvi.orbit:orbit-coroutines:<latest-version>")
-implementation("org.orbit-mvi.orbit:orbit-rxjava1:<latest-version>")
-implementation("org.orbit-mvi.orbit:orbit-rxjava2:<latest-version>")
-implementation("org.orbit-mvi.orbit:orbit-rxjava3:<latest-version>")
-implementation("org.orbit-mvi.orbit:orbit-livedata:<latest-version>")
+implementation("org.orbit-mvi:orbit-coroutines:<latest-version>")
+implementation("org.orbit-mvi:orbit-rxjava1:<latest-version>")
+implementation("org.orbit-mvi:orbit-rxjava2:<latest-version>")
+implementation("org.orbit-mvi:orbit-rxjava3:<latest-version>")
+implementation("org.orbit-mvi:orbit-livedata:<latest-version>")
 
-testImplementation("org.orbit-mvi.orbit:orbit-test:<latest-version>")
+testImplementation("org.orbit-mvi:orbit-test:<latest-version>")
 ```
 
 [![Download](https://api.bintray.com/packages/orbitmvi/maven/orbit-core/images/download.svg)](https://bintray.com/orbitmvi/maven/orbit-core/_latestVersion)
