@@ -9,7 +9,7 @@
 The RxJava3 plugin provides RxJava 3 operators.
 
 ```kotlin
-implementation("org.orbit-mvi.orbit:orbit-rxjava3:<latest-version>")
+implementation("org.orbit-mvi:orbit-rxjava3:<latest-version>")
 ```
 
 ## transformRx3Observable

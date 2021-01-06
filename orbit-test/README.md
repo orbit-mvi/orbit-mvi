@@ -6,7 +6,7 @@ The module provides a simple unit testing framework for your Orbit
 ## Including the module
 
 ```kotlin
-testImplementation("org.orbit-mvi.orbit:orbit-test:<latest-version>")
+testImplementation("org.orbit-mvi:orbit-test:<latest-version>")
 ```
 
 ## Testing goals
