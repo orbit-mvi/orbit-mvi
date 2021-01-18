@@ -20,8 +20,8 @@
 
 package org.orbitmvi.orbit.syntax.strict
 
-//@ExperimentalCoroutinesApi
-//internal class BenchmarkTest {
+// @ExperimentalCoroutinesApi
+// internal class BenchmarkTest {
 //
 //    private val scope = CoroutineScope(Job())
 //
@@ -67,4 +67,4 @@ package org.orbitmvi.orbit.syntax.strict
 //            }
 //        }
 //    }
-//}
+// }

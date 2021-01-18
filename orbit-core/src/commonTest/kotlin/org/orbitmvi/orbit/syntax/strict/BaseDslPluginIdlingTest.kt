@@ -24,7 +24,6 @@ import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.container
 import org.orbitmvi.orbit.idling.IdlingResource
-import org.orbitmvi.orbit.test.assertEventually
 import org.orbitmvi.orbit.test.runBlocking
 import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.booleans.shouldBeTrue

@@ -57,16 +57,15 @@ kotlin {
         }
 
         val iosTest by getting {
-
         }
     }
 }
 
-//// Fix lack of source code when publishing pure Kotlin projects
-//// See https://github.com/novoda/bintray-release/issues/262
-//tasks.whenTaskAdded {
+// // Fix lack of source code when publishing pure Kotlin projects
+// // See https://github.com/novoda/bintray-release/issues/262
+// tasks.whenTaskAdded {
 //    if (name == "generateSourcesJarForMavenPublication") {
 //        this as Jar
 //        from(sourceSets.main.get().allSource)
 //    }
-//}
+// }
