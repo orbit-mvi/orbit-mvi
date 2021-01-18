@@ -1,8 +1,8 @@
-# Orbit 2 for Kotlin and Android
+# Orbit for Kotlin and Android
 
-[![CI status](https://github.com/babylonhealth/orbit-mvi/workflows/Android%20CI/badge.svg)](https://github.com/babylonhealth/orbit-mvi/actions)
-[![codecov](https://codecov.io/gh/babylonhealth/orbit-mvi/branch/main/graph/badge.svg)](https://codecov.io/gh/babylonhealth/orbit-mvi)
-[![Download](https://api.bintray.com/packages/babylonpartners/maven/orbit-core/images/download.svg)](https://bintray.com/babylonpartners/maven/orbit-core/_latestVersion)
+[![CI status](https://github.com/orbit-mvi/orbit-mvi/workflows/Android%20CI/badge.svg)](https://github.com/orbit-mvi/orbit-mvi/actions)
+[![codecov](https://codecov.io/gh/orbit-mvi/orbit-mvi/branch/main/graph/badge.svg)](https://codecov.io/gh/orbit-mvi/orbit-mvi)
+[![Download](https://api.bintray.com/packages/orbitmvi/maven/orbit-core/images/download.svg)](https://bintray.com/orbitmvi/maven/orbit-core/_latestVersion)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE.md)
 
 ![Logo](images/logo.png)
@@ -12,28 +12,25 @@
 If you do not yet have an account with the Kotlinlang slack workspace,
 [sign up here](https://slack.kotlinlang.org).
 
-If you're looking for the original Orbit library,
-[it's available
-here.](https://github.com/babylonhealth/orbit-mvi/tree/orbit/main)
+This library was originally developed at [Babylon Health](https://github.com/babylonhealth/orbit-mvi).
+However, as its development over there ceased, further development
+has been moved to this project maintained by the original authors.
 
 ## Documentation
 
-- [Core module and architecture overview](orbit-2-core/README.md)
-- [Coroutines](orbit-2-coroutines/README.md)
-- [RxJava 1](orbit-2-rxjava1/README.md)
-- [RxJava 2](orbit-2-rxjava2/README.md)
-- [RxJava 3](orbit-2-rxjava3/README.md)
-- [LiveData](orbit-2-livedata/README.md)
-- [ViewModel](orbit-2-viewmodel/README.md)
-- [Test](orbit-2-test/README.md)
+- [Core module and architecture overview](orbit-core/README.md)
+- [Coroutines](orbit-coroutines/README.md)
+- [RxJava 1](orbit-rxjava1/README.md)
+- [RxJava 2](orbit-rxjava2/README.md)
+- [RxJava 3](orbit-rxjava3/README.md)
+- [LiveData](orbit-livedata/README.md)
+- [ViewModel](orbit-viewmodel/README.md)
+- [Test](orbit-test/README.md)
 
 ## Overview
 
-Orbit 2 is a simple scaffolding you can build a Redux/MVI-like architecture
+Orbit is a simple scaffolding you can build a Redux/MVI-like architecture
 around.
-
-In Orbit 2 we have taken the [best features of Orbit 1](history.md) and
-rewritten the rest from scratch.
 
 - Easy to use, type-safe, extensible API
 - Coroutine, RxJava (1 2 & 3!) and LiveData operator support
@@ -46,10 +43,10 @@ And more!...
 ## Getting started in three simple steps
 
 ```kotlin
-implementation("com.babylon.orbit2:orbit-viewmodel:<latest-version>")
+implementation("org.orbit-mvi:orbit-viewmodel:<latest-version>")
 ```
 
-[![Download](https://api.bintray.com/packages/babylonpartners/maven/orbit-core/images/download.svg)](https://bintray.com/babylonpartners/maven/orbit-core/_latestVersion)
+[![Download](https://api.bintray.com/packages/orbitmvi/maven/orbit-core/images/download.svg)](https://bintray.com/orbitmvi/maven/orbit-core/_latestVersion)
 
 ### Define the contract
 
@@ -75,13 +72,13 @@ Using the core Orbit functionality, we can create a simple, functional
 ViewModel.
 
 1. Implement the
-   [ContainerHost](orbit-2-core/src/main/kotlin/com/babylon/orbit2/ContainerHost.kt)
+   [ContainerHost](orbit-core/src/main/kotlin/org/orbitmvi/orbit/ContainerHost.kt)
    interface
 1. Override the `container` field and use the `ViewModel.container` factory
    function to build an Orbit
-   [Container](orbit-2-core/src/main/kotlin/com/babylon/orbit2/Container.kt) in
+   [Container](orbit-core/src/main/kotlin/org/orbitmvi/orbit/Container.kt) in
    your
-   [ContainerHost](orbit-2-core/src/main/kotlin/com/babylon/orbit2/ContainerHost.kt)
+   [ContainerHost](orbit-core/src/main/kotlin/org/orbitmvi/orbit/ContainerHost.kt)
 
 ``` kotlin
 class CalculatorViewModel: ContainerHost<CalculatorState, CalculatorSideEffect>, ViewModel() {
@@ -101,7 +98,7 @@ class CalculatorViewModel: ContainerHost<CalculatorState, CalculatorSideEffect>,
 
 We have used an Android `ViewModel` as the most common example, but there is no
 requirement to do so. You can host an Orbit
-[Container](orbit-2-core/src/main/kotlin/com/babylon/orbit2/Container.kt) in a
+[Container](orbit-core/src/main/kotlin/org/orbitmvi/orbit/Container.kt) in a
 simple class if you wish. This makes it possible to use in simple Kotlin
 projects as well as lifecycle independent services.
 
@@ -184,7 +181,7 @@ class MyViewModel: ContainerHost<MyState, MySideEffect>, ViewModel() {
 
 ## Modules
 
-Orbit 2 is a modular framework. The Core module provides basic Orbit
+Orbit is a modular framework. The Core module provides basic Orbit
 functionality with additional features provided through optional modules.
 
 Orbit supports using various async/stream frameworks at the same time so it is
@@ -196,20 +193,20 @@ alternatively include one of the other modules which already include
 `orbit-core`.
 
 ```kotlin
-implementation("com.babylon.orbit2:orbit-core:<latest-version>")
-implementation("com.babylon.orbit2:orbit-viewmodel:<latest-version>")
+implementation("org.orbit-mvi:orbit-core:<latest-version>")
+implementation("org.orbit-mvi:orbit-viewmodel:<latest-version>")
 
 // strict syntax DSL extensions
-implementation("com.babylon.orbit2:orbit-coroutines:<latest-version>")
-implementation("com.babylon.orbit2:orbit-rxjava1:<latest-version>")
-implementation("com.babylon.orbit2:orbit-rxjava2:<latest-version>")
-implementation("com.babylon.orbit2:orbit-rxjava3:<latest-version>")
-implementation("com.babylon.orbit2:orbit-livedata:<latest-version>")
+implementation("org.orbit-mvi:orbit-coroutines:<latest-version>")
+implementation("org.orbit-mvi:orbit-rxjava1:<latest-version>")
+implementation("org.orbit-mvi:orbit-rxjava2:<latest-version>")
+implementation("org.orbit-mvi:orbit-rxjava3:<latest-version>")
+implementation("org.orbit-mvi:orbit-livedata:<latest-version>")
 
-testImplementation("com.babylon.orbit2:orbit-test:<latest-version>")
+testImplementation("org.orbit-mvi:orbit-test:<latest-version>")
 ```
 
-[![Download](https://api.bintray.com/packages/babylonpartners/maven/orbit-core/images/download.svg)](https://bintray.com/babylonpartners/maven/orbit-core/_latestVersion)
+[![Download](https://api.bintray.com/packages/orbitmvi/maven/orbit-core/images/download.svg)](https://bintray.com/orbitmvi/maven/orbit-core/_latestVersion)
 
 ## Contributing
 
@@ -220,7 +217,7 @@ requests to us.
 ## Versioning
 
 We use [SemVer](http://semver.org/) for versioning. For the versions
-available, see the [tags on this repository](https://github.com/babylonhealth/orbit-mvi/tags).
+available, see the [tags on this repository](https://github.com/orbit-mvi/orbit-mvi/tags).
 
 ## License
 
