@@ -29,7 +29,7 @@ object Versions {
     const val atomicfu = "0.14.4"
 
     const val kotlin = "1.4.21"
-    const val coroutines = "1.4.1-native-mt"
+    const val coroutines = "1.4.2-native-mt"
 
     const val androidxLifecycles = "2.2.0"
     const val androidxAnnotation = "1.1.0"

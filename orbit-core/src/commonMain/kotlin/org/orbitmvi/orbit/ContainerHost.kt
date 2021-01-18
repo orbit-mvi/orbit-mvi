@@ -34,8 +34,8 @@ public interface ContainerHost<STATE : Any, SIDE_EFFECT : Any> {
      * Use factory functions to easily obtain a [Container] instance.
      *
      * ```
-     * override val container = scope.container<MyState, MySideEffect>(initialState)
+     * override var container = scope.container<MyState, MySideEffect>(initialState)
      * ```
      */
-    public val container: Container<STATE, SIDE_EFFECT>
+    public var container: Container<STATE, SIDE_EFFECT> // TODO temporarily var until we can figure out how to swap out for test container
 }

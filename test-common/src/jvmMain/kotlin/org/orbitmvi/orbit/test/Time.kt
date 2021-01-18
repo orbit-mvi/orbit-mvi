@@ -1,3 +1,3 @@
-package com.babylon.orbit2.test
+package org.orbitmvi.orbit.test
 
 actual fun getSystemTimeInMillis() = System.currentTimeMillis()

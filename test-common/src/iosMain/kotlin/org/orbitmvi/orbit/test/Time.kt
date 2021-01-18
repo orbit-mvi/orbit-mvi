@@ -1,4 +1,4 @@
-package com.babylon.orbit2.test
+package org.orbitmvi.orbit.test
 
 import kotlin.system.getTimeMillis
 

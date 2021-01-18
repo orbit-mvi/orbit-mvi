@@ -29,7 +29,7 @@ import io.kotest.matchers.collections.shouldContainExactly
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.test.TestCoroutineScope
+import kotlinx.coroutines.CoroutineScope
 import kotlin.random.Random
 import kotlin.test.AfterTest
 import kotlin.test.Test
@@ -37,11 +37,10 @@ import kotlin.test.Test
 @ExperimentalCoroutinesApi
 internal class ContainerLifecycleTest {
 
-    private val scope = TestCoroutineScope(Job())
+    private val scope = CoroutineScope(Job())
 
     @AfterTest
     fun afterTest() {
-        scope.cleanupTestCoroutines()
         scope.cancel()
     }
 
@@ -63,9 +62,9 @@ internal class ContainerLifecycleTest {
 
     private inner class Middleware(initialState: TestState) : ContainerHost<TestState, String> {
 
-        override val container = scope.container<TestState, String>(initialState) {
-                onCreate(it)
-            }
+        override var container = scope.container<TestState, String>(initialState) {
+            onCreate(it)
+        }
 
         private fun onCreate(createState: TestState) = orbit {
             sideEffect {

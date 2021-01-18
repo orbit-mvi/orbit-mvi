@@ -20,68 +20,51 @@
 
 package org.orbitmvi.orbit.syntax.simple
 
-import org.orbitmvi.orbit.ContainerHost
-import org.orbitmvi.orbit.container
-import org.orbitmvi.orbit.test
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.test.TestCoroutineScope
-import java.util.concurrent.CountDownLatch
-import java.util.concurrent.TimeUnit
-import kotlin.random.Random
-import kotlin.system.measureTimeMillis
-import kotlin.test.AfterTest
-import kotlin.test.Test
-
-@ExperimentalCoroutinesApi
-internal class BenchmarkTest {
-
-    private val scope = TestCoroutineScope(Job())
-
-    @AfterTest
-    fun afterTest() {
-        scope.cleanupTestCoroutines()
-        scope.cancel()
-    }
-
-    @Test
-    fun benchmark() {
-        val x = 100_000
-        val middleware = BenchmarkMiddleware(x)
-        val testFlowObserver = middleware.container.stateFlow.test()
-
-        val actions = List(100_000) { Random.nextInt() }
-
-        GlobalScope.launch {
-            actions.forEach {
-                middleware.reducer(it)
-            }
-        }
-
-        val millisReducing = measureTimeMillis {
-            middleware.latch.await(10, TimeUnit.SECONDS)
-        }
-
-        println(testFlowObserver.values.size)
-        println(millisReducing)
-        val reduction: Float = millisReducing.toFloat() / x
-        println(reduction)
-    }
-
-    private data class TestState(val id: Int)
-
-    private inner class BenchmarkMiddleware(count: Int) : ContainerHost<TestState, String> {
-        override val container = scope.container<TestState, String>(TestState(42))
-
-        val latch = CountDownLatch(count)
-
-        fun reducer(action: Int) = intent {
-            reduce {
-                state.copy(id = action).also { latch.countDown() }
-            }
-        }
-    }
-}
+//@ExperimentalCoroutinesApi
+//internal class BenchmarkTest {
+//
+//    private val scope = CoroutineScope(Job())
+//
+//    @AfterTest
+//    fun afterTest() {
+//        scope.cancel()
+//    }
+//
+//    @Test
+//    fun benchmark() {
+//        val x = 100_000
+//        val middleware = BenchmarkMiddleware(x)
+//        val testFlowObserver = middleware.container.stateFlow.test()
+//
+//        val actions = List(100_000) { Random.nextInt() }
+//
+//        GlobalScope.launch {
+//            actions.forEach {
+//                middleware.reducer(it)
+//            }
+//        }
+//
+//        val millisReducing = measureTimeMillis {
+//            middleware.latch.await(10, TimeUnit.SECONDS)
+//        }
+//
+//        println(testFlowObserver.values.size)
+//        println(millisReducing)
+//        val reduction: Float = millisReducing.toFloat() / x
+//        println(reduction)
+//    }
+//
+//    private data class TestState(val id: Int)
+//
+//    private inner class BenchmarkMiddleware(count: Int) : ContainerHost<TestState, String> {
+//        override var container = scope.container<TestState, String>(TestState(42))
+//
+//        val latch = CountDownLatch(count)
+//
+//        fun reducer(action: Int) = intent {
+//            reduce {
+//                state.copy(id = action).also { latch.countDown() }
+//            }
+//        }
+//    }
+//}

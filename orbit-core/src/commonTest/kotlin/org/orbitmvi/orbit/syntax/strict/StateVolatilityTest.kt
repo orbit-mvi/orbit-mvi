@@ -25,15 +25,14 @@ import io.kotest.matchers.shouldNotBe
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.container
+import org.orbitmvi.orbit.test.runBlocking
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import kotlinx.coroutines.test.TestCoroutineScope
 import kotlinx.coroutines.withTimeout
 import kotlin.test.AfterTest
 import kotlin.test.Test
@@ -44,11 +43,10 @@ internal class StateVolatilityTest {
         private const val TIMEOUT = 5000L
     }
 
-    private val scope = TestCoroutineScope(Job())
+    private val scope = CoroutineScope(Job())
 
     @AfterTest
     fun afterTest() {
-        scope.cleanupTestCoroutines()
         scope.cancel()
     }
 
@@ -132,7 +130,7 @@ internal class StateVolatilityTest {
 
     private fun CoroutineScope.createContainerHost(): ContainerHost<TestState, Int> {
         return object : ContainerHost<TestState, Int> {
-            override val container: Container<TestState, Int> = container(
+            override var container: Container<TestState, Int> = container(
                 initialState = TestState(0)
             )
         }

@@ -23,7 +23,7 @@ package org.orbitmvi.orbit.rxjava1
 import org.orbitmvi.orbit.syntax.strict.Builder
 import org.orbitmvi.orbit.syntax.Operator
 import org.orbitmvi.orbit.syntax.OrbitDsl
-import org.orbitmvi.orbit.syntax.strict.OrbitDslPlugins
+import org.orbitmvi.orbit.syntax.strict.orbitDslPlugins
 import org.orbitmvi.orbit.syntax.strict.VolatileContext
 import rx.Completable
 
@@ -46,6 +46,6 @@ public fun <S : Any, SE : Any, E> Builder<S, SE, E>.transformRx1Completable(
     registerIdling: Boolean = true,
     block: VolatileContext<S, E>.() -> Completable
 ): Builder<S, SE, E> {
-    OrbitDslPlugins.register(RxJava1DslPlugin)
+    orbitDslPlugins.register(RxJava1DslPlugin)
     return add(RxJava1Completable(registerIdling, block))
 }

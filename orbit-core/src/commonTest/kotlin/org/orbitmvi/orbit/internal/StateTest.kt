@@ -27,10 +27,10 @@ import org.orbitmvi.orbit.syntax.strict.reduce
 import org.orbitmvi.orbit.test
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.shouldBe
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.test.TestCoroutineScope
 import kotlin.random.Random
 import kotlin.test.AfterTest
 import kotlin.test.Test
@@ -38,11 +38,10 @@ import kotlin.test.Test
 @ExperimentalCoroutinesApi
 internal class StateTest {
 
-    private val scope = TestCoroutineScope(Job())
+    private val scope = CoroutineScope(Job())
 
     @AfterTest
     fun afterTest() {
-        scope.cleanupTestCoroutines()
         scope.cancel()
     }
 
@@ -105,7 +104,7 @@ internal class StateTest {
     private data class TestState(val id: Int = Random.nextInt())
 
     private inner class Middleware(initialState: TestState) : ContainerHost<TestState, String> {
-        override val container = scope.container<TestState, String>(initialState)
+        override var container = scope.container<TestState, String>(initialState)
 
         fun something(action: Int) = orbit {
             reduce {

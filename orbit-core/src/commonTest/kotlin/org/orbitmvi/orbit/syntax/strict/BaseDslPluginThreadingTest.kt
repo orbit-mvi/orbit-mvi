@@ -24,15 +24,15 @@ import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.container
 import org.orbitmvi.orbit.test
 import org.orbitmvi.orbit.test.ScopedBlockingWorkSimulator
+import org.orbitmvi.orbit.test.runBlocking
 import io.kotest.matchers.collections.shouldContainExactly
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import kotlinx.coroutines.test.TestCoroutineScope
 import kotlinx.coroutines.withTimeout
 import kotlin.random.Random
 import kotlin.test.AfterTest
@@ -41,13 +41,13 @@ import kotlin.test.Test
 @ExperimentalCoroutinesApi
 internal class BaseDslPluginThreadingTest {
 
-    private val scope = TestCoroutineScope(Job())
+    private val scope = CoroutineScope(Job())
     private val middleware = Middleware()
+    private val timeout = 10000L
 
     @AfterTest
     fun afterTest() {
         scope.cancel()
-        scope.cleanupTestCoroutines()
     }
 
     @Test
@@ -57,7 +57,7 @@ internal class BaseDslPluginThreadingTest {
 
         middleware.blockingTransformer()
         runBlocking {
-            withTimeout(1000L) {
+            withTimeout(timeout) {
                 middleware.transformerMutex.withLock { }
                 delay(50)
             }
@@ -75,7 +75,7 @@ internal class BaseDslPluginThreadingTest {
 
         middleware.blockingTransformer()
         runBlocking {
-            withTimeout(1000L) {
+            withTimeout(timeout) {
                 middleware.transformerMutex.withLock { }
                 delay(20)
             }
@@ -128,7 +128,7 @@ internal class BaseDslPluginThreadingTest {
 
         middleware.call()
         runBlocking {
-            withTimeout(1000L) {
+            withTimeout(timeout) {
                 middleware.mutex().withLock { }
                 delay(20)
             }
@@ -150,7 +150,7 @@ internal class BaseDslPluginThreadingTest {
 
         middleware.call()
         runBlocking {
-            withTimeout(1000L) {
+            withTimeout(timeout) {
                 middleware.mutex().withLock { }
                 delay(20)
             }
@@ -167,7 +167,7 @@ internal class BaseDslPluginThreadingTest {
     private inner class Middleware : ContainerHost<TestState, String> {
 
         @Suppress("EXPERIMENTAL_API_USAGE")
-        override val container = scope.container<TestState, String>(TestState(42))
+        override var container = scope.container<TestState, String>(TestState(42))
 
         val reducerMutex = Mutex(locked = true)
         val transformerMutex = Mutex(locked = true)

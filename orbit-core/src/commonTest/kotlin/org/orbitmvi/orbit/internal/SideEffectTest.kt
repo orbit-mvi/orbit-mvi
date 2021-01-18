@@ -26,12 +26,12 @@ import org.orbitmvi.orbit.test
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.collections.shouldNotContainExactly
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.test.TestCoroutineScope
 import kotlin.random.Random
 import kotlin.test.AfterTest
 import kotlin.test.Test
@@ -39,11 +39,10 @@ import kotlin.test.Test
 @ExperimentalCoroutinesApi
 internal class SideEffectTest {
 
-    private val scope = TestCoroutineScope(Job())
+    private val scope = CoroutineScope(Job())
 
     @AfterTest
     fun afterTest() {
-        scope.cleanupTestCoroutines()
         scope.cancel()
     }
 

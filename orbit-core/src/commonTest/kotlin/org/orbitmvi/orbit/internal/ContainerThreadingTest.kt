@@ -23,16 +23,15 @@ package org.orbitmvi.orbit.internal
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.container
 import org.orbitmvi.orbit.test
+import org.orbitmvi.orbit.test.runBlocking
 import io.kotest.matchers.shouldBe
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.test.TestCoroutineScope
-import java.util.concurrent.CountDownLatch
 import kotlin.random.Random
 import kotlin.test.AfterTest
 import kotlin.test.Test
@@ -40,11 +39,10 @@ import kotlin.test.Test
 @ExperimentalCoroutinesApi
 internal class ContainerThreadingTest {
 
-    private val scope = TestCoroutineScope(Job())
+    private val scope = CoroutineScope(Job())
 
     @AfterTest
     fun afterTest() {
-        scope.cleanupTestCoroutines()
         scope.cancel()
     }
 
@@ -132,7 +130,6 @@ internal class ContainerThreadingTest {
 
     private data class TestState(val ids: List<Int> = emptyList())
 
-    private val latch = CountDownLatch(ITEM_COUNT)
     private fun Container<TestState, Nothing>.one(delay: Boolean = false) = orbit {
         if (delay) {
             delay(Random.nextLong(20))
@@ -140,7 +137,6 @@ internal class ContainerThreadingTest {
         reduce {
             it.copy(ids = state.ids + 1)
         }
-        latch.countDown()
     }
 
     private fun Container<TestState, Nothing>.two(delay: Boolean = false) = orbit {
@@ -150,7 +146,6 @@ internal class ContainerThreadingTest {
         reduce {
             it.copy(ids = state.ids + 2)
         }
-        latch.countDown()
     }
 
     private fun Container<TestState, Nothing>.three(delay: Boolean = false) = orbit {
@@ -160,7 +155,6 @@ internal class ContainerThreadingTest {
         reduce {
             it.copy(ids = state.ids + 3)
         }
-        latch.countDown()
     }
 
     private companion object {

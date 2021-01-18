@@ -35,7 +35,7 @@ class ListViewModel(
     private val stockRepository: StockRepository
 ) : ViewModel(), ContainerHost<ListState, ListSideEffect> {
 
-    override val container = container<ListState, ListSideEffect>(ListState(), savedStateHandle) { requestStocks() }
+    override var container = container<ListState, ListSideEffect>(ListState(), savedStateHandle) { requestStocks() }
 
     private fun requestStocks(): Unit = orbit {
         transformFlow {

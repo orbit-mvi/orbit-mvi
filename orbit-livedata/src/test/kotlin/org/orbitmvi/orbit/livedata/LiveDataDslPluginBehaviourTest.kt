@@ -38,7 +38,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.container
-import org.orbitmvi.orbit.syntax.strict.OrbitDslPlugins
+import org.orbitmvi.orbit.syntax.strict.orbitDslPlugins
 import org.orbitmvi.orbit.syntax.strict.orbit
 import org.orbitmvi.orbit.syntax.strict.reduce
 import kotlin.random.Random
@@ -51,7 +51,7 @@ internal class LiveDataDslPluginBehaviourTest {
 
     @BeforeEach
     fun beforeEach() {
-        OrbitDslPlugins.reset() // Test for proper registration
+        orbitDslPlugins.reset() // Test for proper registration
         Dispatchers.setMain(Dispatchers.Unconfined)
     }
 

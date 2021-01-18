@@ -20,7 +20,7 @@
 
 package org.orbitmvi.orbit
 
-import org.orbitmvi.orbit.syntax.strict.OrbitDslPlugins
+import org.orbitmvi.orbit.syntax.strict.orbitDslPlugins
 import org.orbitmvi.orbit.syntax.strict.orbit
 import org.orbitmvi.orbit.syntax.strict.reduce
 import org.orbitmvi.orbit.syntax.strict.sideEffect
@@ -56,7 +56,7 @@ internal class CoroutineDslPluginBehaviourTest {
 
     @BeforeEach
     fun beforeEach() {
-        OrbitDslPlugins.reset() // Test for proper registration
+        orbitDslPlugins.reset() // Test for proper registration
     }
 
     @Test

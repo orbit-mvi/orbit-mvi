@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package com.babylon.orbit2.test
+package org.orbitmvi.orbit.test
 
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext

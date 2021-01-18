@@ -24,10 +24,10 @@ import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.assert
 import org.orbitmvi.orbit.container
 import org.orbitmvi.orbit.test
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.test.TestCoroutineScope
 import kotlin.random.Random
 import kotlin.test.AfterTest
 import kotlin.test.Test
@@ -36,11 +36,10 @@ import kotlin.test.Test
 internal class BaseDslPluginBehaviourTest {
 
     private val initialState = TestState()
-    private val scope = TestCoroutineScope(Job())
+    private val scope = CoroutineScope(Job())
 
     @AfterTest
     fun afterTest() {
-        scope.cleanupTestCoroutines()
         scope.cancel()
     }
 
@@ -109,7 +108,7 @@ internal class BaseDslPluginBehaviourTest {
     private data class TestState(val id: Int = Random.nextInt())
 
     private inner class BaseDslMiddleware : ContainerHost<TestState, String> {
-        override val container = scope.container<TestState, String>(
+        override var container = scope.container<TestState, String>(
             TestState(42)
         )
 

@@ -24,7 +24,7 @@ import androidx.lifecycle.LiveData
 import org.orbitmvi.orbit.syntax.Operator
 import org.orbitmvi.orbit.syntax.OrbitDsl
 import org.orbitmvi.orbit.syntax.strict.Builder
-import org.orbitmvi.orbit.syntax.strict.OrbitDslPlugins
+import org.orbitmvi.orbit.syntax.strict.orbitDslPlugins
 import org.orbitmvi.orbit.syntax.strict.VolatileContext
 
 internal class LiveDataOperator<S : Any, E, E2 : Any>(
@@ -46,7 +46,7 @@ fun <S : Any, SE : Any, E : Any, E2 : Any> Builder<S, SE, E>.transformLiveData(
     registerIdling: Boolean = false,
     block: VolatileContext<S, E>.() -> LiveData<E2>
 ): Builder<S, SE, E2> {
-    OrbitDslPlugins.register(LiveDataDslPlugin)
+    orbitDslPlugins.register(LiveDataDslPlugin)
     return add(
         LiveDataOperator(
             registerIdling,

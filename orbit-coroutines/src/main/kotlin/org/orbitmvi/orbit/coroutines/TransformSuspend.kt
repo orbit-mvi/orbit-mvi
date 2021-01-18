@@ -23,7 +23,7 @@ package org.orbitmvi.orbit.coroutines
 import org.orbitmvi.orbit.syntax.Operator
 import org.orbitmvi.orbit.syntax.OrbitDsl
 import org.orbitmvi.orbit.syntax.strict.Builder
-import org.orbitmvi.orbit.syntax.strict.OrbitDslPlugins
+import org.orbitmvi.orbit.syntax.strict.orbitDslPlugins
 import org.orbitmvi.orbit.syntax.strict.VolatileContext
 import kotlinx.coroutines.Dispatchers
 
@@ -46,6 +46,6 @@ public fun <S : Any, SE : Any, E, E2> Builder<S, SE, E>.transformSuspend(
     registerIdling: Boolean = true,
     block: suspend VolatileContext<S, E>.() -> E2
 ): Builder<S, SE, E2> {
-    OrbitDslPlugins.register(CoroutineDslPlugin)
+    orbitDslPlugins.register(CoroutineDslPlugin)
     return add(TransformSuspend(registerIdling, block))
 }

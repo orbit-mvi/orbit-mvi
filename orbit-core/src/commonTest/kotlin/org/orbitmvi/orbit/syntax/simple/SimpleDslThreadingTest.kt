@@ -24,8 +24,10 @@ import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.container
 import org.orbitmvi.orbit.test
 import org.orbitmvi.orbit.test.ScopedBlockingWorkSimulator
+import org.orbitmvi.orbit.test.runBlocking
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.collections.shouldContainExactly
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
@@ -34,10 +36,8 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import kotlinx.coroutines.test.TestCoroutineScope
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeout
 import kotlin.random.Random
@@ -47,13 +47,12 @@ import kotlin.test.Test
 @ExperimentalCoroutinesApi
 internal class SimpleDslThreadingTest {
 
-    private val scope = TestCoroutineScope(Job())
+    private val scope = CoroutineScope(Job())
     private val middleware = BaseDslMiddleware()
 
     @AfterTest
     fun afterTest() {
         scope.cancel()
-        scope.cleanupTestCoroutines()
     }
 
     @Test
@@ -140,7 +139,7 @@ internal class SimpleDslThreadingTest {
     private inner class BaseDslMiddleware : ContainerHost<TestState, String> {
 
         @Suppress("EXPERIMENTAL_API_USAGE")
-        override val container = scope.container<TestState, String>(TestState(42))
+        override var container = scope.container<TestState, String>(TestState(42))
 
         val intentMutex = Mutex(locked = true)
         val reducerMutex = Mutex(locked = true)

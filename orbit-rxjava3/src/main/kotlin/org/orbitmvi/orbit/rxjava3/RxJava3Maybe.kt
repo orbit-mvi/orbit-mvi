@@ -23,7 +23,7 @@ package org.orbitmvi.orbit.rxjava3
 import org.orbitmvi.orbit.syntax.strict.Builder
 import org.orbitmvi.orbit.syntax.Operator
 import org.orbitmvi.orbit.syntax.OrbitDsl
-import org.orbitmvi.orbit.syntax.strict.OrbitDslPlugins
+import org.orbitmvi.orbit.syntax.strict.orbitDslPlugins
 import org.orbitmvi.orbit.syntax.strict.VolatileContext
 import io.reactivex.rxjava3.core.Maybe
 
@@ -46,6 +46,6 @@ public fun <S : Any, SE : Any, E : Any, E2 : Any> Builder<S, SE, E>.transformRx3
     registerIdling: Boolean = true,
     block: VolatileContext<S, E>.() -> Maybe<E2>
 ): Builder<S, SE, E2> {
-    OrbitDslPlugins.register(RxJava3DslPlugin)
+    orbitDslPlugins.register(RxJava3DslPlugin)
     return add(RxJava3Maybe(registerIdling, block))
 }

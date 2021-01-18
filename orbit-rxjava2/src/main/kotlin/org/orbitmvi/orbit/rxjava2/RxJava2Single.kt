@@ -23,7 +23,7 @@ package org.orbitmvi.orbit.rxjava2
 import org.orbitmvi.orbit.syntax.strict.Builder
 import org.orbitmvi.orbit.syntax.Operator
 import org.orbitmvi.orbit.syntax.OrbitDsl
-import org.orbitmvi.orbit.syntax.strict.OrbitDslPlugins
+import org.orbitmvi.orbit.syntax.strict.orbitDslPlugins
 import org.orbitmvi.orbit.syntax.strict.VolatileContext
 import io.reactivex.Single
 
@@ -46,6 +46,6 @@ public fun <S : Any, SE : Any, E : Any, E2 : Any> Builder<S, SE, E>.transformRx2
     registerIdling: Boolean = true,
     block: VolatileContext<S, E>.() -> Single<E2>
 ): Builder<S, SE, E2> {
-    OrbitDslPlugins.register(RxJava2DslPlugin)
+    orbitDslPlugins.register(RxJava2DslPlugin)
     return add(RxJava2Single(registerIdling, block))
 }

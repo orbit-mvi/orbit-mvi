@@ -28,7 +28,6 @@ import kotlinx.coroutines.channels.produce
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 
 @Suppress("EXPERIMENTAL_API_USAGE")
 public class ScopedBlockingWorkSimulator(private val scope: CoroutineScope) {

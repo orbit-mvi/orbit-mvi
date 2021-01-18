@@ -20,6 +20,11 @@
 
 package org.orbitmvi.orbit.syntax.strict
 
+import kotlinx.atomicfu.AtomicRef
+import kotlinx.atomicfu.atomic
+import kotlinx.atomicfu.update
+import kotlin.native.concurrent.SharedImmutable
+
 /**
  * Orbit DSL plugin registry. In order for DSL extensions to work they need to be registered here
  * before use.
@@ -27,10 +32,11 @@ package org.orbitmvi.orbit.syntax.strict
  * The base DSL provided by [BaseDslPlugin] does not have to be registered as it is registered
  * implicitly, even after a [reset].
  */
-public object OrbitDslPlugins {
+public class OrbitDslPlugins {
 
-    internal var plugins: Set<OrbitDslPlugin> = setOf(BaseDslPlugin)
-        private set
+    private val _plugins: AtomicRef<Set<OrbitDslPlugin>> = atomic(setOf(BaseDslPlugin))
+    internal val plugins: Set<OrbitDslPlugin>
+        get() = _plugins.value
 
     /**
      * Register DSL plugins. This has to be done before using the DSL provided by the plugin.
@@ -38,8 +44,8 @@ public object OrbitDslPlugins {
      * @param plugin The DSL plugin to register
      */
     public fun register(plugin: OrbitDslPlugin) {
-        if (!plugins.contains(plugin)) {
-            plugins = plugins + plugin
+        _plugins.update {
+            it + plugin
         }
     }
 
@@ -47,6 +53,9 @@ public object OrbitDslPlugins {
      * Clears all registered plugins apart from the [BaseDslPlugin].
      */
     public fun reset() {
-        plugins = setOf(BaseDslPlugin)
+        _plugins.update { setOf(BaseDslPlugin) }
     }
 }
+
+@SharedImmutable
+public val orbitDslPlugins = OrbitDslPlugins()

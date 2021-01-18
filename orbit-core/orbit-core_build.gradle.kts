@@ -39,6 +39,7 @@ kotlin {
                 implementation(kotlin("test-annotations-common"))
                 implementation(project(":test-common"))
                 implementation(project(":orbit-test"))
+                implementation(ProjectDependencies.kotlinCoroutines)
                 implementation(ProjectDependencies.kotestAssertions)
             }
         }
@@ -48,7 +49,7 @@ kotlin {
         val jvmTest by getting {
             dependencies {
 //                implementation(kotlin("test"))
-//                implementation(kotlin("test-junit5"))
+                implementation(kotlin("test-junit"))
             }
         }
 

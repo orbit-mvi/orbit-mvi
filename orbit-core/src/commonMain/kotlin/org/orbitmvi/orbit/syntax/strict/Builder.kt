@@ -37,7 +37,7 @@ public class Builder<S : Any, SE : Any, E>(private val stack: List<Operator<S, *
         pluginContext: OrbitDslPlugin.ContainerContext<S, SE>
     ): Flow<Any?> {
         return stack.fold(flowOf(Unit)) { flow: Flow<Any?>, operator: Operator<S, *> ->
-            OrbitDslPlugins.plugins.fold(flow) { flow2: Flow<Any?>, plugin: OrbitDslPlugin ->
+            orbitDslPlugins.plugins.fold(flow) { flow2: Flow<Any?>, plugin: OrbitDslPlugin ->
                 plugin.apply(
                     pluginContext,
                     flow2,
