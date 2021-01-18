@@ -72,13 +72,13 @@ Using the core Orbit functionality, we can create a simple, functional
 ViewModel.
 
 1. Implement the
-   [ContainerHost](orbit-core/src/main/kotlin/org/orbitmvi/orbit/ContainerHost.kt)
+   [ContainerHost](orbit-core/src/commonMain/kotlin/org/orbitmvi/orbit/ContainerHost.kt)
    interface
 1. Override the `container` field and use the `ViewModel.container` factory
    function to build an Orbit
-   [Container](orbit-core/src/main/kotlin/org/orbitmvi/orbit/Container.kt) in
-   your
-   [ContainerHost](orbit-core/src/main/kotlin/org/orbitmvi/orbit/ContainerHost.kt)
+   [Container](orbit-core/src/commonMain/kotlin/org/orbitmvi/orbit/Container.kt)
+   in your
+   [ContainerHost](orbit-core/src/commonMain/kotlin/org/orbitmvi/orbit/ContainerHost.kt)
 
 ``` kotlin
 class CalculatorViewModel: ContainerHost<CalculatorState, CalculatorSideEffect>, ViewModel() {
@@ -98,8 +98,8 @@ class CalculatorViewModel: ContainerHost<CalculatorState, CalculatorSideEffect>,
 
 We have used an Android `ViewModel` as the most common example, but there is no
 requirement to do so. You can host an Orbit
-[Container](orbit-core/src/main/kotlin/org/orbitmvi/orbit/Container.kt) in a
-simple class if you wish. This makes it possible to use in simple Kotlin
+[Container](orbit-core/src/commonMain/kotlin/org/orbitmvi/orbit/Container.kt)
+in a simple class if you wish. This makes it possible to use in simple Kotlin
 projects as well as lifecycle independent services.
 
 ### Connect to the ViewModel in your Activity or Fragment

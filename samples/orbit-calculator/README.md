@@ -15,7 +15,7 @@ This sample implements a simple calculator using [Orbit MVI](https://github.com/
 
 - [CalculatorViewModel](src/main/kotlin/org/orbitmvi/orbit/sample/calculator/CalculatorViewModel.kt)
   uses a `SavedStateHandle` for retaining the current state. It implements a
-  private [ContainerHost](../../orbit-core/src/main/kotlin/org/orbitmvi/orbit/ContainerHost.kt)
+  private [ContainerHost](../../orbit-core/src/commonMain/kotlin/org/orbitmvi/orbit/ContainerHost.kt)
   so the internal implementation of [CalculatorState](src/main/kotlin/org/orbitmvi/orbit/sample/calculator/CalculatorState.kt)
   is not exposed.
 
