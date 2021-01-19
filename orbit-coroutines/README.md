@@ -51,5 +51,5 @@ class ExampleViewModel : ContainerHost<ExampleState, ExampleSideEffect> {
 
 You can use this operator to subscribe to hot or cold coroutine flows. The flows
 will emit until completion or until the
-[Container](../orbit-core/src/main/kotlin/org/orbitmvi/orbit/Container.kt) has
-been closed.
+[Container](../orbit-core/src/commonMain/kotlin/org/orbitmvi/orbit/Container.kt)
+has been closed.
