@@ -21,6 +21,7 @@
 plugins {
     kotlin("multiplatform")
 }
+apply<kotlinx.atomicfu.plugin.gradle.AtomicFUGradlePlugin>()
 
 kotlin {
     jvm()

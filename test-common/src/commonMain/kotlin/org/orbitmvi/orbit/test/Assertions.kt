@@ -20,17 +20,21 @@
 
 package org.orbitmvi.orbit.test
 
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeout
 import kotlinx.coroutines.yield
 
 public suspend fun assertEventually(timeout: Long = 2000L, block: suspend () -> Unit) {
-    withTimeout(timeout) {
-        while (true) {
-            try {
-                block()
-                break
-            } catch (ignored: Throwable) {
-                yield()
+    withContext(Dispatchers.Default) {
+        withTimeout(timeout) {
+            while (true) {
+                try {
+                    block()
+                    break
+                } catch (ignored: Throwable) {
+                    yield()
+                }
             }
         }
     }

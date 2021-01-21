@@ -95,13 +95,12 @@ internal class BaseDslPluginBehaviourTest {
 
     @Test
     fun `allows nullable event`() {
-        val action = null
         val middleware = BaseDslMiddleware().test(initialState)
 
-        middleware.allowsNulls(action)
+        middleware.allowsNulls()
 
         middleware.assert(initialState) {
-            postedSideEffects(action.toString())
+            postedSideEffects("null")
         }
     }
 
@@ -139,11 +138,11 @@ internal class BaseDslPluginBehaviourTest {
             }
         }
 
-        fun allowsNulls(action: Int?) = orbit {
+        fun allowsNulls() = orbit {
             transform {
-                action
+                null
             }.reduce {
-                event?.let { event -> state.copy(id = event) } ?: state
+                state
             }.sideEffect {
                 post(event.toString())
             }

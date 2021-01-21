@@ -20,6 +20,8 @@
 
 package org.orbitmvi.orbit.test
 
+import kotlinx.atomicfu.atomic
+import kotlinx.atomicfu.updateAndGet
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -32,25 +34,28 @@ import kotlinx.coroutines.launch
 @Suppress("EXPERIMENTAL_API_USAGE")
 public class ScopedBlockingWorkSimulator(private val scope: CoroutineScope) {
 
-    private var job: Job? = null
+    private val job = atomic<Job?>(null)
 
     init {
         scope.produce<Unit>(Dispatchers.Unconfined) {
             awaitClose {
-                job?.cancel()
+                job.value?.cancel()
             }
         }
     }
 
     @Suppress("ControlFlowWithEmptyBody", "EmptyWhileBlock")
     public fun simulateWork() {
-        if (job != null) {
-            throw IllegalStateException("Can be invoked only once")
-        }
-        job = scope.launch {
-            while (currentCoroutineContext().isActive) {
+        job.updateAndGet {
+            if (it != null) {
+                throw IllegalStateException("Can be invoked only once")
             }
+            scope.launch {
+                while (currentCoroutineContext().isActive) {
+                }
+            }
+        }.let {
+            runBlocking(it!!) { it.join() }
         }
-        runBlocking(job!!) { job!!.join() }
     }
 }

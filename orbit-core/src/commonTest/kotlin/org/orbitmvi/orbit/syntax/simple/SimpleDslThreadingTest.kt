@@ -62,7 +62,7 @@ internal class SimpleDslThreadingTest {
 
         middleware.backgroundIntent()
         runBlocking {
-            withTimeout(1000L) {
+            withTimeout(TIMEOUT) {
                 middleware.intentMutex.withLock {}
             }
         }
@@ -80,7 +80,7 @@ internal class SimpleDslThreadingTest {
 
         middleware.suspendingIntent()
         runBlocking {
-            withTimeout(1000L) {
+            withTimeout(TIMEOUT) {
                 middleware.intentMutex.withLock {}
             }
         }
@@ -99,7 +99,7 @@ internal class SimpleDslThreadingTest {
         middleware.blockingIntent()
 
         runBlocking {
-            withTimeout(1000L) {
+            withTimeout(TIMEOUT) {
                 middleware.intentMutex.withLock {
                 }
             }
@@ -117,7 +117,7 @@ internal class SimpleDslThreadingTest {
 
         middleware.blockingReducer()
         runBlocking {
-            withTimeout(1000L) {
+            withTimeout(TIMEOUT) {
                 middleware.reducerMutex.withLock {}
             }
         }
@@ -181,5 +181,9 @@ internal class SimpleDslThreadingTest {
         fun simpleIntent() = intent {
             intentMutex.unlock()
         }
+    }
+
+    companion object {
+        private const val TIMEOUT = 1000L
     }
 }

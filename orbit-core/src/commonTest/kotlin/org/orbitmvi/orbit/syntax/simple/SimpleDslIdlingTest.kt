@@ -27,6 +27,7 @@ import org.orbitmvi.orbit.idling.IdlingResource
 import org.orbitmvi.orbit.test.runBlocking
 import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.booleans.shouldBeTrue
+import kotlinx.atomicfu.atomic
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
@@ -35,6 +36,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withTimeout
+import org.orbitmvi.orbit.test.assertEventually
 import kotlin.test.AfterTest
 import kotlin.test.Test
 
@@ -99,24 +101,24 @@ internal class SimpleDslIdlingTest {
         }
     }
 
-//    @Test
-//    fun `idle after running`() {
-//        runBlocking {
-//            val containerHost = scope.createContainerHost()
-//
-//            val mutex = Mutex(locked = true)
-//
-//            containerHost.intent {
-//                mutex.unlock()
-//            }
-//
-//            mutex.withLock {
-//                assertEventually {
-//                    testIdlingResource.isIdle().shouldBeTrue()
-//                }
-//            }
-//        }
-//    }
+    @Test
+    fun `idle after running`() {
+        runBlocking {
+            val containerHost = scope.createContainerHost()
+
+            val mutex = Mutex(locked = true)
+
+            containerHost.intent {
+                mutex.unlock()
+            }
+
+            mutex.withLock {
+                assertEventually {
+                    testIdlingResource.isIdle().shouldBeTrue()
+                }
+            }
+        }
+    }
 
     private fun CoroutineScope.createContainerHost(): ContainerHost<TestState, Int> {
         return object : ContainerHost<TestState, Int> {
@@ -130,19 +132,19 @@ internal class SimpleDslIdlingTest {
     data class TestState(val value: Int)
 
     class TestIdlingResource : IdlingResource {
-        private var counter = 0
+        private val counter = atomic(0)
 
         override fun increment() {
-            counter++
+            counter.incrementAndGet()
         }
 
         override fun decrement() {
-            counter--
+            counter.decrementAndGet()
         }
 
         override fun close() = Unit
 
-        fun isIdle() = counter == 0
+        fun isIdle() = counter.value == 0
     }
 
     companion object {
