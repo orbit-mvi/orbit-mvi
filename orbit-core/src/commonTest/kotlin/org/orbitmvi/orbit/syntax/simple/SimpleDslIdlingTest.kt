@@ -39,6 +39,7 @@ import kotlinx.coroutines.withTimeout
 import org.orbitmvi.orbit.test.assertEventually
 import kotlin.test.AfterTest
 import kotlin.test.Test
+import kotlin.test.assertTrue
 
 @ExperimentalCoroutinesApi
 internal class SimpleDslIdlingTest {
@@ -114,7 +115,7 @@ internal class SimpleDslIdlingTest {
 
             mutex.withLock {
                 assertEventually {
-                    testIdlingResource.isIdle().shouldBeTrue()
+                    assertTrue { testIdlingResource.isIdle() }
                 }
             }
         }
