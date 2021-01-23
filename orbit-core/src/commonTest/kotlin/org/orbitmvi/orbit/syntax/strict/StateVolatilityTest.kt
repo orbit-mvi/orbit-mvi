@@ -20,12 +20,6 @@
 
 package org.orbitmvi.orbit.syntax.strict
 
-import io.kotest.matchers.shouldBe
-import io.kotest.matchers.shouldNotBe
-import org.orbitmvi.orbit.Container
-import org.orbitmvi.orbit.ContainerHost
-import org.orbitmvi.orbit.container
-import org.orbitmvi.orbit.test.runBlocking
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
@@ -34,8 +28,14 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withTimeout
+import org.orbitmvi.orbit.Container
+import org.orbitmvi.orbit.ContainerHost
+import org.orbitmvi.orbit.container
+import org.orbitmvi.orbit.test.runBlocking
 import kotlin.test.AfterTest
 import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertNotEquals
 
 @ExperimentalCoroutinesApi
 internal class StateVolatilityTest {
@@ -65,7 +65,7 @@ internal class StateVolatilityTest {
 
                         stateChangedMutex.withLock {
                             delay(10)
-                            state.shouldBe(initialState)
+                            assertEquals(initialState, state)
                             completionMutex.unlock()
                         }
                     }
@@ -103,18 +103,21 @@ internal class StateVolatilityTest {
                         val initialState = volatileState()
 
                         stateChangedMutex.withLock {
-                            delay(10)
-                            volatileState().shouldNotBe(initialState)
+                            delay(100)
+                            println(initialState)
+                            println(volatileState())
+                            assertNotEquals(initialState, volatileState())
                             completionMutex.unlock()
                         }
                     }
                 }
             }
 
+            delay(50)
+
             container.orbit {
                 reduce {
                     runBlocking {
-                        delay(50)
                         state.copy(value = state.value + 1).also {
                             stateChangedMutex.unlock()
                         }
