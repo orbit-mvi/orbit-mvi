@@ -34,6 +34,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withTimeout
+import org.orbitmvi.orbit.test.IgnoreIos
 import kotlin.random.Random
 import kotlin.test.AfterTest
 import kotlin.test.Test
@@ -51,6 +52,7 @@ internal class BaseDslPluginThreadingTest {
     }
 
     @Test
+    @IgnoreIos
     fun `blocking transformer does not block the container from receiving further intents`() {
         val action = Random.nextInt()
         val testFlowObserver = middleware.container.stateFlow.test()
@@ -59,7 +61,7 @@ internal class BaseDslPluginThreadingTest {
         runBlocking {
             withTimeout(timeout) {
                 middleware.transformerMutex.withLock { }
-                delay(50)
+                delay(500)
             }
         }
         middleware.transformer(action)
@@ -69,6 +71,7 @@ internal class BaseDslPluginThreadingTest {
     }
 
     @Test
+    @IgnoreIos
     fun `blocking transformer does not block the reducer`() {
         val action = Random.nextInt()
         val testFlowObserver = middleware.container.stateFlow.test()
@@ -167,7 +170,7 @@ internal class BaseDslPluginThreadingTest {
     private inner class Middleware : ContainerHost<TestState, String> {
 
         @Suppress("EXPERIMENTAL_API_USAGE")
-        override var container = scope.container<TestState, String>(TestState(42))
+        override val container = scope.container<TestState, String>(TestState(42))
 
         val reducerMutex = Mutex(locked = true)
         val transformerMutex = Mutex(locked = true)

@@ -107,7 +107,7 @@ class ViewModelExtensionsKtTest {
         initialState: TestState,
         onCreate: ((TestState) -> Unit)? = null
     ) : ContainerHost<TestState, Int>, ViewModel() {
-        override var container = container<TestState, Int>(
+        override val container = container<TestState, Int>(
             initialState = initialState,
             savedStateHandle = savedStateHandle,
             onCreate = onCreate

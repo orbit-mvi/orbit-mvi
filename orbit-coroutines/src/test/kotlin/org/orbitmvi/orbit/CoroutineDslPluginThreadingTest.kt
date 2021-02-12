@@ -134,7 +134,7 @@ internal class CoroutineDslPluginThreadingTest {
     private inner class Middleware : ContainerHost<TestState, String> {
 
         @Suppress("EXPERIMENTAL_API_USAGE")
-        override var container = scope.container<TestState, String>(TestState(42))
+        override val container = scope.container<TestState, String>(TestState(42))
         val suspendMutex = Mutex(locked = true)
         val flowMutex = Mutex(locked = true)
 

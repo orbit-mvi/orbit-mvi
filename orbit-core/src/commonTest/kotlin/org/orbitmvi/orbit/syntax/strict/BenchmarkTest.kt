@@ -57,7 +57,7 @@ package org.orbitmvi.orbit.syntax.strict
 //    private data class TestState(val id: Int)
 //
 //    private inner class BenchmarkMiddleware(count: Int) : ContainerHost<TestState, String> {
-//        override var container = scope.container<TestState, String>(TestState(42))
+//        override val container = scope.container<TestState, String>(TestState(42))
 //
 //        val latch = CountDownLatch(count)
 //

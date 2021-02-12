@@ -31,6 +31,7 @@ kotlin {
             dependencies {
                 implementation(ProjectDependencies.kotlinCoroutines)
                 implementation(kotlin("stdlib-common"))
+                implementation(project(":test-common"))
             }
         }
         commonTest {

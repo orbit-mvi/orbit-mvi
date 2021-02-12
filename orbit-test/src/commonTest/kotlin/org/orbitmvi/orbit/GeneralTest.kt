@@ -79,7 +79,7 @@ internal class GeneralTest {
 
     private inner class GeneralTestMiddleware(private val dependency: BogusDependency) :
         ContainerHost<State, Nothing> {
-        override var container = scope.container<State, Nothing>(initialState) {
+        override val container = scope.container<State, Nothing>(initialState) {
                 created()
             }
 

@@ -21,12 +21,13 @@
 package org.orbitmvi.orbit
 
 import org.orbitmvi.orbit.internal.LazyCreateContainerDecorator
-import org.orbitmvi.orbit.test.runBlocking
 import kotlinx.atomicfu.atomic
 import kotlinx.atomicfu.update
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
+import org.orbitmvi.orbit.internal.TestContainerDecorator
+import org.orbitmvi.orbit.test.runBlocking
 import kotlin.test.assertEquals
 
 /**
@@ -47,22 +48,11 @@ public fun <STATE : Any, SIDE_EFFECT : Any, T : ContainerHost<STATE, SIDE_EFFECT
     runOnCreate: Boolean = false,
     blocking: Boolean = true
 ): T {
-
-    val onCreate = container.findOnCreate()
-
-    @Suppress("EXPERIMENTAL_API_USAGE")
-    val testContainer = TestContainer<STATE, SIDE_EFFECT>(
-        initialState,
-        isolateFlow,
-        blocking
+    container.findTestContainer().test(
+        initialState = initialState,
+        isolateFlow = isolateFlow,
+        blocking = blocking
     )
-//
-//    this.javaClass.declaredFields.firstOrNull { it.name == "container" }?.apply {
-//        isAccessible = true
-//        set(this@test, testContainer)
-//    }
-
-    this.container = testContainer
 
     testHarness.fixtures.update {
         it + (this@test to TestFixtures(
@@ -74,16 +64,21 @@ public fun <STATE : Any, SIDE_EFFECT : Any, T : ContainerHost<STATE, SIDE_EFFECT
     }
 
     if (runOnCreate) {
-        onCreate(initialState)
+        container.findOnCreate().invoke(initialState)
     }
 
     return this
 }
-
 private fun <STATE : Any, SIDE_EFFECT : Any> Container<STATE, SIDE_EFFECT>.findOnCreate(): (STATE) -> Unit {
     return (this as? LazyCreateContainerDecorator<STATE, SIDE_EFFECT>)?.onCreate
         ?: (this as? ContainerDecorator<STATE, SIDE_EFFECT>)?.actual?.findOnCreate()
         ?: {}
+}
+
+private fun <STATE : Any, SIDE_EFFECT : Any> Container<STATE, SIDE_EFFECT>.findTestContainer(): TestContainerDecorator<STATE, SIDE_EFFECT> {
+    return (this as? TestContainerDecorator<STATE, SIDE_EFFECT>)
+        ?: (this as? ContainerDecorator<STATE, SIDE_EFFECT>)?.actual?.findTestContainer()
+        ?: throw IllegalStateException("No TestContainerDecorator found!")
 }
 
 /**

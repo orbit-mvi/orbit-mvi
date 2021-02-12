@@ -301,7 +301,7 @@ internal class ParameterisedStateTest(blocking: Boolean) {
 
     private inner class StateTestMiddleware :
         ContainerHost<State, Nothing> {
-        override var container = scope.container<State, Nothing>(initialState)
+        override val container = scope.container<State, Nothing>(initialState)
 
         fun something(action: Int): Unit = orbit {
             transform {

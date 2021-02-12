@@ -37,7 +37,7 @@ public class ScopedBlockingWorkSimulator(private val scope: CoroutineScope) {
     private val job = atomic<Job?>(null)
 
     init {
-        scope.produce<Unit>(Dispatchers.Unconfined) {
+        scope.produce<Unit>(Dispatchers.Default) {
             awaitClose {
                 job.value?.cancel()
             }
@@ -50,7 +50,7 @@ public class ScopedBlockingWorkSimulator(private val scope: CoroutineScope) {
             if (it != null) {
                 throw IllegalStateException("Can be invoked only once")
             }
-            scope.launch {
+            scope.launch(Dispatchers.Default) {
                 while (currentCoroutineContext().isActive) {
                 }
             }

@@ -26,7 +26,6 @@ import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.coroutines.transformFlow
 import org.orbitmvi.orbit.sample.stocklist.streaming.stock.StockRepository
 import org.orbitmvi.orbit.syntax.strict.orbit
-import org.orbitmvi.orbit.syntax.strict.reduce
 import org.orbitmvi.orbit.viewmodel.container
 
 class DetailViewModel(
@@ -35,7 +34,7 @@ class DetailViewModel(
     private val stockRepository: StockRepository
 ) : ViewModel(), ContainerHost<DetailState, Nothing> {
 
-    override var container =
+    override val container =
         container<DetailState, Nothing>(DetailState(), savedStateHandle) { requestStock() }
 
     private fun requestStock(): Unit = orbit {

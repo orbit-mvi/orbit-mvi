@@ -104,7 +104,7 @@ internal class StateTest {
     private data class TestState(val id: Int = Random.nextInt())
 
     private inner class Middleware(initialState: TestState) : ContainerHost<TestState, String> {
-        override var container = scope.container<TestState, String>(initialState)
+        override val container = scope.container<TestState, String>(initialState)
 
         fun something(action: Int) = orbit {
             reduce {

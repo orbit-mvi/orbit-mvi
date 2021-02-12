@@ -62,7 +62,7 @@ internal class ContainerLifecycleTest {
 
     private inner class Middleware(initialState: TestState) : ContainerHost<TestState, String> {
 
-        override var container = scope.container<TestState, String>(initialState) {
+        override val container = scope.container<TestState, String>(initialState) {
             onCreate(it)
         }
 

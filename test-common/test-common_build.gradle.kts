@@ -31,6 +31,7 @@ kotlin {
             dependencies {
                 implementation(ProjectDependencies.kotlinCoroutines)
                 kotlin("stdlib-common")
+                kotlin("test-common")
             }
         }
         val jvmMain by getting {

@@ -79,7 +79,7 @@ internal class ParameterisedSideEffectTest(blocking: Boolean) {
 
     private inner class SideEffectTestMiddleware :
         ContainerHost<State, Int> {
-        override var container = scope.container<State, Int>(initialState)
+        override val container = scope.container<State, Int>(initialState)
 
         fun something(action: Int): Unit = orbit {
             sideEffect {

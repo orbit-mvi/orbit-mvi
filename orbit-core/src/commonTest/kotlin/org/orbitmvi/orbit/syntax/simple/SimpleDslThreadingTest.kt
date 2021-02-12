@@ -139,7 +139,7 @@ internal class SimpleDslThreadingTest {
     private inner class BaseDslMiddleware : ContainerHost<TestState, String> {
 
         @Suppress("EXPERIMENTAL_API_USAGE")
-        override var container = scope.container<TestState, String>(TestState(42))
+        override val container = scope.container<TestState, String>(TestState(42))
 
         val intentMutex = Mutex(locked = true)
         val reducerMutex = Mutex(locked = true)
