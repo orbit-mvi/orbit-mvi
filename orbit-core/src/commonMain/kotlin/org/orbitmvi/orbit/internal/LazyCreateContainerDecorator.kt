@@ -59,4 +59,3 @@ public class LazyCreateContainerDecorator<STATE : Any, SIDE_EFFECT : Any>(
         runOnCreate().also { actual.orbit(orbitFlow) }
     }
 }
-
