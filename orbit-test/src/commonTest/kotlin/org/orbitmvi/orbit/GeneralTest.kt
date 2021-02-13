@@ -20,16 +20,16 @@
 
 package org.orbitmvi.orbit
 
-import org.orbitmvi.orbit.syntax.strict.orbit
-import org.orbitmvi.orbit.syntax.strict.sideEffect
-import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
+import org.orbitmvi.orbit.syntax.strict.orbit
+import org.orbitmvi.orbit.syntax.strict.sideEffect
 import kotlin.random.Random
 import kotlin.test.AfterTest
 import kotlin.test.Test
+import kotlin.test.assertEquals
 
 @ExperimentalCoroutinesApi
 internal class GeneralTest {
@@ -49,7 +49,7 @@ internal class GeneralTest {
 
         testSubject.test(initialState)
 
-        mockDependency.createCallCount.shouldBe(0)
+        assertEquals(0, mockDependency.createCallCount)
     }
 
     @Test
@@ -60,7 +60,7 @@ internal class GeneralTest {
 
         testSubject.test(initialState = initialState, runOnCreate = true)
 
-        mockDependency.createCallCount.shouldBe(1)
+        assertEquals(1, mockDependency.createCallCount)
     }
 
     @Test
@@ -73,15 +73,15 @@ internal class GeneralTest {
 
         spy.something()
 
-        mockDependency.something1CallCount.shouldBe(1)
-        mockDependency.something2CallCount.shouldBe(0)
+        assertEquals(1, mockDependency.something1CallCount)
+        assertEquals(0, mockDependency.something2CallCount)
     }
 
     private inner class GeneralTestMiddleware(private val dependency: BogusDependency) :
         ContainerHost<State, Nothing> {
         override val container = scope.container<State, Nothing>(initialState) {
-                created()
-            }
+            created()
+        }
 
         fun created() {
             dependency.create()

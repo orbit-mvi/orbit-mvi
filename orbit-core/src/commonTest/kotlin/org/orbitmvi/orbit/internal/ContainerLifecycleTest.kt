@@ -20,16 +20,16 @@
 
 package org.orbitmvi.orbit.internal
 
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.container
 import org.orbitmvi.orbit.syntax.strict.orbit
 import org.orbitmvi.orbit.syntax.strict.sideEffect
 import org.orbitmvi.orbit.test
-import io.kotest.matchers.collections.shouldContainExactly
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.CoroutineScope
+import org.orbitmvi.orbit.test.assertContainExactly
 import kotlin.random.Random
 import kotlin.test.AfterTest
 import kotlin.test.Test
@@ -54,8 +54,8 @@ internal class ContainerLifecycleTest {
         testStateObserver.awaitCount(1)
         testSideEffectObserver.awaitCount(1)
 
-        testStateObserver.values.shouldContainExactly(initialState)
-        testSideEffectObserver.values.shouldContainExactly(initialState.id.toString())
+        testStateObserver.values.assertContainExactly(initialState)
+        testSideEffectObserver.values.assertContainExactly(initialState.id.toString())
     }
 
     private data class TestState(val id: Int = Random.nextInt())

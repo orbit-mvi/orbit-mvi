@@ -20,13 +20,6 @@
 
 package org.orbitmvi.orbit.rxjava1
 
-import org.orbitmvi.orbit.ContainerHost
-import org.orbitmvi.orbit.container
-import org.orbitmvi.orbit.syntax.strict.orbit
-import org.orbitmvi.orbit.syntax.strict.reduce
-import org.orbitmvi.orbit.test
-import org.orbitmvi.orbit.test.ScopedBlockingWorkSimulator
-import io.kotest.matchers.collections.shouldContainExactly
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
@@ -41,6 +34,13 @@ import org.junit.jupiter.api.Test
 import rx.Completable
 import rx.Observable
 import rx.Single
+import org.orbitmvi.orbit.ContainerHost
+import org.orbitmvi.orbit.container
+import org.orbitmvi.orbit.syntax.strict.orbit
+import org.orbitmvi.orbit.syntax.strict.reduce
+import org.orbitmvi.orbit.test
+import org.orbitmvi.orbit.test.ScopedBlockingWorkSimulator
+import org.orbitmvi.orbit.test.assertContainExactly
 import kotlin.random.Random
 
 @ExperimentalCoroutinesApi
@@ -119,7 +119,7 @@ internal class RxJava1DslPluginDslThreadingTest {
         middleware.single(action)
 
         testFlowObserver.awaitCount(2)
-        testFlowObserver.values.shouldContainExactly(
+        testFlowObserver.values.assertContainExactly(
             TestState(42),
             TestState(action + 5)
         )
@@ -144,7 +144,7 @@ internal class RxJava1DslPluginDslThreadingTest {
         middleware.reducer(action)
 
         testFlowObserver.awaitCount(2)
-        testFlowObserver.values.shouldContainExactly(TestState(42), TestState(action))
+        testFlowObserver.values.assertContainExactly(TestState(42), TestState(action))
     }
 
     private data class TestState(val id: Int)

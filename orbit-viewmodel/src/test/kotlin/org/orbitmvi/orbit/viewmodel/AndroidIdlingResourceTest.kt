@@ -26,9 +26,6 @@ import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.container
 import org.orbitmvi.orbit.coroutines.transformSuspend
 import org.orbitmvi.orbit.syntax.strict.orbit
-import io.kotest.matchers.booleans.shouldBeFalse
-import io.kotest.matchers.booleans.shouldBeTrue
-import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
@@ -43,6 +40,9 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 class AndroidIdlingResourceTest {
 
@@ -81,7 +81,7 @@ class AndroidIdlingResourceTest {
 
         val idlingResource = IdlingRegistry.getInstance().resources.first()
 
-        idlingResource.isIdleNow.shouldBeTrue()
+        assertTrue(idlingResource.isIdleNow)
     }
 
     @Test
@@ -102,7 +102,7 @@ class AndroidIdlingResourceTest {
 
             withTimeout(ASSERT_TIMEOUT) {
                 mutex.withLock {
-                    idlingResource.isIdleNow.shouldBeFalse()
+                    assertFalse(idlingResource.isIdleNow)
                 }
             }
         }
@@ -126,7 +126,7 @@ class AndroidIdlingResourceTest {
 
             withTimeout(ASSERT_TIMEOUT) {
                 mutex.withLock {
-                    idlingResource.isIdleNow.shouldBeTrue()
+                    assertTrue(idlingResource.isIdleNow)
                 }
             }
         }
@@ -149,7 +149,7 @@ class AndroidIdlingResourceTest {
 
             withTimeout(ASSERT_TIMEOUT) {
                 mutex.withLock {
-                    idlingResource.isIdleNow.shouldBeFalse()
+                    assertFalse(idlingResource.isIdleNow)
                 }
             }
         }
@@ -178,7 +178,7 @@ class AndroidIdlingResourceTest {
                         }
                     }
 
-                    result.shouldBeTrue()
+                    assertTrue(result)
                 }
             }
         }
@@ -211,7 +211,7 @@ class AndroidIdlingResourceTest {
             withTimeout(ASSERT_TIMEOUT) {
                 mutex1.withLock {
                     mutex2.withLock {
-                        idlingResource.isIdleNow.shouldBeFalse()
+                        assertFalse(idlingResource.isIdleNow)
                     }
                 }
             }
@@ -246,7 +246,7 @@ class AndroidIdlingResourceTest {
             withTimeout(ASSERT_TIMEOUT) {
                 mutex1.withLock {
                     mutex2.withLock {
-                        idlingResource.isIdleNow.shouldBeFalse()
+                        assertFalse(idlingResource.isIdleNow)
                     }
                 }
             }
@@ -278,7 +278,7 @@ class AndroidIdlingResourceTest {
             withTimeout(ASSERT_TIMEOUT) {
                 mutex1.withLock {
                     mutex2.withLock {
-                        idlingResource.isIdleNow.shouldBeFalse()
+                        assertFalse(idlingResource.isIdleNow)
                     }
                 }
             }
@@ -316,7 +316,7 @@ class AndroidIdlingResourceTest {
                             }
                         }
 
-                        result.shouldBeTrue()
+                        assertTrue(result)
                     }
                 }
             }
@@ -328,11 +328,11 @@ class AndroidIdlingResourceTest {
         runBlocking {
             scope.createContainerHost()
 
-            IdlingRegistry.getInstance().resources.size.shouldBe(1)
+            assertEquals(1, IdlingRegistry.getInstance().resources.size)
 
             scope.cancel()
 
-            IdlingRegistry.getInstance().resources.size.shouldBe(0)
+            assertEquals(0, IdlingRegistry.getInstance().resources.size)
         }
     }
 

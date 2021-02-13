@@ -20,16 +20,16 @@
 
 package org.orbitmvi.orbit
 
-import io.kotest.assertions.throwables.shouldThrow
-import io.kotest.matchers.string.shouldContain
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import org.orbitmvi.orbit.syntax.strict.orbit
 import org.orbitmvi.orbit.syntax.strict.sideEffect
+import org.orbitmvi.orbit.test.assertContains
 import kotlin.random.Random
 import kotlin.test.AfterTest
+import kotlin.test.assertFailsWith
 
 @ExperimentalCoroutinesApi
 internal class ParameterisedSideEffectTest(blocking: Boolean) {
@@ -66,13 +66,13 @@ internal class ParameterisedSideEffectTest(blocking: Boolean) {
 
         sideEffects.forEach { testSubject.something(it) }
 
-        val throwable = shouldThrow<AssertionError> {
+        val throwable = assertFailsWith<AssertionError> {
             testSubject.assert(initialState, timeoutMillis = TIMEOUT) {
                 postedSideEffects(sideEffects2)
             }
         }
 
-        throwable.message.shouldContain(
+        throwable.message.assertContains(
             "<${Regex.escape(sideEffects2.toString())}>[^<]*<${Regex.escape(sideEffects.toString())}>".toRegex()
         )
     }

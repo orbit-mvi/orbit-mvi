@@ -41,7 +41,6 @@ kotlin {
                 implementation(project(":test-common"))
                 implementation(project(":orbit-test"))
                 implementation(ProjectDependencies.kotlinCoroutines)
-                implementation(ProjectDependencies.kotestAssertions)
             }
         }
 

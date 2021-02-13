@@ -21,8 +21,6 @@
 package org.orbitmvi.orbit.livedata
 
 import androidx.lifecycle.liveData
-import io.kotest.matchers.collections.shouldBeEmpty
-import io.kotest.matchers.collections.shouldContainExactly
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -41,15 +39,16 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
-import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.Container
-import org.orbitmvi.orbit.container
+import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.internal.RealContainer
 import org.orbitmvi.orbit.syntax.strict.orbit
 import org.orbitmvi.orbit.syntax.strict.reduce
 import org.orbitmvi.orbit.syntax.strict.sideEffect
 import org.orbitmvi.orbit.test
+import org.orbitmvi.orbit.test.assertContainExactly
 import kotlin.random.Random
+import kotlin.test.assertEquals
 
 @Suppress("EXPERIMENTAL_API_USAGE", "UNREACHABLE_CODE", "ControlFlowWithEmptyBody", "EmptyWhileBlock")
 @ExtendWith(InstantTaskExecutorExtension::class)
@@ -99,7 +98,7 @@ internal class LiveDataDslPluginDslThreadingTest {
         }
 
         sideEffects.awaitCount(1)
-        sideEffects.values.shouldContainExactly(action)
+        sideEffects.values.assertContainExactly(action)
     }
 
     @Test
@@ -134,8 +133,8 @@ internal class LiveDataDslPluginDslThreadingTest {
         }
 
         states.awaitCount(2)
-        sideEffects.values.shouldBeEmpty()
-        states.values.shouldContainExactly(TestState(42), TestState(action))
+        assertEquals(0, sideEffects.values.size, "should be empty")
+        states.values.assertContainExactly(TestState(42), TestState(action))
     }
 
     private data class TestState(val id: Int)

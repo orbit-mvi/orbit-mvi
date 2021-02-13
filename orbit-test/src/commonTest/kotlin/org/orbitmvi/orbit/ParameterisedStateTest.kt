@@ -20,8 +20,6 @@
 
 package org.orbitmvi.orbit
 
-import io.kotest.assertions.throwables.shouldThrow
-import io.kotest.matchers.string.shouldContain
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
@@ -29,8 +27,10 @@ import kotlinx.coroutines.cancel
 import org.orbitmvi.orbit.syntax.strict.orbit
 import org.orbitmvi.orbit.syntax.strict.reduce
 import org.orbitmvi.orbit.syntax.strict.transform
+import org.orbitmvi.orbit.test.assertContains
 import kotlin.random.Random
 import kotlin.test.AfterTest
+import kotlin.test.assertFailsWith
 
 @ExperimentalCoroutinesApi
 internal class ParameterisedStateTest(blocking: Boolean) {
@@ -65,11 +65,11 @@ internal class ParameterisedStateTest(blocking: Boolean) {
         val testStateObserver = testSubject.container.stateFlow.test()
         testStateObserver.awaitCount(1)
 
-        val throwable = shouldThrow<AssertionError> {
+        val throwable = assertFailsWith<AssertionError> {
             testSubject.assert(someRandomState)
         }
 
-        throwable.message.shouldContain(
+        throwable.message.assertContains(
             "<${Regex.escape(someRandomState.toString())}>[^<]*<${Regex.escape(initialState.toString())}>".toRegex()
         )
     }
@@ -102,7 +102,7 @@ internal class ParameterisedStateTest(blocking: Boolean) {
         testSubject.something(action2)
         testStateObserver.awaitCount(3)
 
-        val throwable = shouldThrow<AssertionError> {
+        val throwable = assertFailsWith<AssertionError> {
             testSubject.assert(initialState, timeoutMillis = TIMEOUT) {
                 states(
                     { State(count = action) }
@@ -110,7 +110,7 @@ internal class ParameterisedStateTest(blocking: Boolean) {
             }
         }
 
-        throwable.message.shouldContain(
+        throwable.message.assertContains(
             "Expected 1 states but more were emitted:\n" +
                     "[State(count=$action2)]"
         )
@@ -127,7 +127,7 @@ internal class ParameterisedStateTest(blocking: Boolean) {
         testSubject.something(action2)
         testStateObserver.awaitCount(3)
 
-        val throwable = shouldThrow<AssertionError> {
+        val throwable = assertFailsWith<AssertionError> {
             testSubject.assert(initialState, timeoutMillis = 1000L) {
                 states(
                     { State(count = action) },
@@ -137,7 +137,7 @@ internal class ParameterisedStateTest(blocking: Boolean) {
             }
         }
 
-        throwable.message.shouldContain(
+        throwable.message.assertContains(
             "Failed assertions at indices 2..2, expected states but never received:\n" +
                     "[State(count=$action3)]"
         )
@@ -155,7 +155,7 @@ internal class ParameterisedStateTest(blocking: Boolean) {
         testSubject.something(action2)
         testStateObserver.awaitCount(3)
 
-        val throwable = shouldThrow<AssertionError> {
+        val throwable = assertFailsWith<AssertionError> {
             testSubject.assert(initialState, timeoutMillis = 1000L) {
                 states(
                     { State(count = action) },
@@ -166,7 +166,7 @@ internal class ParameterisedStateTest(blocking: Boolean) {
             }
         }
 
-        throwable.message.shouldContain(
+        throwable.message.assertContains(
             "Failed assertions at indices 2..3, expected states but never received:\n" +
                     "[State(count=$action3), State(count=$action4)]"
         )
@@ -183,7 +183,7 @@ internal class ParameterisedStateTest(blocking: Boolean) {
         testSubject.something(action2)
         testStateObserver.awaitCount(3)
 
-        val throwable = shouldThrow<AssertionError> {
+        val throwable = assertFailsWith<AssertionError> {
             testSubject.assert(initialState, timeoutMillis = TIMEOUT) {
                 states(
                     { State(count = action2) },
@@ -192,7 +192,7 @@ internal class ParameterisedStateTest(blocking: Boolean) {
             }
         }
 
-        throwable.message.shouldContain(
+        throwable.message.assertContains(
             "Failed assertion at index 0[^<]*<State\\(count=$action2\\)>[^<]*<State\\(count=$action\\)>".toRegex()
         )
     }
@@ -208,7 +208,7 @@ internal class ParameterisedStateTest(blocking: Boolean) {
         testSubject.something(action2)
         testStateObserver.awaitCount(3)
 
-        val throwable = shouldThrow<AssertionError> {
+        val throwable = assertFailsWith<AssertionError> {
             testSubject.assert(initialState, timeoutMillis = TIMEOUT) {
                 states(
                     { State(count = action2) },
@@ -217,7 +217,7 @@ internal class ParameterisedStateTest(blocking: Boolean) {
             }
         }
 
-        throwable.message.shouldContain(
+        throwable.message.assertContains(
             "Failed assertion at index 0[^<]*<State\\(count=$action2\\)>[^<]*<State\\(count=$action\\)>".toRegex()
         )
     }
@@ -232,7 +232,7 @@ internal class ParameterisedStateTest(blocking: Boolean) {
         testSubject.something(action2)
         testStateObserver.awaitCount(3)
 
-        val throwable = shouldThrow<AssertionError> {
+        val throwable = assertFailsWith<AssertionError> {
             testSubject.assert(initialState, timeoutMillis = TIMEOUT) {
                 states(
                     { State(count = action2) },
@@ -241,7 +241,7 @@ internal class ParameterisedStateTest(blocking: Boolean) {
             }
         }
 
-        throwable.message.shouldContain(
+        throwable.message.assertContains(
             "Failed assertion at index 0[^<]*<State\\(count=$action2\\)>[^<]*<State\\(count=$action\\)>".toRegex()
         )
     }
@@ -279,7 +279,7 @@ internal class ParameterisedStateTest(blocking: Boolean) {
         testSubject.something(action2)
         testStateObserver.awaitCount(3)
 
-        val throwable = shouldThrow<AssertionError> {
+        val throwable = assertFailsWith<AssertionError> {
             testSubject.assert(initialState, timeoutMillis = TIMEOUT) {
                 states(
                     { initialState },
@@ -288,7 +288,7 @@ internal class ParameterisedStateTest(blocking: Boolean) {
             }
         }
 
-        throwable.message.shouldContain(
+        throwable.message.assertContains(
             "Expected 2 states but more were emitted:\n" +
                     "[State(count=$action2)]\n\n" +
                     "Caution: 1 assertions were dropped as they encountered a current state " +

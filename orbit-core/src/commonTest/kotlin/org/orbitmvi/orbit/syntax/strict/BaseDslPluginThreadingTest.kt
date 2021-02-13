@@ -20,12 +20,6 @@
 
 package org.orbitmvi.orbit.syntax.strict
 
-import org.orbitmvi.orbit.ContainerHost
-import org.orbitmvi.orbit.container
-import org.orbitmvi.orbit.test
-import org.orbitmvi.orbit.test.ScopedBlockingWorkSimulator
-import org.orbitmvi.orbit.test.runBlocking
-import io.kotest.matchers.collections.shouldContainExactly
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
@@ -34,7 +28,13 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withTimeout
+import org.orbitmvi.orbit.ContainerHost
+import org.orbitmvi.orbit.container
+import org.orbitmvi.orbit.test
 import org.orbitmvi.orbit.test.IgnoreIos
+import org.orbitmvi.orbit.test.ScopedBlockingWorkSimulator
+import org.orbitmvi.orbit.test.assertContainExactly
+import org.orbitmvi.orbit.test.runBlocking
 import kotlin.random.Random
 import kotlin.test.AfterTest
 import kotlin.test.Test
@@ -67,7 +67,7 @@ internal class BaseDslPluginThreadingTest {
         middleware.transformer(action)
 
         testFlowObserver.awaitCount(2)
-        testFlowObserver.values.shouldContainExactly(TestState(42), TestState(action + 5))
+        testFlowObserver.values.assertContainExactly(TestState(42), TestState(action + 5))
     }
 
     @Test
@@ -87,7 +87,7 @@ internal class BaseDslPluginThreadingTest {
         middleware.reducer(action)
 
         testFlowObserver.awaitCount(2)
-        testFlowObserver.values.shouldContainExactly(TestState(42), TestState(action))
+        testFlowObserver.values.assertContainExactly(TestState(42), TestState(action))
     }
 
     @Test
@@ -139,7 +139,7 @@ internal class BaseDslPluginThreadingTest {
         middleware.transformer(action)
 
         testFlowObserver.awaitCount(2, 100L)
-        testFlowObserver.values.shouldContainExactly(
+        testFlowObserver.values.assertContainExactly(
             TestState(42),
         )
     }
@@ -162,7 +162,7 @@ internal class BaseDslPluginThreadingTest {
         middleware.reducer(action)
 
         testFlowObserver.awaitCount(2, 100L)
-        testFlowObserver.values.shouldContainExactly(TestState(42))
+        testFlowObserver.values.assertContainExactly(TestState(42))
     }
 
     private data class TestState(val id: Int)

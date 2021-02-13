@@ -20,20 +20,20 @@
 
 package org.orbitmvi.orbit.internal
 
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.container
 import org.orbitmvi.orbit.syntax.strict.orbit
 import org.orbitmvi.orbit.syntax.strict.reduce
 import org.orbitmvi.orbit.test
-import io.kotest.matchers.collections.shouldContainExactly
-import io.kotest.matchers.shouldBe
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.cancel
+import org.orbitmvi.orbit.test.assertContainExactly
 import kotlin.random.Random
 import kotlin.test.AfterTest
 import kotlin.test.Test
+import kotlin.test.assertEquals
 
 @ExperimentalCoroutinesApi
 internal class StateTest {
@@ -53,7 +53,7 @@ internal class StateTest {
 
         testStateObserver.awaitCount(1)
 
-        testStateObserver.values.shouldContainExactly(initialState)
+        testStateObserver.values.assertContainExactly(initialState)
     }
 
     @Test
@@ -68,11 +68,11 @@ internal class StateTest {
         val testStateObserver2 = middleware.container.stateFlow.test()
         testStateObserver2.awaitCount(1)
 
-        testStateObserver.values.shouldContainExactly(
+        testStateObserver.values.assertContainExactly(
             initialState,
             TestState(action)
         )
-        testStateObserver2.values.shouldContainExactly(
+        testStateObserver2.values.assertContainExactly(
             TestState(
                 action
             )
@@ -84,7 +84,7 @@ internal class StateTest {
         val initialState = TestState()
         val middleware = Middleware(initialState)
 
-        middleware.container.currentState.shouldBe(initialState)
+        assertEquals(initialState, middleware.container.currentState)
     }
 
     @Test
@@ -98,7 +98,7 @@ internal class StateTest {
 
         testStateObserver.awaitCount(2)
 
-        middleware.container.currentState.shouldBe(testStateObserver.values.last())
+        assertEquals(testStateObserver.values.last(), middleware.container.currentState)
     }
 
     private data class TestState(val id: Int = Random.nextInt())

@@ -24,6 +24,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeout
 import kotlinx.coroutines.yield
+import kotlin.test.assertTrue
 
 public suspend fun assertEventually(timeout: Long = 2000L, block: suspend () -> Unit) {
     withContext(Dispatchers.Default) {
@@ -37,5 +38,17 @@ public suspend fun assertEventually(timeout: Long = 2000L, block: suspend () -> 
                 }
             }
         }
+    }
+}
+
+public fun CharSequence?.assertContains(expected: CharSequence) {
+    assertTrue("Does not contain $expected") {
+        this?.contains(expected) ?: false
+    }
+}
+
+public fun CharSequence?.assertContains(expected: Regex) {
+    assertTrue("Does not contain ${expected.pattern}") {
+        this?.contains(expected) ?: false
     }
 }

@@ -20,13 +20,6 @@
 
 package org.orbitmvi.orbit.syntax.strict
 
-import org.orbitmvi.orbit.Container
-import org.orbitmvi.orbit.ContainerHost
-import org.orbitmvi.orbit.container
-import org.orbitmvi.orbit.idling.IdlingResource
-import org.orbitmvi.orbit.test.runBlocking
-import io.kotest.matchers.booleans.shouldBeFalse
-import io.kotest.matchers.booleans.shouldBeTrue
 import kotlinx.atomicfu.atomic
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -36,9 +29,15 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withTimeout
+import org.orbitmvi.orbit.Container
+import org.orbitmvi.orbit.ContainerHost
+import org.orbitmvi.orbit.container
+import org.orbitmvi.orbit.idling.IdlingResource
 import org.orbitmvi.orbit.test.assertEventually
+import org.orbitmvi.orbit.test.runBlocking
 import kotlin.test.AfterTest
 import kotlin.test.Test
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 @ExperimentalCoroutinesApi
@@ -59,7 +58,7 @@ internal class BaseDslPluginIdlingTest {
             delay(50)
         }
 
-        testIdlingResource.isIdle().shouldBeTrue()
+        assertTrue(testIdlingResource.isIdle())
     }
 
     @Test
@@ -80,7 +79,7 @@ internal class BaseDslPluginIdlingTest {
 
             withTimeout(TIMEOUT) {
                 mutex.withLock {
-                    testIdlingResource.isIdle().shouldBeFalse()
+                    assertFalse(testIdlingResource.isIdle())
                 }
             }
         }
@@ -104,7 +103,7 @@ internal class BaseDslPluginIdlingTest {
 
             withTimeout(TIMEOUT) {
                 mutex.withLock {
-                    testIdlingResource.isIdle().shouldBeTrue()
+                    assertTrue(testIdlingResource.isIdle())
                 }
             }
         }
@@ -149,7 +148,7 @@ internal class BaseDslPluginIdlingTest {
 
             withTimeout(TIMEOUT) {
                 mutex.withLock {
-                    testIdlingResource.isIdle().shouldBeFalse()
+                    assertFalse(testIdlingResource.isIdle())
                 }
             }
         }
@@ -173,7 +172,7 @@ internal class BaseDslPluginIdlingTest {
 
             withTimeout(TIMEOUT) {
                 mutex.withLock {
-                    testIdlingResource.isIdle().shouldBeTrue()
+                    assertTrue(testIdlingResource.isIdle())
                 }
             }
         }
@@ -221,7 +220,7 @@ internal class BaseDslPluginIdlingTest {
 
             withTimeout(TIMEOUT) {
                 mutex.withLock {
-                    testIdlingResource.isIdle().shouldBeFalse()
+                    assertFalse(testIdlingResource.isIdle())
                 }
             }
         }
@@ -246,7 +245,7 @@ internal class BaseDslPluginIdlingTest {
 
             withTimeout(TIMEOUT) {
                 mutex.withLock {
-                    testIdlingResource.isIdle().shouldBeTrue()
+                    assertTrue(testIdlingResource.isIdle())
                 }
             }
         }

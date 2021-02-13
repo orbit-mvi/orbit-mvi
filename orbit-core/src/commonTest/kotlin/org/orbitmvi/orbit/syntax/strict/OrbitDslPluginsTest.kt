@@ -20,9 +20,9 @@
 
 package org.orbitmvi.orbit.syntax.strict
 
-import org.orbitmvi.orbit.syntax.Operator
-import io.kotest.matchers.collections.shouldContainExactly
 import kotlinx.coroutines.flow.Flow
+import org.orbitmvi.orbit.syntax.Operator
+import org.orbitmvi.orbit.test.assertContainExactly
 import kotlin.test.AfterTest
 import kotlin.test.Test
 
@@ -35,7 +35,7 @@ internal class OrbitDslPluginsTest {
 
     @Test
     fun `base plugin is present by default`() {
-        orbitDslPlugins.plugins.shouldContainExactly(BaseDslPlugin)
+        orbitDslPlugins.plugins.assertContainExactly(BaseDslPlugin)
     }
 
     @Test
@@ -43,7 +43,7 @@ internal class OrbitDslPluginsTest {
 
         orbitDslPlugins.register(TestPlugin)
 
-        orbitDslPlugins.plugins.shouldContainExactly(BaseDslPlugin, TestPlugin)
+        orbitDslPlugins.plugins.assertContainExactly(BaseDslPlugin, TestPlugin)
     }
 
     private object TestPlugin : OrbitDslPlugin {
