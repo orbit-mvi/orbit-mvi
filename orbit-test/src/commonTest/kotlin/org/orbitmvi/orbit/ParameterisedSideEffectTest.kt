@@ -20,14 +20,14 @@
 
 package org.orbitmvi.orbit
 
-import org.orbitmvi.orbit.syntax.strict.orbit
-import org.orbitmvi.orbit.syntax.strict.sideEffect
 import io.kotest.assertions.throwables.shouldThrow
-import io.kotest.matchers.throwable.shouldHaveMessage
+import io.kotest.matchers.string.shouldContain
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
+import org.orbitmvi.orbit.syntax.strict.orbit
+import org.orbitmvi.orbit.syntax.strict.sideEffect
 import kotlin.random.Random
 import kotlin.test.AfterTest
 
@@ -72,8 +72,8 @@ internal class ParameterisedSideEffectTest(blocking: Boolean) {
             }
         }
 
-        throwable.shouldHaveMessage(
-            "expected:<$sideEffects2> but was:<$sideEffects>"
+        throwable.message.shouldContain(
+            "<${Regex.escape(sideEffects2.toString())}>[^<]*<${Regex.escape(sideEffects.toString())}>".toRegex()
         )
     }
 

@@ -20,16 +20,15 @@
 
 package org.orbitmvi.orbit
 
-import org.orbitmvi.orbit.syntax.strict.orbit
-import org.orbitmvi.orbit.syntax.strict.reduce
-import org.orbitmvi.orbit.syntax.strict.transform
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.string.shouldContain
-import io.kotest.matchers.throwable.shouldHaveMessage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
+import org.orbitmvi.orbit.syntax.strict.orbit
+import org.orbitmvi.orbit.syntax.strict.reduce
+import org.orbitmvi.orbit.syntax.strict.transform
 import kotlin.random.Random
 import kotlin.test.AfterTest
 
@@ -71,7 +70,7 @@ internal class ParameterisedStateTest(blocking: Boolean) {
         }
 
         throwable.message.shouldContain(
-            "expected:<$someRandomState> but was:<$initialState>"
+            "<${Regex.escape(someRandomState.toString())}>[^<]*<${Regex.escape(initialState.toString())}>".toRegex()
         )
     }
 
@@ -194,8 +193,7 @@ internal class ParameterisedStateTest(blocking: Boolean) {
         }
 
         throwable.message.shouldContain(
-            "Failed assertion at index 0 " +
-                    "expected:<State(count=$action2)> but was:<State(count=$action)>"
+            "Failed assertion at index 0[^<]*<State\\(count=$action2\\)>[^<]*<State\\(count=$action\\)>".toRegex()
         )
     }
 
@@ -219,8 +217,8 @@ internal class ParameterisedStateTest(blocking: Boolean) {
             }
         }
 
-        throwable.shouldHaveMessage(
-            "Failed assertion at index 0 expected:<State(count=$action2)> but was:<State(count=$action)>"
+        throwable.message.shouldContain(
+            "Failed assertion at index 0[^<]*<State\\(count=$action2\\)>[^<]*<State\\(count=$action\\)>".toRegex()
         )
     }
 
@@ -244,8 +242,7 @@ internal class ParameterisedStateTest(blocking: Boolean) {
         }
 
         throwable.message.shouldContain(
-            "Failed assertion at index 0 " +
-                    "expected:<State(count=$action2)> but was:<State(count=$action)>"
+            "Failed assertion at index 0[^<]*<State\\(count=$action2\\)>[^<]*<State\\(count=$action\\)>".toRegex()
         )
     }
 

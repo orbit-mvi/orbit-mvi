@@ -21,6 +21,7 @@
 package org.orbitmvi.orbit
 
 import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.matchers.string.shouldContain
 import io.kotest.matchers.throwable.shouldHaveMessage
 import kotlin.test.Test
 
@@ -175,10 +176,8 @@ internal class OrbitAssertionsTest {
         }
 
         // Then The failure message points us to the failed assertion
-        throwable.shouldHaveMessage(
-            "Failed assertion at index 0 " +
-                    "expected:<TestState(label=foobaz, index=1)> " +
-                    "but was:<TestState(label=foobar, index=1)>"
+        throwable.message.shouldContain(
+            "Failed assertion at index 0[^<]*<TestState\\(label=foobaz, index=1\\)>[^<]*<TestState\\(label=foobar, index=1\\)>".toRegex()
         )
     }
 
