@@ -26,9 +26,9 @@ object Versions {
     const val detektPlugin = "1.15.0"
     const val bintray = "1.8.5"
     const val safeargs = "2.3.2"
-    const val atomicfu = "0.14.4"
+    const val atomicfu = "0.15.1"
 
-    const val kotlin = "1.4.21"
+    const val kotlin = "1.4.30"
     const val coroutines = "1.4.2-native-mt"
 
     const val androidxLifecycles = "2.2.0"
