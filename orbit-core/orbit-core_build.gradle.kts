@@ -31,7 +31,6 @@ kotlin {
             dependencies {
                 implementation(ProjectDependencies.kotlinCoroutines)
                 implementation(kotlin("stdlib-common"))
-                implementation(project(":test-common"))
             }
         }
         commonTest {
@@ -48,7 +47,6 @@ kotlin {
         }
         val jvmTest by getting {
             dependencies {
-//                implementation(kotlin("test"))
                 implementation(kotlin("test-junit"))
             }
         }

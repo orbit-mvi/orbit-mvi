@@ -15,7 +15,6 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.syntax.strict.OrbitDslPlugin
-import org.orbitmvi.orbit.test.runBlocking
 
 internal class TestContainer<STATE : Any, SIDE_EFFECT : Any>(
     initialState: STATE,
