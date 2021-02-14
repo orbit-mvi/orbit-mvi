@@ -55,7 +55,6 @@ fun <T, C : Collection<T>> C.assertContainExactly(expected: C) {
     assertTrue(passed, failureMessage())
 }
 
-
 /** Assert that a collection not contains exactly the given values and nothing else, in order. */
 fun <T> Collection<T>.assertNotContainExactly(vararg expected: T) = assertNotContainExactly(expected.asList())
 
