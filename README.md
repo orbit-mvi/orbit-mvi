@@ -19,11 +19,6 @@ has been moved to this project maintained by the original authors.
 ## Documentation
 
 - [Core module and architecture overview](orbit-core/README.md)
-- [Coroutines](orbit-coroutines/README.md)
-- [RxJava 1](orbit-rxjava1/README.md)
-- [RxJava 2](orbit-rxjava2/README.md)
-- [RxJava 3](orbit-rxjava3/README.md)
-- [LiveData](orbit-livedata/README.md)
 - [ViewModel](orbit-viewmodel/README.md)
 - [Test](orbit-test/README.md)
 
