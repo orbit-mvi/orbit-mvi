@@ -37,5 +37,5 @@ public interface ContainerHost<STATE : Any, SIDE_EFFECT : Any> {
      * override val container = scope.container<MyState, MySideEffect>(initialState)
      * ```
      */
-    public val container: Container<STATE, SIDE_EFFECT> // TODO temporarily var until we can figure out how to swap out for test container
+    public val container: Container<STATE, SIDE_EFFECT>
 }
