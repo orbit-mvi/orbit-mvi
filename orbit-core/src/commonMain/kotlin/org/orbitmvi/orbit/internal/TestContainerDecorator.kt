@@ -1,7 +1,6 @@
 package org.orbitmvi.orbit.internal
 
 import kotlinx.atomicfu.atomic
-import kotlinx.atomicfu.update
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import org.orbitmvi.orbit.Container
@@ -33,13 +32,18 @@ public class TestContainerDecorator<STATE : Any, SIDE_EFFECT : Any>(
         isolateFlow: Boolean = true,
         blocking: Boolean = true
     ) {
-        delegate.update {
-            TestContainer(
+        val testDispatcherSet = delegate.compareAndSet(
+            expect = actual,
+            update = TestContainer(
                 initialState = initialState,
                 parentScope = parentScope,
                 isolateFlow = isolateFlow,
                 blocking = blocking
             )
+        )
+
+        if (!testDispatcherSet) {
+            throw IllegalStateException("Can only call test() once")
         }
     }
 }
