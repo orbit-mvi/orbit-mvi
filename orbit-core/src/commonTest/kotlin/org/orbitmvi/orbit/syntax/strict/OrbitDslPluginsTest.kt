@@ -23,6 +23,7 @@ package org.orbitmvi.orbit.syntax.strict
 import kotlinx.coroutines.flow.Flow
 import org.orbitmvi.orbit.syntax.Operator
 import org.orbitmvi.orbit.test.assertContainExactly
+import org.orbitmvi.orbit.test.assertEmpty
 import kotlin.test.AfterTest
 import kotlin.test.Test
 
@@ -34,16 +35,16 @@ internal class OrbitDslPluginsTest {
     }
 
     @Test
-    fun `base plugin is present by default`() {
-        orbitDslPlugins.plugins.assertContainExactly(BaseDslPlugin)
+    fun `no plugin is present by default`() {
+        orbitDslPlugins.plugins.assertEmpty()
     }
 
     @Test
-    fun `base plugin is present after another plugin has been added`() {
+    fun `plugin can be added`() {
 
         orbitDslPlugins.register(TestPlugin)
 
-        orbitDslPlugins.plugins.assertContainExactly(BaseDslPlugin, TestPlugin)
+        orbitDslPlugins.plugins.assertContainExactly(TestPlugin)
     }
 
     private object TestPlugin : OrbitDslPlugin {

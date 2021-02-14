@@ -49,7 +49,6 @@ android {
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
     implementation(project(":orbit-core"))
-    implementation(project(":orbit-coroutines"))
     implementation(project(":orbit-viewmodel"))
 
     // UI

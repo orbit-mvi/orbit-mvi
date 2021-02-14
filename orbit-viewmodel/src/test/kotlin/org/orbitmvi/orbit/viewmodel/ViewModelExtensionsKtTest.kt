@@ -23,11 +23,11 @@ package org.orbitmvi.orbit.viewmodel
 import android.os.Parcelable
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import org.orbitmvi.orbit.syntax.strict.orbit
-import org.orbitmvi.orbit.syntax.strict.reduce
 import kotlinx.android.parcel.Parcelize
 import org.junit.jupiter.api.Test
 import org.orbitmvi.orbit.ContainerHost
+import org.orbitmvi.orbit.syntax.simple.intent
+import org.orbitmvi.orbit.syntax.simple.reduce
 import org.orbitmvi.orbit.test
 import kotlin.random.Random
 import kotlin.test.assertEquals
@@ -113,7 +113,7 @@ class ViewModelExtensionsKtTest {
             onCreate = onCreate
         )
 
-        fun something(action: Int) = orbit {
+        fun something(action: Int) = intent {
             reduce {
                 state.copy(id = action)
             }

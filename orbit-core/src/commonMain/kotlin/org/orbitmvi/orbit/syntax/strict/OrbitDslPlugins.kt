@@ -29,12 +29,10 @@ import kotlin.native.concurrent.SharedImmutable
  * Orbit DSL plugin registry. In order for DSL extensions to work they need to be registered here
  * before use.
  *
- * The base DSL provided by [BaseDslPlugin] does not have to be registered as it is registered
- * implicitly, even after a [reset].
  */
 public class OrbitDslPlugins {
 
-    private val _plugins: AtomicRef<Set<OrbitDslPlugin>> = atomic(setOf(BaseDslPlugin))
+    private val _plugins: AtomicRef<Set<OrbitDslPlugin>> = atomic(setOf())
     internal val plugins: Set<OrbitDslPlugin>
         get() = _plugins.value
 
@@ -50,10 +48,10 @@ public class OrbitDslPlugins {
     }
 
     /**
-     * Clears all registered plugins apart from the [BaseDslPlugin].
+     * Clears all registered plugins
      */
     public fun reset() {
-        _plugins.update { setOf(BaseDslPlugin) }
+        _plugins.update { setOf() }
     }
 }
 

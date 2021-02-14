@@ -26,8 +26,8 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.container
-import org.orbitmvi.orbit.syntax.strict.orbit
-import org.orbitmvi.orbit.syntax.strict.reduce
+import org.orbitmvi.orbit.syntax.simple.intent
+import org.orbitmvi.orbit.syntax.simple.reduce
 import org.orbitmvi.orbit.test
 import org.orbitmvi.orbit.test.assertContainExactly
 import kotlin.random.Random
@@ -106,7 +106,7 @@ internal class StateTest {
     private inner class Middleware(initialState: TestState) : ContainerHost<TestState, String> {
         override val container = scope.container<TestState, String>(initialState)
 
-        fun something(action: Int) = orbit {
+        fun something(action: Int) = intent {
             reduce {
                 state.copy(id = action)
             }

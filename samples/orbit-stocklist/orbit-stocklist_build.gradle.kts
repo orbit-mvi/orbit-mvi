@@ -70,9 +70,7 @@ repositories {
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
     implementation(project(":orbit-core"))
-    implementation(project(":orbit-livedata"))
     implementation(project(":orbit-viewmodel"))
-    implementation(project(":orbit-coroutines"))
 
     implementation("androidx.constraintlayout:constraintlayout:2.0.4")
     implementation("com.google.android.material:material:1.2.1")

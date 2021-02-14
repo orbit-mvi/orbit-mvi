@@ -26,9 +26,8 @@ import kotlinx.coroutines.flow.collect
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.sample.stocklist.streaming.stock.StockRepository
 import org.orbitmvi.orbit.syntax.simple.intent
+import org.orbitmvi.orbit.syntax.simple.postSideEffect
 import org.orbitmvi.orbit.syntax.simple.reduce
-import org.orbitmvi.orbit.syntax.strict.orbit
-import org.orbitmvi.orbit.syntax.strict.sideEffect
 import org.orbitmvi.orbit.viewmodel.container
 
 class ListViewModel(
@@ -46,9 +45,7 @@ class ListViewModel(
         }
     }
 
-    fun viewMarket(itemName: String) = orbit {
-        sideEffect {
-            post(ListSideEffect.NavigateToDetail(itemName))
-        }
+    fun viewMarket(itemName: String) = intent {
+        postSideEffect(ListSideEffect.NavigateToDetail(itemName))
     }
 }
