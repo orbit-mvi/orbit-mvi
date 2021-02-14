@@ -12,26 +12,20 @@ public class TestContainerDecorator<STATE : Any, SIDE_EFFECT : Any>(
     private val parentScope: CoroutineScope,
     override val actual: Container<STATE, SIDE_EFFECT>
 ) : ContainerDecorator<STATE, SIDE_EFFECT> {
-    private val testMode = atomic(false)
-    private val testContainer = atomic<TestContainer<STATE, SIDE_EFFECT>?>(null)
-    private val delegate: Container<STATE, SIDE_EFFECT>
-        get() = if (testMode.value) {
-            testContainer.value!!
-        } else {
-            actual
-        }
+
+    private val delegate = atomic(actual)
 
     override val currentState: STATE
-        get() = delegate.currentState
+        get() = delegate.value.currentState
 
     override val stateFlow: Flow<STATE>
-        get() = delegate.stateFlow
+        get() = delegate.value.stateFlow
 
     override val sideEffectFlow: Flow<SIDE_EFFECT>
-        get() = delegate.sideEffectFlow
+        get() = delegate.value.sideEffectFlow
 
     override fun orbit(orbitFlow: suspend OrbitDslPlugin.ContainerContext<STATE, SIDE_EFFECT>.() -> Unit) {
-        delegate.orbit(orbitFlow)
+        delegate.value.orbit(orbitFlow)
     }
 
     fun test(
@@ -39,8 +33,7 @@ public class TestContainerDecorator<STATE : Any, SIDE_EFFECT : Any>(
         isolateFlow: Boolean = true,
         blocking: Boolean = true
     ) {
-        testMode.compareAndSet(expect = false, update = true)
-        testContainer.update {
+        delegate.update {
             TestContainer(
                 initialState = initialState,
                 parentScope = parentScope,
