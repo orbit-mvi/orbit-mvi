@@ -22,9 +22,11 @@ package org.orbitmvi.orbit.sample.stocklist.list.business
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import kotlinx.coroutines.flow.collect
 import org.orbitmvi.orbit.ContainerHost
-import org.orbitmvi.orbit.coroutines.transformFlow
 import org.orbitmvi.orbit.sample.stocklist.streaming.stock.StockRepository
+import org.orbitmvi.orbit.syntax.simple.intent
+import org.orbitmvi.orbit.syntax.simple.reduce
 import org.orbitmvi.orbit.syntax.strict.orbit
 import org.orbitmvi.orbit.syntax.strict.sideEffect
 import org.orbitmvi.orbit.viewmodel.container
@@ -36,11 +38,11 @@ class ListViewModel(
 
     override val container = container<ListState, ListSideEffect>(ListState(), savedStateHandle) { requestStocks() }
 
-    private fun requestStocks(): Unit = orbit {
-        transformFlow {
-            stockRepository.stockList()
-        }.reduce {
-            state.copy(stocks = event)
+    private fun requestStocks(): Unit = intent(registerIdling = false) {
+        stockRepository.stockList().collect {
+            reduce {
+                state.copy(stocks = it)
+            }
         }
     }
 
