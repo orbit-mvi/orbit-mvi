@@ -21,10 +21,10 @@
 package org.orbitmvi.orbit.syntax.simple
 
 import org.orbitmvi.orbit.syntax.OrbitDsl
-import org.orbitmvi.orbit.syntax.strict.OrbitDslPlugin
+import org.orbitmvi.orbit.syntax.ContainerContext
 
 @OrbitDsl
-public class SimpleSyntax<S : Any, SE : Any>(internal val containerContext: OrbitDslPlugin.ContainerContext<S, SE>) {
+public class SimpleSyntax<S : Any, SE : Any>(internal val containerContext: ContainerContext<S, SE>) {
 
     /**
      * The current state which can change throughout execution of the orbit block

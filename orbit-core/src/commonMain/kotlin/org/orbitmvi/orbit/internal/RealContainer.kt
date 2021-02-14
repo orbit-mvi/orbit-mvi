@@ -34,7 +34,7 @@ import kotlinx.coroutines.plus
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import org.orbitmvi.orbit.Container
-import org.orbitmvi.orbit.syntax.strict.OrbitDslPlugin
+import org.orbitmvi.orbit.syntax.ContainerContext
 
 @Suppress("EXPERIMENTAL_API_USAGE")
 public open class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
@@ -43,7 +43,7 @@ public open class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
     private val settings: Container.Settings
 ) : Container<STATE, SIDE_EFFECT> {
     private val scope = parentScope + settings.orbitDispatcher
-    private val dispatchChannel = Channel<suspend OrbitDslPlugin.ContainerContext<STATE, SIDE_EFFECT>.() -> Unit>(Channel.UNLIMITED)
+    private val dispatchChannel = Channel<suspend ContainerContext<STATE, SIDE_EFFECT>.() -> Unit>(Channel.UNLIMITED)
     private val mutex = Mutex()
     private val initialised = atomic(false)
 
@@ -55,7 +55,7 @@ public open class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
     private val sideEffectChannel = Channel<SIDE_EFFECT>(settings.sideEffectBufferSize)
     override val sideEffectFlow: Flow<SIDE_EFFECT> = sideEffectChannel.receiveAsFlow()
 
-    protected val pluginContext: OrbitDslPlugin.ContainerContext<STATE, SIDE_EFFECT> = OrbitDslPlugin.ContainerContext(
+    protected val pluginContext: ContainerContext<STATE, SIDE_EFFECT> = ContainerContext(
         settings = settings,
         postSideEffect = { sideEffectChannel.send(it) },
         getState = {
@@ -68,7 +68,7 @@ public open class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
         }
     )
 
-    override fun orbit(orbitFlow: suspend OrbitDslPlugin.ContainerContext<STATE, SIDE_EFFECT>.() -> Unit) {
+    override fun orbit(orbitFlow: suspend ContainerContext<STATE, SIDE_EFFECT>.() -> Unit) {
         if (initialised.compareAndSet(expect = false, update = true)) {
             scope.produce<Unit>(Dispatchers.Unconfined) {
                 awaitClose {
