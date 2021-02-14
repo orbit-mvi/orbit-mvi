@@ -21,8 +21,6 @@
 package org.orbitmvi.orbit.livedata
 
 import androidx.lifecycle.liveData
-import io.kotest.matchers.booleans.shouldBeFalse
-import io.kotest.matchers.booleans.shouldBeTrue
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -45,6 +43,8 @@ import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.container
 import org.orbitmvi.orbit.idling.IdlingResource
 import org.orbitmvi.orbit.syntax.strict.orbit
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 @ExperimentalCoroutinesApi
 @ExtendWith(InstantTaskExecutorExtension::class)
@@ -72,7 +72,7 @@ class LiveDataDslPluginIdlingTest {
     fun `idle when nothing running`() {
         scope.createContainerHost()
 
-        testIdlingResource.isIdle().shouldBeTrue()
+        assertTrue(testIdlingResource.isIdle())
     }
 
     @Test
@@ -93,7 +93,7 @@ class LiveDataDslPluginIdlingTest {
 
             withTimeout(TIMEOUT) {
                 mutex.withLock {
-                    testIdlingResource.isIdle().shouldBeFalse()
+                    assertFalse(testIdlingResource.isIdle())
                 }
             }
         }
@@ -117,7 +117,7 @@ class LiveDataDslPluginIdlingTest {
 
             withTimeout(TIMEOUT) {
                 mutex.withLock {
-                    testIdlingResource.isIdle().shouldBeTrue()
+                    assertTrue(testIdlingResource.isIdle())
                 }
             }
         }
@@ -125,7 +125,7 @@ class LiveDataDslPluginIdlingTest {
 
     private fun CoroutineScope.createContainerHost(): ContainerHost<TestState, Int> {
         return object : ContainerHost<TestState, Int> {
-            override var container: Container<TestState, Int> = container(
+            override val container: Container<TestState, Int> = container(
                 initialState = TestState(0),
                 settings = Container.Settings(idlingRegistry = testIdlingResource)
             )

@@ -26,8 +26,6 @@ import org.orbitmvi.orbit.container
 import org.orbitmvi.orbit.idling.IdlingResource
 import org.orbitmvi.orbit.syntax.strict.orbit
 import org.orbitmvi.orbit.test.assertEventually
-import io.kotest.matchers.booleans.shouldBeFalse
-import io.kotest.matchers.booleans.shouldBeTrue
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
@@ -43,6 +41,8 @@ import org.junit.jupiter.api.Test
 import rx.Completable
 import rx.Observable
 import rx.Single
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 @ExperimentalCoroutinesApi
 internal class RxJava1DslPluginIdlingTest {
@@ -63,7 +63,7 @@ internal class RxJava1DslPluginIdlingTest {
             delay(50)
         }
 
-        testIdlingResource.isIdle().shouldBeTrue()
+        assertTrue(testIdlingResource.isIdle())
     }
 
     @Test
@@ -85,7 +85,7 @@ internal class RxJava1DslPluginIdlingTest {
 
             withTimeout(TIMEOUT) {
                 mutex.withLock {
-                    testIdlingResource.isIdle().shouldBeFalse()
+                    assertFalse(testIdlingResource.isIdle())
                 }
             }
         }
@@ -110,7 +110,7 @@ internal class RxJava1DslPluginIdlingTest {
 
             withTimeout(TIMEOUT) {
                 mutex.withLock {
-                    testIdlingResource.isIdle().shouldBeTrue()
+                    assertTrue(testIdlingResource.isIdle())
                 }
             }
         }
@@ -134,7 +134,7 @@ internal class RxJava1DslPluginIdlingTest {
 
             mutex.withLock {
                 assertEventually {
-                    testIdlingResource.isIdle().shouldBeTrue()
+                    assertTrue(testIdlingResource.isIdle())
                 }
             }
         }
@@ -159,7 +159,7 @@ internal class RxJava1DslPluginIdlingTest {
 
             withTimeout(TIMEOUT) {
                 mutex.withLock {
-                    testIdlingResource.isIdle().shouldBeFalse()
+                    assertFalse(testIdlingResource.isIdle())
                 }
             }
         }
@@ -184,7 +184,7 @@ internal class RxJava1DslPluginIdlingTest {
 
             withTimeout(TIMEOUT) {
                 mutex.withLock {
-                    testIdlingResource.isIdle().shouldBeTrue()
+                    assertTrue(testIdlingResource.isIdle())
                 }
             }
         }
@@ -208,7 +208,7 @@ internal class RxJava1DslPluginIdlingTest {
 
             mutex.withLock {
                 assertEventually {
-                    testIdlingResource.isIdle().shouldBeTrue()
+                    assertTrue(testIdlingResource.isIdle())
                 }
             }
         }
@@ -234,7 +234,7 @@ internal class RxJava1DslPluginIdlingTest {
 
             withTimeout(TIMEOUT) {
                 mutex.withLock {
-                    testIdlingResource.isIdle().shouldBeFalse()
+                    assertFalse(testIdlingResource.isIdle())
                 }
             }
         }
@@ -260,7 +260,7 @@ internal class RxJava1DslPluginIdlingTest {
 
             withTimeout(TIMEOUT) {
                 mutex.withLock {
-                    testIdlingResource.isIdle().shouldBeTrue()
+                    assertTrue(testIdlingResource.isIdle())
                 }
             }
         }
@@ -283,7 +283,7 @@ internal class RxJava1DslPluginIdlingTest {
 
             mutex.withLock {
                 assertEventually {
-                    testIdlingResource.isIdle().shouldBeTrue()
+                    assertTrue(testIdlingResource.isIdle())
                 }
             }
         }
@@ -291,7 +291,7 @@ internal class RxJava1DslPluginIdlingTest {
 
     private fun CoroutineScope.createContainerHost(): ContainerHost<TestState, Int> {
         return object : ContainerHost<TestState, Int> {
-            override var container: Container<TestState, Int> = container(
+            override val container: Container<TestState, Int> = container(
                 initialState = TestState(0),
                 settings = Container.Settings(idlingRegistry = testIdlingResource)
             )

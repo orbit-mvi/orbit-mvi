@@ -20,13 +20,13 @@
 
 package org.orbitmvi.orbit.internal
 
-import org.orbitmvi.orbit.Container
-import org.orbitmvi.orbit.ContainerDecorator
-import org.orbitmvi.orbit.syntax.strict.OrbitDslPlugin
 import kotlinx.atomicfu.atomic
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.flow
+import org.orbitmvi.orbit.Container
+import org.orbitmvi.orbit.ContainerDecorator
+import org.orbitmvi.orbit.syntax.strict.OrbitDslPlugin
 
 public class LazyCreateContainerDecorator<STATE : Any, SIDE_EFFECT : Any>(
     override val actual: Container<STATE, SIDE_EFFECT>,

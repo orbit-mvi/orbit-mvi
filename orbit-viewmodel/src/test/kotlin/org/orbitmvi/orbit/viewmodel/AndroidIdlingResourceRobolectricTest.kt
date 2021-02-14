@@ -24,7 +24,6 @@ import androidx.test.espresso.Espresso
 import androidx.test.espresso.idling.CountingIdlingResource
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.container
-import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
@@ -33,6 +32,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
+import kotlin.test.assertEquals
 
 @RunWith(RobolectricTestRunner::class)
 @Config(manifest = Config.NONE, sdk = [28])
@@ -60,7 +60,7 @@ class AndroidIdlingResourceRobolectricTest {
         forceIdlingResourceSync()
 
         @Suppress("DEPRECATION")
-        Espresso.getIdlingResources().size.shouldBe(2)
+        assertEquals(2, Espresso.getIdlingResources().size)
     }
 
     /**

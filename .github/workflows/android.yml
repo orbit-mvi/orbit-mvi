@@ -97,7 +97,7 @@ jobs:
           key: ${{ runner.os }}-gradlewrapper
 
       - name: Unit tests
-        run: ./gradlew test
+        run: ./gradlew check
 
       - name: Upload test artifacts
         if: failure()

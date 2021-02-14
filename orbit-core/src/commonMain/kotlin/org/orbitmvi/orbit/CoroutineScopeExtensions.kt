@@ -20,10 +20,11 @@
 
 package org.orbitmvi.orbit
 
+import kotlinx.coroutines.CoroutineScope
 import org.orbitmvi.orbit.Container.Settings
 import org.orbitmvi.orbit.internal.LazyCreateContainerDecorator
 import org.orbitmvi.orbit.internal.RealContainer
-import kotlinx.coroutines.CoroutineScope
+import org.orbitmvi.orbit.internal.TestContainerDecorator
 
 /**
  * Helps create a concrete container in a standard way.
@@ -40,18 +41,24 @@ public fun <STATE : Any, SIDE_EFFECT : Any> CoroutineScope.container(
     onCreate: ((state: STATE) -> Unit)? = null
 ): Container<STATE, SIDE_EFFECT> =
     if (onCreate == null) {
-        RealContainer(
-            initialState = initialState,
-            settings = settings,
-            parentScope = this
-        )
-    } else {
-        LazyCreateContainerDecorator(
+        TestContainerDecorator(
+            parentScope = this,
             RealContainer(
                 initialState = initialState,
                 settings = settings,
                 parentScope = this
-            ),
-            onCreate
+            )
+        )
+    } else {
+        TestContainerDecorator(
+            parentScope = this,
+            LazyCreateContainerDecorator(
+                RealContainer(
+                    initialState = initialState,
+                    settings = settings,
+                    parentScope = this
+                ),
+                onCreate
+            )
         )
     }

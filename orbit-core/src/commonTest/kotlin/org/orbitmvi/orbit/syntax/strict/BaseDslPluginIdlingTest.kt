@@ -20,13 +20,7 @@
 
 package org.orbitmvi.orbit.syntax.strict
 
-import org.orbitmvi.orbit.Container
-import org.orbitmvi.orbit.ContainerHost
-import org.orbitmvi.orbit.container
-import org.orbitmvi.orbit.idling.IdlingResource
-import org.orbitmvi.orbit.test.runBlocking
-import io.kotest.matchers.booleans.shouldBeFalse
-import io.kotest.matchers.booleans.shouldBeTrue
+import kotlinx.atomicfu.atomic
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
@@ -35,8 +29,16 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withTimeout
+import org.orbitmvi.orbit.Container
+import org.orbitmvi.orbit.ContainerHost
+import org.orbitmvi.orbit.container
+import org.orbitmvi.orbit.idling.IdlingResource
+import org.orbitmvi.orbit.test.assertEventually
+import org.orbitmvi.orbit.test.runBlocking
 import kotlin.test.AfterTest
 import kotlin.test.Test
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 @ExperimentalCoroutinesApi
 internal class BaseDslPluginIdlingTest {
@@ -56,7 +58,7 @@ internal class BaseDslPluginIdlingTest {
             delay(50)
         }
 
-        testIdlingResource.isIdle().shouldBeTrue()
+        assertTrue(testIdlingResource.isIdle())
     }
 
     @Test
@@ -77,7 +79,7 @@ internal class BaseDslPluginIdlingTest {
 
             withTimeout(TIMEOUT) {
                 mutex.withLock {
-                    testIdlingResource.isIdle().shouldBeFalse()
+                    assertFalse(testIdlingResource.isIdle())
                 }
             }
         }
@@ -101,32 +103,32 @@ internal class BaseDslPluginIdlingTest {
 
             withTimeout(TIMEOUT) {
                 mutex.withLock {
-                    testIdlingResource.isIdle().shouldBeTrue()
+                    assertTrue(testIdlingResource.isIdle())
                 }
             }
         }
     }
 
-//    @Test
-//    fun `transform idle after running`() {
-//        runBlocking {
-//            val containerHost = scope.createContainerHost()
-//
-//            val mutex = Mutex(locked = true)
-//
-//            containerHost.orbit {
-//                transform {
-//                    mutex.unlock()
-//                }
-//            }
-//
-//            mutex.withLock {
-//                assertEventually {
-//                    testIdlingResource.isIdle().shouldBeTrue()
-//                }
-//            }
-//        }
-//    }
+    @Test
+    fun `transform idle after running`() {
+        runBlocking {
+            val containerHost = scope.createContainerHost()
+
+            val mutex = Mutex(locked = true)
+
+            containerHost.orbit {
+                transform {
+                    mutex.unlock()
+                }
+            }
+
+            mutex.withLock {
+                assertEventually {
+                    assertTrue { testIdlingResource.isIdle() }
+                }
+            }
+        }
+    }
 
     @Test
     fun `sideEffect not idle when actively running`() {
@@ -146,7 +148,7 @@ internal class BaseDslPluginIdlingTest {
 
             withTimeout(TIMEOUT) {
                 mutex.withLock {
-                    testIdlingResource.isIdle().shouldBeFalse()
+                    assertFalse(testIdlingResource.isIdle())
                 }
             }
         }
@@ -170,34 +172,34 @@ internal class BaseDslPluginIdlingTest {
 
             withTimeout(TIMEOUT) {
                 mutex.withLock {
-                    testIdlingResource.isIdle().shouldBeTrue()
+                    assertTrue(testIdlingResource.isIdle())
                 }
             }
         }
     }
 
-//    @Test
-//    fun `sideEffect idle after running`() {
-//        runBlocking {
-//            val containerHost = scope.createContainerHost()
-//
-//            val mutex = Mutex(locked = true)
-//
-//            containerHost.orbit {
-//                sideEffect {
-//                    runBlocking {
-//                        mutex.unlock()
-//                    }
-//                }
-//            }
-//
-//            mutex.withLock {
-//                assertEventually {
-//                    testIdlingResource.isIdle().shouldBeTrue()
-//                }
-//            }
-//        }
-//    }
+    @Test
+    fun `sideEffect idle after running`() {
+        runBlocking {
+            val containerHost = scope.createContainerHost()
+
+            val mutex = Mutex(locked = true)
+
+            containerHost.orbit {
+                sideEffect {
+                    runBlocking {
+                        mutex.unlock()
+                    }
+                }
+            }
+
+            mutex.withLock {
+                assertEventually {
+                    assertTrue { testIdlingResource.isIdle() }
+                }
+            }
+        }
+    }
 
     @Test
     fun `reduce not idle when actively running`() {
@@ -218,7 +220,7 @@ internal class BaseDslPluginIdlingTest {
 
             withTimeout(TIMEOUT) {
                 mutex.withLock {
-                    testIdlingResource.isIdle().shouldBeFalse()
+                    assertFalse(testIdlingResource.isIdle())
                 }
             }
         }
@@ -243,39 +245,39 @@ internal class BaseDslPluginIdlingTest {
 
             withTimeout(TIMEOUT) {
                 mutex.withLock {
-                    testIdlingResource.isIdle().shouldBeTrue()
+                    assertTrue(testIdlingResource.isIdle())
                 }
             }
         }
     }
 
-//    @Test
-//    fun `reduce idle after running`() {
-//        runBlocking {
-//            val containerHost = scope.createContainerHost()
-//
-//            val mutex = Mutex(locked = true)
-//
-//            containerHost.orbit {
-//                reduce {
-//                    runBlocking {
-//                        mutex.unlock()
-//                        state
-//                    }
-//                }
-//            }
-//
-//            mutex.withLock {
-//                assertEventually {
-//                    testIdlingResource.isIdle().shouldBeTrue()
-//                }
-//            }
-//        }
-//    }
+    @Test
+    fun `reduce idle after running`() {
+        runBlocking {
+            val containerHost = scope.createContainerHost()
+
+            val mutex = Mutex(locked = true)
+
+            containerHost.orbit {
+                reduce {
+                    runBlocking {
+                        mutex.unlock()
+                        state
+                    }
+                }
+            }
+
+            mutex.withLock {
+                assertEventually {
+                    assertTrue { testIdlingResource.isIdle() }
+                }
+            }
+        }
+    }
 
     private fun CoroutineScope.createContainerHost(): ContainerHost<TestState, Int> {
         return object : ContainerHost<TestState, Int> {
-            override var container: Container<TestState, Int> = container(
+            override val container: Container<TestState, Int> = container(
                 initialState = TestState(0),
                 settings = Container.Settings(idlingRegistry = testIdlingResource)
 
@@ -286,19 +288,19 @@ internal class BaseDslPluginIdlingTest {
     data class TestState(val value: Int)
 
     class TestIdlingResource : IdlingResource {
-        private var counter = 0
+        private val counter = atomic(0)
 
         override fun increment() {
-            counter++
+            counter.incrementAndGet()
         }
 
         override fun decrement() {
-            counter--
+            counter.decrementAndGet()
         }
 
         override fun close() = Unit
 
-        fun isIdle() = counter == 0
+        fun isIdle() = counter.value == 0
     }
 
     companion object {

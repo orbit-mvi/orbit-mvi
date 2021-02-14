@@ -20,14 +20,15 @@
 
 package org.orbitmvi.orbit.syntax.strict
 
-import org.orbitmvi.orbit.ContainerHost
-import org.orbitmvi.orbit.assert
-import org.orbitmvi.orbit.container
-import org.orbitmvi.orbit.test
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
+import org.orbitmvi.orbit.ContainerHost
+import org.orbitmvi.orbit.assert
+import org.orbitmvi.orbit.container
+import org.orbitmvi.orbit.test
+import org.orbitmvi.orbit.test.IgnoreIos
 import kotlin.random.Random
 import kotlin.test.AfterTest
 import kotlin.test.Test
@@ -94,21 +95,21 @@ internal class BaseDslPluginBehaviourTest {
     }
 
     @Test
+    @IgnoreIos
     fun `allows nullable event`() {
-        val action = null
         val middleware = BaseDslMiddleware().test(initialState)
 
-        middleware.allowsNulls(action)
+        middleware.allowsNulls()
 
         middleware.assert(initialState) {
-            postedSideEffects(action.toString())
+            postedSideEffects("null")
         }
     }
 
     private data class TestState(val id: Int = Random.nextInt())
 
     private inner class BaseDslMiddleware : ContainerHost<TestState, String> {
-        override var container = scope.container<TestState, String>(
+        override val container = scope.container<TestState, String>(
             TestState(42)
         )
 
@@ -139,11 +140,11 @@ internal class BaseDslPluginBehaviourTest {
             }
         }
 
-        fun allowsNulls(action: Int?) = orbit {
+        fun allowsNulls() = orbit {
             transform {
-                action
+                null
             }.reduce {
-                event?.let { event -> state.copy(id = event) } ?: state
+                state
             }.sideEffect {
                 post(event.toString())
             }

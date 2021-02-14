@@ -326,7 +326,7 @@ class Example : ContainerHost<ExampleState, ExampleSideEffect> {
 ``` kotlin
 perform("Toast the current state")
 class Example : ContainerHost<ExampleState, ExampleSideEffect> {
-    override var container = container<ExampleState, ExampleSideEffect>(ExampleState()) {
+    override val container = container<ExampleState, ExampleSideEffect>(ExampleState()) {
         onCreate()
     }
 

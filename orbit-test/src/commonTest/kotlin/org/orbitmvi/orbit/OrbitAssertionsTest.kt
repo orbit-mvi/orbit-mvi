@@ -20,9 +20,9 @@
 
 package org.orbitmvi.orbit
 
-import io.kotest.assertions.throwables.shouldThrow
-import io.kotest.matchers.throwable.shouldHaveMessage
+import org.orbitmvi.orbit.test.assertContains
 import kotlin.test.Test
+import kotlin.test.assertFailsWith
 
 internal class OrbitAssertionsTest {
     @Test
@@ -37,12 +37,12 @@ internal class OrbitAssertionsTest {
         )
 
         // When I assert the state list
-        val throwable = shouldThrow<AssertionError> {
+        val throwable = assertFailsWith<AssertionError> {
             assertStatesInOrder(stateList, assertions, TestState())
         }
 
         // Then The failure message points us to the failed assertion
-        throwable.shouldHaveMessage(
+        throwable.message.assertContains(
             "Failed assertions at indices 0..2, expected states but never received:\n" +
                     "[" +
                     "TestState(label=foobar, index=1), " +
@@ -143,12 +143,12 @@ internal class OrbitAssertionsTest {
         )
 
         // When I assert the state list
-        val throwable = shouldThrow<AssertionError> {
+        val throwable = assertFailsWith<AssertionError> {
             assertStatesInOrder(stateList, assertions, TestState())
         }
 
         // Then The failure message points us to the failed assertion
-        throwable.shouldHaveMessage(
+        throwable.message.assertContains(
             "Expected 3 states but more were emitted:\n" +
                     "[TestState(label=foobarbaz, index=4), TestState(label=foobarbaz, index=6)]"
         )
@@ -170,15 +170,13 @@ internal class OrbitAssertionsTest {
         )
 
         // When I assert the state list
-        val throwable = shouldThrow<AssertionError> {
+        val throwable = assertFailsWith<AssertionError> {
             assertStatesInOrder(stateList, assertions, TestState())
         }
 
         // Then The failure message points us to the failed assertion
-        throwable.shouldHaveMessage(
-            "Failed assertion at index 0 " +
-                    "expected:<TestState(label=foobaz, index=1)> " +
-                    "but was:<TestState(label=foobar, index=1)>"
+        throwable.message.assertContains(
+            "Failed assertion at index 0[^<]*<TestState\\(label=foobaz, index=1\\)>[^<]*<TestState\\(label=foobar, index=1\\)>".toRegex()
         )
     }
 
@@ -203,7 +201,7 @@ internal class OrbitAssertionsTest {
                 )
 
                 // Then The assertion fails
-                shouldThrow<AssertionError> {
+                assertFailsWith<AssertionError> {
                     assertStatesInOrder(stateList, assertions, TestState())
                 }
             }
@@ -231,7 +229,7 @@ internal class OrbitAssertionsTest {
                 val assertions: List<TestState.() -> TestState> = it
 
                 // Then The assertion fails
-                shouldThrow<AssertionError> {
+                assertFailsWith<AssertionError> {
                     assertStatesInOrder(stateList, assertions, TestState())
                 }
             }

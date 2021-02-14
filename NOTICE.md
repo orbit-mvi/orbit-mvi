@@ -17,6 +17,5 @@ This software uses the following open source works:
 - [Detekt](https://github.com/detekt/detekt)
 - [RxJava](https://github.com/ReactiveX/RxJava)
 - [JUnit](https://junit.org/)
-- [Kotest](https://kotest.io)
 
 See individual sample projects for their notices.

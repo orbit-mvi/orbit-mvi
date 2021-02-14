@@ -20,16 +20,16 @@
 
 package org.orbitmvi.orbit
 
-import org.orbitmvi.orbit.syntax.strict.orbit
-import org.orbitmvi.orbit.syntax.strict.sideEffect
-import io.kotest.assertions.throwables.shouldThrow
-import io.kotest.matchers.throwable.shouldHaveMessage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
+import org.orbitmvi.orbit.syntax.strict.orbit
+import org.orbitmvi.orbit.syntax.strict.sideEffect
+import org.orbitmvi.orbit.test.assertContains
 import kotlin.random.Random
 import kotlin.test.AfterTest
+import kotlin.test.assertFailsWith
 
 @ExperimentalCoroutinesApi
 internal class ParameterisedSideEffectTest(blocking: Boolean) {
@@ -66,20 +66,20 @@ internal class ParameterisedSideEffectTest(blocking: Boolean) {
 
         sideEffects.forEach { testSubject.something(it) }
 
-        val throwable = shouldThrow<AssertionError> {
+        val throwable = assertFailsWith<AssertionError> {
             testSubject.assert(initialState, timeoutMillis = TIMEOUT) {
                 postedSideEffects(sideEffects2)
             }
         }
 
-        throwable.shouldHaveMessage(
-            "expected:<$sideEffects2> but was:<$sideEffects>"
+        throwable.message.assertContains(
+            "<${Regex.escape(sideEffects2.toString())}>[^<]*<${Regex.escape(sideEffects.toString())}>".toRegex()
         )
     }
 
     private inner class SideEffectTestMiddleware :
         ContainerHost<State, Int> {
-        override var container = scope.container<State, Int>(initialState)
+        override val container = scope.container<State, Int>(initialState)
 
         fun something(action: Int): Unit = orbit {
             sideEffect {

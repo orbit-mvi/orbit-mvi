@@ -21,14 +21,6 @@
 package org.orbitmvi.orbit.viewmodel
 
 import androidx.test.espresso.IdlingRegistry
-import org.orbitmvi.orbit.Container
-import org.orbitmvi.orbit.ContainerHost
-import org.orbitmvi.orbit.container
-import org.orbitmvi.orbit.coroutines.transformSuspend
-import org.orbitmvi.orbit.syntax.strict.orbit
-import io.kotest.matchers.booleans.shouldBeFalse
-import io.kotest.matchers.booleans.shouldBeTrue
-import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
@@ -41,8 +33,17 @@ import kotlinx.coroutines.withTimeout
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.orbitmvi.orbit.Container
+import org.orbitmvi.orbit.ContainerHost
+import org.orbitmvi.orbit.container
+import org.orbitmvi.orbit.coroutines.transformSuspend
+import org.orbitmvi.orbit.syntax.simple.intent
+import org.orbitmvi.orbit.syntax.strict.orbit
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 class AndroidIdlingResourceTest {
 
@@ -81,7 +82,7 @@ class AndroidIdlingResourceTest {
 
         val idlingResource = IdlingRegistry.getInstance().resources.first()
 
-        idlingResource.isIdleNow.shouldBeTrue()
+        assertTrue(idlingResource.isIdleNow)
     }
 
     @Test
@@ -102,7 +103,7 @@ class AndroidIdlingResourceTest {
 
             withTimeout(ASSERT_TIMEOUT) {
                 mutex.withLock {
-                    idlingResource.isIdleNow.shouldBeFalse()
+                    assertFalse(idlingResource.isIdleNow)
                 }
             }
         }
@@ -126,7 +127,7 @@ class AndroidIdlingResourceTest {
 
             withTimeout(ASSERT_TIMEOUT) {
                 mutex.withLock {
-                    idlingResource.isIdleNow.shouldBeTrue()
+                    assertTrue(idlingResource.isIdleNow)
                 }
             }
         }
@@ -149,7 +150,7 @@ class AndroidIdlingResourceTest {
 
             withTimeout(ASSERT_TIMEOUT) {
                 mutex.withLock {
-                    idlingResource.isIdleNow.shouldBeFalse()
+                    assertFalse(idlingResource.isIdleNow)
                 }
             }
         }
@@ -178,7 +179,7 @@ class AndroidIdlingResourceTest {
                         }
                     }
 
-                    result.shouldBeTrue()
+                    assertTrue(result)
                 }
             }
         }
@@ -211,7 +212,7 @@ class AndroidIdlingResourceTest {
             withTimeout(ASSERT_TIMEOUT) {
                 mutex1.withLock {
                     mutex2.withLock {
-                        idlingResource.isIdleNow.shouldBeFalse()
+                        assertFalse(idlingResource.isIdleNow)
                     }
                 }
             }
@@ -246,7 +247,7 @@ class AndroidIdlingResourceTest {
             withTimeout(ASSERT_TIMEOUT) {
                 mutex1.withLock {
                     mutex2.withLock {
-                        idlingResource.isIdleNow.shouldBeFalse()
+                        assertFalse(idlingResource.isIdleNow)
                     }
                 }
             }
@@ -278,7 +279,7 @@ class AndroidIdlingResourceTest {
             withTimeout(ASSERT_TIMEOUT) {
                 mutex1.withLock {
                     mutex2.withLock {
-                        idlingResource.isIdleNow.shouldBeFalse()
+                        assertFalse(idlingResource.isIdleNow)
                     }
                 }
             }
@@ -316,7 +317,7 @@ class AndroidIdlingResourceTest {
                             }
                         }
 
-                        result.shouldBeTrue()
+                        assertTrue(result)
                     }
                 }
             }
@@ -326,19 +327,21 @@ class AndroidIdlingResourceTest {
     @Test
     fun `cancelling scope removes IdlingResource`() {
         runBlocking {
-            scope.createContainerHost()
+            val host = scope.createContainerHost()
+            // Make sure idling resource is lazily initialised
+            host.intent { }
 
-            IdlingRegistry.getInstance().resources.size.shouldBe(1)
+            assertEquals(1, IdlingRegistry.getInstance().resources.size)
 
             scope.cancel()
 
-            IdlingRegistry.getInstance().resources.size.shouldBe(0)
+            assertEquals(0, IdlingRegistry.getInstance().resources.size)
         }
     }
 
     private fun CoroutineScope.createContainerHost(): ContainerHost<TestState, Int> {
         return object : ContainerHost<TestState, Int> {
-            override var container: Container<TestState, Int> = container(
+            override val container: Container<TestState, Int> = container(
                 initialState = TestState(0),
                 settings = Container.Settings(idlingRegistry = AndroidIdlingResource())
             )

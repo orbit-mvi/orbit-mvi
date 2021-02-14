@@ -18,22 +18,23 @@
  * See: https://github.com/orbit-mvi/orbit-mvi/compare/c5b8b3f2b83b5972ba2ad98f73f75086a89653d3...main
  */
 
-package org.orbitmvi.orbit
+package org.orbitmvi.orbit.internal
 
-import org.orbitmvi.orbit.internal.RealContainer
-import org.orbitmvi.orbit.syntax.strict.OrbitDslPlugin
-import org.orbitmvi.orbit.test.runBlocking
 import kotlinx.atomicfu.atomic
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.plus
+import org.orbitmvi.orbit.Container
+import org.orbitmvi.orbit.syntax.strict.OrbitDslPlugin
 
 internal class TestContainer<STATE : Any, SIDE_EFFECT : Any>(
     initialState: STATE,
+    parentScope: CoroutineScope,
     private val isolateFlow: Boolean,
     private val blocking: Boolean
 ) : RealContainer<STATE, SIDE_EFFECT>(
     initialState = initialState,
-    parentScope = CoroutineScope(Dispatchers.Unconfined),
+    parentScope = parentScope + Dispatchers.Unconfined,
     settings = Container.Settings(
         orbitDispatcher =
         @Suppress("EXPERIMENTAL_API_USAGE") if (blocking) Dispatchers.Unconfined else Dispatchers.Default,

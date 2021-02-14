@@ -29,3 +29,8 @@ tasks.withType(KotlinCompile::class.java).all {
         jvmTarget = "1.8"
     }
 }
+
+dependencies {
+    // See https://github.com/Kotlin/kotlinx.atomicfu/issues/171
+    implementation(kotlin("stdlib", "1.4.30"))
+}

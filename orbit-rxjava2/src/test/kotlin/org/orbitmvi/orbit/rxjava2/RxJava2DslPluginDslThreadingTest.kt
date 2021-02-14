@@ -20,13 +20,6 @@
 
 package org.orbitmvi.orbit.rxjava2
 
-import org.orbitmvi.orbit.ContainerHost
-import org.orbitmvi.orbit.container
-import org.orbitmvi.orbit.syntax.strict.orbit
-import org.orbitmvi.orbit.syntax.strict.reduce
-import org.orbitmvi.orbit.test
-import org.orbitmvi.orbit.test.ScopedBlockingWorkSimulator
-import io.kotest.matchers.collections.shouldContainExactly
 import io.reactivex.Completable
 import io.reactivex.Maybe
 import io.reactivex.Observable
@@ -42,6 +35,13 @@ import kotlinx.coroutines.test.TestCoroutineScope
 import kotlinx.coroutines.withTimeout
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
+import org.orbitmvi.orbit.ContainerHost
+import org.orbitmvi.orbit.container
+import org.orbitmvi.orbit.syntax.strict.orbit
+import org.orbitmvi.orbit.syntax.strict.reduce
+import org.orbitmvi.orbit.test
+import org.orbitmvi.orbit.test.ScopedBlockingWorkSimulator
+import org.orbitmvi.orbit.test.assertContainExactly
 import kotlin.random.Random
 
 @ExperimentalCoroutinesApi
@@ -136,7 +136,7 @@ internal class RxJava2DslPluginDslThreadingTest {
         middleware.single(action)
 
         testFlowObserver.awaitCount(2)
-        testFlowObserver.values.shouldContainExactly(
+        testFlowObserver.values.assertContainExactly(
             TestState(42),
             TestState(action + 5)
         )
@@ -161,7 +161,7 @@ internal class RxJava2DslPluginDslThreadingTest {
         middleware.reducer(action)
 
         testFlowObserver.awaitCount(2)
-        testFlowObserver.values.shouldContainExactly(TestState(42), TestState(action))
+        testFlowObserver.values.assertContainExactly(TestState(42), TestState(action))
     }
 
     private data class TestState(val id: Int)
@@ -169,7 +169,7 @@ internal class RxJava2DslPluginDslThreadingTest {
     private inner class Middleware : ContainerHost<TestState, String> {
 
         @Suppress("EXPERIMENTAL_API_USAGE")
-        override var container = scope.container<TestState, String>(TestState(42))
+        override val container = scope.container<TestState, String>(TestState(42))
 
         val singleMutex = Mutex(locked = true)
         val maybeMutex = Mutex(locked = true)

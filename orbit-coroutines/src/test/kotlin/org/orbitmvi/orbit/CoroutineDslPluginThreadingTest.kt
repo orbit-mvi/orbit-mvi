@@ -20,9 +20,6 @@
 
 package org.orbitmvi.orbit
 
-import org.orbitmvi.orbit.syntax.strict.orbit
-import org.orbitmvi.orbit.syntax.strict.reduce
-import io.kotest.matchers.collections.shouldContainExactly
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
@@ -38,6 +35,9 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import org.orbitmvi.orbit.coroutines.transformFlow
 import org.orbitmvi.orbit.coroutines.transformSuspend
+import org.orbitmvi.orbit.syntax.strict.orbit
+import org.orbitmvi.orbit.syntax.strict.reduce
+import org.orbitmvi.orbit.test.assertContainExactly
 import kotlin.random.Random
 
 @ExperimentalCoroutinesApi
@@ -100,7 +100,7 @@ internal class CoroutineDslPluginThreadingTest {
         middleware.suspend(action)
 
         testFlowObserver.awaitCount(2)
-        testFlowObserver.values.shouldContainExactly(
+        testFlowObserver.values.assertContainExactly(
             TestState(42),
             TestState(action + 5)
         )
@@ -125,7 +125,7 @@ internal class CoroutineDslPluginThreadingTest {
         middleware.reducer(action)
 
         testFlowObserver.awaitCount(2)
-        testFlowObserver.values.shouldContainExactly(TestState(42), TestState(action))
+        testFlowObserver.values.assertContainExactly(TestState(42), TestState(action))
     }
 
     private data class TestState(val id: Int)
@@ -134,7 +134,7 @@ internal class CoroutineDslPluginThreadingTest {
     private inner class Middleware : ContainerHost<TestState, String> {
 
         @Suppress("EXPERIMENTAL_API_USAGE")
-        override var container = scope.container<TestState, String>(TestState(42))
+        override val container = scope.container<TestState, String>(TestState(42))
         val suspendMutex = Mutex(locked = true)
         val flowMutex = Mutex(locked = true)
 

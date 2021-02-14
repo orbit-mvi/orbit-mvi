@@ -26,7 +26,7 @@ import org.orbitmvi.orbit.syntax.strict.orbit
 import org.orbitmvi.orbit.syntax.strict.reduce
 import org.orbitmvi.orbit.test
 import org.orbitmvi.orbit.test.ScopedBlockingWorkSimulator
-import io.kotest.matchers.collections.shouldContainExactly
+import org.orbitmvi.orbit.test.assertContainExactly
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Maybe
 import io.reactivex.rxjava3.core.Observable
@@ -136,7 +136,7 @@ internal class RxJava3DslPluginDslThreadingTest {
         middleware.single(action)
 
         testFlowObserver.awaitCount(2)
-        testFlowObserver.values.shouldContainExactly(
+        testFlowObserver.values.assertContainExactly(
             TestState(42),
             TestState(action + 5)
         )
@@ -161,7 +161,7 @@ internal class RxJava3DslPluginDslThreadingTest {
         middleware.reducer(action)
 
         testFlowObserver.awaitCount(2)
-        testFlowObserver.values.shouldContainExactly(TestState(42), TestState(action))
+        testFlowObserver.values.assertContainExactly(TestState(42), TestState(action))
     }
 
     private data class TestState(val id: Int)
@@ -169,7 +169,7 @@ internal class RxJava3DslPluginDslThreadingTest {
     private inner class Middleware : ContainerHost<TestState, String> {
 
         @Suppress("EXPERIMENTAL_API_USAGE")
-        override var container = scope.container<TestState, String>(TestState(42))
+        override val container = scope.container<TestState, String>(TestState(42))
         val singleMutex = Mutex(locked = true)
         val maybeMutex = Mutex(locked = true)
         val completableMutex = Mutex(locked = true)

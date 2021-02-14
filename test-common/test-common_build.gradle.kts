@@ -21,6 +21,7 @@
 plugins {
     kotlin("multiplatform")
 }
+apply<kotlinx.atomicfu.plugin.gradle.AtomicFUGradlePlugin>()
 
 kotlin {
     jvm()
@@ -29,7 +30,8 @@ kotlin {
         commonMain {
             dependencies {
                 implementation(ProjectDependencies.kotlinCoroutines)
-                kotlin("stdlib-common")
+                implementation(kotlin("stdlib"))
+                implementation(kotlin("test"))
             }
         }
         val jvmMain by getting {

@@ -41,7 +41,6 @@ kotlin {
             dependencies {
                 implementation(kotlin("test-common"))
                 implementation(kotlin("test-annotations-common"))
-                implementation(ProjectDependencies.kotestAssertions)
             }
         }
 

@@ -20,11 +20,6 @@
 
 package org.orbitmvi.orbit.internal
 
-import org.orbitmvi.orbit.Container
-import org.orbitmvi.orbit.container
-import org.orbitmvi.orbit.test
-import org.orbitmvi.orbit.test.runBlocking
-import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.GlobalScope
@@ -32,9 +27,14 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import org.orbitmvi.orbit.Container
+import org.orbitmvi.orbit.container
+import org.orbitmvi.orbit.test
+import org.orbitmvi.orbit.test.runBlocking
 import kotlin.random.Random
 import kotlin.test.AfterTest
 import kotlin.test.Test
+import kotlin.test.assertEquals
 
 @ExperimentalCoroutinesApi
 internal class ContainerThreadingTest {
@@ -60,7 +60,7 @@ internal class ContainerThreadingTest {
         }
 
         observer.awaitCount(2)
-        container.currentState.shouldBe(newState)
+        assertEquals(newState, container.currentState)
     }
 
     @Test
@@ -90,7 +90,7 @@ internal class ContainerThreadingTest {
 
             testStateObserver.awaitFor { values.last().ids.size == ITEM_COUNT }
 
-            testStateObserver.values.last().shouldBe(expectedStates.last())
+            assertEquals(expectedStates.last(), testStateObserver.values.last())
         }
     }
 
@@ -123,8 +123,8 @@ internal class ContainerThreadingTest {
 
             testStateObserver.awaitFor { values.last().ids.size == ITEM_COUNT }
 
-            testStateObserver.values.last().ids.count { it == 1 }.shouldBe(ITEM_COUNT / 3)
-            testStateObserver.values.last().ids.count { it == 2 }.shouldBe(ITEM_COUNT / 3)
+            assertEquals(ITEM_COUNT / 3, testStateObserver.values.last().ids.count { it == 1 })
+            assertEquals(ITEM_COUNT / 3, testStateObserver.values.last().ids.count { it == 2 })
         }
     }
 

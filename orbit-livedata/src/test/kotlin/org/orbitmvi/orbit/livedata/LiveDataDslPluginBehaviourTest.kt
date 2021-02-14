@@ -94,7 +94,7 @@ internal class LiveDataDslPluginBehaviourTest {
 
     private inner class Middleware(val liveData: LiveData<Int>) : ContainerHost<TestState, String> {
 
-        override var container = scope.container<TestState, String>(TestState(42))
+        override val container = scope.container<TestState, String>(TestState(42))
 
         fun liveData() = orbit {
             transformLiveData {

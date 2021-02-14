@@ -23,8 +23,6 @@ package org.orbitmvi.orbit
 import org.orbitmvi.orbit.idling.IdlingResource
 import org.orbitmvi.orbit.syntax.strict.orbit
 import org.orbitmvi.orbit.test.assertEventually
-import io.kotest.matchers.booleans.shouldBeFalse
-import io.kotest.matchers.booleans.shouldBeTrue
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
@@ -40,6 +38,8 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import org.orbitmvi.orbit.coroutines.transformFlow
 import org.orbitmvi.orbit.coroutines.transformSuspend
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 @ExperimentalCoroutinesApi
 internal class CoroutineDslPluginIdlingTest {
@@ -63,7 +63,7 @@ internal class CoroutineDslPluginIdlingTest {
             delay(50)
         }
 
-        testIdlingResource.isIdle().shouldBeTrue()
+        assertTrue(testIdlingResource.isIdle())
     }
 
     @Test
@@ -82,7 +82,7 @@ internal class CoroutineDslPluginIdlingTest {
 
             withTimeout(TIMEOUT) {
                 mutex.withLock {
-                    testIdlingResource.isIdle().shouldBeFalse()
+                    assertFalse(testIdlingResource.isIdle())
                 }
             }
         }
@@ -104,7 +104,7 @@ internal class CoroutineDslPluginIdlingTest {
 
             withTimeout(TIMEOUT) {
                 mutex.withLock {
-                    testIdlingResource.isIdle().shouldBeTrue()
+                    assertTrue(testIdlingResource.isIdle())
                 }
             }
         }
@@ -125,7 +125,7 @@ internal class CoroutineDslPluginIdlingTest {
 
             mutex.withLock {
                 assertEventually {
-                    testIdlingResource.isIdle().shouldBeTrue()
+                    assertTrue(testIdlingResource.isIdle())
                 }
             }
         }
@@ -149,7 +149,7 @@ internal class CoroutineDslPluginIdlingTest {
 
             withTimeout(TIMEOUT) {
                 mutex.withLock {
-                    testIdlingResource.isIdle().shouldBeFalse()
+                    assertFalse(testIdlingResource.isIdle())
                 }
             }
         }
@@ -173,7 +173,7 @@ internal class CoroutineDslPluginIdlingTest {
 
             withTimeout(TIMEOUT) {
                 mutex.withLock {
-                    testIdlingResource.isIdle().shouldBeTrue()
+                    assertTrue(testIdlingResource.isIdle())
                 }
             }
         }
@@ -196,7 +196,7 @@ internal class CoroutineDslPluginIdlingTest {
 
             mutex.withLock {
                 assertEventually {
-                    testIdlingResource.isIdle().shouldBeTrue()
+                    assertTrue(testIdlingResource.isIdle())
                 }
             }
         }
@@ -204,7 +204,7 @@ internal class CoroutineDslPluginIdlingTest {
 
     private fun CoroutineScope.createContainerHost(): ContainerHost<TestState, Int> {
         return object : ContainerHost<TestState, Int> {
-            override var container: Container<TestState, Int> = container(
+            override val container: Container<TestState, Int> = container(
                 initialState = TestState(0),
                 settings = Container.Settings(idlingRegistry = testIdlingResource)
             )

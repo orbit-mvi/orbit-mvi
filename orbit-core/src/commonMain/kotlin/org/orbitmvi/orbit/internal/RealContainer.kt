@@ -20,8 +20,7 @@
 
 package org.orbitmvi.orbit.internal
 
-import org.orbitmvi.orbit.Container
-import org.orbitmvi.orbit.syntax.strict.OrbitDslPlugin
+import kotlinx.atomicfu.atomic
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
@@ -34,6 +33,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import org.orbitmvi.orbit.Container
+import org.orbitmvi.orbit.syntax.strict.OrbitDslPlugin
 
 @Suppress("EXPERIMENTAL_API_USAGE")
 public open class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
@@ -44,6 +45,7 @@ public open class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
     private val scope = parentScope + settings.orbitDispatcher
     private val dispatchChannel = Channel<suspend OrbitDslPlugin.ContainerContext<STATE, SIDE_EFFECT>.() -> Unit>(Channel.UNLIMITED)
     private val mutex = Mutex()
+    private val initialised = atomic(false)
 
     private val internalStateFlow = MutableStateFlow(initialState)
     override val currentState: STATE
@@ -66,20 +68,19 @@ public open class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
         }
     )
 
-    init {
-        scope.produce<Unit>(Dispatchers.Unconfined) {
-            awaitClose {
-                settings.idlingRegistry.close()
-            }
-        }
-        scope.launch {
-            for (msg in dispatchChannel) {
-                launch(Dispatchers.Unconfined) { pluginContext.msg() }
-            }
-        }
-    }
-
     override fun orbit(orbitFlow: suspend OrbitDslPlugin.ContainerContext<STATE, SIDE_EFFECT>.() -> Unit) {
+        if (initialised.compareAndSet(expect = false, update = true)) {
+            scope.produce<Unit>(Dispatchers.Unconfined) {
+                awaitClose {
+                    settings.idlingRegistry.close()
+                }
+            }
+            scope.launch {
+                for (msg in dispatchChannel) {
+                    launch(Dispatchers.Unconfined) { pluginContext.msg() }
+                }
+            }
+        }
         dispatchChannel.offer(orbitFlow)
     }
 }

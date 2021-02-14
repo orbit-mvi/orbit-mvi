@@ -20,12 +20,6 @@
 
 package org.orbitmvi.orbit.syntax.strict
 
-import org.orbitmvi.orbit.ContainerHost
-import org.orbitmvi.orbit.container
-import org.orbitmvi.orbit.test
-import org.orbitmvi.orbit.test.ScopedBlockingWorkSimulator
-import org.orbitmvi.orbit.test.runBlocking
-import io.kotest.matchers.collections.shouldContainExactly
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
@@ -34,6 +28,13 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withTimeout
+import org.orbitmvi.orbit.ContainerHost
+import org.orbitmvi.orbit.container
+import org.orbitmvi.orbit.test
+import org.orbitmvi.orbit.test.IgnoreIos
+import org.orbitmvi.orbit.test.ScopedBlockingWorkSimulator
+import org.orbitmvi.orbit.test.assertContainExactly
+import org.orbitmvi.orbit.test.runBlocking
 import kotlin.random.Random
 import kotlin.test.AfterTest
 import kotlin.test.Test
@@ -51,6 +52,7 @@ internal class BaseDslPluginThreadingTest {
     }
 
     @Test
+    @IgnoreIos
     fun `blocking transformer does not block the container from receiving further intents`() {
         val action = Random.nextInt()
         val testFlowObserver = middleware.container.stateFlow.test()
@@ -59,16 +61,17 @@ internal class BaseDslPluginThreadingTest {
         runBlocking {
             withTimeout(timeout) {
                 middleware.transformerMutex.withLock { }
-                delay(50)
+                delay(500)
             }
         }
         middleware.transformer(action)
 
         testFlowObserver.awaitCount(2)
-        testFlowObserver.values.shouldContainExactly(TestState(42), TestState(action + 5))
+        testFlowObserver.values.assertContainExactly(TestState(42), TestState(action + 5))
     }
 
     @Test
+    @IgnoreIos
     fun `blocking transformer does not block the reducer`() {
         val action = Random.nextInt()
         val testFlowObserver = middleware.container.stateFlow.test()
@@ -84,7 +87,7 @@ internal class BaseDslPluginThreadingTest {
         middleware.reducer(action)
 
         testFlowObserver.awaitCount(2)
-        testFlowObserver.values.shouldContainExactly(TestState(42), TestState(action))
+        testFlowObserver.values.assertContainExactly(TestState(42), TestState(action))
     }
 
     @Test
@@ -136,7 +139,7 @@ internal class BaseDslPluginThreadingTest {
         middleware.transformer(action)
 
         testFlowObserver.awaitCount(2, 100L)
-        testFlowObserver.values.shouldContainExactly(
+        testFlowObserver.values.assertContainExactly(
             TestState(42),
         )
     }
@@ -159,7 +162,7 @@ internal class BaseDslPluginThreadingTest {
         middleware.reducer(action)
 
         testFlowObserver.awaitCount(2, 100L)
-        testFlowObserver.values.shouldContainExactly(TestState(42))
+        testFlowObserver.values.assertContainExactly(TestState(42))
     }
 
     private data class TestState(val id: Int)
@@ -167,7 +170,7 @@ internal class BaseDslPluginThreadingTest {
     private inner class Middleware : ContainerHost<TestState, String> {
 
         @Suppress("EXPERIMENTAL_API_USAGE")
-        override var container = scope.container<TestState, String>(TestState(42))
+        override val container = scope.container<TestState, String>(TestState(42))
 
         val reducerMutex = Mutex(locked = true)
         val transformerMutex = Mutex(locked = true)
