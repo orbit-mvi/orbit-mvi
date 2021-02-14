@@ -169,12 +169,12 @@ order to create an Orbit-enabled Android `ViewModel`.
 The Core module contains built-in Orbit operators. Here's how
 they map to MVI concepts:
 
-| MVI Operation / DSL | [Simple](../simple-syntax.md) |
+| MVI Operation       | Orbit DSL                     |
 |---------------------|-------------------------------|
 | block               | `intent { ... }`              |
 | transformation      | operations within `intent`    |
 | posted side effect  | `postSideEffect(...)`         |
-| reduction           | reduce { ... }`               |
+| reduction           | `reduce { ... }`              |
 
 Operators are invoked through the block function in a
 [ContainerHost](src/commonMain/kotlin/org/orbitmvi/orbit/ContainerHost.kt). For
@@ -200,7 +200,7 @@ subscribing to a `Flow` of location updates.
 In Orbit, the transformations are simply suspend function calls in the block
 function. It is your responsibility to ensure you are using the correct
 context for your calls. Blocking code in your `intent` block will generally
-cause orbit's "event loop" to be blocked, effectively preventing processing
+cause Orbit's "event loop" to be blocked, effectively preventing processing
 of new intents until that code completes.
 
 ### Reduction
@@ -303,7 +303,7 @@ done by switching your coroutine context.
 - Calls to Container.intent` do not block the caller. The
   operations within are offloaded to an event-loop style background coroutine.
 - Generally it is good practice to make sure long-running operations are done
-  in a switched coroutine context in order not to block the orbit "event
+  in a switched coroutine context in order not to block the Orbit "event
   loop".
 
 ## Error handling
