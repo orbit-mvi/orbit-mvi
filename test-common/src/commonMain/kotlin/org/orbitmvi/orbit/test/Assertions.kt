@@ -24,6 +24,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeout
 import kotlinx.coroutines.yield
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 public suspend fun assertEventually(timeout: Long = 2000L, block: suspend () -> Unit) {
@@ -51,4 +52,52 @@ public fun CharSequence?.assertContains(expected: Regex) {
     assertTrue("Does not contain ${expected.pattern}") {
         this?.contains(expected) ?: false
     }
+}
+
+/** Assert that a collection contains exactly the given values and nothing else, in order. */
+public fun <T> Collection<T>.assertContainExactly(vararg expected: T) = assertContainExactly(expected.asList())
+
+/** Assert that a collection contains exactly the given values and nothing else, in order. */
+public fun <T, C : Collection<T>> C.assertContainExactly(expected: C) {
+    val actual = this
+
+    val passed = actual.size == expected.size && actual.zip(expected).all { (a, b) -> a == b }
+
+    val failureMessage = {
+        val missing = expected.filterNot { actual.contains(it) }
+        val extra = actual.filterNot { expected.contains(it) }
+
+        val sb = StringBuilder()
+        sb.append("Expecting: ${expected.printed()} but was: ${actual.printed()}")
+        sb.append("\n")
+        if (missing.isNotEmpty()) {
+            sb.append("Some elements were missing: ")
+            sb.append(missing.printed())
+            if (extra.isNotEmpty()) {
+                sb.append(" and some elements were unexpected: ")
+                sb.append(extra.printed())
+            }
+        } else if (extra.isNotEmpty()) {
+            sb.append("Some elements were unexpected: ")
+            sb.append(extra.printed())
+        }
+        sb.toString()
+    }
+
+    assertTrue(passed, failureMessage())
+}
+
+/** Assert that a collection not contains exactly the given values and nothing else, in order. */
+public fun <T> Collection<T>.assertNotContainExactly(vararg expected: T) {
+    val actual = this
+
+    val passed = actual.size == expected.size && actual.zip(expected).all { (a, b) -> a == b }
+
+    assertFalse(passed, "Collection should not be exactly ${expected.asList().printed()}")
+}
+
+private fun <T, C : Collection<T>> C.printed(): String {
+    val expectedPrinted = take(20).joinToString(",\n  ", prefix = "[\n  ", postfix = "\n]") { it.toString() }
+    val expectedMore = if (size > 20) " ... (plus ${size - 20} more)" else ""
+    return "$expectedPrinted$expectedMore"
 }
