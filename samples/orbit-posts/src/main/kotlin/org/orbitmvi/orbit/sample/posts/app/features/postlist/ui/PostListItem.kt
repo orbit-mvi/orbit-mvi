@@ -20,17 +20,18 @@
 
 package org.orbitmvi.orbit.sample.posts.app.features.postlist.ui
 
-import android.widget.ImageView
-import android.widget.TextView
+import android.view.View
 import org.orbitmvi.orbit.sample.posts.R
 import org.orbitmvi.orbit.sample.posts.app.features.postlist.viewmodel.PostListViewModel
 import org.orbitmvi.orbit.sample.posts.domain.repositories.PostOverview
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
-import com.xwray.groupie.kotlinandroidextensions.GroupieViewHolder
-import com.xwray.groupie.kotlinandroidextensions.Item
+import com.xwray.groupie.viewbinding.BindableItem
+import org.orbitmvi.orbit.sample.posts.databinding.PostListItemBinding
 
-data class PostListItem(private val post: PostOverview, private val viewModel: PostListViewModel) : Item() {
+data class PostListItem(private val post: PostOverview, private val viewModel: PostListViewModel) : BindableItem<PostListItemBinding>() {
+
+    override fun initializeViewBinding(view: View) = PostListItemBinding.bind(view)
 
     override fun isSameAs(other: com.xwray.groupie.Item<*>) = other is PostListItem && post.id == other.post.id
 
@@ -38,18 +39,14 @@ data class PostListItem(private val post: PostOverview, private val viewModel: P
 
     override fun getLayout() = R.layout.post_list_item
 
-    override fun bind(viewHolder: GroupieViewHolder, position: Int) {
-        val avatar: ImageView = viewHolder.itemView.findViewById(R.id.post_avatar)
-        val title: TextView = viewHolder.itemView.findViewById(R.id.post_title)
-        val username: TextView = viewHolder.itemView.findViewById(R.id.post_username)
+    override fun bind(viewBinding: PostListItemBinding, position: Int) {
+        Glide.with(viewBinding.root.context).load(post.avatarUrl)
+            .apply(RequestOptions.circleCropTransform()).into(viewBinding.postAvatar)
 
-        Glide.with(viewHolder.itemView.context).load(post.avatarUrl)
-            .apply(RequestOptions.circleCropTransform()).into(avatar)
+        viewBinding.postTitle.text = post.title
+        viewBinding.postUsername.text = post.username
 
-        title.text = post.title
-        username.text = post.username
-
-        viewHolder.itemView.setOnClickListener {
+        viewBinding.root.setOnClickListener {
             viewModel.onPostClicked(post)
         }
     }

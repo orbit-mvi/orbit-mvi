@@ -21,7 +21,7 @@
 plugins {
     id("com.android.application")
     kotlin("android")
-    id("kotlin-android-extensions")
+    id("kotlin-parcelize")
     id("androidx.navigation.safeargs.kotlin")
 }
 
@@ -73,16 +73,16 @@ dependencies {
     implementation(project(":orbit-viewmodel"))
 
     implementation("androidx.constraintlayout:constraintlayout:2.0.4")
-    implementation("com.google.android.material:material:1.2.1")
-    implementation("androidx.navigation:navigation-fragment-ktx:2.3.2")
-    implementation("androidx.navigation:navigation-ui-ktx:2.3.2")
+    implementation("com.google.android.material:material:1.3.0")
+    implementation("androidx.navigation:navigation-fragment-ktx:2.3.3")
+    implementation("androidx.navigation:navigation-ui-ktx:2.3.3")
     implementation("com.lightstreamer:ls-android-client:4.2.3")
-    implementation("com.xwray:groupie:2.8.1")
-    implementation("com.xwray:groupie-kotlin-android-extensions:2.8.1")
-    implementation("com.xwray:groupie-viewbinding:2.8.1")
+    implementation("com.xwray:groupie:2.9.0")
+    implementation("com.xwray:groupie-kotlin-android-extensions:2.9.0")
+    implementation("com.xwray:groupie-viewbinding:2.9.0")
     implementation("org.koin:koin-androidx-viewmodel:2.2.1")
-    implementation("androidx.lifecycle:lifecycle-common-java8:2.2.0")
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.2.0")
+    implementation("androidx.lifecycle:lifecycle-common-java8:2.3.0")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.3.0")
 
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:${Versions.desugar}")
 }

@@ -21,11 +21,11 @@
 object Versions {
 
     const val gradleVersionsPlugin = "0.36.0"
-    const val gradleAndroidPlugin = "4.1.1"
+    const val gradleAndroidPlugin = "4.1.2"
     const val markdownLintPlugin = "0.6.0"
     const val detektPlugin = "1.15.0"
     const val bintray = "1.8.5"
-    const val safeargs = "2.3.2"
+    const val safeargs = "2.3.3"
     const val atomicfu = "0.15.1"
 
     const val kotlin = "1.4.30"
@@ -43,10 +43,10 @@ object Versions {
     const val desugar = "1.0.10"
 
     // Testing
-    const val junitPlatform = "1.7.0"
-    const val junitRuntime = "5.7.0"
+    const val junitPlatform = "1.7.1"
+    const val junitRuntime = "5.7.1"
     const val jacoco = "0.8.5"
-    const val robolectric = "4.4"
+    const val robolectric = "4.5.1"
 }
 
 object ProjectDependencies {
