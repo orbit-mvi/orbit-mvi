@@ -104,30 +104,28 @@ class AndroidIdlingResourceTest {
             }
         }
     }
-//
-//    @Test
-//    fun `idle when actively running with registration disabled`() {
-//        runBlocking {
-//            val containerHost = scope.createContainerHost()
-//
-//            val mutex = Mutex(locked = true)
-//
-//            containerHost.intent {
-//                transformSuspend(registerIdling = false) {
-//                    mutex.unlock()
-//                    delay(200)
-//                }
-//            }
-//
-//            val idlingResource = IdlingRegistry.getInstance().resources.first()
-//
-//            withTimeout(ASSERT_TIMEOUT) {
-//                mutex.withLock {
-//                    assertTrue(idlingResource.isIdleNow)
-//                }
-//            }
-//        }
-//    }
+
+    @Test
+    fun `idle when actively running with registration disabled`() {
+        runBlocking {
+            val containerHost = scope.createContainerHost()
+
+            val mutex = Mutex(locked = true)
+
+            containerHost.intent(registerIdling = false) {
+                mutex.unlock()
+                delay(200)
+            }
+
+            val idlingResource = IdlingRegistry.getInstance().resources.first()
+
+            withTimeout(ASSERT_TIMEOUT) {
+                mutex.withLock {
+                    assertTrue(idlingResource.isIdleNow)
+                }
+            }
+        }
+    }
 
     @Test
     fun `not idle directly after running`() {
