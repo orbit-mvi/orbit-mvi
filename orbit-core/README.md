@@ -54,12 +54,13 @@ We can map the above logic onto real components.
    any UI, for example as a background service.
 1. The functions call through to a
    [Container](src/commonMain/kotlin/org/orbitmvi/orbit/Container.kt) instance
-   through the `orbit` or `intent` block which applies Orbit operators
-1. Transformer operators apply business logic that transforms function
-   parameters into single or multiple events
-1. The reducer operator reduces the current state of the system with the
-   incoming events to produce new states
-1. The new state is sent to observers
+   through the `intent` block which offloads work to a background coroutine
+   and provides a DSL for side effects and reductions.
+1. Transformations are performed through user-defined business logic within
+   the `intent` block.
+1. The reduce operator reduces the current state of the system with the
+   incoming events to produce new states.
+1. The new state is sent to observers.
 
 Notes:
 
@@ -165,23 +166,20 @@ order to create an Orbit-enabled Android `ViewModel`.
 
 ## Core Orbit operators
 
-The Core module contains built-in Orbit operators:
+The Core module contains built-in Orbit operators. Here's how
+they map to MVI concepts:
 
-| Operation / Syntax | [Strict](../strict-syntax.md) | [Simple](../simple-syntax.md) |
-|--------------------|--------------------------|---------------------|
-| block              | `orbit { ... }`            | `intent { ... }`      |
-| transformation     | `transform { ... }`        | -                     |
-| posted side effect | `sideEffect { post(...) }` | `postSideEffect(...)` |
-| reduction          | `reduce { ... }`           | `reduce { ... }`      |
+| MVI Operation       | Orbit DSL                     |
+|---------------------|-------------------------------|
+| block               | `intent { ... }`              |
+| transformation      | operations within `intent`    |
+| posted side effect  | `postSideEffect(...)`         |
+| reduction           | `reduce { ... }`              |
 
 Operators are invoked through the block function in a
 [ContainerHost](src/commonMain/kotlin/org/orbitmvi/orbit/ContainerHost.kt). For
 more information about which threads these operators run on please see
 [Threading](#threading).
-
-For the [strict syntax](../strict-syntax.md), aside from the Orbit
-operators already mentioned, more are provided via modules with support
-for e.g. `RxJava2` or Kotlin `Coroutines`.
 
 ### Transformation
 
@@ -192,21 +190,18 @@ class Example : ContainerHost<ExampleState, ExampleSideEffect> {
     fun simpleExample() = intent {
         anotherApiCall(apiCall()) // just call suspending functions
     }
-
-
-    fun strictExample() = orbit {
-        transform { apiCall() }
-            .transform { anotherApiCall(event) } // "event" is the result of the first api call
-    }
 }
 ```
 
-Transformations change upstream data into a different type. Transformers can do
-a simple mapping or do something much more complex like call a backend API or
-subscribe to a stream of location updates.
+Transformations change upstream data into a different type. Transformations
+can do a simple mapping or something more complex like call a backend API or
+subscribing to a `Flow` of location updates.
 
-In the [simple syntax](../simple-syntax.md) the transformations are
-simply suspend function calls inlined into the block function.
+In Orbit, the transformations are simply suspend function calls in the block
+function. It is your responsibility to ensure you are using the correct
+context for your calls. Blocking code in your `intent` block will generally
+cause Orbit's "event loop" to be blocked, effectively preventing processing
+of new intents until that code completes.
 
 ### Reduction
 
@@ -218,22 +213,10 @@ class Example : ContainerHost<ExampleState, ExampleSideEffect> {
         val result = apiCall()
         reduce { state.copy(results = result) }
     }
-
-    fun strictExample(number: Int) = orbit {
-        transform { apiCall() }
-            .reduce { state.copy(results = event.results) }
-    }
 }
 ```
 
 Reducers take incoming events and the current state to produce a new state.
-
-**Note:** With the [strict syntax](../strict-syntax.md) reducers are
-pass-through operators. This means that after applying a reducer, the
-upstream event is passed through unmodified to downstream operators.
-This helps avoid having to create intermediate objects to retain
-upstream events. Operators downstream of a reducer can expect to be
-called only after the upstream reduction has completed.
 
 ### Side effect
 
@@ -245,12 +228,6 @@ class Example : ContainerHost<ExampleState, ExampleSideEffect> {
         val result = apiCall()
         postSideEffect(ExampleSideEffect.Toast("result $result"))
         reduce { state.copy(results = result) }
-    }
-
-    fun strictExample(number: Int) = orbit {
-        transform { apiCall() }
-            .sideEffect { post(ExampleSideEffect.Toast("event $event")) }
-            .reduce { state.copy(results = event.results) }
     }
 }
 ```
@@ -266,13 +243,7 @@ You may post the side effect in order to send it to a
 effect flow. Use this for view-related side effects like Toasts, Navigation,
 etc.
 
-**Note:** With the [strict syntax](../strict-syntax.md) side effects are
-pass-through operators. This means that after applying a side effect,
-the upstream event is passed through unmodified to downstream operators.
-This helps avoid having to create intermediate objects to retain
-upstream events.
-
-### Operator context in the simple syntax
+### Operator context
 
 Each simple syntax operator lambda has a receiver that exposes the
 current state of the
@@ -291,35 +262,9 @@ class Example : ContainerHost<ExampleState, ExampleSideEffect> {
 }
 ```
 
-### Operator context in the strict syntax
-
-Commonly in an operator you need two things:
-
-- The current state of the [Container](src/commonMain/kotlin/org/orbitmvi/orbit/Container.kt)
-- The upstream event
-
-Each Orbit operator lambda has a receiver that exposes the above as fields:
-
-- `state`
-- `event`
-
-**Inside an operator invocation the same state value will be returned regardless
-of what may be changing it in other threads.**
-
-Examples of using the exposed fields:
-
-``` kotlin
-perform("Toast the current state")
-class Example : ContainerHost<ExampleState, ExampleSideEffect> {
-    ...
-
-    fun anotherExample(number: Int) = orbit {
-        transform { apiCall() }
-            .sideEffect { post(ExampleSideEffect.Toast("state $state")) }
-            .reduce { state.copy(results = event.results) }
-    }
-}
-```
+`reduce` is a special operator, where state is captured when it's lambda is
+invoked. This means that within a `reduce` block, your state is guaranteed
+not to change.
 
 ## Container factories
 
@@ -351,15 +296,15 @@ saved state support via a `SavedStateHandle`.
 Orbit is designed to provide a sane default threading model to cater for most of
 the typical use cases. That being said you are not constrained and are free to
 switch threads if you need to (e.g. for database access). Typically that is
-done within particular `transform` blocks e.g. `transformSuspend`.
+done by switching your coroutine context.
 
 ### Threading guarantees
 
-- Calls to `Container.orbit` or `Container.intent` do not block the caller. The
-  operations within are offloaded to a background thread.
-- `transform` and `transformX` calls execute in an `IO` thread so as not to
-  block the Orbit [Container](src/commonMain/kotlin/org/orbitmvi/orbit/Container.kt)
-  from accepting further events.
+- Calls to Container.intent` do not block the caller. The
+  operations within are offloaded to an event-loop style background coroutine.
+- Generally it is good practice to make sure long-running operations are done
+  in a switched coroutine context in order not to block the Orbit "event
+  loop".
 
 ## Error handling
 

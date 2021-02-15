@@ -24,8 +24,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
-import org.orbitmvi.orbit.syntax.strict.orbit
-import org.orbitmvi.orbit.syntax.strict.sideEffect
+import org.orbitmvi.orbit.syntax.simple.intent
+import org.orbitmvi.orbit.syntax.simple.postSideEffect
 import org.orbitmvi.orbit.test.assertContains
 import kotlin.random.Random
 import kotlin.test.AfterTest
@@ -81,17 +81,13 @@ internal class ParameterisedSideEffectTest(blocking: Boolean) {
         ContainerHost<State, Int> {
         override val container = scope.container<State, Int>(initialState)
 
-        fun something(action: Int): Unit = orbit {
-            sideEffect {
-                post(action)
-            }
-                .sideEffect { somethingElse(action.toString()) }
+        fun something(action: Int): Unit = intent {
+            postSideEffect(action)
+            somethingElse(action.toString())
         }
 
-        fun somethingElse(action: String) = orbit {
-            sideEffect {
-                println(action)
-            }
+        fun somethingElse(action: String) = intent {
+            println(action)
         }
     }
 

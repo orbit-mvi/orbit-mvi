@@ -26,7 +26,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerDecorator
-import org.orbitmvi.orbit.syntax.strict.OrbitDslPlugin
+import org.orbitmvi.orbit.syntax.ContainerContext
 
 internal class SavedStateContainerDecorator<STATE : Any, SIDE_EFFECT : Any>(
     override val actual: Container<STATE, SIDE_EFFECT>,
@@ -45,6 +45,6 @@ internal class SavedStateContainerDecorator<STATE : Any, SIDE_EFFECT : Any>(
     override val sideEffectFlow: Flow<SIDE_EFFECT>
         get() = actual.sideEffectFlow
 
-    override fun orbit(orbitFlow: suspend OrbitDslPlugin.ContainerContext<STATE, SIDE_EFFECT>.() -> Unit) =
+    override fun orbit(orbitFlow: suspend ContainerContext<STATE, SIDE_EFFECT>.() -> Unit) =
         actual.orbit(orbitFlow)
 }

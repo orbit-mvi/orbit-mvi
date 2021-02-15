@@ -25,7 +25,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.plus
 import org.orbitmvi.orbit.Container
-import org.orbitmvi.orbit.syntax.strict.OrbitDslPlugin
+import org.orbitmvi.orbit.syntax.ContainerContext
 
 internal class TestContainer<STATE : Any, SIDE_EFFECT : Any>(
     initialState: STATE,
@@ -43,7 +43,7 @@ internal class TestContainer<STATE : Any, SIDE_EFFECT : Any>(
 ) {
     private val dispatched = atomic<Int>(0)
 
-    override fun orbit(orbitFlow: suspend OrbitDslPlugin.ContainerContext<STATE, SIDE_EFFECT>.() -> Unit) {
+    override fun orbit(orbitFlow: suspend ContainerContext<STATE, SIDE_EFFECT>.() -> Unit) {
         if (!isolateFlow || dispatched.compareAndSet(0, 1)) {
             if (blocking) {
                 runBlocking {

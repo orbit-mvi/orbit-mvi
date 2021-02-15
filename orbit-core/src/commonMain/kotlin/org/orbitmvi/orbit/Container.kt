@@ -23,11 +23,11 @@ package org.orbitmvi.orbit
 import org.orbitmvi.orbit.idling.IdlingResource
 import org.orbitmvi.orbit.idling.NoopIdlingResource
 import org.orbitmvi.orbit.internal.defaultBackgroundDispatcher
-import org.orbitmvi.orbit.syntax.strict.OrbitDslPlugin
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
+import org.orbitmvi.orbit.syntax.ContainerContext
 
 /**
  * The heart of the Orbit MVI system. Represents an MVI container with its input and outputs.
@@ -66,7 +66,7 @@ public interface Container<STATE : Any, SIDE_EFFECT : Any> {
      *
      * @param orbitFlow lambda returning the suspend function representing the flow
      */
-    public fun orbit(orbitFlow: suspend OrbitDslPlugin.ContainerContext<STATE, SIDE_EFFECT>.() -> Unit)
+    public fun orbit(orbitFlow: suspend ContainerContext<STATE, SIDE_EFFECT>.() -> Unit)
 
     /**
      * Represents additional settings to create the container with.

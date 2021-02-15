@@ -24,8 +24,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
-import org.orbitmvi.orbit.syntax.strict.orbit
-import org.orbitmvi.orbit.syntax.strict.sideEffect
+import org.orbitmvi.orbit.syntax.simple.intent
 import kotlin.random.Random
 import kotlin.test.AfterTest
 import kotlin.test.Test
@@ -88,13 +87,13 @@ internal class GeneralTest {
             println("created!")
         }
 
-        fun something() = orbit {
-            sideEffect { dependency.something1() }
-                .sideEffect { somethingElse() }
+        fun something() = intent {
+            dependency.something1()
+            somethingElse()
         }
 
-        fun somethingElse() = orbit {
-            sideEffect { dependency.something2() }
+        fun somethingElse() = intent {
+            dependency.something2()
         }
     }
 

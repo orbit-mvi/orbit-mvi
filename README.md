@@ -19,11 +19,6 @@ has been moved to this project maintained by the original authors.
 ## Documentation
 
 - [Core module and architecture overview](orbit-core/README.md)
-- [Coroutines](orbit-coroutines/README.md)
-- [RxJava 1](orbit-rxjava1/README.md)
-- [RxJava 2](orbit-rxjava2/README.md)
-- [RxJava 3](orbit-rxjava3/README.md)
-- [LiveData](orbit-livedata/README.md)
 - [ViewModel](orbit-viewmodel/README.md)
 - [Test](orbit-test/README.md)
 
@@ -33,7 +28,8 @@ Orbit is a simple scaffolding you can build a Redux/MVI-like architecture
 around.
 
 - Easy to use, type-safe, extensible API
-- Coroutine, RxJava (1 2 & 3!) and LiveData operator support
+- Built on top of coroutines
+- Compatible with RxJava, LiveData etc. through coroutine wrappers
 - ViewModel support, along with SavedState!
 - Unit test framework designed in step with the framework
 - Built-in espresso idling resource support
@@ -145,13 +141,6 @@ class CalculatorActivity: AppCompatActivity() {
 
 ## Syntax
 
-There are two Orbit syntaxes to choose from.
-
-We recommend using the [simple syntax](simple-syntax.md) if you're just
-starting out or using coroutines exclusively in your codebase. The
-[strict syntax](strict-syntax.md) is most useful when used in a codebase
-with mixed RxJava and coroutines.
-
 ``` kotlin
 class MyViewModel: ContainerHost<MyState, MySideEffect>, ViewModel() {
 
@@ -195,13 +184,6 @@ alternatively include one of the other modules which already include
 ```kotlin
 implementation("org.orbit-mvi:orbit-core:<latest-version>")
 implementation("org.orbit-mvi:orbit-viewmodel:<latest-version>")
-
-// strict syntax DSL extensions
-implementation("org.orbit-mvi:orbit-coroutines:<latest-version>")
-implementation("org.orbit-mvi:orbit-rxjava1:<latest-version>")
-implementation("org.orbit-mvi:orbit-rxjava2:<latest-version>")
-implementation("org.orbit-mvi:orbit-rxjava3:<latest-version>")
-implementation("org.orbit-mvi:orbit-livedata:<latest-version>")
 
 testImplementation("org.orbit-mvi:orbit-test:<latest-version>")
 ```

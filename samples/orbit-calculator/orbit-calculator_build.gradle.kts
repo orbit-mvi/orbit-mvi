@@ -53,7 +53,6 @@ android {
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
     implementation(project(":orbit-core"))
-    implementation(project(":orbit-livedata"))
     implementation(project(":orbit-viewmodel"))
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.2")

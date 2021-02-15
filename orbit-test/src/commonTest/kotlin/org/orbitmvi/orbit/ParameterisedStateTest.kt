@@ -24,9 +24,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
-import org.orbitmvi.orbit.syntax.strict.orbit
-import org.orbitmvi.orbit.syntax.strict.reduce
-import org.orbitmvi.orbit.syntax.strict.transform
+import org.orbitmvi.orbit.syntax.simple.intent
+import org.orbitmvi.orbit.syntax.simple.reduce
 import org.orbitmvi.orbit.test.assertContains
 import kotlin.random.Random
 import kotlin.test.AfterTest
@@ -300,13 +299,10 @@ internal class ParameterisedStateTest(blocking: Boolean) {
         ContainerHost<State, Nothing> {
         override val container = scope.container<State, Nothing>(initialState)
 
-        fun something(action: Int): Unit = orbit {
-            transform {
-                action.toString()
+        fun something(action: Int): Unit = intent {
+            reduce {
+                State(count = action)
             }
-                .reduce {
-                    State(count = event.toInt())
-                }
         }
     }
 

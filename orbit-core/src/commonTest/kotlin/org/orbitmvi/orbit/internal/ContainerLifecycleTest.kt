@@ -26,8 +26,8 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.container
-import org.orbitmvi.orbit.syntax.strict.orbit
-import org.orbitmvi.orbit.syntax.strict.sideEffect
+import org.orbitmvi.orbit.syntax.simple.intent
+import org.orbitmvi.orbit.syntax.simple.postSideEffect
 import org.orbitmvi.orbit.test
 import org.orbitmvi.orbit.test.assertContainExactly
 import kotlin.random.Random
@@ -66,10 +66,8 @@ internal class ContainerLifecycleTest {
             onCreate(it)
         }
 
-        private fun onCreate(createState: TestState) = orbit {
-            sideEffect {
-                post(createState.id.toString())
-            }
+        private fun onCreate(createState: TestState) = intent {
+            postSideEffect(createState.id.toString())
         }
     }
 }

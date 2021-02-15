@@ -5,7 +5,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerDecorator
-import org.orbitmvi.orbit.syntax.strict.OrbitDslPlugin
+import org.orbitmvi.orbit.syntax.ContainerContext
 
 public class TestContainerDecorator<STATE : Any, SIDE_EFFECT : Any>(
     private val parentScope: CoroutineScope,
@@ -23,7 +23,7 @@ public class TestContainerDecorator<STATE : Any, SIDE_EFFECT : Any>(
     override val sideEffectFlow: Flow<SIDE_EFFECT>
         get() = delegate.value.sideEffectFlow
 
-    override fun orbit(orbitFlow: suspend OrbitDslPlugin.ContainerContext<STATE, SIDE_EFFECT>.() -> Unit) {
+    override fun orbit(orbitFlow: suspend ContainerContext<STATE, SIDE_EFFECT>.() -> Unit) {
         delegate.value.orbit(orbitFlow)
     }
 

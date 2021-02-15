@@ -21,12 +21,12 @@
 package org.orbitmvi.orbit.idling
 
 import org.orbitmvi.orbit.syntax.Operator
-import org.orbitmvi.orbit.syntax.strict.OrbitDslPlugin
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onStart
+import org.orbitmvi.orbit.syntax.ContainerContext
 
-public suspend fun <O : Operator<*, *>, T> OrbitDslPlugin.ContainerContext<*, *>.withIdling(
+public suspend fun <O : Operator<*, *>, T> ContainerContext<*, *>.withIdling(
     operator: O,
     block: suspend O.() -> T
 ): T {
@@ -37,7 +37,7 @@ public suspend fun <O : Operator<*, *>, T> OrbitDslPlugin.ContainerContext<*, *>
 }
 
 @Suppress("EXPERIMENTAL_API_USAGE")
-public suspend fun <O : Operator<*, *>, T> OrbitDslPlugin.ContainerContext<*, *>.withIdlingFlow(
+public suspend fun <O : Operator<*, *>, T> ContainerContext<*, *>.withIdlingFlow(
     operator: O,
     block: suspend O.() -> Flow<T>
 ): Flow<T> {
