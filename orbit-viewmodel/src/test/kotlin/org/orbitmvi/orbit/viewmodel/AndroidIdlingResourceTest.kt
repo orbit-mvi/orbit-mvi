@@ -205,38 +205,35 @@ class AndroidIdlingResourceTest {
         }
     }
 
-//    @Test
-//    fun `not idle when one of two actively running`() {
-//        runBlocking {
-//            val containerHost = scope.createContainerHost()
-//
-//            val mutex1 = Mutex(locked = true)
-//            val mutex2 = Mutex(locked = true)
-//
-//            containerHost.intent {
-//                transformSuspend {
-//                    delay(50)
-//                }.transformSuspend(registerIdling = false) {
-//                    mutex1.unlock()
-//                }
-//            }
-//
-//            containerHost.intent {
-//                mutex2.unlock()
-//                delay(200)
-//            }
-//
-//            val idlingResource = IdlingRegistry.getInstance().resources.first()
-//
-//            withTimeout(ASSERT_TIMEOUT) {
-//                mutex1.withLock {
-//                    mutex2.withLock {
-//                        assertFalse(idlingResource.isIdleNow)
-//                    }
-//                }
-//            }
-//        }
-//    }
+    @Test
+    fun `not idle when one of two actively running`() {
+        runBlocking {
+            val containerHost = scope.createContainerHost()
+
+            val mutex1 = Mutex(locked = true)
+            val mutex2 = Mutex(locked = true)
+
+            containerHost.intent {
+                delay(50)
+                mutex1.unlock()
+            }
+
+            containerHost.intent {
+                mutex2.unlock()
+                delay(200)
+            }
+
+            val idlingResource = IdlingRegistry.getInstance().resources.first()
+
+            withTimeout(ASSERT_TIMEOUT) {
+                mutex1.withLock {
+                    mutex2.withLock {
+                        assertFalse(idlingResource.isIdleNow)
+                    }
+                }
+            }
+        }
+    }
 
     @Test
     fun `not idle directly after two running`() {
