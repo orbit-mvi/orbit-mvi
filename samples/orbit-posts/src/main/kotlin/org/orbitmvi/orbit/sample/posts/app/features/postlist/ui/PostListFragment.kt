@@ -29,17 +29,17 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import org.orbitmvi.orbit.sample.posts.R
-import org.orbitmvi.orbit.sample.posts.app.common.NavigationEvent
-import org.orbitmvi.orbit.sample.posts.app.common.SeparatorDecoration
-import org.orbitmvi.orbit.sample.posts.app.features.postlist.viewmodel.OpenPostNavigationEvent
-import org.orbitmvi.orbit.sample.posts.app.features.postlist.viewmodel.PostListState
-import org.orbitmvi.orbit.sample.posts.app.features.postlist.viewmodel.PostListViewModel
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.GroupieViewHolder
 import kotlinx.coroutines.flow.collect
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.orbitmvi.orbit.sample.posts.R
+import org.orbitmvi.orbit.sample.posts.app.common.NavigationEvent
+import org.orbitmvi.orbit.sample.posts.app.common.SeparatorDecoration
 import org.orbitmvi.orbit.sample.posts.app.common.viewBinding
+import org.orbitmvi.orbit.sample.posts.app.features.postlist.viewmodel.OpenPostNavigationEvent
+import org.orbitmvi.orbit.sample.posts.app.features.postlist.viewmodel.PostListState
+import org.orbitmvi.orbit.sample.posts.app.features.postlist.viewmodel.PostListViewModel
 import org.orbitmvi.orbit.sample.posts.databinding.PostListFragmentBinding
 
 class PostListFragment : Fragment(R.layout.post_list_fragment) {
@@ -66,7 +66,9 @@ class PostListFragment : Fragment(R.layout.post_list_fragment) {
         }
 
         binding.content.layoutManager = LinearLayoutManager(activity)
-        binding.content.addItemDecoration(SeparatorDecoration(requireActivity(), R.dimen.separator_margin_start_icon, R.dimen.separator_margin_end))
+        binding.content.addItemDecoration(
+            SeparatorDecoration(requireActivity(), R.dimen.separator_margin_start_icon, R.dimen.separator_margin_end)
+        )
 
         val adapter = GroupAdapter<GroupieViewHolder>()
 
