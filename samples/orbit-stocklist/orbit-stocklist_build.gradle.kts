@@ -21,7 +21,7 @@
 plugins {
     id("com.android.application")
     kotlin("android")
-    id("kotlin-android-extensions")
+    id("kotlin-parcelize")
     id("androidx.navigation.safeargs.kotlin")
 }
 
