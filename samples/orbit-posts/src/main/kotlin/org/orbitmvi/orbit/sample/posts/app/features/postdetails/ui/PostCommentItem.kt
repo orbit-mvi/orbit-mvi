@@ -20,13 +20,15 @@
 
 package org.orbitmvi.orbit.sample.posts.app.features.postdetails.ui
 
-import android.widget.TextView
+import android.view.View
+import com.xwray.groupie.viewbinding.BindableItem
 import org.orbitmvi.orbit.sample.posts.R
+import org.orbitmvi.orbit.sample.posts.databinding.PostCommentListItemBinding
 import org.orbitmvi.orbit.sample.posts.domain.repositories.PostComment
-import com.xwray.groupie.kotlinandroidextensions.GroupieViewHolder
-import com.xwray.groupie.kotlinandroidextensions.Item
 
-data class PostCommentItem(private val post: PostComment) : Item() {
+data class PostCommentItem(private val post: PostComment) : BindableItem<PostCommentListItemBinding>() {
+
+    override fun initializeViewBinding(view: View) = PostCommentListItemBinding.bind(view)
 
     override fun isSameAs(other: com.xwray.groupie.Item<*>) = other is PostCommentItem && post.id == other.post.id
 
@@ -34,11 +36,9 @@ data class PostCommentItem(private val post: PostComment) : Item() {
 
     override fun getLayout() = R.layout.post_comment_list_item
 
-    override fun bind(viewHolder: GroupieViewHolder, position: Int) {
-        viewHolder.itemView.apply {
-            findViewById<TextView>(R.id.comment_username).text = post.name
-            findViewById<TextView>(R.id.comment_email).text = post.email
-            findViewById<TextView>(R.id.comment_body).text = post.body
-        }
+    override fun bind(viewBinding: PostCommentListItemBinding, position: Int) {
+        viewBinding.commentUsername.text = post.name
+        viewBinding.commentEmail.text = post.email
+        viewBinding.commentBody.text = post.body
     }
 }

@@ -36,14 +36,17 @@ import org.orbitmvi.orbit.sample.posts.app.features.postlist.viewmodel.OpenPostN
 import org.orbitmvi.orbit.sample.posts.app.features.postlist.viewmodel.PostListState
 import org.orbitmvi.orbit.sample.posts.app.features.postlist.viewmodel.PostListViewModel
 import com.xwray.groupie.GroupAdapter
-import com.xwray.groupie.kotlinandroidextensions.GroupieViewHolder
-import kotlinx.android.synthetic.main.post_list_fragment.*
+import com.xwray.groupie.GroupieViewHolder
 import kotlinx.coroutines.flow.collect
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.orbitmvi.orbit.sample.posts.app.common.viewBinding
+import org.orbitmvi.orbit.sample.posts.databinding.PostListFragmentBinding
 
-class PostListFragment : Fragment() {
+class PostListFragment : Fragment(R.layout.post_list_fragment) {
 
     private val viewModel: PostListViewModel by viewModel()
+
+    private val binding by viewBinding<PostListFragmentBinding>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -62,12 +65,12 @@ class PostListFragment : Fragment() {
             setLogo(R.drawable.ic_orbit_toolbar)
         }
 
-        content.layoutManager = LinearLayoutManager(activity)
-        content.addItemDecoration(SeparatorDecoration(requireActivity(), R.dimen.separator_margin_start_icon, R.dimen.separator_margin_end))
+        binding.content.layoutManager = LinearLayoutManager(activity)
+        binding.content.addItemDecoration(SeparatorDecoration(requireActivity(), R.dimen.separator_margin_start_icon, R.dimen.separator_margin_end))
 
         val adapter = GroupAdapter<GroupieViewHolder>()
 
-        content.adapter = adapter
+        binding.content.adapter = adapter
 
         lifecycleScope.launchWhenCreated {
             viewModel.container.stateFlow.collect {

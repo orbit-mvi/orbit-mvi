@@ -22,7 +22,7 @@ package org.orbitmvi.orbit.sample.stocklist.list.business
 
 import android.os.Parcelable
 import org.orbitmvi.orbit.sample.stocklist.streaming.stock.Stock
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class ListState(
