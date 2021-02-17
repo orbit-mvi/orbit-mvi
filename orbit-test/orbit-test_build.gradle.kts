@@ -29,7 +29,6 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                implementation(kotlin("stdlib-common"))
                 implementation(kotlin("test-common"))
                 implementation(ProjectDependencies.kotlinCoroutines)
                 implementation(project(":test-common"))
