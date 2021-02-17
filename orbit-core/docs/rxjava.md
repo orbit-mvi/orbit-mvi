@@ -15,7 +15,7 @@ dependencies {
 
 Then simply use the extensions to convert your RxJava objects into coroutines.
 Please note you need to ensure your RxJava objects are already being observed
-on a background thread, otherwise add `.observeOn(Dispatchers.IO)` before
+on a background thread, otherwise add `.observeOn(Schedulers.IO)` before
 `await()`.
 
 ```kotlin
