@@ -23,52 +23,45 @@ package org.orbitmvi.orbit.sample.posts.app.features.postdetails.ui
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.LayerDrawable
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
-import org.orbitmvi.orbit.sample.posts.R
-import org.orbitmvi.orbit.sample.posts.app.common.SeparatorDecoration
-import org.orbitmvi.orbit.sample.posts.app.features.postdetails.viewmodel.PostDetailState
-import org.orbitmvi.orbit.sample.posts.app.features.postdetails.viewmodel.PostDetailsViewModel
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.xwray.groupie.GroupAdapter
-import com.xwray.groupie.kotlinandroidextensions.GroupieViewHolder
-import kotlinx.android.synthetic.main.post_details_fragment.*
+import com.xwray.groupie.GroupieViewHolder
 import kotlinx.coroutines.flow.collect
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
+import org.orbitmvi.orbit.sample.posts.R
+import org.orbitmvi.orbit.sample.posts.app.common.SeparatorDecoration
+import org.orbitmvi.orbit.sample.posts.app.common.viewBinding
+import org.orbitmvi.orbit.sample.posts.app.features.postdetails.viewmodel.PostDetailState
+import org.orbitmvi.orbit.sample.posts.app.features.postdetails.viewmodel.PostDetailsViewModel
+import org.orbitmvi.orbit.sample.posts.databinding.PostDetailsFragmentBinding
 
-class PostDetailsFragment : Fragment() {
+class PostDetailsFragment : Fragment(R.layout.post_details_fragment) {
 
     private val args: PostDetailsFragmentArgs by navArgs()
     private val viewModel: PostDetailsViewModel by viewModel { parametersOf(args.overview) }
     private var initialised: Boolean = false
     private val adapter = GroupAdapter<GroupieViewHolder>()
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        return inflater.inflate(R.layout.post_details_fragment, container, false)
-    }
+    private val binding by viewBinding<PostDetailsFragmentBinding>()
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-        post_comments_list.layoutManager = LinearLayoutManager(activity)
-        ViewCompat.setNestedScrollingEnabled(post_comments_list, false)
+        binding.postCommentsList.layoutManager = LinearLayoutManager(activity)
+        ViewCompat.setNestedScrollingEnabled(binding.postCommentsList, false)
 
-        post_comments_list.addItemDecoration(
+        binding.postCommentsList.addItemDecoration(
             SeparatorDecoration(
                 requireActivity(),
                 R.dimen.separator_margin_start,
@@ -76,7 +69,7 @@ class PostDetailsFragment : Fragment() {
             )
         )
 
-        post_comments_list.adapter = adapter
+        binding.postCommentsList.adapter = adapter
 
         lifecycleScope.launchWhenCreated {
             viewModel.container.stateFlow.collect { render(it) }
@@ -106,14 +99,14 @@ class PostDetailsFragment : Fragment() {
                         }
                     )
             }
-            post_title.text = state.postOverview.title
+            binding.postTitle.text = state.postOverview.title
         }
 
         if (state is PostDetailState.Details) {
-            post_body.text = state.post.body
+            binding.postBody.text = state.post.body
 
             val comments = state.post.comments.size
-            post_comment_count.text = context?.resources?.getQuantityString(
+            binding.postCommentCount.text = context?.resources?.getQuantityString(
                 R.plurals.comments,
                 comments,
                 comments

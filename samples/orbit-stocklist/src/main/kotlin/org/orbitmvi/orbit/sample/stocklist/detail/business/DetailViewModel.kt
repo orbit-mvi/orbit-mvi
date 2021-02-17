@@ -22,11 +22,11 @@ package org.orbitmvi.orbit.sample.stocklist.detail.business
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import kotlinx.coroutines.flow.collect
 import org.orbitmvi.orbit.ContainerHost
-import org.orbitmvi.orbit.coroutines.transformFlow
 import org.orbitmvi.orbit.sample.stocklist.streaming.stock.StockRepository
-import org.orbitmvi.orbit.syntax.strict.orbit
-import org.orbitmvi.orbit.syntax.strict.reduce
+import org.orbitmvi.orbit.syntax.simple.intent
+import org.orbitmvi.orbit.syntax.simple.reduce
 import org.orbitmvi.orbit.viewmodel.container
 
 class DetailViewModel(
@@ -38,11 +38,11 @@ class DetailViewModel(
     override val container =
         container<DetailState, Nothing>(DetailState(), savedStateHandle) { requestStock() }
 
-    private fun requestStock(): Unit = orbit {
-        transformFlow {
-            stockRepository.stockDetails(itemName)
-        }.reduce {
-            state.copy(stock = event)
+    private fun requestStock(): Unit = intent(registerIdling = false) {
+        stockRepository.stockDetails(itemName).collect {
+            reduce {
+                state.copy(stock = it)
+            }
         }
     }
 }

@@ -23,14 +23,14 @@ package org.orbitmvi.orbit.viewmodel
 import android.os.Parcelable
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import org.orbitmvi.orbit.syntax.strict.orbit
-import org.orbitmvi.orbit.syntax.strict.reduce
-import io.kotest.matchers.shouldBe
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 import org.junit.jupiter.api.Test
 import org.orbitmvi.orbit.ContainerHost
+import org.orbitmvi.orbit.syntax.simple.intent
+import org.orbitmvi.orbit.syntax.simple.reduce
 import org.orbitmvi.orbit.test
 import kotlin.random.Random
+import kotlin.test.assertEquals
 
 class ViewModelExtensionsKtTest {
     @Test
@@ -41,7 +41,7 @@ class ViewModelExtensionsKtTest {
 
         val middleware = Middleware(savedStateHandle, initialState)
 
-        middleware.container.currentState.shouldBe(savedState)
+        assertEquals(savedState, middleware.container.currentState)
     }
 
     @Test
@@ -51,7 +51,7 @@ class ViewModelExtensionsKtTest {
 
         val middleware = Middleware(savedStateHandle, initialState)
 
-        middleware.container.currentState.shouldBe(initialState)
+        assertEquals(initialState, middleware.container.currentState)
     }
 
     @Test
@@ -66,7 +66,7 @@ class ViewModelExtensionsKtTest {
 
         testStateObserver.awaitCount(2)
 
-        savedStateHandle.get<TestState?>(SAVED_STATE_KEY).shouldBe(TestState(something))
+        assertEquals(TestState(something), savedStateHandle.get<TestState?>(SAVED_STATE_KEY))
     }
 
     @Test
@@ -83,7 +83,7 @@ class ViewModelExtensionsKtTest {
         // Used to trigger execution of onCreate
         middleware.container.stateFlow.test().awaitCount(1)
 
-        onCreateState.shouldBe(savedState)
+        assertEquals(savedState, onCreateState)
     }
 
     @Test
@@ -99,7 +99,7 @@ class ViewModelExtensionsKtTest {
         // Used to trigger execution of onCreate
         middleware.container.stateFlow.test().awaitCount(1)
 
-        onCreateState.shouldBe(initialState)
+        assertEquals(initialState, onCreateState)
     }
 
     private class Middleware(
@@ -113,7 +113,7 @@ class ViewModelExtensionsKtTest {
             onCreate = onCreate
         )
 
-        fun something(action: Int) = orbit {
+        fun something(action: Int) = intent {
             reduce {
                 state.copy(id = action)
             }

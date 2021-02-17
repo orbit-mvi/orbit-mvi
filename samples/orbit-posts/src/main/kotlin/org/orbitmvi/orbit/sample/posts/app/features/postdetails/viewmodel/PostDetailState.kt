@@ -23,7 +23,7 @@ package org.orbitmvi.orbit.sample.posts.app.features.postdetails.viewmodel
 import android.os.Parcelable
 import org.orbitmvi.orbit.sample.posts.domain.repositories.PostDetail
 import org.orbitmvi.orbit.sample.posts.domain.repositories.PostOverview
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 
 sealed class PostDetailState : Parcelable {
 

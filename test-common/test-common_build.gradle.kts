@@ -19,10 +19,24 @@
  */
 
 plugins {
-    kotlin("jvm")
+    kotlin("multiplatform")
 }
+apply<kotlinx.atomicfu.plugin.gradle.AtomicFUGradlePlugin>()
 
-dependencies {
-    implementation(kotlin("stdlib-jdk8"))
-    implementation(ProjectDependencies.kotlinCoroutines)
+kotlin {
+    jvm()
+    ios()
+    sourceSets {
+        commonMain {
+            dependencies {
+                implementation(ProjectDependencies.kotlinCoroutines)
+                implementation(kotlin("stdlib"))
+                implementation(kotlin("test"))
+            }
+        }
+        val jvmMain by getting {
+        }
+        val iosMain by getting {
+        }
+    }
 }

@@ -21,15 +21,15 @@
 object Versions {
 
     const val gradleVersionsPlugin = "0.36.0"
-    const val gradleAndroidPlugin = "4.1.1"
+    const val gradleAndroidPlugin = "4.1.2"
     const val markdownLintPlugin = "0.6.0"
     const val detektPlugin = "1.15.0"
     const val bintray = "1.8.5"
-    const val safeargs = "2.3.2"
-    const val atomicfu = "0.14.4"
+    const val safeargs = "2.3.3"
+    const val atomicfu = "0.15.1"
 
-    const val kotlin = "1.4.21"
-    const val coroutines = "1.4.2"
+    const val kotlin = "1.4.30"
+    const val coroutines = "1.4.2-native-mt"
 
     const val androidxLifecycles = "2.2.0"
     const val androidxAnnotation = "1.1.0"
@@ -43,11 +43,10 @@ object Versions {
     const val desugar = "1.0.10"
 
     // Testing
-    const val junitPlatform = "1.7.0"
-    const val junitRuntime = "5.7.0"
+    const val junitPlatform = "1.7.1"
+    const val junitRuntime = "5.7.1"
     const val jacoco = "0.8.5"
-    const val robolectric = "4.4"
-    const val kotest = "4.3.1"
+    const val robolectric = "4.5.1"
 }
 
 object ProjectDependencies {
@@ -58,7 +57,6 @@ object ProjectDependencies {
     const val kotlinCoroutinesRx2 = "org.jetbrains.kotlinx:kotlinx-coroutines-rx2:${Versions.coroutines}"
     const val kotlinCoroutinesRx3 = "org.jetbrains.kotlinx:kotlinx-coroutines-rx3:${Versions.coroutines}"
     const val kotlinTest = "org.jetbrains.kotlin:kotlin-test:${Versions.kotlin}"
-    const val kotestAssertions = "io.kotest:kotest-assertions-core:${Versions.kotest}"
 
     // AndroidX
     const val androidxAnnotation = "androidx.annotation:annotation:${Versions.androidxAnnotation}"
@@ -101,7 +99,6 @@ object GroupedDependencies {
         ProjectDependencies.junitJupiterApi,
         ProjectDependencies.junitJupiterParams,
         ProjectDependencies.kotlinTest,
-        ProjectDependencies.kotlinCoroutinesTest,
-        ProjectDependencies.kotestAssertions
+        ProjectDependencies.kotlinCoroutinesTest
     )
 }

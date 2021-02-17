@@ -19,11 +19,6 @@ has been moved to this project maintained by the original authors.
 ## Documentation
 
 - [Core module and architecture overview](orbit-core/README.md)
-- [Coroutines](orbit-coroutines/README.md)
-- [RxJava 1](orbit-rxjava1/README.md)
-- [RxJava 2](orbit-rxjava2/README.md)
-- [RxJava 3](orbit-rxjava3/README.md)
-- [LiveData](orbit-livedata/README.md)
 - [ViewModel](orbit-viewmodel/README.md)
 - [Test](orbit-test/README.md)
 
@@ -33,7 +28,9 @@ Orbit is a simple scaffolding you can build a Redux/MVI-like architecture
 around.
 
 - Easy to use, type-safe, extensible API
-- Coroutine, RxJava (1 2 & 3!) and LiveData operator support
+- Built on top of coroutines
+- Compatible with [RxJava](orbit-core/docs/rxjava.md), [LiveData](orbit-core/docs/livedata.md)
+  etc. through coroutine wrappers
 - ViewModel support, along with SavedState!
 - Unit test framework designed in step with the framework
 - Built-in espresso idling resource support
@@ -72,13 +69,13 @@ Using the core Orbit functionality, we can create a simple, functional
 ViewModel.
 
 1. Implement the
-   [ContainerHost](orbit-core/src/main/kotlin/org/orbitmvi/orbit/ContainerHost.kt)
+   [ContainerHost](orbit-core/src/commonMain/kotlin/org/orbitmvi/orbit/ContainerHost.kt)
    interface
 1. Override the `container` field and use the `ViewModel.container` factory
    function to build an Orbit
-   [Container](orbit-core/src/main/kotlin/org/orbitmvi/orbit/Container.kt) in
-   your
-   [ContainerHost](orbit-core/src/main/kotlin/org/orbitmvi/orbit/ContainerHost.kt)
+   [Container](orbit-core/src/commonMain/kotlin/org/orbitmvi/orbit/Container.kt)
+   in your
+   [ContainerHost](orbit-core/src/commonMain/kotlin/org/orbitmvi/orbit/ContainerHost.kt)
 
 ``` kotlin
 class CalculatorViewModel: ContainerHost<CalculatorState, CalculatorSideEffect>, ViewModel() {
@@ -98,8 +95,8 @@ class CalculatorViewModel: ContainerHost<CalculatorState, CalculatorSideEffect>,
 
 We have used an Android `ViewModel` as the most common example, but there is no
 requirement to do so. You can host an Orbit
-[Container](orbit-core/src/main/kotlin/org/orbitmvi/orbit/Container.kt) in a
-simple class if you wish. This makes it possible to use in simple Kotlin
+[Container](orbit-core/src/commonMain/kotlin/org/orbitmvi/orbit/Container.kt)
+in a simple class if you wish. This makes it possible to use in simple Kotlin
 projects as well as lifecycle independent services.
 
 ### Connect to the ViewModel in your Activity or Fragment
@@ -145,19 +142,11 @@ class CalculatorActivity: AppCompatActivity() {
 
 ## Syntax
 
-There are two Orbit syntaxes to choose from.
-
-We recommend using the [simple syntax](simple-syntax.md) if you're just
-starting out or using coroutines exclusively in your codebase. The
-[strict syntax](strict-syntax.md) is most useful when used in a codebase
-with mixed RxJava and coroutines.
-
 ``` kotlin
 class MyViewModel: ContainerHost<MyState, MySideEffect>, ViewModel() {
 
     override val container = container<MyState, MySideEffect>(MyState())
 
-    // Simple
     fun loadDataForId(id: Int) = intent {
         postSideEffect(MySideEffect.Toast("Loading data for $id!"))
 
@@ -166,15 +155,6 @@ class MyViewModel: ContainerHost<MyState, MySideEffect>, ViewModel() {
         reduce {
             state.copy(data = result)
         }
-    }
-
-    // Strict
-    fun loadDataForId(id: Int) = orbit {
-        sideEffect { post(MySideEffect.Toast("Loading data for $id!")) }
-            .transformSuspend { repository.loadData(id) }
-            .reduce {
-                state.copy(data = result)
-            }
     }
 }
 ```
@@ -185,8 +165,8 @@ Orbit is a modular framework. The Core module provides basic Orbit
 functionality with additional features provided through optional modules.
 
 Orbit supports using various async/stream frameworks at the same time so it is
-perfect for legacy codebases. For example, it can support both RxJava 2 and
-coroutines if you are in the process of migrating from one to the other.
+perfect for legacy codebases. For example, it can support both [RxJava](orbit-core/docs/rxjava.md)
+and coroutines if you are in the process of migrating from one to the other.
 
 At the very least you will need the `orbit-core` module to get started,
 alternatively include one of the other modules which already include
@@ -195,13 +175,6 @@ alternatively include one of the other modules which already include
 ```kotlin
 implementation("org.orbit-mvi:orbit-core:<latest-version>")
 implementation("org.orbit-mvi:orbit-viewmodel:<latest-version>")
-
-// strict syntax DSL extensions
-implementation("org.orbit-mvi:orbit-coroutines:<latest-version>")
-implementation("org.orbit-mvi:orbit-rxjava1:<latest-version>")
-implementation("org.orbit-mvi:orbit-rxjava2:<latest-version>")
-implementation("org.orbit-mvi:orbit-rxjava3:<latest-version>")
-implementation("org.orbit-mvi:orbit-livedata:<latest-version>")
 
 testImplementation("org.orbit-mvi:orbit-test:<latest-version>")
 ```

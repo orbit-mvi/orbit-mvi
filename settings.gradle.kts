@@ -20,11 +20,6 @@
 
 include(
     "orbit-core",
-    "orbit-coroutines",
-    "orbit-livedata",
-    "orbit-rxjava1",
-    "orbit-rxjava2",
-    "orbit-rxjava3",
     "orbit-test",
     "orbit-viewmodel",
     "samples:orbit-calculator",

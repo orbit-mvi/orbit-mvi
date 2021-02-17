@@ -22,7 +22,7 @@ package org.orbitmvi.orbit.sample.posts.app.features.postlist.viewmodel
 
 import android.os.Parcelable
 import org.orbitmvi.orbit.sample.posts.domain.repositories.PostOverview
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class PostListState(

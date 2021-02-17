@@ -21,7 +21,7 @@
 plugins {
     id("com.android.library")
     kotlin("android")
-    id("kotlin-android-extensions")
+    id("kotlin-parcelize")
 }
 
 dependencies {
@@ -37,7 +37,6 @@ dependencies {
     // Testing
     testImplementation(project(":orbit-test"))
     testImplementation(project(":test-common"))
-    testImplementation(project(":orbit-coroutines"))
     testImplementation(ProjectDependencies.androidxEspressoCore)
     testImplementation(ProjectDependencies.robolectric)
 

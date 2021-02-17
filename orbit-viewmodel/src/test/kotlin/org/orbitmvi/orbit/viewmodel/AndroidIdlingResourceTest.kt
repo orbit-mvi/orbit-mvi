@@ -21,14 +21,6 @@
 package org.orbitmvi.orbit.viewmodel
 
 import androidx.test.espresso.IdlingRegistry
-import org.orbitmvi.orbit.Container
-import org.orbitmvi.orbit.ContainerHost
-import org.orbitmvi.orbit.container
-import org.orbitmvi.orbit.coroutines.transformSuspend
-import org.orbitmvi.orbit.syntax.strict.orbit
-import io.kotest.matchers.booleans.shouldBeFalse
-import io.kotest.matchers.booleans.shouldBeTrue
-import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
@@ -41,8 +33,15 @@ import kotlinx.coroutines.withTimeout
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.orbitmvi.orbit.Container
+import org.orbitmvi.orbit.ContainerHost
+import org.orbitmvi.orbit.container
+import org.orbitmvi.orbit.syntax.simple.intent
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 class AndroidIdlingResourceTest {
 
@@ -81,7 +80,7 @@ class AndroidIdlingResourceTest {
 
         val idlingResource = IdlingRegistry.getInstance().resources.first()
 
-        idlingResource.isIdleNow.shouldBeTrue()
+        assertTrue(idlingResource.isIdleNow)
     }
 
     @Test
@@ -91,18 +90,16 @@ class AndroidIdlingResourceTest {
 
             val mutex = Mutex(locked = true)
 
-            containerHost.orbit {
-                transformSuspend {
-                    mutex.unlock()
-                    delay(200)
-                }
+            containerHost.intent {
+                mutex.unlock()
+                delay(200)
             }
 
             val idlingResource = IdlingRegistry.getInstance().resources.first()
 
             withTimeout(ASSERT_TIMEOUT) {
                 mutex.withLock {
-                    idlingResource.isIdleNow.shouldBeFalse()
+                    assertFalse(idlingResource.isIdleNow)
                 }
             }
         }
@@ -115,18 +112,16 @@ class AndroidIdlingResourceTest {
 
             val mutex = Mutex(locked = true)
 
-            containerHost.orbit {
-                transformSuspend(registerIdling = false) {
-                    mutex.unlock()
-                    delay(200)
-                }
+            containerHost.intent(registerIdling = false) {
+                mutex.unlock()
+                delay(200)
             }
 
             val idlingResource = IdlingRegistry.getInstance().resources.first()
 
             withTimeout(ASSERT_TIMEOUT) {
                 mutex.withLock {
-                    idlingResource.isIdleNow.shouldBeTrue()
+                    assertTrue(idlingResource.isIdleNow)
                 }
             }
         }
@@ -139,17 +134,15 @@ class AndroidIdlingResourceTest {
 
             val mutex = Mutex(locked = true)
 
-            containerHost.orbit {
-                transformSuspend {
-                    mutex.unlock()
-                }
+            containerHost.intent {
+                mutex.unlock()
             }
 
             val idlingResource = IdlingRegistry.getInstance().resources.first()
 
             withTimeout(ASSERT_TIMEOUT) {
                 mutex.withLock {
-                    idlingResource.isIdleNow.shouldBeFalse()
+                    assertFalse(idlingResource.isIdleNow)
                 }
             }
         }
@@ -162,10 +155,8 @@ class AndroidIdlingResourceTest {
 
             val mutex = Mutex(locked = true)
 
-            containerHost.orbit {
-                transformSuspend {
-                    mutex.unlock()
-                }
+            containerHost.intent {
+                mutex.unlock()
             }
 
             val idlingResource = IdlingRegistry.getInstance().resources.first()
@@ -178,7 +169,7 @@ class AndroidIdlingResourceTest {
                         }
                     }
 
-                    result.shouldBeTrue()
+                    assertTrue(result)
                 }
             }
         }
@@ -192,18 +183,14 @@ class AndroidIdlingResourceTest {
             val mutex1 = Mutex(locked = true)
             val mutex2 = Mutex(locked = true)
 
-            containerHost.orbit {
-                transformSuspend {
-                    mutex1.unlock()
-                    delay(200)
-                }
+            containerHost.intent {
+                mutex1.unlock()
+                delay(200)
             }
 
-            containerHost.orbit {
-                transformSuspend {
-                    mutex2.unlock()
-                    delay(200)
-                }
+            containerHost.intent {
+                mutex2.unlock()
+                delay(200)
             }
 
             val idlingResource = IdlingRegistry.getInstance().resources.first()
@@ -211,7 +198,7 @@ class AndroidIdlingResourceTest {
             withTimeout(ASSERT_TIMEOUT) {
                 mutex1.withLock {
                     mutex2.withLock {
-                        idlingResource.isIdleNow.shouldBeFalse()
+                        assertFalse(idlingResource.isIdleNow)
                     }
                 }
             }
@@ -226,19 +213,14 @@ class AndroidIdlingResourceTest {
             val mutex1 = Mutex(locked = true)
             val mutex2 = Mutex(locked = true)
 
-            containerHost.orbit {
-                transformSuspend {
-                    delay(50)
-                }.transformSuspend(registerIdling = false) {
-                    mutex1.unlock()
-                }
+            containerHost.intent {
+                delay(50)
+                mutex1.unlock()
             }
 
-            containerHost.orbit {
-                transformSuspend {
-                    mutex2.unlock()
-                    delay(200)
-                }
+            containerHost.intent {
+                mutex2.unlock()
+                delay(200)
             }
 
             val idlingResource = IdlingRegistry.getInstance().resources.first()
@@ -246,7 +228,7 @@ class AndroidIdlingResourceTest {
             withTimeout(ASSERT_TIMEOUT) {
                 mutex1.withLock {
                     mutex2.withLock {
-                        idlingResource.isIdleNow.shouldBeFalse()
+                        assertFalse(idlingResource.isIdleNow)
                     }
                 }
             }
@@ -261,16 +243,12 @@ class AndroidIdlingResourceTest {
             val mutex1 = Mutex(locked = true)
             val mutex2 = Mutex(locked = true)
 
-            containerHost.orbit {
-                transformSuspend {
-                    mutex1.unlock()
-                }
+            containerHost.intent {
+                mutex1.unlock()
             }
 
-            containerHost.orbit {
-                transformSuspend {
-                    mutex2.unlock()
-                }
+            containerHost.intent {
+                mutex2.unlock()
             }
 
             val idlingResource = IdlingRegistry.getInstance().resources.first()
@@ -278,7 +256,7 @@ class AndroidIdlingResourceTest {
             withTimeout(ASSERT_TIMEOUT) {
                 mutex1.withLock {
                     mutex2.withLock {
-                        idlingResource.isIdleNow.shouldBeFalse()
+                        assertFalse(idlingResource.isIdleNow)
                     }
                 }
             }
@@ -293,16 +271,12 @@ class AndroidIdlingResourceTest {
             val mutex1 = Mutex(locked = true)
             val mutex2 = Mutex(locked = true)
 
-            containerHost.orbit {
-                transformSuspend {
-                    mutex1.unlock()
-                }
+            containerHost.intent {
+                mutex1.unlock()
             }
 
-            containerHost.orbit {
-                transformSuspend {
-                    mutex2.unlock()
-                }
+            containerHost.intent {
+                mutex2.unlock()
             }
 
             val idlingResource = IdlingRegistry.getInstance().resources.first()
@@ -316,7 +290,7 @@ class AndroidIdlingResourceTest {
                             }
                         }
 
-                        result.shouldBeTrue()
+                        assertTrue(result)
                     }
                 }
             }
@@ -326,13 +300,15 @@ class AndroidIdlingResourceTest {
     @Test
     fun `cancelling scope removes IdlingResource`() {
         runBlocking {
-            scope.createContainerHost()
+            val host = scope.createContainerHost()
+            // Make sure idling resource is lazily initialised
+            host.intent { }
 
-            IdlingRegistry.getInstance().resources.size.shouldBe(1)
+            assertEquals(1, IdlingRegistry.getInstance().resources.size)
 
             scope.cancel()
 
-            IdlingRegistry.getInstance().resources.size.shouldBe(0)
+            assertEquals(0, IdlingRegistry.getInstance().resources.size)
         }
     }
 

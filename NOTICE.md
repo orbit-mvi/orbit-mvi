@@ -15,8 +15,6 @@ This software uses the following open source works:
 - [Gradle Versions plugin](https://github.com/ben-manes/gradle-versions-plugin)
 - [Bintray plugin](https://github.com/bintray/gradle-bintray-plugin)
 - [Detekt](https://github.com/detekt/detekt)
-- [RxJava](https://github.com/ReactiveX/RxJava)
 - [JUnit](https://junit.org/)
-- [Kotest](https://kotest.io)
 
 See individual sample projects for their notices.
