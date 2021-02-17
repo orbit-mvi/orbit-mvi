@@ -29,7 +29,8 @@ around.
 
 - Easy to use, type-safe, extensible API
 - Built on top of coroutines
-- Compatible with RxJava, LiveData etc. through coroutine wrappers
+- Compatible with [RxJava](orbit-core/docs/rxjava.md), [LiveData](orbit-core/docs/livedata.md)
+  etc. through coroutine wrappers
 - ViewModel support, along with SavedState!
 - Unit test framework designed in step with the framework
 - Built-in espresso idling resource support
@@ -146,7 +147,6 @@ class MyViewModel: ContainerHost<MyState, MySideEffect>, ViewModel() {
 
     override val container = container<MyState, MySideEffect>(MyState())
 
-    // Simple
     fun loadDataForId(id: Int) = intent {
         postSideEffect(MySideEffect.Toast("Loading data for $id!"))
 
@@ -155,15 +155,6 @@ class MyViewModel: ContainerHost<MyState, MySideEffect>, ViewModel() {
         reduce {
             state.copy(data = result)
         }
-    }
-
-    // Strict
-    fun loadDataForId(id: Int) = orbit {
-        sideEffect { post(MySideEffect.Toast("Loading data for $id!")) }
-            .transformSuspend { repository.loadData(id) }
-            .reduce {
-                state.copy(data = result)
-            }
     }
 }
 ```
@@ -174,8 +165,8 @@ Orbit is a modular framework. The Core module provides basic Orbit
 functionality with additional features provided through optional modules.
 
 Orbit supports using various async/stream frameworks at the same time so it is
-perfect for legacy codebases. For example, it can support both RxJava 2 and
-coroutines if you are in the process of migrating from one to the other.
+perfect for legacy codebases. For example, it can support both [RxJava](orbit-core/docs/rxjava.md)
+and coroutines if you are in the process of migrating from one to the other.
 
 At the very least you will need the `orbit-core` module to get started,
 alternatively include one of the other modules which already include
