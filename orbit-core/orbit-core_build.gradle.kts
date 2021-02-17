@@ -30,7 +30,6 @@ kotlin {
         commonMain {
             dependencies {
                 implementation(ProjectDependencies.kotlinCoroutines)
-                implementation(kotlin("stdlib-common"))
             }
         }
         commonTest {

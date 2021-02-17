@@ -31,10 +31,14 @@ kotlin {
             dependencies {
                 implementation(ProjectDependencies.kotlinCoroutines)
                 implementation(kotlin("stdlib"))
-                implementation(kotlin("test"))
+                implementation(kotlin("test-common"))
+                implementation(kotlin("test-annotations-common"))
             }
         }
         val jvmMain by getting {
+            dependencies {
+                implementation(kotlin("test"))
+            }
         }
         val iosMain by getting {
         }
