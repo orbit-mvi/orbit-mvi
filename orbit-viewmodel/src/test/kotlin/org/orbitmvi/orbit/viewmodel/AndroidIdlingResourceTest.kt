@@ -24,9 +24,11 @@ import androidx.test.espresso.IdlingRegistry
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withTimeout
@@ -268,6 +270,16 @@ class AndroidIdlingResourceTest {
         runBlocking {
             val containerHost = scope.createContainerHost()
 
+            @Suppress("EXPERIMENTAL_API_USAGE")
+            val flow = callbackFlow {
+                IdlingRegistry.getInstance().resources.first().registerIdleTransitionCallback {
+                    // Triggered when resource goes from busy to idle
+                    offer(true)
+                }
+
+                awaitClose { }
+            }
+
             val mutex1 = Mutex(locked = true)
             val mutex2 = Mutex(locked = true)
 
@@ -279,18 +291,10 @@ class AndroidIdlingResourceTest {
                 mutex2.unlock()
             }
 
-            val idlingResource = IdlingRegistry.getInstance().resources.first()
-
-            withTimeout(200) {
+            withTimeout(ASSERT_TIMEOUT) {
                 mutex1.withLock {
                     mutex2.withLock {
-                        val result = suspendCancellableCoroutine<Boolean> {
-                            idlingResource.registerIdleTransitionCallback {
-                                it.resume(true)
-                            }
-                        }
-
-                        assertTrue(result)
+                        assertTrue(flow.first())
                     }
                 }
             }
@@ -324,6 +328,6 @@ class AndroidIdlingResourceTest {
     data class TestState(val value: Int)
 
     private companion object {
-        const val ASSERT_TIMEOUT = 200L
+        const val ASSERT_TIMEOUT = 1000L
     }
 }
