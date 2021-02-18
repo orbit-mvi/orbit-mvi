@@ -149,3 +149,7 @@ jobs:
       - name: Upload tag
         run: ./gradlew publish --no-daemon --no-parallel -Psigning.secretKeyRingFile=$(echo ~/.gradle/sonatype-orbitmvi-keys.gpg)
         if: startsWith(github.ref, 'refs/tags/')
+
+      - name: Close and release tag
+        run: ./gradlew closeAndReleaseRepository
+        if: startsWith(github.ref, 'refs/tags/')
