@@ -39,8 +39,6 @@ import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.container
 import org.orbitmvi.orbit.syntax.simple.intent
-import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -157,21 +155,23 @@ class AndroidIdlingResourceTest {
 
             val mutex = Mutex(locked = true)
 
+            @Suppress("EXPERIMENTAL_API_USAGE")
+            val flow = callbackFlow {
+                IdlingRegistry.getInstance().resources.first().registerIdleTransitionCallback {
+                    // Triggered when resource goes from busy to idle
+                    offer(true)
+                }
+
+                awaitClose { }
+            }
+
             containerHost.intent {
                 mutex.unlock()
             }
 
-            val idlingResource = IdlingRegistry.getInstance().resources.first()
-
-            withTimeout(200) {
+            withTimeout(ASSERT_TIMEOUT) {
                 mutex.withLock {
-                    val result = suspendCoroutine<Boolean> {
-                        idlingResource.registerIdleTransitionCallback {
-                            it.resume(true)
-                        }
-                    }
-
-                    assertTrue(result)
+                    assertTrue(flow.first())
                 }
             }
         }
