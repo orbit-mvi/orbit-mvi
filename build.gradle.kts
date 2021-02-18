@@ -24,6 +24,7 @@ import com.appmattus.markdown.rules.ProperNamesRule
 import com.appmattus.markdown.rules.ProperNamesRule.Companion.DefaultNames
 import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import java.net.URL
 
 buildscript {
     repositories {
@@ -40,9 +41,11 @@ buildscript {
 }
 
 plugins {
-    kotlin(module = "plugin.serialization") version Versions.kotlin
+    kotlin("plugin.serialization") version Versions.kotlin
     id("com.github.ben-manes.versions") version Versions.gradleVersionsPlugin
     id("com.appmattus.markdown") version Versions.markdownLintPlugin
+    id("com.vanniktech.maven.publish") version Versions.gradleMavenPublishPlugin apply false
+    id("org.jetbrains.dokka") version Versions.dokkaPlugin
 }
 
 apply(from = "gradle/scripts/detekt.gradle.kts")
@@ -81,6 +84,9 @@ subprojects {
         jcenter()
     }
 
+    version = (System.getenv("GITHUB_REF") ?: System.getProperty("GITHUB_REF"))
+        ?.replaceFirst("refs/tags/", "") ?: "unspecified"
+
     tasks.withType<Test> {
         @Suppress("UnstableApiUsage")
         if (project.name !in listOf("orbit-core", "orbit-test")) {
@@ -106,6 +112,23 @@ subprojects {
             targetCompatibility = JavaVersion.VERSION_1_8
         }
     }
+    plugins.withType<org.jetbrains.dokka.gradle.DokkaPlugin> {
+        tasks.withType<org.jetbrains.dokka.gradle.DokkaTask>().configureEach {
+            dokkaSourceSets {
+                configureEach {
+                    if (name.startsWith("ios")) {
+                        displayName.set("ios")
+                    }
+
+                    sourceLink {
+                        localDirectory.set(rootDir)
+                        remoteUrl.set(URL("https://github.com/orbit-mvi/orbit-mvi/blob/main"))
+                        remoteLineSuffix.set("#L")
+                    }
+                }
+            }
+        }
+    }
     plugins.withId("com.android.application") {
         apply(from = "$rootDir/gradle/scripts/jacoco-android.gradle.kts")
         configure<com.android.build.gradle.AppExtension> {
@@ -117,9 +140,6 @@ subprojects {
     }
     plugins.withType<org.jetbrains.kotlin.gradle.plugin.KotlinPluginWrapper> {
         apply(from = "$rootDir/gradle/scripts/jacoco.gradle.kts")
-        if (project.name !in listOf("test-common")) {
-            apply(from = "$rootDir/gradle/scripts/bintray.gradle.kts")
-        }
         configure<org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension> {
             // for strict mode
             explicitApi()
@@ -133,13 +153,6 @@ subprojects {
             }
         }
         apply(from = "$rootDir/gradle/scripts/jacoco-android.gradle.kts")
-        apply(from = "$rootDir/gradle/scripts/bintray.gradle.kts")
-
-        val sourceSets = extensions.findByType<LibraryExtension>()!!.sourceSets
-        tasks.register<Jar>("sourcesJar") {
-            archiveClassifier.set("sources")
-            from(sourceSets["main"].java.srcDirs)
-        }
 
         configure<LibraryExtension> {
             compileSdkVersion(30)
