@@ -328,6 +328,6 @@ class AndroidIdlingResourceTest {
     data class TestState(val value: Int)
 
     private companion object {
-        const val ASSERT_TIMEOUT = 200L
+        const val ASSERT_TIMEOUT = 1000L
     }
 }
