@@ -55,9 +55,6 @@ kotlin {
         }
 
         val iosMain by getting {
-            dependencies {
-                implementation(ProjectDependencies.kotlinCoroutines)
-            }
         }
 
         val iosTest by getting {

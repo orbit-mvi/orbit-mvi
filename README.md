@@ -2,7 +2,7 @@
 
 [![CI status](https://github.com/orbit-mvi/orbit-mvi/workflows/Android%20CI/badge.svg)](https://github.com/orbit-mvi/orbit-mvi/actions)
 [![codecov](https://codecov.io/gh/orbit-mvi/orbit-mvi/branch/main/graph/badge.svg)](https://codecov.io/gh/orbit-mvi/orbit-mvi)
-[![Download](https://api.bintray.com/packages/orbitmvi/maven/orbit-core/images/download.svg)](https://bintray.com/orbitmvi/maven/orbit-core/_latestVersion)
+[![Download](https://img.shields.io/maven-central/v/org.orbit-mvi/orbit-core)](https://search.maven.org/artifact/org.orbit-mvi/orbit-core)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE.md)
 
 ![Logo](images/logo.png)
@@ -43,7 +43,7 @@ And more!...
 implementation("org.orbit-mvi:orbit-viewmodel:<latest-version>")
 ```
 
-[![Download](https://api.bintray.com/packages/orbitmvi/maven/orbit-core/images/download.svg)](https://bintray.com/orbitmvi/maven/orbit-core/_latestVersion)
+[![Download](https://img.shields.io/maven-central/v/org.orbit-mvi/orbit-viewmodel)](https://search.maven.org/artifact/org.orbit-mvi/orbit-viewmodel)
 
 ### Define the contract
 
@@ -179,7 +179,7 @@ implementation("org.orbit-mvi:orbit-viewmodel:<latest-version>")
 testImplementation("org.orbit-mvi:orbit-test:<latest-version>")
 ```
 
-[![Download](https://api.bintray.com/packages/orbitmvi/maven/orbit-core/images/download.svg)](https://bintray.com/orbitmvi/maven/orbit-core/_latestVersion)
+[![Download](https://img.shields.io/maven-central/v/org.orbit-mvi/orbit-core)](https://search.maven.org/artifact/org.orbit-mvi/orbit-core)
 
 ## Contributing
 
