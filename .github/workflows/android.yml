@@ -186,4 +186,6 @@ jobs:
         env:
           mavenCentralRepositoryUsername: ${{ secrets.MAVEN_CENTRAL_REPOSITORY_USERNAME }}
           mavenCentralRepositoryPassword: ${{ secrets.MAVEN_CENTRAL_REPOSITORY_PASSWORD }}
-        run: ./gradlew publish --no-daemon --no-parallel -Psigning.keyId="${{ secrets.GPG_SIGNING_KEY_ID }}" -Psigning.password="${{ secrets.GPG_SIGNING_PASSWORD }}" -Psigning.secretKeyRingFile=$(echo ~/.gradle/sonatype-orbitmvi-keys.gpg)
+          signing.keyId: ${{ secrets.GPG_SIGNING_KEY_ID }}
+          signing.password: ${{ secrets.GPG_SIGNING_PASSWORD }}
+        run: ./gradlew publish --no-daemon --no-parallel -Psigning.secretKeyRingFile=$(echo ~/.gradle/sonatype-orbitmvi-keys.gpg)
