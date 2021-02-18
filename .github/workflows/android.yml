@@ -73,7 +73,7 @@ jobs:
         run: ./gradlew lint
 
   unit-tests:
-    runs-on: ubuntu-latest
+    runs-on: macOS-latest
     steps:
       - uses: actions/checkout@v2
 
@@ -97,7 +97,7 @@ jobs:
           key: ${{ runner.os }}-gradlewrapper
 
       - name: Unit tests
-        run: ./gradlew check
+        run: ./gradlew check -xlint
 
       - name: Upload test artifacts
         if: failure()
@@ -112,7 +112,7 @@ jobs:
           token: ${{secrets.CODECOV_TOKEN}}
 
   build:
-    runs-on: ubuntu-latest
+    runs-on: macOS-latest
     steps:
       - uses: actions/checkout@v2
 
@@ -136,7 +136,7 @@ jobs:
           key: ${{ runner.os }}-gradlewrapper
 
       - name: Build
-        run: ./gradlew clean assemble sourcesJar -xassembleDebug
+        run: ./gradlew clean assemble -xassembleDebug
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
@@ -148,7 +148,7 @@ jobs:
 
   upload:
     needs: [static-checks, lint, unit-tests, build]
-    runs-on: ubuntu-latest
+    runs-on: macOS-latest
     if: startsWith(github.ref, 'refs/tags/')
     steps:
       - uses: actions/checkout@v2
@@ -177,8 +177,13 @@ jobs:
         with:
           name: upload-artifacts
 
+      - name: Prepare GPG
+        run: |
+          echo "${{secrets.GPG_SIGNING_SECRET_KEY_RING_FILE_BASE64}}" > ~/.gradle/sonatype-orbitmvi-keys.gpg.b64
+          base64 -d ~/.gradle/sonatype-orbitmvi-keys.gpg.b64 > ~/.gradle/sonatype-orbitmvi-keys.gpg
+
       - name: Upload tag
         env:
-          BINTRAY_USER: ${{ secrets.BINTRAY_USER }}
-          BINTRAY_KEY: ${{ secrets.BINTRAY_KEY }}
-        run: ./gradlew bintrayUpload
+          mavenCentralRepositoryUsername: ${{ secrets.MAVEN_CENTRAL_REPOSITORY_USERNAME }}
+          mavenCentralRepositoryPassword: ${{ secrets.MAVEN_CENTRAL_REPOSITORY_PASSWORD }}
+        run: ./gradlew publish --no-daemon --no-parallel -Psigning.keyId="${{ secrets.GPG_SIGNING_KEY_ID }}" -Psigning.password="${{ secrets.GPG_SIGNING_PASSWORD }}" -Psigning.secretKeyRingFile=$(echo ~/.gradle/sonatype-orbitmvi-keys.gpg)

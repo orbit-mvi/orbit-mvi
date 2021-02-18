@@ -18,10 +18,14 @@
  * See: https://github.com/orbit-mvi/orbit-mvi/compare/c5b8b3f2b83b5972ba2ad98f73f75086a89653d3...main
  */
 
+import kotlinx.atomicfu.plugin.gradle.AtomicFUGradlePlugin
+
 plugins {
     kotlin("multiplatform")
+    id("com.vanniktech.maven.publish")
+    id("org.jetbrains.dokka")
 }
-apply<kotlinx.atomicfu.plugin.gradle.AtomicFUGradlePlugin>()
+apply<AtomicFUGradlePlugin>()
 
 kotlin {
     jvm()
@@ -51,18 +55,12 @@ kotlin {
         }
 
         val iosMain by getting {
+            dependencies {
+                implementation(ProjectDependencies.kotlinCoroutines)
+            }
         }
 
         val iosTest by getting {
         }
     }
 }
-
-// // Fix lack of source code when publishing pure Kotlin projects
-// // See https://github.com/novoda/bintray-release/issues/262
-// tasks.whenTaskAdded {
-//    if (name == "generateSourcesJarForMavenPublication") {
-//        this as Jar
-//        from(sourceSets.main.get().allSource)
-//    }
-// }

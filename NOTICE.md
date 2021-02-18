@@ -13,7 +13,7 @@ This software uses the following open source works:
 - [Android](https://developer.android.com)
 - [Markdown Lint plugin](https://github.com/appmattus/markdown-lint)
 - [Gradle Versions plugin](https://github.com/ben-manes/gradle-versions-plugin)
-- [Bintray plugin](https://github.com/bintray/gradle-bintray-plugin)
+- [Gradle Maven Publish Plugin](https://github.com/vanniktech/gradle-maven-publish-plugin)
 - [Detekt](https://github.com/detekt/detekt)
 - [JUnit](https://junit.org/)
 

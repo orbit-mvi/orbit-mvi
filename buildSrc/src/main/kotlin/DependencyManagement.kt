@@ -22,9 +22,10 @@ object Versions {
 
     const val gradleVersionsPlugin = "0.36.0"
     const val gradleAndroidPlugin = "4.1.2"
+    const val gradleMavenPublishPlugin = "0.14.0"
+    const val dokkaPlugin = "1.4.20"
     const val markdownLintPlugin = "0.6.0"
     const val detektPlugin = "1.15.0"
-    const val bintray = "1.8.5"
     const val safeargs = "2.3.3"
     const val atomicfu = "0.15.1"
 
@@ -32,13 +33,7 @@ object Versions {
     const val coroutines = "1.4.2-native-mt"
 
     const val androidxLifecycles = "2.2.0"
-    const val androidxAnnotation = "1.1.0"
-    const val androidxTesting = "2.1.0"
     const val androidxEspresso = "3.3.0"
-
-    const val rxJava1 = "1.3.8"
-    const val rxJava2 = "2.2.20"
-    const val rxJava3 = "3.0.8"
 
     const val desugar = "1.0.10"
 
@@ -53,30 +48,18 @@ object ProjectDependencies {
     // Kotlin
     const val kotlinCoroutines = "org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versions.coroutines}"
     const val kotlinCoroutinesTest = "org.jetbrains.kotlinx:kotlinx-coroutines-test:${Versions.coroutines}"
-    const val kotlinCoroutinesAndroid = "org.jetbrains.kotlinx:kotlinx-coroutines-android:${Versions.coroutines}"
-    const val kotlinCoroutinesRx2 = "org.jetbrains.kotlinx:kotlinx-coroutines-rx2:${Versions.coroutines}"
-    const val kotlinCoroutinesRx3 = "org.jetbrains.kotlinx:kotlinx-coroutines-rx3:${Versions.coroutines}"
     const val kotlinTest = "org.jetbrains.kotlin:kotlin-test:${Versions.kotlin}"
 
     // AndroidX
-    const val androidxAnnotation = "androidx.annotation:annotation:${Versions.androidxAnnotation}"
-    const val androidxLifecycleComponents = "androidx.lifecycle:lifecycle-extensions:${Versions.androidxLifecycles}"
     const val androidxLifecycleSavedState = "androidx.lifecycle:lifecycle-viewmodel-savedstate:${Versions.androidxLifecycles}"
     const val androidxLifecycleKtx = "androidx.lifecycle:lifecycle-viewmodel-ktx:${Versions.androidxLifecycles}"
-    const val androidxLiveDataKtx = "androidx.lifecycle:lifecycle-livedata-ktx:${Versions.androidxLifecycles}"
     const val androidxEspressoIdlingResource = "androidx.test.espresso:espresso-idling-resource:${Versions.androidxEspresso}"
     const val androidxEspressoCore = "androidx.test.espresso:espresso-core:${Versions.androidxEspresso}"
-
-    // RxJava
-    const val rxJava1 = "io.reactivex:rxjava:${Versions.rxJava1}"
-    const val rxJava2 = "io.reactivex.rxjava2:rxjava:${Versions.rxJava2}"
-    const val rxJava3 = "io.reactivex.rxjava3:rxjava:${Versions.rxJava3}"
 
     // Tools
     const val detektFormatting = "io.gitlab.arturbosch.detekt:detekt-formatting:${Versions.detektPlugin}"
 
     // Test prerequisites
-    const val androidxTesting = "androidx.arch.core:core-testing:${Versions.androidxTesting}"
     const val junitPlatformConsole = "org.junit.platform:junit-platform-console:${Versions.junitPlatform}"
     const val junitJupiterEngine = "org.junit.jupiter:junit-jupiter-engine:${Versions.junitRuntime}"
     const val junitJupiterApi = "org.junit.jupiter:junit-jupiter-api:${Versions.junitRuntime}"
@@ -88,7 +71,6 @@ object PluginDependencies {
     const val android = "com.android.tools.build:gradle:${Versions.gradleAndroidPlugin}"
     const val kotlin = "org.jetbrains.kotlin:kotlin-gradle-plugin:${Versions.kotlin}"
     const val detekt = "io.gitlab.arturbosch.detekt:detekt-gradle-plugin:${Versions.detektPlugin}"
-    const val bintray = "com.jfrog.bintray.gradle:gradle-bintray-plugin:${Versions.bintray}"
     const val safeargs = "androidx.navigation:navigation-safe-args-gradle-plugin:${Versions.safeargs}"
     const val atomicfu = "org.jetbrains.kotlinx:atomicfu-gradle-plugin:${Versions.atomicfu}"
 }

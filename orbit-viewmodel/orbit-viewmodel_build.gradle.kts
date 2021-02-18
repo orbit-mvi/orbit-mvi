@@ -22,6 +22,8 @@ plugins {
     id("com.android.library")
     kotlin("android")
     id("kotlin-parcelize")
+    id("com.vanniktech.maven.publish")
+    id("org.jetbrains.dokka")
 }
 
 dependencies {
