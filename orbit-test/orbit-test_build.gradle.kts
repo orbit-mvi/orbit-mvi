@@ -35,39 +35,31 @@ kotlin {
             dependencies {
                 implementation(kotlin("test-common"))
                 implementation(ProjectDependencies.kotlinCoroutines)
-                implementation(project(":test-common"))
 
                 api(project(":orbit-core"))
             }
         }
         commonTest {
             dependencies {
+                implementation(project(":test-common"))
                 implementation(kotlin("test-common"))
                 implementation(kotlin("test-annotations-common"))
             }
         }
-
         val iosMain by getting {
             dependencies {
                 implementation(ProjectDependencies.kotlinCoroutines)
             }
         }
-
+        val iosTest by getting {
+        }
         val jvmMain by getting {
             dependencies {
                 implementation(kotlin("test-junit"))
                 implementation(ProjectDependencies.kotlinCoroutines)
             }
         }
-
         val jvmTest by getting {
-            dependencies {
-            }
-        }
-
-        val iosTest by getting {
-            dependencies {
-            }
         }
     }
 }

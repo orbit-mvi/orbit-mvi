@@ -14,6 +14,14 @@
  * limitations under the License.
  */
 
-package org.orbitmvi.orbit.test
+package org.orbitmvi.orbit
 
-actual fun getSystemTimeInMillis() = System.currentTimeMillis()
+import kotlin.coroutines.CoroutineContext
+import kotlin.coroutines.EmptyCoroutineContext
+
+internal expect fun <T> runBlocking(block: suspend () -> T): T
+
+internal  expect fun <T> runBlocking(
+    coroutineContext: CoroutineContext = EmptyCoroutineContext,
+    block: suspend () -> T
+): T

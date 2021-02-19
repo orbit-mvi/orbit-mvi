@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 
-package org.orbitmvi.orbit.test
+package org.orbitmvi.orbit
 
-public expect fun getSystemTimeInMillis(): Long
+internal actual fun getSystemTimeInMillis() = System.currentTimeMillis()
