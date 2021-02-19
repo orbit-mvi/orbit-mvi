@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-package org.orbitmvi.orbit.test
+package org.orbitmvi.orbit
 
 import kotlin.system.getTimeMillis
 
-actual fun getSystemTimeInMillis() = getTimeMillis()
+internal actual fun getSystemTimeInMillis() = getTimeMillis()

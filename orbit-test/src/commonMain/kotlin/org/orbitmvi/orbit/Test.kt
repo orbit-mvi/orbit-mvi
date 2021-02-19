@@ -20,14 +20,13 @@
 
 package org.orbitmvi.orbit
 
-import org.orbitmvi.orbit.internal.LazyCreateContainerDecorator
 import kotlinx.atomicfu.atomic
 import kotlinx.atomicfu.update
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
+import org.orbitmvi.orbit.internal.LazyCreateContainerDecorator
 import org.orbitmvi.orbit.internal.TestContainerDecorator
-import org.orbitmvi.orbit.test.runBlocking
 import kotlin.test.assertEquals
 
 /**
@@ -69,6 +68,7 @@ public fun <STATE : Any, SIDE_EFFECT : Any, T : ContainerHost<STATE, SIDE_EFFECT
 
     return this
 }
+
 private fun <STATE : Any, SIDE_EFFECT : Any> Container<STATE, SIDE_EFFECT>.findOnCreate(): (STATE) -> Unit {
     return (this as? LazyCreateContainerDecorator<STATE, SIDE_EFFECT>)?.onCreate
         ?: (this as? ContainerDecorator<STATE, SIDE_EFFECT>)?.actual?.findOnCreate()
