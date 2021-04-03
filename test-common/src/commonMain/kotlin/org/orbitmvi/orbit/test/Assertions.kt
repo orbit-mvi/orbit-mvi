@@ -55,10 +55,10 @@ public fun CharSequence?.assertContains(expected: Regex) {
 }
 
 /** Assert that a collection contains exactly the given values and nothing else, in order. */
-public fun <T> Collection<T>.assertContainExactly(vararg expected: T) = assertContainExactly(expected.asList())
+public fun <T> Collection<T>.assertContainExactly(vararg expected: T): Unit = assertContainExactly(expected.asList())
 
 /** Assert that a collection contains exactly the given values and nothing else, in order. */
-public fun <T> Collection<T>.assertEmpty() = assertContainExactly(emptyList())
+public fun <T> Collection<T>.assertEmpty(): Unit = assertContainExactly(emptyList())
 
 /** Assert that a collection contains exactly the given values and nothing else, in order. */
 public fun <T, C : Collection<T>> C.assertContainExactly(expected: C) {

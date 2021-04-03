@@ -27,7 +27,7 @@ public class TestContainerDecorator<STATE : Any, SIDE_EFFECT : Any>(
         delegate.value.orbit(orbitFlow)
     }
 
-    fun test(
+    public fun test(
         initialState: STATE,
         isolateFlow: Boolean = true,
         blocking: Boolean = true

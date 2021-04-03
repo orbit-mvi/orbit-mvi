@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="orbit-test-jvm">
+    <output-path>$PROJECT_DIR$/orbit-test/build/libs</output-path>
+    <root id="archive" name="orbit-test-jvm.jar">
+      <element id="module-output" name="orbit-mvi.orbit-test.jvmMain" />
+    </root>
+  </artifact>
+</component>

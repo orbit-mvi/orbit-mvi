@@ -20,4 +20,4 @@ package org.orbitmvi.orbit.test
 @OptionalExpectation
 @Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.BINARY)
-expect annotation class IgnoreIos()
+public expect annotation class IgnoreIos()
