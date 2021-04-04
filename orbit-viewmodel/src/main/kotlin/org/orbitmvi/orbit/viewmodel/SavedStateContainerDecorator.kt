@@ -22,8 +22,7 @@ package org.orbitmvi.orbit.viewmodel
 
 import androidx.lifecycle.SavedStateHandle
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.StateFlow
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerDecorator
 import org.orbitmvi.orbit.syntax.ContainerContext
@@ -32,16 +31,12 @@ internal class SavedStateContainerDecorator<STATE : Any, SIDE_EFFECT : Any>(
     override val actual: Container<STATE, SIDE_EFFECT>,
     private val savedStateHandle: SavedStateHandle
 ) : ContainerDecorator<STATE, SIDE_EFFECT> {
-    override val currentState: STATE
-        get() = actual.currentState
 
-    override val stateFlow: Flow<STATE>
-        get() = flow {
-            actual.stateFlow.collect {
-                savedStateHandle[SAVED_STATE_KEY] = it
-                emit(it)
-            }
+    override val stateFlow: StateFlow<STATE>
+        get() = actual.stateFlow.onEach {
+            savedStateHandle[SAVED_STATE_KEY] = it
         }
+
     override val sideEffectFlow: Flow<SIDE_EFFECT>
         get() = actual.sideEffectFlow
 

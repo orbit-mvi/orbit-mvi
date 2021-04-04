@@ -22,6 +22,7 @@ package org.orbitmvi.orbit.internal
 
 import kotlinx.atomicfu.atomic
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.flow
 import org.orbitmvi.orbit.Container
@@ -34,14 +35,8 @@ public class LazyCreateContainerDecorator<STATE : Any, SIDE_EFFECT : Any>(
 ) : ContainerDecorator<STATE, SIDE_EFFECT> {
     private val created = atomic<Int>(0)
 
-    override val currentState: STATE
-        get() = actual.currentState
-
-    override val stateFlow: Flow<STATE>
-        get() = flow {
-            runOnCreate()
-            emitAll(actual.stateFlow)
-        }
+    override val stateFlow: StateFlow<STATE>
+        get() = actual.stateFlow.onSubscribe { runOnCreate() }
 
     override val sideEffectFlow: Flow<SIDE_EFFECT>
         get() = flow {
@@ -51,7 +46,7 @@ public class LazyCreateContainerDecorator<STATE : Any, SIDE_EFFECT : Any>(
 
     private fun runOnCreate() {
         if (created.compareAndSet(0, 1)) {
-            onCreate(actual.currentState)
+            onCreate(actual.stateFlow.value)
         }
     }
 

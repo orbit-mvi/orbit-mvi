@@ -28,6 +28,8 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.channels.produce
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
@@ -49,9 +51,7 @@ public open class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
     private val initialised = atomic(false)
 
     private val internalStateFlow = MutableStateFlow(initialState)
-    override val currentState: STATE
-        get() = internalStateFlow.value
-    override val stateFlow: Flow<STATE> = internalStateFlow
+    override val stateFlow: StateFlow<STATE> = internalStateFlow.asStateFlow()
 
     private val sideEffectChannel = Channel<SIDE_EFFECT>(settings.sideEffectBufferSize)
     override val sideEffectFlow: Flow<SIDE_EFFECT> = sideEffectChannel.receiveAsFlow()

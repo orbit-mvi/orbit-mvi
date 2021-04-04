@@ -20,14 +20,15 @@
 
 package org.orbitmvi.orbit
 
-import org.orbitmvi.orbit.idling.IdlingResource
-import org.orbitmvi.orbit.idling.NoopIdlingResource
-import org.orbitmvi.orbit.internal.defaultBackgroundDispatcher
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.StateFlow
+import org.orbitmvi.orbit.idling.IdlingResource
+import org.orbitmvi.orbit.idling.NoopIdlingResource
+import org.orbitmvi.orbit.internal.defaultBackgroundDispatcher
 import org.orbitmvi.orbit.syntax.ContainerContext
 
 /**
@@ -39,16 +40,12 @@ import org.orbitmvi.orbit.syntax.ContainerContext
  * container never posts side effects.
  */
 public interface Container<STATE : Any, SIDE_EFFECT : Any> {
-    /**
-     * The container's current state.
-     */
-    public val currentState: STATE
 
     /**
-     * A [Flow] of state updates. Emits the latest state upon subscription and serves only distinct
+     * A [StateFlow] of state updates. Emits the latest state upon subscription and serves only distinct
      * values (through equality comparison).
      */
-    public val stateFlow: Flow<STATE>
+    public val stateFlow: StateFlow<STATE>
 
     /**
      * A [Flow] of one-off side effects posted from [Container]. Caches side effects when there are no collectors.
