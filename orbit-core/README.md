@@ -309,6 +309,10 @@ done by switching your coroutine context.
 ## Error handling
 
 It is good practice to handle all of your errors within your flows.
-Orbit does not provide any built-in exception handling because it cannot
-make assumptions about how you respond to errors, avoiding putting your
-system in an undefined state.
+By default Orbit doesn't handle or process any exceptions because it cannot
+make assumptions about how you respond to errors. However you could install
+default exception handler via
+[Container Settings](src/commonMain/kotlin/org/orbitmvi/orbit/Container.kt)
+property `orbitExceptionHandler` -> if defined exceptions are caught here so
+parent scope is not affected and Orbit container
+would continue to operate normally.

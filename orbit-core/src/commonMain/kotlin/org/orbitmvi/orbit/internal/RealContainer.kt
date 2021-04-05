@@ -31,6 +31,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
+import kotlinx.coroutines.supervisorScope
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import org.orbitmvi.orbit.Container
@@ -77,7 +78,13 @@ public open class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
             }
             scope.launch {
                 for (msg in dispatchChannel) {
-                    launch(Dispatchers.Unconfined) { pluginContext.msg() }
+                    if (settings.orbitExceptionHandler == null) {
+                        launch(Dispatchers.Unconfined) { pluginContext.msg() }
+                    } else {
+                        supervisorScope {
+                            launch(settings.orbitExceptionHandler + Dispatchers.Unconfined) { pluginContext.msg() }
+                        }
+                    }
                 }
             }
         }

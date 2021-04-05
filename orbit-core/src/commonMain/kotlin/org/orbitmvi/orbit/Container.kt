@@ -24,6 +24,7 @@ import org.orbitmvi.orbit.idling.IdlingResource
 import org.orbitmvi.orbit.idling.NoopIdlingResource
 import org.orbitmvi.orbit.internal.defaultBackgroundDispatcher
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
@@ -82,6 +83,7 @@ public interface Container<STATE : Any, SIDE_EFFECT : Any> {
         public val sideEffectBufferSize: Int = Channel.UNLIMITED,
         public val idlingRegistry: IdlingResource = NoopIdlingResource(),
         public val orbitDispatcher: CoroutineDispatcher = Dispatchers.Default,
+        public val orbitExceptionHandler: CoroutineExceptionHandler? = null,
         public val backgroundDispatcher: CoroutineDispatcher = defaultBackgroundDispatcher,
     )
 }
