@@ -19,5 +19,5 @@ package org.orbitmvi.orbit.test
 import kotlin.coroutines.CoroutineContext
 
 public actual fun <T> runBlocking(block: suspend () -> T): T = kotlinx.coroutines.runBlocking { block() }
-actual fun <T> runBlocking(coroutineContext: CoroutineContext, block: suspend () -> T): T =
+public actual fun <T> runBlocking(coroutineContext: CoroutineContext, block: suspend () -> T): T =
     kotlinx.coroutines.runBlocking(coroutineContext) { block() }

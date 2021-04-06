@@ -134,7 +134,7 @@ public fun <STATE : Any, SIDE_EFFECT : Any> ContainerHost<STATE, SIDE_EFFECT>.as
     )
 }
 
-class TestFixtures<STATE : Any, SIDE_EFFECT : Any>(
+private class TestFixtures<STATE : Any, SIDE_EFFECT : Any>(
     val initialState: STATE,
     val stateObserver: TestFlowObserver<STATE>,
     val sideEffectObserver: TestFlowObserver<SIDE_EFFECT>,
@@ -143,6 +143,6 @@ class TestFixtures<STATE : Any, SIDE_EFFECT : Any>(
 
 private val testHarness = TestHarness()
 
-class TestHarness {
+private class TestHarness {
     val fixtures = atomic<Map<ContainerHost<*, *>, TestFixtures<*, *>>>(mapOf())
 }

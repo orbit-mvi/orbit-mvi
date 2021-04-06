@@ -145,6 +145,20 @@ subprojects {
             explicitApi()
         }
     }
+    plugins.withType<org.jetbrains.kotlin.gradle.plugin.KotlinPluginWrapper> {
+        apply(from = "$rootDir/gradle/scripts/jacoco.gradle.kts")
+        configure<org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension> {
+            // for strict mode
+            explicitApi()
+        }
+    }
+    plugins.withType<org.jetbrains.kotlin.gradle.plugin.KotlinMultiplatformPluginWrapper> {
+        apply(from = "$rootDir/gradle/scripts/jacoco.gradle.kts")
+        configure<org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension> {
+            // for strict mode
+            explicitApi()
+        }
+    }
     plugins.withId("com.android.library") {
         plugins.withType<org.jetbrains.kotlin.gradle.plugin.KotlinAndroidPluginWrapper> {
             configure<org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension> {
