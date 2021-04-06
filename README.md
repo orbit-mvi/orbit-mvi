@@ -18,6 +18,7 @@ has been moved to this project maintained by the original authors.
 
 ## Documentation
 
+- [How to write your own MVI library and why you shouldn't](https://www.youtube.com/watch?v=E6obYmkkdko)
 - [Core module and architecture overview](orbit-core/README.md)
 - [ViewModel](orbit-viewmodel/README.md)
 - [Test](orbit-test/README.md)
