@@ -1,6 +1,5 @@
 /*
  * Copyright 2021 Mikołaj Leszczyński & Appmattus Limited
- * Copyright 2020 Babylon Partners Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,9 +12,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- * File modified by Mikołaj Leszczyński & Appmattus Limited
- * See: https://github.com/orbit-mvi/orbit-mvi/compare/c5b8b3f2b83b5972ba2ad98f73f75086a89653d3...main
  */
 
 package org.orbitmvi.orbit.internal
@@ -29,7 +25,6 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.isActive
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.container
-import org.orbitmvi.orbit.test
 import kotlin.random.Random
 import kotlin.test.AfterTest
 import kotlin.test.Test
@@ -49,8 +44,10 @@ internal class ContainerExceptionHandlerTest {
     @Test
     fun `by default any exception breaks the scope`() = runBlocking {
         val initState = Random.nextInt()
-        val container = scope.container<Int, Nothing>(initState)
-        val observer = container.stateFlow.test()
+        val container = scope.container<Int, Nothing>(
+                initialState = initState,
+                settings = Container.Settings(orbitDispatcher = Dispatchers.Unconfined)
+        )
         val newState = Random.nextInt()
 
         container.orbit {
@@ -60,7 +57,6 @@ internal class ContainerExceptionHandlerTest {
             reduce { newState }
         }
 
-        observer.awaitCount(2)
         assertEquals(initState, container.currentState)
         assertEquals(false, scope.isActive)
     }
@@ -74,10 +70,9 @@ internal class ContainerExceptionHandlerTest {
                 initialState = initState,
                 settings = Container.Settings(
                         orbitDispatcher = Dispatchers.Unconfined,
-                        orbitExceptionHandler = exceptionHandler
+                        exceptionHandler = exceptionHandler
                 )
         )
-        val observer = container.stateFlow.test()
         val newState = Random.nextInt()
 
         container.orbit {
@@ -87,7 +82,6 @@ internal class ContainerExceptionHandlerTest {
             reduce { newState }
         }
 
-        observer.awaitCount(2)
         assertEquals(newState, container.currentState)
         assertEquals(true, scope.isActive)
         assertEquals(1, exceptions.size)

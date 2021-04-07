@@ -45,7 +45,7 @@ class PostListViewModel(
     override val container = container<PostListState, NavigationEvent>(
         initialState = PostListState(),
         savedStateHandle = savedStateHandle,
-        settings = Container.Settings(orbitExceptionHandler = exceptionHandler)
+        settings = Container.Settings(exceptionHandler = exceptionHandler)
     ) {
         if (it.overviews.isEmpty()) {
             loadOverviews()

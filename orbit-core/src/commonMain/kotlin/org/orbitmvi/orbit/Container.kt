@@ -83,7 +83,7 @@ public interface Container<STATE : Any, SIDE_EFFECT : Any> {
         public val sideEffectBufferSize: Int = Channel.UNLIMITED,
         public val idlingRegistry: IdlingResource = NoopIdlingResource(),
         public val orbitDispatcher: CoroutineDispatcher = Dispatchers.Default,
-        public val orbitExceptionHandler: CoroutineExceptionHandler? = null,
         public val backgroundDispatcher: CoroutineDispatcher = defaultBackgroundDispatcher,
+        public val exceptionHandler: CoroutineExceptionHandler? = null,
     )
 }

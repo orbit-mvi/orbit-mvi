@@ -78,11 +78,11 @@ public open class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
             }
             scope.launch {
                 for (msg in dispatchChannel) {
-                    if (settings.orbitExceptionHandler == null) {
+                    if (settings.exceptionHandler == null) {
                         launch(Dispatchers.Unconfined) { pluginContext.msg() }
                     } else {
                         supervisorScope {
-                            launch(settings.orbitExceptionHandler + Dispatchers.Unconfined) { pluginContext.msg() }
+                            launch(settings.exceptionHandler + Dispatchers.Unconfined) { pluginContext.msg() }
                         }
                     }
                 }
