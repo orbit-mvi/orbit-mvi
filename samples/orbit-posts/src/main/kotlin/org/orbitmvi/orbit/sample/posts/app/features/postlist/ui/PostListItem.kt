@@ -49,5 +49,10 @@ data class PostListItem(private val post: PostOverview, private val viewModel: P
         viewBinding.root.setOnClickListener {
             viewModel.onPostClicked(post)
         }
+
+        viewBinding.root.setOnLongClickListener {
+            viewModel.onPostLongClicked()
+            true
+        }
     }
 }

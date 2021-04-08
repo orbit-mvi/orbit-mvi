@@ -20,8 +20,11 @@
 
 package org.orbitmvi.orbit.sample.posts.app.features.postlist.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import kotlinx.coroutines.CoroutineExceptionHandler
+import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.sample.posts.app.common.NavigationEvent
 import org.orbitmvi.orbit.sample.posts.domain.repositories.PostOverview
@@ -33,10 +36,17 @@ import org.orbitmvi.orbit.viewmodel.container
 
 class PostListViewModel(
     savedStateHandle: SavedStateHandle,
-    private val postRepository: PostRepository
+    private val postRepository: PostRepository,
+    exceptionHandler: CoroutineExceptionHandler = CoroutineExceptionHandler { _, throwable ->
+        Log.w("PostListViewModel", "orbit caught the exception", throwable)
+    }
 ) : ViewModel(), ContainerHost<PostListState, NavigationEvent> {
 
-    override val container = container<PostListState, NavigationEvent>(PostListState(), savedStateHandle) {
+    override val container = container<PostListState, NavigationEvent>(
+        initialState = PostListState(),
+        savedStateHandle = savedStateHandle,
+        settings = Container.Settings(exceptionHandler = exceptionHandler)
+    ) {
         if (it.overviews.isEmpty()) {
             loadOverviews()
         }
@@ -52,5 +62,9 @@ class PostListViewModel(
 
     fun onPostClicked(post: PostOverview) = intent {
         postSideEffect(OpenPostNavigationEvent(post))
+    }
+
+    fun onPostLongClicked() = intent {
+        throw IllegalStateException("Catch me!")
     }
 }
