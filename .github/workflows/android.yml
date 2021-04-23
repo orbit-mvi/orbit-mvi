@@ -100,7 +100,7 @@ jobs:
         uses: actions/cache@v1
         with:
           path: ~/.konan
-          key: ${{ runner.os }}-konan-${{ hashFiles('**') }}
+          key: ${{ runner.os }}-konan
 
       - name: Unit tests
         run: ./gradlew check -xlint
@@ -146,7 +146,7 @@ jobs:
         uses: actions/cache@v1
         with:
           path: ~/.konan
-          key: ${{ runner.os }}-konan-${{ hashFiles('**') }}
+          key: ${{ runner.os }}-konan
 
       - name: Build
         run: ./gradlew clean assemble -xassembleDebug
