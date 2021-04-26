@@ -41,7 +41,7 @@ class ViewModelExtensionsKtTest {
 
         val middleware = Middleware(savedStateHandle, initialState)
 
-        assertEquals(savedState, middleware.container.currentState)
+        assertEquals(savedState, middleware.container.stateFlow.value)
     }
 
     @Test
@@ -51,7 +51,7 @@ class ViewModelExtensionsKtTest {
 
         val middleware = Middleware(savedStateHandle, initialState)
 
-        assertEquals(initialState, middleware.container.currentState)
+        assertEquals(initialState, middleware.container.stateFlow.value)
     }
 
     @Test

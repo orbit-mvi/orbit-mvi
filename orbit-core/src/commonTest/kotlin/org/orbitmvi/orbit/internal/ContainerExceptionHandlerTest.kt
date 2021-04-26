@@ -57,7 +57,7 @@ internal class ContainerExceptionHandlerTest {
             reduce { newState }
         }
 
-        assertEquals(initState, container.currentState)
+        assertEquals(initState, container.stateFlow.value)
         assertEquals(false, scope.isActive)
     }
 
@@ -82,7 +82,7 @@ internal class ContainerExceptionHandlerTest {
             reduce { newState }
         }
 
-        assertEquals(newState, container.currentState)
+        assertEquals(newState, container.stateFlow.value)
         assertEquals(true, scope.isActive)
         assertEquals(1, exceptions.size)
         assertTrue { exceptions.first() is IllegalStateException }

@@ -84,7 +84,7 @@ internal class StateTest {
         val initialState = TestState()
         val middleware = Middleware(initialState)
 
-        assertEquals(initialState, middleware.container.currentState)
+        assertEquals(initialState, middleware.container.stateFlow.value)
     }
 
     @Test
@@ -98,7 +98,7 @@ internal class StateTest {
 
         testStateObserver.awaitCount(2)
 
-        assertEquals(testStateObserver.values.last(), middleware.container.currentState)
+        assertEquals(testStateObserver.values.last(), middleware.container.stateFlow.value)
     }
 
     private data class TestState(val id: Int = Random.nextInt())

@@ -3,6 +3,7 @@ package org.orbitmvi.orbit.internal
 import kotlinx.atomicfu.atomic
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.StateFlow
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerDecorator
 import org.orbitmvi.orbit.syntax.ContainerContext
@@ -14,10 +15,7 @@ public class TestContainerDecorator<STATE : Any, SIDE_EFFECT : Any>(
 
     private val delegate = atomic(actual)
 
-    override val currentState: STATE
-        get() = delegate.value.currentState
-
-    override val stateFlow: Flow<STATE>
+    override val stateFlow: StateFlow<STATE>
         get() = delegate.value.stateFlow
 
     override val sideEffectFlow: Flow<SIDE_EFFECT>

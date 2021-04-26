@@ -60,7 +60,7 @@ internal class ContainerThreadingTest {
         }
 
         observer.awaitCount(2)
-        assertEquals(newState, container.currentState)
+        assertEquals(newState, container.stateFlow.value)
     }
 
     @Test

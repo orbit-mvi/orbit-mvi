@@ -96,6 +96,12 @@ jobs:
           path: ~/.gradle/wrapper/dists
           key: ${{ runner.os }}-gradlewrapper
 
+      - name: konan cache
+        uses: actions/cache@v1
+        with:
+          path: ~/.konan
+          key: ${{ runner.os }}-konan
+
       - name: Unit tests
         run: ./gradlew check -xlint
 
@@ -107,12 +113,12 @@ jobs:
           path: '**/build/reports/tests/**'
 
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v1.0.7
+        uses: codecov/codecov-action@v1.4.1
         with:
           token: ${{secrets.CODECOV_TOKEN}}
 
   build:
-    needs: [static-checks, lint, unit-tests]
+    needs: [ static-checks, lint, unit-tests ]
     runs-on: macOS-latest
     steps:
       - uses: actions/checkout@v2
@@ -135,6 +141,12 @@ jobs:
         with:
           path: ~/.gradle/wrapper/dists
           key: ${{ runner.os }}-gradlewrapper
+
+      - name: konan cache
+        uses: actions/cache@v1
+        with:
+          path: ~/.konan
+          key: ${{ runner.os }}-konan
 
       - name: Build
         run: ./gradlew clean assemble -xassembleDebug
