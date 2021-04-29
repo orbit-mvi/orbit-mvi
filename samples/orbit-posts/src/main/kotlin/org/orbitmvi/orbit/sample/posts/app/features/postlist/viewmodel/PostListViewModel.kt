@@ -53,18 +53,14 @@ class PostListViewModel(
             settings = Container.Settings(exceptionHandler = exceptionHandler)
     ) {
         intent {
-            withContext(Dispatchers.IO) {
-                flow<Int> {
-                    var counter = 0
-                    while (true) {
-                        delay(3000)
-                        emit(++counter)
-                    }
+            flow<Int> {
+                var counter = 0
+                while (true) {
+                    delay(3000)
+                    emit(++counter)
                 }
-                        .collect { counter ->
-                            Log.i("FLOW", "Piu")
-                            reduce { state.copy(overviews = state.overviews.map { it.copy(title = "$counter. {it.title}") }) }
-                        }
+            }.collect { counter ->
+                reduce { state.copy(overviews = state.overviews.map { it.copy(title = "$counter. ${it.title}") }) }
             }
         }
         if (it.overviews.isEmpty()) {

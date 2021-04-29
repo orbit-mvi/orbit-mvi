@@ -30,6 +30,9 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.consumeAsFlow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
@@ -41,9 +44,9 @@ import org.orbitmvi.orbit.syntax.ContainerContext
 
 @Suppress("EXPERIMENTAL_API_USAGE")
 public open class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
-    initialState: STATE,
-    parentScope: CoroutineScope,
-    private val settings: Container.Settings
+        initialState: STATE,
+        parentScope: CoroutineScope,
+        private val settings: Container.Settings
 ) : Container<STATE, SIDE_EFFECT> {
     private val scope = parentScope + settings.orbitDispatcher
     private val dispatchChannel = Channel<suspend ContainerContext<STATE, SIDE_EFFECT>.() -> Unit>(Channel.UNLIMITED)
@@ -57,34 +60,37 @@ public open class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
     override val sideEffectFlow: Flow<SIDE_EFFECT> = sideEffectChannel.receiveAsFlow()
 
     protected val pluginContext: ContainerContext<STATE, SIDE_EFFECT> = ContainerContext(
-        settings = settings,
-        postSideEffect = { sideEffectChannel.send(it) },
-        getState = {
-            internalStateFlow.value
-        },
-        reduce = { reducer ->
-            mutex.withLock {
-                internalStateFlow.value = reducer(internalStateFlow.value)
+            settings = settings,
+            postSideEffect = { sideEffectChannel.send(it) },
+            getState = {
+                internalStateFlow.value
+            },
+            reduce = { reducer ->
+                mutex.withLock {
+                    internalStateFlow.value = reducer(internalStateFlow.value)
+                }
             }
-        }
     )
+
+    init {
+        dispatchChannel.consumeAsFlow()
+                .onEach { msg ->
+                    if (settings.exceptionHandler == null) {
+                        scope.launch { pluginContext.msg() }
+                    } else {
+                        supervisorScope {
+                            scope.launch(settings.exceptionHandler) { pluginContext.msg() }
+                        }
+                    }
+                }
+                .launchIn(scope)
+    }
 
     override fun orbit(orbitFlow: suspend ContainerContext<STATE, SIDE_EFFECT>.() -> Unit) {
         if (initialised.compareAndSet(expect = false, update = true)) {
             scope.produce<Unit>(Dispatchers.Unconfined) {
                 awaitClose {
                     settings.idlingRegistry.close()
-                }
-            }
-            scope.launch {
-                for (msg in dispatchChannel) {
-                    if (settings.exceptionHandler == null) {
-                        launch(Dispatchers.Unconfined) { pluginContext.msg() }
-                    } else {
-                        supervisorScope {
-                            launch(settings.exceptionHandler + Dispatchers.Unconfined) { pluginContext.msg() }
-                        }
-                    }
                 }
             }
         }
