@@ -18,11 +18,9 @@ package org.orbitmvi.orbit.internal
 
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.container
@@ -47,7 +45,7 @@ internal class ContainerExceptionHandlerTest {
     fun `by default any exception breaks the scope`() = runBlocking {
         val initState = Random.nextInt()
         val container = scope.container<Int, Nothing>(
-                initialState = initState
+            initialState = initState
         )
         val testObserver = container.stateFlow.test()
         val newState = Random.nextInt()
@@ -70,10 +68,10 @@ internal class ContainerExceptionHandlerTest {
         val exceptions = mutableListOf<Throwable>()
         val exceptionHandler = CoroutineExceptionHandler { _, throwable -> exceptions += throwable }
         val container = scope.container<Int, Nothing>(
-                initialState = initState,
-                settings = Container.Settings(
-                        exceptionHandler = exceptionHandler
-                )
+            initialState = initState,
+            settings = Container.Settings(
+                exceptionHandler = exceptionHandler
+            )
         )
         val testObserver = container.stateFlow.test()
         val newState = Random.nextInt()
