@@ -24,6 +24,11 @@ import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.withContext
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.sample.posts.app.common.NavigationEvent
@@ -35,18 +40,33 @@ import org.orbitmvi.orbit.syntax.simple.reduce
 import org.orbitmvi.orbit.viewmodel.container
 
 class PostListViewModel(
-    savedStateHandle: SavedStateHandle,
-    private val postRepository: PostRepository,
-    exceptionHandler: CoroutineExceptionHandler = CoroutineExceptionHandler { _, throwable ->
-        Log.w("PostListViewModel", "orbit caught the exception", throwable)
-    }
+        savedStateHandle: SavedStateHandle,
+        private val postRepository: PostRepository,
+        exceptionHandler: CoroutineExceptionHandler = CoroutineExceptionHandler { _, throwable ->
+            Log.w("PostListViewModel", "orbit caught the exception", throwable)
+        }
 ) : ViewModel(), ContainerHost<PostListState, NavigationEvent> {
 
     override val container = container<PostListState, NavigationEvent>(
-        initialState = PostListState(),
-        savedStateHandle = savedStateHandle,
-        settings = Container.Settings(exceptionHandler = exceptionHandler)
+            initialState = PostListState(),
+            savedStateHandle = savedStateHandle,
+            settings = Container.Settings(exceptionHandler = exceptionHandler)
     ) {
+        intent {
+            withContext(Dispatchers.IO) {
+                flow<Int> {
+                    var counter = 0
+                    while (true) {
+                        delay(3000)
+                        emit(++counter)
+                    }
+                }
+                        .collect { counter ->
+                            Log.i("FLOW", "Piu")
+                            reduce { state.copy(overviews = state.overviews.map { it.copy(title = "$counter. {it.title}") }) }
+                        }
+            }
+        }
         if (it.overviews.isEmpty()) {
             loadOverviews()
         }
