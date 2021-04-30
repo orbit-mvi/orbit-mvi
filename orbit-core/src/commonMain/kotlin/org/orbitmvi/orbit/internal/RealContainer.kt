@@ -23,6 +23,7 @@ package org.orbitmvi.orbit.internal
 import kotlinx.atomicfu.atomic
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.channels.produce
@@ -33,11 +34,11 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
-import kotlinx.coroutines.supervisorScope
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.syntax.ContainerContext
+import kotlin.coroutines.EmptyCoroutineContext
 
 @Suppress("EXPERIMENTAL_API_USAGE")
 public open class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
@@ -77,14 +78,10 @@ public open class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
                 }
             }
             scope.launch {
+                val context = Dispatchers.Unconfined + (settings.exceptionHandler?.plus(SupervisorJob()) ?: EmptyCoroutineContext)
+
                 for (msg in dispatchChannel) {
-                    if (settings.exceptionHandler == null) {
-                        launch(Dispatchers.Unconfined) { pluginContext.msg() }
-                    } else {
-                        supervisorScope {
-                            launch(settings.exceptionHandler + Dispatchers.Unconfined) { pluginContext.msg() }
-                        }
-                    }
+                    launch(context) { pluginContext.msg() }
                 }
             }
         }

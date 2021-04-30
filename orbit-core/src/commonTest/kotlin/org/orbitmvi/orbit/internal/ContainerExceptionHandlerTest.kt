@@ -25,6 +25,7 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.isActive
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.container
+import org.orbitmvi.orbit.test
 import kotlin.random.Random
 import kotlin.test.AfterTest
 import kotlin.test.Test
@@ -45,9 +46,9 @@ internal class ContainerExceptionHandlerTest {
     fun `by default any exception breaks the scope`() = runBlocking {
         val initState = Random.nextInt()
         val container = scope.container<Int, Nothing>(
-                initialState = initState,
-                settings = Container.Settings(orbitDispatcher = Dispatchers.Unconfined)
+            initialState = initState
         )
+        val testObserver = container.stateFlow.test()
         val newState = Random.nextInt()
 
         container.orbit {
@@ -57,7 +58,8 @@ internal class ContainerExceptionHandlerTest {
             reduce { newState }
         }
 
-        assertEquals(initState, container.stateFlow.value)
+        testObserver.awaitCount(2, 1000L)
+        assertEquals(listOf(initState), testObserver.values)
         assertEquals(false, scope.isActive)
     }
 
@@ -67,11 +69,11 @@ internal class ContainerExceptionHandlerTest {
         val exceptions = mutableListOf<Throwable>()
         val exceptionHandler = CoroutineExceptionHandler { _, throwable -> exceptions += throwable }
         val container = scope.container<Int, Nothing>(
-                initialState = initState,
-                settings = Container.Settings(
-                        orbitDispatcher = Dispatchers.Unconfined,
-                        exceptionHandler = exceptionHandler
-                )
+            initialState = initState,
+            settings = Container.Settings(
+                exceptionHandler = exceptionHandler,
+                orbitDispatcher = Dispatchers.Unconfined
+            )
         )
         val newState = Random.nextInt()
 
