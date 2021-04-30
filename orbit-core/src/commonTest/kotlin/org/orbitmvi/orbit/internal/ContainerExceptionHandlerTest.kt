@@ -18,6 +18,7 @@ package org.orbitmvi.orbit.internal
 
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
@@ -70,10 +71,10 @@ internal class ContainerExceptionHandlerTest {
         val container = scope.container<Int, Nothing>(
             initialState = initState,
             settings = Container.Settings(
-                exceptionHandler = exceptionHandler
+                exceptionHandler = exceptionHandler,
+                orbitDispatcher = Dispatchers.Unconfined
             )
         )
-        val testObserver = container.stateFlow.test()
         val newState = Random.nextInt()
 
         container.orbit {
@@ -83,8 +84,7 @@ internal class ContainerExceptionHandlerTest {
             reduce { newState }
         }
 
-        testObserver.awaitCount(2, 1000L)
-        assertEquals(listOf(initState, newState), testObserver.values)
+        assertEquals(newState, container.stateFlow.value)
         assertEquals(true, scope.isActive)
         assertEquals(1, exceptions.size)
         assertTrue { exceptions.first() is IllegalStateException }
