@@ -35,6 +35,9 @@ public class LazyCreateContainerDecorator<STATE : Any, SIDE_EFFECT : Any>(
 ) : ContainerDecorator<STATE, SIDE_EFFECT> {
     private val created = atomic<Int>(0)
 
+    override val settings: Container.Settings
+        get() = actual.settings
+
     override val stateFlow: StateFlow<STATE> = actual.stateFlow.onSubscribe { runOnCreate() }
 
     override val sideEffectFlow: Flow<SIDE_EFFECT> = flow {

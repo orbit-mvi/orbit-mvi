@@ -44,7 +44,7 @@ import kotlin.coroutines.EmptyCoroutineContext
 public open class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
     initialState: STATE,
     parentScope: CoroutineScope,
-    private val settings: Container.Settings
+    public override val settings: Container.Settings
 ) : Container<STATE, SIDE_EFFECT> {
     private val scope = parentScope + settings.orbitDispatcher
     private val dispatchChannel = Channel<suspend ContainerContext<STATE, SIDE_EFFECT>.() -> Unit>(Channel.UNLIMITED)

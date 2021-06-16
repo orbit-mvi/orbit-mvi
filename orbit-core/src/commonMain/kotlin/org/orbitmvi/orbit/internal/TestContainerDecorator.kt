@@ -15,6 +15,9 @@ public class TestContainerDecorator<STATE : Any, SIDE_EFFECT : Any>(
 
     private val delegate = atomic(actual)
 
+    override val settings: Container.Settings
+        get() = delegate.value.settings
+
     override val stateFlow: StateFlow<STATE>
         get() = delegate.value.stateFlow
 
@@ -28,7 +31,7 @@ public class TestContainerDecorator<STATE : Any, SIDE_EFFECT : Any>(
     public fun test(
         initialState: STATE,
         isolateFlow: Boolean = true,
-        blocking: Boolean = true
+        settings: Container.Settings
     ) {
         val testDispatcherSet = delegate.compareAndSet(
             expect = actual,
@@ -36,7 +39,7 @@ public class TestContainerDecorator<STATE : Any, SIDE_EFFECT : Any>(
                 initialState = initialState,
                 parentScope = parentScope,
                 isolateFlow = isolateFlow,
-                blocking = blocking
+                settings = settings
             )
         )
 

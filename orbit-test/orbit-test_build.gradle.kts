@@ -60,6 +60,9 @@ kotlin {
             }
         }
         val jvmTest by getting {
+            dependencies {
+                implementation(ProjectDependencies.kotlinCoroutinesTest)
+            }
         }
     }
 }

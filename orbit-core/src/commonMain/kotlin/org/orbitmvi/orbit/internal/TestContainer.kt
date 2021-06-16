@@ -31,27 +31,17 @@ internal class TestContainer<STATE : Any, SIDE_EFFECT : Any>(
     initialState: STATE,
     parentScope: CoroutineScope,
     private val isolateFlow: Boolean,
-    private val blocking: Boolean
+    settings: Container.Settings
 ) : RealContainer<STATE, SIDE_EFFECT>(
     initialState = initialState,
-    parentScope = parentScope + Dispatchers.Unconfined,
-    settings = Container.Settings(
-        orbitDispatcher =
-        @Suppress("EXPERIMENTAL_API_USAGE") if (blocking) Dispatchers.Unconfined else Dispatchers.Default,
-        backgroundDispatcher = Dispatchers.Unconfined
-    )
+    parentScope = parentScope,
+    settings = settings
 ) {
     private val dispatched = atomic<Int>(0)
 
     override fun orbit(orbitFlow: suspend ContainerContext<STATE, SIDE_EFFECT>.() -> Unit) {
         if (!isolateFlow || dispatched.compareAndSet(0, 1)) {
-            if (blocking) {
-                runBlocking {
-                    orbitFlow(pluginContext)
-                }
-            } else {
-                super.orbit(orbitFlow)
-            }
+            super.orbit(orbitFlow)
         }
     }
 }

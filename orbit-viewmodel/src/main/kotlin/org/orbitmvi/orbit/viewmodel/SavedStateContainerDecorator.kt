@@ -32,6 +32,9 @@ internal class SavedStateContainerDecorator<STATE : Any, SIDE_EFFECT : Any>(
     private val savedStateHandle: SavedStateHandle
 ) : ContainerDecorator<STATE, SIDE_EFFECT> {
 
+    override val settings: Container.Settings
+        get() = actual.settings
+
     override val stateFlow: StateFlow<STATE> by lazy {
         actual.stateFlow.onEach {
             savedStateHandle[SAVED_STATE_KEY] = it

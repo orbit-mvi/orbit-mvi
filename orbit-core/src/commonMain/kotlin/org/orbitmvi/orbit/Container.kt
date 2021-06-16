@@ -42,6 +42,11 @@ import org.orbitmvi.orbit.syntax.ContainerContext
 public interface Container<STATE : Any, SIDE_EFFECT : Any> {
 
     /**
+     * Settings that the container was set up with
+     */
+    public val settings: Settings
+
+    /**
      * A [StateFlow] of state updates. Emits the latest state upon subscription and serves only distinct
      * values (through equality comparison).
      */
@@ -76,7 +81,7 @@ public interface Container<STATE : Any, SIDE_EFFECT : Any> {
      * @property orbitDispatcher The dispatcher used for handling incoming [orbit] flows
      * @property backgroundDispatcher The dispatcher used for background operations (depending on syntax)
      */
-    public class Settings(
+    public data class Settings(
         public val sideEffectBufferSize: Int = Channel.UNLIMITED,
         public val idlingRegistry: IdlingResource = NoopIdlingResource(),
         public val orbitDispatcher: CoroutineDispatcher = Dispatchers.Default,

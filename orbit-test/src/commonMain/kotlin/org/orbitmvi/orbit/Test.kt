@@ -22,6 +22,7 @@ package org.orbitmvi.orbit
 
 import kotlinx.atomicfu.atomic
 import kotlinx.atomicfu.update
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
@@ -39,18 +40,48 @@ import kotlin.test.assertEquals
  * @param initialState The state to initialize the test container with
  * @param isolateFlow Whether the flow should be isolated
  * @param runOnCreate Whether to run the container's create lambda
+ * @param blocking True by default. In this mode the invoked flow will block until the its coroutine completes.
+ * @return Your [ContainerHost] in test mode.
+ */
+//@Deprecated("foo")
+public fun <STATE : Any, SIDE_EFFECT : Any, T : ContainerHost<STATE, SIDE_EFFECT>> T.test(
+    initialState: STATE,
+    isolateFlow: Boolean = true,
+    runOnCreate: Boolean = false,
+    blocking: Boolean
+): T = test(
+    initialState,
+    isolateFlow,
+    runOnCreate,
+    Container.Settings(
+        orbitDispatcher = if (blocking) Dispatchers.Unconfined else Dispatchers.Default,
+        backgroundDispatcher = Dispatchers.Unconfined
+    )
+)
+
+/**
+ *  Switches your [ContainerHost] into test mode. Allows you to isolate the flow to the next one
+ *  called (default) i.e. method calls on the container beyond the first will be registered but not
+ *  actually execute. This allows you to assert any loopbacks
+ *  while keeping your test isolated to the flow you are testing, thus avoiding overly complex
+ *  tests with many states/side effects being emitted.
+ *
+ * @param initialState The state to initialize the test container with
+ * @param isolateFlow Whether the flow should be isolated
+ * @param runOnCreate Whether to run the container's create lambda
+ * @param settings You can substitute the [Container.Settings]
  * @return Your [ContainerHost] in test mode.
  */
 public fun <STATE : Any, SIDE_EFFECT : Any, T : ContainerHost<STATE, SIDE_EFFECT>> T.test(
     initialState: STATE,
     isolateFlow: Boolean = true,
     runOnCreate: Boolean = false,
-    blocking: Boolean = true
+    settings: Container.Settings = container.settings.copy(orbitDispatcher = Dispatchers.Unconfined, backgroundDispatcher = Dispatchers.Unconfined)
 ): T {
     container.findTestContainer().test(
         initialState = initialState,
         isolateFlow = isolateFlow,
-        blocking = blocking
+        settings = settings
     )
 
     testHarness.fixtures.update {
@@ -58,7 +89,7 @@ public fun <STATE : Any, SIDE_EFFECT : Any, T : ContainerHost<STATE, SIDE_EFFECT
             initialState,
             this.container.stateFlow.test(),
             this.container.sideEffectFlow.test(),
-            blocking
+            settings
         ))
     }
 
@@ -100,7 +131,11 @@ public fun <STATE : Any, SIDE_EFFECT : Any> ContainerHost<STATE, SIDE_EFFECT>.as
     @Suppress("UNCHECKED_CAST")
     val testFixtures = testHarness.fixtures.value[this] as TestFixtures<STATE, SIDE_EFFECT>
 
-    if (!testFixtures.blocking) {
+    // In blocking mode (dispatchers set to unconfined)
+//    if (
+//        testFixtures.settings.orbitDispatcher != Dispatchers.Unconfined &&
+//        testFixtures.settings.backgroundDispatcher != Dispatchers.Unconfined
+//    ) {
         // With non-blocking mode await for expected states
         val stateJob = GlobalScope.launch {
             testFixtures.stateObserver.awaitCountSuspending(verification.expectedStateChanges.size + 1, timeoutMillis)
@@ -113,7 +148,7 @@ public fun <STATE : Any, SIDE_EFFECT : Any> ContainerHost<STATE, SIDE_EFFECT>.as
                 stateJob,
                 sideEffectJob
             )
-        }
+//        }
     }
 
     // sanity check the initial state
@@ -138,7 +173,7 @@ private class TestFixtures<STATE : Any, SIDE_EFFECT : Any>(
     val initialState: STATE,
     val stateObserver: TestFlowObserver<STATE>,
     val sideEffectObserver: TestFlowObserver<SIDE_EFFECT>,
-    val blocking: Boolean
+    val settings: Container.Settings
 )
 
 private val testHarness = TestHarness()
