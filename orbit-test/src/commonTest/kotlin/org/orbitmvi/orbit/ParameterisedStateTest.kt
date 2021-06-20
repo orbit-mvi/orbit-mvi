@@ -40,11 +40,13 @@ internal class ParameterisedStateTest(blocking: Boolean) {
     private val initialState = State()
 
     private val scope = CoroutineScope(Job())
-    private val testSubject = StateTestMiddleware().test(
-        initialState = initialState,
-        isolateFlow = false,
-        blocking = blocking
-    )
+    private val testSubject = if (blocking) {
+        StateTestMiddleware().test(
+            initialState = initialState
+        )
+    } else {
+        StateTestMiddleware().liveTest(initialState)
+    }
 
     @AfterTest
     fun afterTest() {
@@ -52,8 +54,7 @@ internal class ParameterisedStateTest(blocking: Boolean) {
     }
 
     fun `succeeds if initial state matches expected state`() {
-        val testStateObserver = testSubject.container.stateFlow.test()
-        testStateObserver.awaitCount(1)
+        testSubject.stateObserver.awaitCount(1)
 
         testSubject.assert(initialState)
     }
@@ -61,8 +62,7 @@ internal class ParameterisedStateTest(blocking: Boolean) {
     fun `fails if initial state does not match expected state`() {
         val someRandomState = State()
 
-        val testStateObserver = testSubject.container.stateFlow.test()
-        testStateObserver.awaitCount(1)
+        testSubject.stateObserver.awaitCount(1)
 
         val throwable = assertFailsWith<AssertionError> {
             testSubject.assert(someRandomState)
@@ -77,11 +77,10 @@ internal class ParameterisedStateTest(blocking: Boolean) {
         val action = Random.nextInt()
         val action2 = Random.nextInt()
 
-        val testStateObserver = testSubject.container.stateFlow.test()
-        testSubject.something(action)
-        testStateObserver.awaitCount(2)
-        testSubject.something(action2)
-        testStateObserver.awaitCount(3)
+        testSubject.call { something(action) }
+        testSubject.stateObserver.awaitCount(2)
+        testSubject.call { something(action2) }
+        testSubject.stateObserver.awaitCount(3)
 
         testSubject.assert(initialState, timeoutMillis = TIMEOUT) {
             states(
@@ -95,11 +94,10 @@ internal class ParameterisedStateTest(blocking: Boolean) {
         val action = Random.nextInt()
         val action2 = Random.nextInt()
 
-        val testStateObserver = testSubject.container.stateFlow.test()
-        testSubject.something(action)
-        testStateObserver.awaitCount(2)
-        testSubject.something(action2)
-        testStateObserver.awaitCount(3)
+        testSubject.call { something(action) }
+        testSubject.stateObserver.awaitCount(2)
+        testSubject.call { something(action2) }
+        testSubject.stateObserver.awaitCount(3)
 
         val throwable = assertFailsWith<AssertionError> {
             testSubject.assert(initialState, timeoutMillis = TIMEOUT) {
@@ -120,11 +118,10 @@ internal class ParameterisedStateTest(blocking: Boolean) {
         val action2 = Random.nextInt()
         val action3 = Random.nextInt()
 
-        val testStateObserver = testSubject.container.stateFlow.test()
-        testSubject.something(action)
-        testStateObserver.awaitCount(2)
-        testSubject.something(action2)
-        testStateObserver.awaitCount(3)
+        testSubject.call { something(action) }
+        testSubject.stateObserver.awaitCount(2)
+        testSubject.call { something(action2) }
+        testSubject.stateObserver.awaitCount(3)
 
         val throwable = assertFailsWith<AssertionError> {
             testSubject.assert(initialState, timeoutMillis = 1000L) {
@@ -148,11 +145,10 @@ internal class ParameterisedStateTest(blocking: Boolean) {
         val action3 = Random.nextInt()
         val action4 = Random.nextInt()
 
-        val testStateObserver = testSubject.container.stateFlow.test()
-        testSubject.something(action)
-        testStateObserver.awaitCount(2)
-        testSubject.something(action2)
-        testStateObserver.awaitCount(3)
+        testSubject.call { something(action) }
+        testSubject.stateObserver.awaitCount(2)
+        testSubject.call { something(action2) }
+        testSubject.stateObserver.awaitCount(3)
 
         val throwable = assertFailsWith<AssertionError> {
             testSubject.assert(initialState, timeoutMillis = 1000L) {
@@ -176,11 +172,10 @@ internal class ParameterisedStateTest(blocking: Boolean) {
         val action2 = Random.nextInt()
         val action3 = Random.nextInt()
 
-        val testStateObserver = testSubject.container.stateFlow.test()
-        testSubject.something(action)
-        testStateObserver.awaitCount(2)
-        testSubject.something(action2)
-        testStateObserver.awaitCount(3)
+        testSubject.call { something(action) }
+        testSubject.stateObserver.awaitCount(2)
+        testSubject.call { something(action2) }
+        testSubject.stateObserver.awaitCount(3)
 
         val throwable = assertFailsWith<AssertionError> {
             testSubject.assert(initialState, timeoutMillis = TIMEOUT) {
@@ -201,11 +196,10 @@ internal class ParameterisedStateTest(blocking: Boolean) {
         val action2 = Random.nextInt()
         val action3 = Random.nextInt()
 
-        val testStateObserver = testSubject.container.stateFlow.test()
-        testSubject.something(action)
-        testStateObserver.awaitCount(2)
-        testSubject.something(action2)
-        testStateObserver.awaitCount(3)
+        testSubject.call { something(action) }
+        testSubject.stateObserver.awaitCount(2)
+        testSubject.call { something(action2) }
+        testSubject.stateObserver.awaitCount(3)
 
         val throwable = assertFailsWith<AssertionError> {
             testSubject.assert(initialState, timeoutMillis = TIMEOUT) {
@@ -225,11 +219,10 @@ internal class ParameterisedStateTest(blocking: Boolean) {
         val action = Random.nextInt()
         val action2 = Random.nextInt()
 
-        val testStateObserver = testSubject.container.stateFlow.test()
-        testSubject.something(action)
-        testStateObserver.awaitCount(2)
-        testSubject.something(action2)
-        testStateObserver.awaitCount(3)
+        testSubject.call { something(action) }
+        testSubject.stateObserver.awaitCount(2)
+        testSubject.call { something(action2) }
+        testSubject.stateObserver.awaitCount(3)
 
         val throwable = assertFailsWith<AssertionError> {
             testSubject.assert(initialState, timeoutMillis = TIMEOUT) {
@@ -250,13 +243,12 @@ internal class ParameterisedStateTest(blocking: Boolean) {
         val action2 = Random.nextInt()
         val action3 = Random.nextInt()
 
-        val testStateObserver = testSubject.container.stateFlow.test()
-        testSubject.something(action)
-        testStateObserver.awaitCount(2)
-        testSubject.something(action2)
-        testStateObserver.awaitCount(3)
-        testSubject.something(action3)
-        testStateObserver.awaitCount(4)
+        testSubject.call { something(action) }
+        testSubject.stateObserver.awaitCount(2)
+        testSubject.call { something(action2) }
+        testSubject.stateObserver.awaitCount(3)
+        testSubject.call { something(action3) }
+        testSubject.stateObserver.awaitCount(4)
 
         testSubject.assert(initialState, timeoutMillis = 2000L) {
             states(
@@ -272,11 +264,10 @@ internal class ParameterisedStateTest(blocking: Boolean) {
         val action = Random.nextInt()
         val action2 = Random.nextInt()
 
-        val testStateObserver = testSubject.container.stateFlow.test()
-        testSubject.something(action)
-        testStateObserver.awaitCount(2)
-        testSubject.something(action2)
-        testStateObserver.awaitCount(3)
+        testSubject.call { something(action) }
+        testSubject.stateObserver.awaitCount(2)
+        testSubject.call { something(action2) }
+        testSubject.stateObserver.awaitCount(3)
 
         val throwable = assertFailsWith<AssertionError> {
             testSubject.assert(initialState, timeoutMillis = TIMEOUT) {
@@ -307,4 +298,11 @@ internal class ParameterisedStateTest(blocking: Boolean) {
     }
 
     private data class State(val count: Int = Random.nextInt())
+
+    private fun <STATE : Any, SIDE_EFFECT : Any, T : ContainerHost<STATE, SIDE_EFFECT>> TestContainerHost<STATE, SIDE_EFFECT, T>.call(block: T.() -> Unit) {
+        when (this) {
+            is SuspendingTestContainerHost -> runBlocking { testIntent { block() } }
+            is RegularTestContainerHost -> testIntent { block() }
+        }
+    }
 }

@@ -23,6 +23,7 @@ package org.orbitmvi.orbit.syntax.simple
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.idling.withIdling
+import org.orbitmvi.orbit.internal.runBlocking
 import org.orbitmvi.orbit.syntax.OrbitDsl
 
 /**
@@ -64,8 +65,10 @@ public fun <STATE : Any, SIDE_EFFECT : Any> ContainerHost<STATE, SIDE_EFFECT>.in
     registerIdling: Boolean = true,
     transformer: suspend SimpleSyntax<STATE, SIDE_EFFECT>.() -> Unit
 ): Unit =
-    container.orbit {
-        withIdling(registerIdling) {
-            SimpleSyntax(this).transformer()
+    runBlocking {
+        container.orbit {
+            withIdling(registerIdling) {
+                SimpleSyntax(this).transformer()
+            }
         }
     }

@@ -39,11 +39,13 @@ internal class ParameterisedSideEffectTest(blocking: Boolean) {
 
     private val initialState = State()
     private val scope = CoroutineScope(Job())
-    private val testSubject = SideEffectTestMiddleware().test(
-        initialState = initialState,
-        isolateFlow = false,
-        blocking = blocking
-    )
+    private val testSubject = if (blocking) {
+        SideEffectTestMiddleware().test(
+            initialState = initialState
+        )
+    } else {
+        SideEffectTestMiddleware().liveTest(initialState)
+    }
 
     @AfterTest
     fun afterTest() {
@@ -53,7 +55,7 @@ internal class ParameterisedSideEffectTest(blocking: Boolean) {
     fun `succeeds if posted side effects match expected side effects`() {
         val sideEffects = List(Random.nextInt(1, 5)) { Random.nextInt() }
 
-        sideEffects.forEach { testSubject.something(it) }
+        sideEffects.forEach { testSubject.call { something(it) } }
 
         testSubject.assert(initialState, timeoutMillis = TIMEOUT) {
             postedSideEffects(sideEffects)
@@ -64,7 +66,7 @@ internal class ParameterisedSideEffectTest(blocking: Boolean) {
         val sideEffects = List(Random.nextInt(1, 5)) { Random.nextInt() }
         val sideEffects2 = List(Random.nextInt(1, 5)) { Random.nextInt() }
 
-        sideEffects.forEach { testSubject.something(it) }
+        sideEffects.forEach { testSubject.call { something(it) } }
 
         val throwable = assertFailsWith<AssertionError> {
             testSubject.assert(initialState, timeoutMillis = TIMEOUT) {
@@ -92,4 +94,11 @@ internal class ParameterisedSideEffectTest(blocking: Boolean) {
     }
 
     private data class State(val count: Int = Random.nextInt())
+
+    private fun <STATE : Any, SIDE_EFFECT : Any, T : ContainerHost<STATE, SIDE_EFFECT>> TestContainerHost<STATE, SIDE_EFFECT, T>.call(block: T.() -> Unit) {
+        when (this) {
+            is SuspendingTestContainerHost -> runBlocking { testIntent { block() } }
+            is RegularTestContainerHost -> testIntent { block() }
+        }
+    }
 }

@@ -20,20 +20,22 @@
 
 package org.orbitmvi.orbit.syntax.simple
 
-import org.orbitmvi.orbit.ContainerHost
-import org.orbitmvi.orbit.assert
-import org.orbitmvi.orbit.container
-import org.orbitmvi.orbit.test
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
+import org.orbitmvi.orbit.ContainerHost
+import org.orbitmvi.orbit.container
+import org.orbitmvi.orbit.test
+import org.orbitmvi.orbit.test.runBlocking
 import kotlin.random.Random
 import kotlin.test.AfterTest
 import kotlin.test.Test
 
 @ExperimentalCoroutinesApi
+@InternalCoroutinesApi
 internal class SimpleDslBehaviourTest {
 
     private val scope = CoroutineScope(Job())
@@ -46,11 +48,11 @@ internal class SimpleDslBehaviourTest {
     private val initialState = TestState()
 
     @Test
-    fun `reducer produces new states`() {
+    fun `reducer produces new states`() = runBlocking {
         val action = Random.nextInt()
         val middleware = BaseDslMiddleware().test(initialState)
 
-        middleware.reducer(action)
+        middleware.testIntent { reducer(action) }
 
         middleware.assert(initialState) {
             states(
@@ -60,11 +62,11 @@ internal class SimpleDslBehaviourTest {
     }
 
     @Test
-    fun `transformer maps values`() {
+    fun `transformer maps values`() = runBlocking {
         val action = Random.nextInt()
         val middleware = BaseDslMiddleware().test(initialState)
 
-        middleware.transformer(action)
+        middleware.testIntent { transformer(action) }
 
         middleware.assert(initialState) {
             states(
@@ -74,11 +76,11 @@ internal class SimpleDslBehaviourTest {
     }
 
     @Test
-    fun `posting side effects emit side effects`() {
+    fun `posting side effects emit side effects`() = runBlocking {
         val action = Random.nextInt()
         val middleware = BaseDslMiddleware().test(initialState)
 
-        middleware.postingSideEffect(action)
+        middleware.testIntent { postingSideEffect(action) }
 
         middleware.assert(initialState) {
             postedSideEffects(action.toString())

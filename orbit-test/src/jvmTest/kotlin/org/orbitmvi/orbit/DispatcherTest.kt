@@ -21,15 +21,12 @@
 package org.orbitmvi.orbit
 
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.test.TestCoroutineDispatcher
-import kotlinx.coroutines.test.TestCoroutineScope
 import kotlinx.coroutines.test.runBlockingTest
-import kotlinx.coroutines.withContext
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.reduce
 import kotlin.random.Random
@@ -52,12 +49,12 @@ internal class DispatcherTest {
     }
 
     @Test
-    fun `default blocking test works`() {
+    fun `default blocking test works`() = runBlocking {
         val testSubject = StateTestMiddleware().test(initialState = initialState)
         val action = Random.nextInt()
 
         // This should block
-        testSubject.somethingInBackground(action)
+        testSubject.testIntent { somethingInBackground(action) }
 
         testSubject.assert(initialState) {
             states(
@@ -69,20 +66,13 @@ internal class DispatcherTest {
     @Test
     fun `run blocking test works`() {
         val testCoroutineDispatcher = TestCoroutineDispatcher()
-        val testSubject = StateTestMiddleware().apply {
-            test(
-                initialState = initialState,
-                settings = container.settings.copy(
-                    orbitDispatcher = testCoroutineDispatcher,
-                    backgroundDispatcher = testCoroutineDispatcher
-                )
-            )
-        }
+        val testSubject = StateTestMiddleware().test(initialState)
+
         runBlockingTest(testCoroutineDispatcher) {
             val action = Random.nextInt()
 
             // This should block
-            testSubject.somethingInBackground(action)
+            testSubject.testIntent { somethingInBackground(action) }
             testCoroutineDispatcher.advanceTimeBy(1010)
 
             testSubject.assert(initialState) {

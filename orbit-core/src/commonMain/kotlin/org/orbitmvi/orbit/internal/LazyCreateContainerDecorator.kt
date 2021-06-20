@@ -33,10 +33,7 @@ public class LazyCreateContainerDecorator<STATE : Any, SIDE_EFFECT : Any>(
     override val actual: Container<STATE, SIDE_EFFECT>,
     public val onCreate: (state: STATE) -> Unit
 ) : ContainerDecorator<STATE, SIDE_EFFECT> {
-    private val created = atomic<Int>(0)
-
-    override val settings: Container.Settings
-        get() = actual.settings
+    private val created = atomic(false)
 
     override val stateFlow: StateFlow<STATE> = actual.stateFlow.onSubscribe { runOnCreate() }
 
@@ -46,12 +43,12 @@ public class LazyCreateContainerDecorator<STATE : Any, SIDE_EFFECT : Any>(
     }
 
     private fun runOnCreate() {
-        if (created.compareAndSet(0, 1)) {
+        if (created.compareAndSet(expect = false, update = true)) {
             onCreate(actual.stateFlow.value)
         }
     }
 
-    override fun orbit(orbitFlow: suspend ContainerContext<STATE, SIDE_EFFECT>.() -> Unit) {
+    override suspend fun orbit(orbitFlow: suspend ContainerContext<STATE, SIDE_EFFECT>.() -> Unit) {
         runOnCreate().also { actual.orbit(orbitFlow) }
     }
 }

@@ -69,7 +69,7 @@ public interface Container<STATE : Any, SIDE_EFFECT : Any> {
      *
      * @param orbitFlow lambda returning the suspend function representing the flow
      */
-    public fun orbit(orbitFlow: suspend ContainerContext<STATE, SIDE_EFFECT>.() -> Unit)
+    public suspend fun orbit(orbitFlow: suspend ContainerContext<STATE, SIDE_EFFECT>.() -> Unit)
 
     /**
      * Represents additional settings to create the container with.

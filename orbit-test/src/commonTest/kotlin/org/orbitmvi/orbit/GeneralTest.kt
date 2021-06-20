@@ -63,14 +63,36 @@ internal class GeneralTest {
     }
 
     @Test
-    fun `first flow is isolated by default`() {
+    fun `created is not invoked by default in live test`() {
+
+        val mockDependency = FakeDependency()
+        val testSubject = GeneralTestMiddleware(mockDependency)
+
+        testSubject.liveTest(initialState)
+
+        assertEquals(0, mockDependency.createCallCount)
+    }
+
+    @Test
+    fun `created is invoked upon request in live test`() {
+
+        val mockDependency = FakeDependency()
+        val testSubject = GeneralTestMiddleware(mockDependency)
+
+        testSubject.liveTest(initialState = initialState, runOnCreate = true)
+
+        assertEquals(1, mockDependency.createCallCount)
+    }
+
+    @Test
+    fun `first flow is isolated by default`() = runBlocking {
 
         val mockDependency = FakeDependency()
         val testSubject = GeneralTestMiddleware(mockDependency)
 
         val spy = testSubject.test(initialState)
 
-        spy.something()
+        spy.testIntent { something() }
 
         assertEquals(1, mockDependency.something1CallCount)
         assertEquals(0, mockDependency.something2CallCount)

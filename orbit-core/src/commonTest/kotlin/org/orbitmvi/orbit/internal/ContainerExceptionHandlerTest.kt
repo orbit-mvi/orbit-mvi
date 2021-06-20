@@ -77,11 +77,13 @@ internal class ContainerExceptionHandlerTest {
         )
         val newState = Random.nextInt()
 
-        container.orbit {
-            reduce { throw IllegalStateException() }
-        }
-        container.orbit {
-            reduce { newState }
+        runBlocking {
+            container.orbit {
+                reduce { throw IllegalStateException() }
+            }
+            container.orbit {
+                reduce { newState }
+            }
         }
 
         assertEquals(newState, container.stateFlow.value)
