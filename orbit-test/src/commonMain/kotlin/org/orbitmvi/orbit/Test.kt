@@ -22,8 +22,10 @@ package org.orbitmvi.orbit
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeout
 import org.orbitmvi.orbit.internal.LazyCreateContainerDecorator
 import org.orbitmvi.orbit.internal.TestContainerDecorator
 import org.orbitmvi.orbit.internal.TestingStrategy
@@ -44,6 +46,7 @@ import kotlin.test.assertEquals
  */
 public fun <STATE : Any, SIDE_EFFECT : Any, T : ContainerHost<STATE, SIDE_EFFECT>> T.test(
     initialState: STATE,
+    isolateFlow: Boolean = true,
     runOnCreate: Boolean = false
 ): SuspendingTestContainerHost<STATE, SIDE_EFFECT, T> {
     container.findTestContainer().test(
@@ -51,7 +54,7 @@ public fun <STATE : Any, SIDE_EFFECT : Any, T : ContainerHost<STATE, SIDE_EFFECT
         strategy = TestingStrategy.Suspending
     )
 
-    return SuspendingTestContainerHost(this, initialState, runOnCreate)
+    return SuspendingTestContainerHost(this, initialState, isolateFlow, runOnCreate)
 }
 
 /**
@@ -96,6 +99,7 @@ private fun <STATE : Any, SIDE_EFFECT : Any> Container<STATE, SIDE_EFFECT>.findT
 public class SuspendingTestContainerHost<STATE : Any, SIDE_EFFECT : Any, T : ContainerHost<STATE, SIDE_EFFECT>>(
     private val actual: T,
     initialState: STATE,
+    private val isolateFlow: Boolean,
     runOnCreate: Boolean
 ) : TestContainerHost<STATE, SIDE_EFFECT, T>(actual, initialState, runOnCreate) {
 
@@ -103,12 +107,27 @@ public class SuspendingTestContainerHost<STATE : Any, SIDE_EFFECT : Any, T : Con
         actual.suspendingIntent { action() }
     }
 
+    @Suppress("EXPERIMENTAL_COROUTINES_API")
     private suspend fun <STATE : Any, SIDE_EFFECT : Any, T : ContainerHost<STATE, SIDE_EFFECT>> T.suspendingIntent(block: T.() -> Unit) {
         val testContainer = container.findTestContainer()
 
         this.block()
 
-        testContainer.savedFlow()
+        val firstFlow = withTimeout(1000) {
+            testContainer.savedFlows.receive()
+        }
+
+        coroutineScope {
+            firstFlow()
+            while (true) {
+                when (val flow = testContainer.savedFlows.poll()) {
+                    null -> break
+                    else -> if (!isolateFlow) {
+                        flow()
+                    }
+                }
+            }
+        }
     }
 }
 

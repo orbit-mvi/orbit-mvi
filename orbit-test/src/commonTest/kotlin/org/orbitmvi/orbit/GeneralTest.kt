@@ -20,6 +20,7 @@
 
 package org.orbitmvi.orbit
 
+import kotlinx.atomicfu.atomic
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
@@ -48,7 +49,7 @@ internal class GeneralTest {
 
         testSubject.test(initialState)
 
-        assertEquals(0, mockDependency.createCallCount)
+        assertEquals(false, mockDependency.createCalled.value)
     }
 
     @Test
@@ -59,7 +60,7 @@ internal class GeneralTest {
 
         testSubject.test(initialState = initialState, runOnCreate = true)
 
-        assertEquals(1, mockDependency.createCallCount)
+        assertEquals(true, mockDependency.createCalled.value)
     }
 
     @Test
@@ -70,7 +71,7 @@ internal class GeneralTest {
 
         testSubject.liveTest(initialState)
 
-        assertEquals(0, mockDependency.createCallCount)
+        assertEquals(false, mockDependency.createCalled.value)
     }
 
     @Test
@@ -81,24 +82,22 @@ internal class GeneralTest {
 
         testSubject.liveTest(initialState = initialState, runOnCreate = true)
 
-        assertEquals(1, mockDependency.createCallCount)
+        assertEquals(true, mockDependency.createCalled.value)
     }
 
     @Test
     fun `first flow is isolated by default`() = runBlocking {
 
-        val mockDependency = FakeDependency()
-        val testSubject = GeneralTestMiddleware(mockDependency)
+        val testSubject = GeneralTestMiddleware()
+        val testContainerHost = testSubject.test(initialState)
 
-        val spy = testSubject.test(initialState)
+        testContainerHost.testIntent { something() }
 
-        spy.testIntent { something() }
-
-        assertEquals(1, mockDependency.something1CallCount)
-        assertEquals(0, mockDependency.something2CallCount)
+        assertEquals(true, (testSubject.dependency as FakeDependency).something1Called.value)
+        assertEquals(false, testSubject.dependency.something2Called.value)
     }
 
-    private inner class GeneralTestMiddleware(private val dependency: BogusDependency) :
+    private inner class GeneralTestMiddleware(val dependency: BogusDependency = FakeDependency()) :
         ContainerHost<State, Nothing> {
         override val container = scope.container<State, Nothing>(initialState) {
             created()
@@ -128,23 +127,20 @@ internal class GeneralTest {
     }
 
     private class FakeDependency : BogusDependency {
-        var createCallCount = 0
-            private set
-        var something1CallCount = 0
-            private set
-        var something2CallCount = 0
-            private set
+        val createCalled = atomic(false)
+        val something1Called = atomic(false)
+        val something2Called = atomic(false)
 
         override fun create() {
-            createCallCount++
+            createCalled.compareAndSet(expect = false, update = true)
         }
 
         override fun something1() {
-            something1CallCount++
+            something1Called.compareAndSet(expect = false, update = true)
         }
 
         override fun something2() {
-            something2CallCount++
+            something2Called.compareAndSet(expect = false, update = true)
         }
     }
 }

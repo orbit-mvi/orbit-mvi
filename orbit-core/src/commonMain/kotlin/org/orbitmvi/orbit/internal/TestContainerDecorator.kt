@@ -1,12 +1,10 @@
 package org.orbitmvi.orbit.internal
 
-import kotlinx.atomicfu.AtomicRef
 import kotlinx.atomicfu.atomic
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerDecorator
 import org.orbitmvi.orbit.syntax.ContainerContext
@@ -18,8 +16,8 @@ public class TestContainerDecorator<STATE : Any, SIDE_EFFECT : Any>(
 
     private val delegate = atomic(actual)
 
-    public val savedFlow: (suspend () -> Unit)
-        get() = (delegate.value as FlowSavingContainerDecorator).savedFlow
+    public val savedFlows: Channel<(suspend () -> Unit)>
+        get() = (delegate.value as FlowSavingContainerDecorator).savedFlows
 
     override val settings: Container.Settings
         get() = delegate.value.settings
@@ -74,20 +72,20 @@ public class FlowSavingContainerDecorator<STATE : Any, SIDE_EFFECT : Any>(
 ) : ContainerDecorator<STATE, SIDE_EFFECT> {
 
     private val dispatched = atomic<Boolean>(false)
-    private val _savedFlow: AtomicRef<(suspend () -> Unit)?> = atomic(null)
-    public val savedFlow: (suspend () -> Unit)
-        get() = _savedFlow.value!!
+
+    public val savedFlows: Channel<suspend () -> Unit> = Channel()
 
     override suspend fun orbit(orbitFlow: suspend ContainerContext<STATE, SIDE_EFFECT>.() -> Unit) {
-        if (dispatched.compareAndSet(expect = false, update = true)) {
-            val mutex = Mutex(locked = true)
-            actual.orbit {
-                _savedFlow.compareAndSet(null, { orbitFlow() })
-                mutex.unlock()
-            }
-            runBlocking {
-                mutex.withLock { }
-            }
+//        if (dispatched.compareAndSet(expect = false, update = true)) {
+//        val mutex = Mutex(locked = true)
+        actual.orbit {
+            val payload: suspend () -> Unit = { orbitFlow() }
+            savedFlows.send(payload)
+//            mutex.unlock()
         }
+//        runBlocking {
+//            mutex.withLock { }
+//        }
+//        }
     }
 }
