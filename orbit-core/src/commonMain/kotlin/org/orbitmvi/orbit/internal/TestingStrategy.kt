@@ -16,6 +16,17 @@
 
 package org.orbitmvi.orbit.internal
 
-import kotlinx.coroutines.Dispatchers
+import org.orbitmvi.orbit.Container
 
-internal actual val defaultBackgroundDispatcher = Dispatchers.IO
+public sealed class TestingStrategy {
+
+    internal abstract val settings: Container.Settings
+
+    public class Suspending(
+        override val settings: Container.Settings
+    ) : TestingStrategy()
+
+    public class Live(
+        override val settings: Container.Settings
+    ) : TestingStrategy()
+}

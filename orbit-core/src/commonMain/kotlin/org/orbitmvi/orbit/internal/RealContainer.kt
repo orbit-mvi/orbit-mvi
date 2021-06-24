@@ -57,7 +57,7 @@ public class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
     private val sideEffectChannel = Channel<SIDE_EFFECT>(settings.sideEffectBufferSize)
     override val sideEffectFlow: Flow<SIDE_EFFECT> = sideEffectChannel.receiveAsFlow()
 
-    private val pluginContext: ContainerContext<STATE, SIDE_EFFECT> = ContainerContext(
+    internal val pluginContext: ContainerContext<STATE, SIDE_EFFECT> = ContainerContext(
         settings = settings,
         postSideEffect = { sideEffectChannel.send(it) },
         getState = {
@@ -70,7 +70,12 @@ public class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
         }
     )
 
-    override suspend fun orbit(orbitFlow: suspend ContainerContext<STATE, SIDE_EFFECT>.() -> Unit) {
+    override suspend fun orbit(orbitIntent: suspend ContainerContext<STATE, SIDE_EFFECT>.() -> Unit) {
+        initialiseIfNeeded()
+        dispatchChannel.send(orbitIntent)
+    }
+
+    private suspend fun initialiseIfNeeded() {
         if (initialised.compareAndSet(expect = false, update = true)) {
             scope.produce<Unit>(Dispatchers.Unconfined) {
                 awaitClose {
@@ -85,6 +90,5 @@ public class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
                 }
             }
         }
-        dispatchChannel.offer(orbitFlow)
     }
 }

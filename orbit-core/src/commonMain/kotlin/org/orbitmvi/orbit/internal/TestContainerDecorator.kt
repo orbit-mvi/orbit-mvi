@@ -1,3 +1,19 @@
+/*
+ * Copyright 2021 Mikołaj Leszczyński & Appmattus Limited
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.orbitmvi.orbit.internal
 
 import kotlinx.atomicfu.atomic
@@ -16,8 +32,8 @@ public class TestContainerDecorator<STATE : Any, SIDE_EFFECT : Any>(
 
     private val delegate = atomic(actual)
 
-    public val savedFlows: Channel<(suspend () -> Unit)>
-        get() = (delegate.value as FlowSavingContainerDecorator).savedFlows
+    public val savedIntents: Channel<(suspend () -> Unit)>
+        get() = (delegate.value as InterceptingContainerDecorator).savedIntents
 
     override val settings: Container.Settings
         get() = delegate.value.settings
@@ -28,64 +44,33 @@ public class TestContainerDecorator<STATE : Any, SIDE_EFFECT : Any>(
     override val sideEffectFlow: Flow<SIDE_EFFECT>
         get() = delegate.value.sideEffectFlow
 
-    override suspend fun orbit(orbitFlow: suspend ContainerContext<STATE, SIDE_EFFECT>.() -> Unit) {
-        delegate.value.orbit(orbitFlow)
+    override suspend fun orbit(orbitIntent: suspend ContainerContext<STATE, SIDE_EFFECT>.() -> Unit) {
+        delegate.value.orbit(orbitIntent)
     }
 
     public fun test(
         initialState: STATE,
         strategy: TestingStrategy
     ) {
-        val newContainer: Container<STATE, SIDE_EFFECT> = RealContainer(
+        val testDelegate = RealContainer<STATE, SIDE_EFFECT>(
             initialState = initialState,
             parentScope = parentScope,
-            settings = if (strategy is TestingStrategy.Live) strategy.settings else actual.settings
-        )
-
-        val newDelegate = when (strategy) {
-            is TestingStrategy.Suspending -> FlowSavingContainerDecorator(newContainer)
-            is TestingStrategy.Live -> newContainer
+            settings = strategy.settings
+        ).let {
+            if (strategy is TestingStrategy.Suspending) {
+                InterceptingContainerDecorator(it)
+            } else {
+                it
+            }
         }
 
-        val testDispatcherSet = delegate.compareAndSet(
+        val testDelegateSet = delegate.compareAndSet(
             expect = actual,
-            update = newDelegate
+            update = testDelegate
         )
 
-        if (!testDispatcherSet) {
+        if (!testDelegateSet) {
             throw IllegalStateException("Can only call test() once")
         }
-    }
-}
-
-public sealed class TestingStrategy {
-
-    public object Suspending : TestingStrategy()
-
-    public class Live(
-        internal val settings: Container.Settings
-    ) : TestingStrategy()
-}
-
-public class FlowSavingContainerDecorator<STATE : Any, SIDE_EFFECT : Any>(
-    override val actual: Container<STATE, SIDE_EFFECT>
-) : ContainerDecorator<STATE, SIDE_EFFECT> {
-
-    private val dispatched = atomic<Boolean>(false)
-
-    public val savedFlows: Channel<suspend () -> Unit> = Channel()
-
-    override suspend fun orbit(orbitFlow: suspend ContainerContext<STATE, SIDE_EFFECT>.() -> Unit) {
-//        if (dispatched.compareAndSet(expect = false, update = true)) {
-//        val mutex = Mutex(locked = true)
-        actual.orbit {
-            val payload: suspend () -> Unit = { orbitFlow() }
-            savedFlows.send(payload)
-//            mutex.unlock()
-        }
-//        runBlocking {
-//            mutex.withLock { }
-//        }
-//        }
     }
 }

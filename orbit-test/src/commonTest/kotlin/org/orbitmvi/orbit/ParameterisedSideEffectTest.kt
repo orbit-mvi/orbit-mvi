@@ -28,7 +28,6 @@ import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.postSideEffect
 import org.orbitmvi.orbit.test.assertContains
 import kotlin.random.Random
-import kotlin.test.AfterTest
 import kotlin.test.assertFailsWith
 
 @ExperimentalCoroutinesApi
@@ -47,8 +46,7 @@ internal class ParameterisedSideEffectTest(blocking: Boolean) {
         SideEffectTestMiddleware().liveTest(initialState)
     }
 
-    @AfterTest
-    fun afterTest() {
+    fun cancel() {
         scope.cancel()
     }
 
@@ -95,7 +93,9 @@ internal class ParameterisedSideEffectTest(blocking: Boolean) {
 
     private data class State(val count: Int = Random.nextInt())
 
-    private fun <STATE : Any, SIDE_EFFECT : Any, T : ContainerHost<STATE, SIDE_EFFECT>> TestContainerHost<STATE, SIDE_EFFECT, T>.call(block: T.() -> Unit) {
+    private fun <STATE : Any, SIDE_EFFECT : Any, T : ContainerHost<STATE, SIDE_EFFECT>> TestContainerHost<STATE, SIDE_EFFECT, T>.call(
+        block: T.() -> Unit
+    ) {
         when (this) {
             is SuspendingTestContainerHost -> runBlocking { testIntent { block() } }
             is RegularTestContainerHost -> testIntent { block() }

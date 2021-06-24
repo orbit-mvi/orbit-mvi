@@ -28,7 +28,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 import org.orbitmvi.orbit.idling.IdlingResource
 import org.orbitmvi.orbit.idling.NoopIdlingResource
-import org.orbitmvi.orbit.internal.defaultBackgroundDispatcher
 import org.orbitmvi.orbit.syntax.ContainerContext
 
 /**
@@ -65,11 +64,11 @@ public interface Container<STATE : Any, SIDE_EFFECT : Any> {
     public val sideEffectFlow: Flow<SIDE_EFFECT>
 
     /**
-     * Executes an orbit flow. The flows are built in the [ContainerHost] using your chosen syntax.
+     * Executes an orbit intent. The intents are built in the [ContainerHost] using your chosen syntax.
      *
-     * @param orbitFlow lambda returning the suspend function representing the flow
+     * @param orbitIntent lambda returning the suspend function representing the intent
      */
-    public suspend fun orbit(orbitFlow: suspend ContainerContext<STATE, SIDE_EFFECT>.() -> Unit)
+    public suspend fun orbit(orbitIntent: suspend ContainerContext<STATE, SIDE_EFFECT>.() -> Unit)
 
     /**
      * Represents additional settings to create the container with.
@@ -78,14 +77,12 @@ public interface Container<STATE : Any, SIDE_EFFECT : Any> {
      * sending many side effects and getting out of memory exceptions this can be turned down to suspend the container instead.
      * Unlimited by default.
      * @property idlingRegistry The registry used by the container for signalling idling for UI tests
-     * @property orbitDispatcher The dispatcher used for handling incoming [orbit] flows
-     * @property backgroundDispatcher The dispatcher used for background operations (depending on syntax)
+     * @property orbitDispatcher The dispatcher used for handling incoming [orbit] intents
      */
     public data class Settings(
         public val sideEffectBufferSize: Int = Channel.UNLIMITED,
         public val idlingRegistry: IdlingResource = NoopIdlingResource(),
         public val orbitDispatcher: CoroutineDispatcher = Dispatchers.Default,
-        public val backgroundDispatcher: CoroutineDispatcher = defaultBackgroundDispatcher,
         public val exceptionHandler: CoroutineExceptionHandler? = null,
     )
 }

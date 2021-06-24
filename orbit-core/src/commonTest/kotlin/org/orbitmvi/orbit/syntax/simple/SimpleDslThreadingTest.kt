@@ -36,7 +36,6 @@ import kotlinx.coroutines.withTimeout
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.container
 import org.orbitmvi.orbit.test
-import org.orbitmvi.orbit.test.IgnoreIos
 import org.orbitmvi.orbit.test.ScopedBlockingWorkSimulator
 import org.orbitmvi.orbit.test.assertContainExactly
 import org.orbitmvi.orbit.test.runBlocking
@@ -57,7 +56,6 @@ internal class SimpleDslThreadingTest {
     }
 
     @Test
-    @IgnoreIos
     fun `blocking intent with context switch does not block the reducer`() = runBlocking {
         val action = Random.nextInt()
         val testFlowObserver = middleware.container.stateFlow.test()

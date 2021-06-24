@@ -62,7 +62,7 @@ internal class SideEffectTest {
     }
 
     @Test
-    fun `side effects are not multicast`()  = runBlocking {
+    fun `side effects are not multicast`() = runBlocking {
         val action = Random.nextInt()
         val action2 = Random.nextInt()
         val action3 = Random.nextInt()
@@ -87,7 +87,7 @@ internal class SideEffectTest {
     }
 
     @Test
-    fun `side effects are cached when there are no subscribers`()  = runBlocking {
+    fun `side effects are cached when there are no subscribers`() = runBlocking {
         val action = Random.nextInt()
         val action2 = Random.nextInt()
         val action3 = Random.nextInt()
@@ -105,7 +105,7 @@ internal class SideEffectTest {
     }
 
     @Test
-    fun `consumed side effects are not resent`()  = runBlocking {
+    fun `consumed side effects are not resent`() = runBlocking {
         val action = Random.nextInt()
         val action2 = Random.nextInt()
         val action3 = Random.nextInt()

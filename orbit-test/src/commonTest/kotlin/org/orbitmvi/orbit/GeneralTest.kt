@@ -86,7 +86,7 @@ internal class GeneralTest {
     }
 
     @Test
-    fun `first flow is isolated by default`() = runBlocking {
+    fun `first intent is isolated by default`() = runBlocking {
 
         val testSubject = GeneralTestMiddleware()
         val testContainerHost = testSubject.test(initialState)

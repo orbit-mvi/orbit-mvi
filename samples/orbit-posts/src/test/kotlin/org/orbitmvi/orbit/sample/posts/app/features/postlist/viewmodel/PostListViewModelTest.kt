@@ -22,15 +22,14 @@ package org.orbitmvi.orbit.sample.posts.app.features.postlist.viewmodel
 
 import androidx.lifecycle.SavedStateHandle
 import com.appmattus.kotlinfixture.kotlinFixture
-import org.orbitmvi.orbit.sample.posts.InstantTaskExecutorExtension
-import org.orbitmvi.orbit.sample.posts.domain.repositories.PostOverview
-import org.orbitmvi.orbit.sample.posts.domain.repositories.PostRepository
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.whenever
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
-import org.orbitmvi.orbit.assert
+import org.orbitmvi.orbit.sample.posts.InstantTaskExecutorExtension
+import org.orbitmvi.orbit.sample.posts.domain.repositories.PostOverview
+import org.orbitmvi.orbit.sample.posts.domain.repositories.PostRepository
 import org.orbitmvi.orbit.test
 
 @ExtendWith(InstantTaskExecutorExtension::class)
@@ -50,13 +49,13 @@ class PostListViewModelTest {
         }.thenReturn(overviews)
 
         // when we observe details from the view model
-        val viewModel = PostListViewModel(SavedStateHandle(), repository).test(
+        val testContainerHost = PostListViewModel(SavedStateHandle(), repository).test(
             initialState = initialState,
             runOnCreate = true
         )
 
         // then the view model loads the overviews
-        viewModel.assert(initialState) {
+        testContainerHost.assert(initialState) {
             states(
                 { copy(overviews = overviews) }
             )
@@ -84,19 +83,19 @@ class PostListViewModelTest {
     }
 
     @Test
-    fun `navigates to detail screen`() {
+    fun `navigates to detail screen`() = runBlocking {
         val overviews = fixture<List<PostOverview>>()
         val detailTarget = overviews.random()
         val initialState = PostListState(overviews)
 
         // given we have already loaded the overviews
-        val viewModel = PostListViewModel(SavedStateHandle(), repository).test(initialState = initialState)
+        val testContainerHost = PostListViewModel(SavedStateHandle(), repository).test(initialState = initialState)
 
         // when we click a post
-        viewModel.onPostClicked(detailTarget)
+        testContainerHost.testIntent { onPostClicked(detailTarget) }
 
         // then the view model loads the overviews
-        viewModel.assert(initialState) {
+        testContainerHost.assert(initialState) {
             postedSideEffects(OpenPostNavigationEvent(detailTarget))
         }
     }

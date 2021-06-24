@@ -21,118 +21,147 @@
 package org.orbitmvi.orbit
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlin.test.AfterTest
 import kotlin.test.Test
 
 @ExperimentalCoroutinesApi
 internal class StateTest {
+    lateinit var testCase: ParameterisedStateTest
+
+    @AfterTest
+    fun afterTest() {
+        testCase.cancel()
+    }
 
     @Test
     fun `BLOCKING - succeeds if initial state matches expected state`() {
-        ParameterisedStateTest(blocking = true).`succeeds if initial state matches expected state`()
+        testCase = ParameterisedStateTest(blocking = true)
+        testCase.`succeeds if initial state matches expected state`()
     }
 
     @Test
     fun `NON BLOCKING - succeeds if initial state matches expected state`() {
-        ParameterisedStateTest(blocking = false).`succeeds if initial state matches expected state`()
+        testCase = ParameterisedStateTest(blocking = false)
+        testCase.`succeeds if initial state matches expected state`()
     }
 
     @Test
     fun `BLOCKING - fails if initial state does not match expected state`() {
-        ParameterisedStateTest(blocking = true).`fails if initial state does not match expected state`()
+        testCase = ParameterisedStateTest(blocking = true)
+        testCase.`fails if initial state does not match expected state`()
     }
 
     @Test
     fun `NON BLOCKING - fails if initial state does not match expected state`() {
-        ParameterisedStateTest(blocking = false).`fails if initial state does not match expected state`()
+        testCase = ParameterisedStateTest(blocking = false)
+        testCase.`fails if initial state does not match expected state`()
     }
 
     @Test
     fun `BLOCKING - succeeds if emitted states match expected states`() {
-        ParameterisedStateTest(blocking = true).`succeeds if emitted states match expected states`()
+        testCase = ParameterisedStateTest(blocking = true)
+        testCase.`succeeds if emitted states match expected states`()
     }
 
     @Test
     fun `NON BLOCKING - succeeds if emitted states match expected states`() {
-        ParameterisedStateTest(blocking = false).`succeeds if emitted states match expected states`()
+        testCase = ParameterisedStateTest(blocking = false)
+        testCase.`succeeds if emitted states match expected states`()
     }
 
     @Test
     fun `BLOCKING - fails if more states emitted than expected`() {
-        ParameterisedStateTest(blocking = true).`fails if more states emitted than expected`()
+        testCase = ParameterisedStateTest(blocking = true)
+        testCase.`fails if more states emitted than expected`()
     }
 
     @Test
     fun `NON BLOCKING - fails if more states emitted than expected`() {
-        ParameterisedStateTest(blocking = false).`fails if more states emitted than expected`()
+        testCase = ParameterisedStateTest(blocking = false)
+        testCase.`fails if more states emitted than expected`()
     }
 
     @Test
     fun `BLOCKING - fails if one more state expected than emitted`() {
-        ParameterisedStateTest(blocking = true).`fails if one more state expected than emitted`()
+        testCase = ParameterisedStateTest(blocking = true)
+        testCase.`fails if one more state expected than emitted`()
     }
 
     @Test
     fun `NON BLOCKING - fails if one more state expected than emitted`() {
-        ParameterisedStateTest(blocking = false).`fails if one more state expected than emitted`()
+        testCase = ParameterisedStateTest(blocking = false)
+        testCase.`fails if one more state expected than emitted`()
     }
 
     @Test
     fun `BLOCKING - fails if two more states expected than emitted`() {
-        ParameterisedStateTest(blocking = true).`fails if two more states expected than emitted`()
+        testCase = ParameterisedStateTest(blocking = true)
+        testCase.`fails if two more states expected than emitted`()
     }
 
     @Test
     fun `NON BLOCKING - fails if two more states expected than emitted`() {
-        ParameterisedStateTest(blocking = false).`fails if two more states expected than emitted`()
+        testCase = ParameterisedStateTest(blocking = false)
+        testCase.`fails if two more states expected than emitted`()
     }
 
     @Test
     fun `BLOCKING - fails if first emitted state does not match expected`() {
-        ParameterisedStateTest(blocking = true).`fails if first emitted state does not match expected`()
+        testCase = ParameterisedStateTest(blocking = true)
+        testCase.`fails if first emitted state does not match expected`()
     }
 
     @Test
     fun `NON BLOCKING - fails if first emitted state does not match expected`() {
-        ParameterisedStateTest(blocking = false).`fails if first emitted state does not match expected`()
+        testCase = ParameterisedStateTest(blocking = false)
+        testCase.`fails if first emitted state does not match expected`()
     }
 
     @Test
     fun `BLOCKING - fails if second emitted state does not match expected`() {
-        ParameterisedStateTest(blocking = true).`fails if second emitted state does not match expected`()
+        testCase = ParameterisedStateTest(blocking = true)
+        testCase.`fails if second emitted state does not match expected`()
     }
 
     @Test
     fun `NON BLOCKING - fails if second emitted state does not match expected`() {
-        ParameterisedStateTest(blocking = false).`fails if second emitted state does not match expected`()
+        testCase = ParameterisedStateTest(blocking = false)
+        testCase.`fails if second emitted state does not match expected`()
     }
 
     @Test
     fun `BLOCKING - fails if expected states are out of order`() {
-        ParameterisedStateTest(blocking = true).`fails if expected states are out of order`()
+        testCase = ParameterisedStateTest(blocking = true)
+        testCase.`fails if expected states are out of order`()
     }
 
     @Test
     fun `NON BLOCKING - fails if expected states are out of order`() {
-        ParameterisedStateTest(blocking = false).`fails if expected states are out of order`()
+        testCase = ParameterisedStateTest(blocking = false)
+        testCase.`fails if expected states are out of order`()
     }
 
     @Test
     fun `BLOCKING - succeeds with dropped assertions`() {
-        ParameterisedStateTest(blocking = true).`succeeds with dropped assertions`()
+        testCase = ParameterisedStateTest(blocking = true)
+        testCase.`succeeds with dropped assertions`()
     }
 
     @Test
     fun `NON BLOCKING - succeeds with dropped assertions`() {
-        ParameterisedStateTest(blocking = false).`succeeds with dropped assertions`()
+        testCase = ParameterisedStateTest(blocking = false)
+        testCase.`succeeds with dropped assertions`()
     }
 
     @Test
     fun `BLOCKING - fails if dropped assertions mean extra states are observed`() {
-        ParameterisedStateTest(blocking = true).`fails if dropped assertions mean extra states are observed`()
+        testCase = ParameterisedStateTest(blocking = true)
+        testCase.`fails if dropped assertions mean extra states are observed`()
     }
 
     @Test
     fun `NON BLOCKING - fails if dropped assertions mean extra states are observed`() {
-        ParameterisedStateTest(blocking = false).`fails if dropped assertions mean extra states are observed`()
+        testCase = ParameterisedStateTest(blocking = false)
+        testCase.`fails if dropped assertions mean extra states are observed`()
     }
 }

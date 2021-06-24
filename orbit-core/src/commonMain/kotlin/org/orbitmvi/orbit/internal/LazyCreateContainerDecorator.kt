@@ -48,7 +48,7 @@ public class LazyCreateContainerDecorator<STATE : Any, SIDE_EFFECT : Any>(
         }
     }
 
-    override suspend fun orbit(orbitFlow: suspend ContainerContext<STATE, SIDE_EFFECT>.() -> Unit) {
-        runOnCreate().also { actual.orbit(orbitFlow) }
+    override suspend fun orbit(orbitIntent: suspend ContainerContext<STATE, SIDE_EFFECT>.() -> Unit) {
+        runOnCreate().also { actual.orbit(orbitIntent) }
     }
 }

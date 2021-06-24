@@ -33,7 +33,6 @@ import com.nhaarman.mockitokotlin2.whenever
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
-import org.orbitmvi.orbit.assert
 import org.orbitmvi.orbit.test
 import java.io.IOException
 

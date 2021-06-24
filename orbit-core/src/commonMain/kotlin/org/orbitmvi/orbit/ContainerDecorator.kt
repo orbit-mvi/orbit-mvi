@@ -44,7 +44,7 @@ public interface ContainerDecorator<STATE : Any, SIDE_EFFECT : Any> : Container<
     override val sideEffectFlow: Flow<SIDE_EFFECT>
         get() = actual.sideEffectFlow
 
-    override suspend fun orbit(orbitFlow: suspend ContainerContext<STATE, SIDE_EFFECT>.() -> Unit) {
-        actual.orbit(orbitFlow)
+    override suspend fun orbit(orbitIntent: suspend ContainerContext<STATE, SIDE_EFFECT>.() -> Unit) {
+        actual.orbit(orbitIntent)
     }
 }
