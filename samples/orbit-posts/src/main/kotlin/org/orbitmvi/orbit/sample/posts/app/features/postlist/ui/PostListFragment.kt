@@ -26,12 +26,15 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.GroupieViewHolder
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.orbitmvi.orbit.sample.posts.R
 import org.orbitmvi.orbit.sample.posts.app.common.NavigationEvent
@@ -79,8 +82,8 @@ class PostListFragment : Fragment(R.layout.post_list_fragment) {
                 reduce(adapter, it)
             }
         }
-        lifecycleScope.launchWhenCreated {
-            viewModel.container.sideEffectFlow.collect {
+        lifecycleScope.launch {
+            viewModel.container.sideEffectFlow.flowWithLifecycle(lifecycle, Lifecycle.State.STARTED).collect {
                 sideEffect(it)
             }
         }

@@ -9,16 +9,15 @@ This product includes software developed at [Babylon Health](http://www.babylonh
 
 This software uses the following open source works:
 
-- [Kotlin](https://github.com/JetBrains/kotlin)
-- [Android](https://developer.android.com)
-- [Orbit MVI](https://github.com/orbit-mvi/orbit-mvi)
+- [Kotlin](https://github.com/JetBrains/kotlin/)
+- [Android](https://developer.android.com/)
+- [Orbit MVI](https://github.com/orbit-mvi/orbit-mvi/)
 - [Koin](https://insert-koin.io/)
 - [OkHttp](https://square.github.io/okhttp/)
 - [Retrofit](https://square.github.io/retrofit/)
-- [Jackson](https://github.com/FasterXML/jackson)
+- [Jackson](https://github.com/FasterXML/jackson/)
 - [Glide](https://bumptech.github.io/glide/)
-- [Groupie](https://github.com/lisawray/groupie)
+- [Groupie](https://github.com/lisawray/groupie/)
 - [JUnit](https://junit.org/)
-- [Mockito](https://site.mockito.org)
-- [Mockito-Kotlin](https://github.com/nhaarman/mockito-kotlin)
+- [Mockito](https://site.mockito.org/)
 - [Kotlin Fixture](https://github.com/appmattus/kotlinfixture/)

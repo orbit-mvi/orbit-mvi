@@ -60,15 +60,16 @@ dependencies {
     implementation("com.github.bumptech.glide:glide:4.12.0")
     implementation("com.xwray:groupie:2.9.0")
     implementation("com.xwray:groupie-viewbinding:2.9.0")
-    implementation("androidx.navigation:navigation-fragment-ktx:2.3.3")
-    implementation("androidx.navigation:navigation-ui-ktx:2.3.3")
-    implementation("androidx.lifecycle:lifecycle-common-java8:2.3.0")
+    implementation("androidx.navigation:navigation-fragment-ktx:2.3.5")
+    implementation("androidx.navigation:navigation-ui-ktx:2.3.5")
+    implementation("androidx.lifecycle:lifecycle-common-java8:2.4.0-alpha02")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.4.0-alpha02")
 
     // Networking
     implementation("com.squareup.okhttp3:okhttp:4.9.1")
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-jackson:2.9.0")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.12.1")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.12.2")
     // reflect set to override version from jackson
     implementation(kotlin("reflect"))
 
@@ -77,13 +78,13 @@ dependencies {
 
     // Testing
     testImplementation(project(":orbit-test"))
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.7.1")
-    testImplementation("org.junit.platform:junit-platform-console:1.7.1")
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.7.1")
-    testImplementation("org.junit.jupiter:junit-jupiter-params:5.7.1")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.7.2")
+    testImplementation("org.junit.platform:junit-platform-console:1.7.2")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.7.2")
+    testImplementation("org.junit.jupiter:junit-jupiter-params:5.7.2")
     testImplementation("junit:junit:4.13.2")
-    testImplementation("com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0")
-    testImplementation("org.mockito:mockito-inline:3.7.7")
+    testImplementation("org.mockito.kotlin:mockito-kotlin:3.2.0")
+    testImplementation("org.mockito:mockito-inline:3.11.2")
     testImplementation("com.appmattus.fixture:fixture:1.0.0")
     testImplementation("com.squareup.retrofit2:retrofit-mock:2.9.0")
 }
