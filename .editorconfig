@@ -1,0 +1,44 @@
+root = true
+
+[*]
+charset = utf-8
+indent_style = space
+insert_final_newline = true
+max_line_length = 145
+indent_size = 4
+trim_trailing_whitespace = true
+
+[*.gradle]
+ij_continuation_indent_size = 8
+
+[{*.kt, *.kts}]
+ij_continuation_indent_size = 8
+ij_kotlin_assignment_wrap = normal
+ij_kotlin_call_parameters_new_line_after_left_paren = true
+ij_kotlin_call_parameters_right_paren_on_new_line = true
+ij_kotlin_call_parameters_wrap = on_every_item
+ij_kotlin_code_style_defaults = KOTLIN_OFFICIAL
+ij_kotlin_continuation_indent_for_chained_calls = false
+ij_kotlin_continuation_indent_for_expression_bodies = false
+ij_kotlin_continuation_indent_in_argument_lists = false
+ij_kotlin_continuation_indent_in_elvis = false
+ij_kotlin_continuation_indent_in_if_conditions = false
+ij_kotlin_continuation_indent_in_parameter_lists = false
+ij_kotlin_continuation_indent_in_supertype_lists = false
+ij_kotlin_extends_list_wrap = normal
+ij_kotlin_if_rparen_on_new_line = true
+ij_kotlin_keep_blank_lines_before_right_brace = 0
+ij_kotlin_keep_blank_lines_in_code = 1
+ij_kotlin_keep_blank_lines_in_declarations = 1
+ij_kotlin_method_call_chain_wrap = normal
+ij_kotlin_method_parameters_new_line_after_left_paren = true
+ij_kotlin_method_parameters_right_paren_on_new_line = true
+ij_kotlin_method_parameters_wrap = on_every_item
+ij_kotlin_name_count_to_use_star_import = 2147483647
+ij_kotlin_name_count_to_use_star_import_for_members = 2147483647
+ij_kotlin_wrap_expression_body_functions = 1
+ij_kotlin_imports_layout = *
+
+[*.md]
+trim_trailing_whitespace = false
+max_line_length = 80
