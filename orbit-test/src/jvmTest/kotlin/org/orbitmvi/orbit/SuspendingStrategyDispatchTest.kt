@@ -22,16 +22,17 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.test.TestCoroutineDispatcher
 import kotlinx.coroutines.test.runBlockingTest
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.reduce
 import kotlin.random.Random
+import kotlin.system.measureTimeMillis
 import kotlin.test.AfterTest
 import kotlin.test.Test
+import kotlin.test.assertTrue
 
 @ExperimentalCoroutinesApi
-internal class DispatcherTest {
+internal class SuspendingStrategyDispatchTest {
     private val initialState = State()
 
     private val scope = CoroutineScope(Job())
@@ -42,38 +43,21 @@ internal class DispatcherTest {
     }
 
     @Test
-    fun `default blocking test works`() = runBlocking {
-        val testSubject = StateTestMiddleware().test(initialState = initialState)
+    fun `suspending test maintains test dispatcher through runBlockingTest`() = runBlockingTest {
+        val testSubject = StateTestMiddleware().test(initialState)
+
         val action = Random.nextInt()
 
-        // This should block
-        testSubject.testIntent { somethingInBackground(action) }
+        val executionTime = measureTimeMillis {
+            testSubject.testIntent { somethingInBackground(action) }
+        }
 
         testSubject.assert(initialState) {
             states(
                 { copy(count = action) }
             )
         }
-    }
-
-    @Test
-    fun `run blocking test works`() {
-        val testCoroutineDispatcher = TestCoroutineDispatcher()
-        val testSubject = StateTestMiddleware().test(initialState)
-
-        runBlockingTest(testCoroutineDispatcher) {
-            val action = Random.nextInt()
-
-            // This should block
-            testSubject.testIntent { somethingInBackground(action) }
-            testCoroutineDispatcher.advanceTimeBy(1010)
-
-            testSubject.assert(initialState) {
-                states(
-                    { copy(count = action) }
-                )
-            }
-        }
+        assertTrue { executionTime < 1000 }
     }
 
     private inner class StateTestMiddleware :
@@ -81,7 +65,7 @@ internal class DispatcherTest {
         override val container = scope.container<State, Nothing>(initialState)
 
         fun somethingInBackground(action: Int): Unit = intent {
-            delay(1000)
+            delay(5000)
             reduce {
                 State(count = action)
             }

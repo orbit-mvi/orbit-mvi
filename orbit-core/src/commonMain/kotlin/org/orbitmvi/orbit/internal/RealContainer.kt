@@ -46,7 +46,7 @@ public class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
     parentScope: CoroutineScope,
     public override val settings: Container.Settings
 ) : Container<STATE, SIDE_EFFECT> {
-    private val scope = parentScope + settings.intentLoopDispatcher
+    private val scope = parentScope + settings.intentDispatcher
     private val dispatchChannel = Channel<suspend ContainerContext<STATE, SIDE_EFFECT>.() -> Unit>(Channel.UNLIMITED)
     private val mutex = Mutex()
     private val initialised = atomic(false)
