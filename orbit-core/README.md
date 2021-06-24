@@ -137,7 +137,7 @@ fun main() {
             // do something with the state
         }
     }
-    // For Android, use `lifecycleScope.launch` and `.flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)` instead 
+    // For Android, use `lifecycleScope.launch` and `.flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)` instead
     CoroutineScope(Dispatchers.Main).launch {
         container.sideEffectFlow.collect {
             // do something with the side effect
