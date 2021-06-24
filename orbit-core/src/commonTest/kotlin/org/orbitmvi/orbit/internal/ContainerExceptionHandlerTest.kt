@@ -72,7 +72,7 @@ internal class ContainerExceptionHandlerTest {
             initialState = initState,
             settings = Container.Settings(
                 exceptionHandler = exceptionHandler,
-                orbitDispatcher = Dispatchers.Unconfined
+                intentLoopDispatcher = Dispatchers.Unconfined
             )
         )
         val newState = Random.nextInt()

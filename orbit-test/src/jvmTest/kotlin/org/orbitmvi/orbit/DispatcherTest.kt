@@ -1,6 +1,5 @@
 /*
  * Copyright 2021 Mikołaj Leszczyński & Appmattus Limited
- * Copyright 2020 Babylon Partners Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,8 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * File modified by Mikołaj Leszczyński & Appmattus Limited
- * See: https://github.com/orbit-mvi/orbit-mvi/compare/c5b8b3f2b83b5972ba2ad98f73f75086a89653d3...main
  */
 
 package org.orbitmvi.orbit
@@ -35,10 +32,6 @@ import kotlin.test.Test
 
 @ExperimentalCoroutinesApi
 internal class DispatcherTest {
-    companion object {
-        const val TIMEOUT = 1000L
-    }
-
     private val initialState = State()
 
     private val scope = CoroutineScope(Job())
@@ -88,12 +81,10 @@ internal class DispatcherTest {
         override val container = scope.container<State, Nothing>(initialState)
 
         fun somethingInBackground(action: Int): Unit = intent {
-//            withContext(Dispatchers.Default) {
-                delay(1000)
-                reduce {
-                    State(count = action)
-                }
-//            }
+            delay(1000)
+            reduce {
+                State(count = action)
+            }
         }
     }
 

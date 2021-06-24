@@ -33,7 +33,7 @@ public class TestContainerDecorator<STATE : Any, SIDE_EFFECT : Any>(
     private val delegate = atomic(actual)
 
     public val savedIntents: Channel<(suspend () -> Unit)>
-        get() = (delegate.value as InterceptingContainerDecorator).savedIntents
+        get() = (delegate.value as? InterceptingContainerDecorator)?.savedIntents ?: Channel()
 
     override val settings: Container.Settings
         get() = delegate.value.settings

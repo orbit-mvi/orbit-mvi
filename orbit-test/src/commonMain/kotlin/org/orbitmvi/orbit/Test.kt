@@ -65,7 +65,7 @@ public fun <STATE : Any, SIDE_EFFECT : Any, T : ContainerHost<STATE, SIDE_EFFECT
 public fun <STATE : Any, SIDE_EFFECT : Any, T : ContainerHost<STATE, SIDE_EFFECT>> T.liveTest(
     initialState: STATE,
     runOnCreate: Boolean = false,
-    settings: Container.Settings = container.settings.copy(orbitDispatcher = Dispatchers.Unconfined)
+    settings: Container.Settings = container.settings.copy(intentLoopDispatcher = Dispatchers.Unconfined)
 ): RegularTestContainerHost<STATE, SIDE_EFFECT, T> {
     container.findTestContainer().test(
         initialState = initialState,

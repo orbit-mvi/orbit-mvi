@@ -77,12 +77,12 @@ public interface Container<STATE : Any, SIDE_EFFECT : Any> {
      * sending many side effects and getting out of memory exceptions this can be turned down to suspend the container instead.
      * Unlimited by default.
      * @property idlingRegistry The registry used by the container for signalling idling for UI tests
-     * @property orbitDispatcher The dispatcher used for handling incoming [orbit] intents
+     * @property intentLoopDispatcher The dispatcher used for handling incoming [orbit] intents
      */
     public data class Settings(
         public val sideEffectBufferSize: Int = Channel.UNLIMITED,
         public val idlingRegistry: IdlingResource = NoopIdlingResource(),
-        public val orbitDispatcher: CoroutineDispatcher = Dispatchers.Default,
+        public val intentLoopDispatcher: CoroutineDispatcher = Dispatchers.Default,
         public val exceptionHandler: CoroutineExceptionHandler? = null,
     )
 }
