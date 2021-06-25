@@ -20,13 +20,13 @@
 
 package org.orbitmvi.orbit.sample.posts.data.posts.network
 
-import org.orbitmvi.orbit.sample.posts.data.posts.model.CommentData
-import org.orbitmvi.orbit.sample.posts.data.posts.model.PostData
-import org.orbitmvi.orbit.sample.posts.data.posts.model.UserData
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.orbitmvi.orbit.sample.posts.data.posts.model.CommentData
+import org.orbitmvi.orbit.sample.posts.data.posts.model.PostData
+import org.orbitmvi.orbit.sample.posts.data.posts.model.UserData
 import retrofit2.Retrofit
 import retrofit2.mock.BehaviorDelegate
 import retrofit2.mock.MockRetrofit

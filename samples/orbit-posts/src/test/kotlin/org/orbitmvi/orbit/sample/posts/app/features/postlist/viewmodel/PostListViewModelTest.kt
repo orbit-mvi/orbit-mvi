@@ -22,11 +22,11 @@ package org.orbitmvi.orbit.sample.posts.app.features.postlist.viewmodel
 
 import androidx.lifecycle.SavedStateHandle
 import com.appmattus.kotlinfixture.kotlinFixture
-import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.whenever
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.whenever
 import org.orbitmvi.orbit.sample.posts.InstantTaskExecutorExtension
 import org.orbitmvi.orbit.sample.posts.domain.repositories.PostOverview
 import org.orbitmvi.orbit.sample.posts.domain.repositories.PostRepository

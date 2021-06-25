@@ -123,8 +123,10 @@ class CalculatorActivity: AppCompatActivity() {
         lifecycleScope.launchWhenCreated {
             viewModel.container.stateFlow.collect { render(it) }
         }
-        lifecycleScope.launchWhenCreated {
-            viewModel.container.sideEffectFlow.collect { handleSideEffect(it) }
+        lifecycleScope.launch {
+            viewModel.container.sideEffectFlow
+                .flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
+                .collect { handleSideEffect(it) }
         }
     }
 
