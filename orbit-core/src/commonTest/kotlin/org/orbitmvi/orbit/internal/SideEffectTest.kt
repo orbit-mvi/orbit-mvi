@@ -47,7 +47,7 @@ internal class SideEffectTest {
     }
 
     @Test
-    fun `side effects are emitted in order`() {
+    fun `side effects are emitted in order`() = runBlocking {
         val container = scope.container<Unit, Int>(Unit)
 
         val testSideEffectObserver1 = container.sideEffectFlow.test()
@@ -62,7 +62,7 @@ internal class SideEffectTest {
     }
 
     @Test
-    fun `side effects are not multicast`() {
+    fun `side effects are not multicast`() = runBlocking {
         val action = Random.nextInt()
         val action2 = Random.nextInt()
         val action3 = Random.nextInt()
@@ -87,7 +87,7 @@ internal class SideEffectTest {
     }
 
     @Test
-    fun `side effects are cached when there are no subscribers`() {
+    fun `side effects are cached when there are no subscribers`() = runBlocking {
         val action = Random.nextInt()
         val action2 = Random.nextInt()
         val action3 = Random.nextInt()
@@ -105,7 +105,7 @@ internal class SideEffectTest {
     }
 
     @Test
-    fun `consumed side effects are not resent`() {
+    fun `consumed side effects are not resent`() = runBlocking {
         val action = Random.nextInt()
         val action2 = Random.nextInt()
         val action3 = Random.nextInt()
@@ -132,7 +132,9 @@ internal class SideEffectTest {
 
         val testSideEffectObserver1 = container.sideEffectFlow.test()
 
-        container.someFlow(action)
+        runBlocking {
+            container.someFlow(action)
+        }
 
         testSideEffectObserver1.awaitCount(1)
         testSideEffectObserver1.close()
@@ -150,7 +152,7 @@ internal class SideEffectTest {
         testSideEffectObserver2.values.assertContainExactly((0..999).toList())
     }
 
-    private fun Container<Unit, Int>.someFlow(action: Int) = orbit {
+    private suspend fun Container<Unit, Int>.someFlow(action: Int) = orbit {
         postSideEffect(action)
     }
 }

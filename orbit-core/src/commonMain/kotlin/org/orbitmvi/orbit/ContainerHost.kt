@@ -25,7 +25,7 @@ package org.orbitmvi.orbit
  * Typically this will be an Android ViewModel but it can be applied to simple presenters etc.
  *
  * Extension functions `intent` and `orbit` are provided as a convenient way of launching orbit
- * flows on the container.
+ * intents on the container.
  */
 public interface ContainerHost<STATE : Any, SIDE_EFFECT : Any> {
     /**

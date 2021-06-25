@@ -16,6 +16,16 @@
 
 package org.orbitmvi.orbit.internal
 
-import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.channels.Channel
+import org.orbitmvi.orbit.ContainerDecorator
+import org.orbitmvi.orbit.syntax.ContainerContext
 
-internal expect val defaultBackgroundDispatcher: CoroutineDispatcher
+public class InterceptingContainerDecorator<STATE : Any, SIDE_EFFECT : Any>(
+    override val actual: RealContainer<STATE, SIDE_EFFECT>
+) : ContainerDecorator<STATE, SIDE_EFFECT> {
+    public val savedIntents: Channel<suspend () -> Unit> = Channel(Channel.UNLIMITED)
+
+    override suspend fun orbit(orbitIntent: suspend ContainerContext<STATE, SIDE_EFFECT>.() -> Unit) {
+        savedIntents.send { actual.pluginContext.orbitIntent() }
+    }
+}

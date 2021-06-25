@@ -41,12 +41,12 @@ import org.orbitmvi.orbit.syntax.ContainerContext
 import kotlin.coroutines.EmptyCoroutineContext
 
 @Suppress("EXPERIMENTAL_API_USAGE")
-public open class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
+public class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
     initialState: STATE,
     parentScope: CoroutineScope,
-    private val settings: Container.Settings
+    public override val settings: Container.Settings
 ) : Container<STATE, SIDE_EFFECT> {
-    private val scope = parentScope + settings.orbitDispatcher
+    private val scope = parentScope + settings.intentDispatcher
     private val dispatchChannel = Channel<suspend ContainerContext<STATE, SIDE_EFFECT>.() -> Unit>(Channel.UNLIMITED)
     private val mutex = Mutex()
     private val initialised = atomic(false)
@@ -57,7 +57,7 @@ public open class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
     private val sideEffectChannel = Channel<SIDE_EFFECT>(settings.sideEffectBufferSize)
     override val sideEffectFlow: Flow<SIDE_EFFECT> = sideEffectChannel.receiveAsFlow()
 
-    protected val pluginContext: ContainerContext<STATE, SIDE_EFFECT> = ContainerContext(
+    internal val pluginContext: ContainerContext<STATE, SIDE_EFFECT> = ContainerContext(
         settings = settings,
         postSideEffect = { sideEffectChannel.send(it) },
         getState = {
@@ -70,7 +70,12 @@ public open class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
         }
     )
 
-    override fun orbit(orbitFlow: suspend ContainerContext<STATE, SIDE_EFFECT>.() -> Unit) {
+    override suspend fun orbit(orbitIntent: suspend ContainerContext<STATE, SIDE_EFFECT>.() -> Unit) {
+        initialiseIfNeeded()
+        dispatchChannel.send(orbitIntent)
+    }
+
+    private fun initialiseIfNeeded() {
         if (initialised.compareAndSet(expect = false, update = true)) {
             scope.produce<Unit>(Dispatchers.Unconfined) {
                 awaitClose {
@@ -85,6 +90,5 @@ public open class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
                 }
             }
         }
-        dispatchChannel.offer(orbitFlow)
     }
 }

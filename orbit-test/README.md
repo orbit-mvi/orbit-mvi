@@ -22,7 +22,7 @@ Things that we consider important to test:
 
 - Emitted states
 - Emitted side effects
-- Loopbacks i.e. flow A calling flow B from a `sideEffect`
+- Loopbacks i.e. intent A calling intent B
 - Potentially dependencies being called
 
 The last two items on the list are outside of the scope of this library
@@ -33,32 +33,32 @@ easy to test.
 
 ### Additional constraints
 
-There are a couple of additional constraints that we put on our tests to make
-them more predictable.
+There are a couple of additional constraints that we can put on our tests to
+make them more predictable.
 
-- Run the
+- Run the calls invoked on your
   [Container](../orbit-core/src/commonMain/kotlin/org/orbitmvi/orbit/Container.kt)
-  in blocking mode
+  as suspending function
 - Isolate the first function called on the
   [ContainerHost](../orbit-core/src/commonMain/kotlin/org/orbitmvi/orbit/ContainerHost.kt)
 
-Isolating flows helps avoid unexpected state/side effect emissions from
-loopbacks in your flow under test. This can be turned off if you have a
+Isolating intents helps avoid unexpected state/side effect emissions from
+loopbacks in your intent under test. This can be turned off if you have a
 particular testing need.
 
 ## Testing method
 
 First we need to put our
 [ContainerHost](../orbit-core/src/commonMain/kotlin/org/orbitmvi/orbit/ContainerHost.kt)
-into test mode and call our flow (method) under test. Let's assume we've made a
-`ViewModel` the host.
+into test mode and call our intent (method) under test. Let's assume we've
+made a `ViewModel` the host.
 
 ```kotlin
 data class State(val count: Int = 0)
 
 val testSubject = ExampleViewModel().test(State())
 
-testSubject.countToFour()
+testSubject.testIntent { countToFour() }
 ```
 
 ### Asserting states
@@ -114,9 +114,9 @@ Since all of the assertions need to be done within the same `assert` block
 here's what it looks like once we put it together.
 
 ```kotlin
-val testSubject = spy(ExampleViewModel()).test(State()
+val testSubject = spy(ExampleViewModel()).test(State())
 
-testSubject.countToFour()
+testSubject.testIntent { countToFour() }
 
 testSubject.assert(State()) {
     states(

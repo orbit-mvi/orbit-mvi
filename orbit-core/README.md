@@ -309,7 +309,7 @@ done by switching your coroutine context.
 
 ## Error handling
 
-It is good practice to handle all of your errors within your flows.
+It is good practice to handle all of your errors within your intents.
 By default Orbit doesn't handle or process any exceptions because it cannot
 make assumptions about how you respond to errors. However you could install
 default exception handler via

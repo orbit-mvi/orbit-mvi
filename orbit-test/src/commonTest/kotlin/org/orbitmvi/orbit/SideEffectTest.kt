@@ -21,31 +21,39 @@
 package org.orbitmvi.orbit
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlin.test.AfterTest
 import kotlin.test.Test
 
 @ExperimentalCoroutinesApi
 internal class SideEffectTest {
+    lateinit var testCase: ParameterisedSideEffectTest
+
+    @AfterTest
+    fun afterTest() {
+        testCase.cancel()
+    }
+
     @Test
     fun `BLOCKING - succeeds if posted side effects match expected side effects`() {
-        ParameterisedSideEffectTest(blocking = true)
-            .`succeeds if posted side effects match expected side effects`()
+        testCase = ParameterisedSideEffectTest(blocking = true)
+        testCase.`succeeds if posted side effects match expected side effects`()
     }
 
     @Test
     fun `NON BLOCKING - succeeds if posted side effects match expected side effects`() {
-        ParameterisedSideEffectTest(blocking = false)
-            .`succeeds if posted side effects match expected side effects`()
+        testCase = ParameterisedSideEffectTest(blocking = false)
+        testCase.`succeeds if posted side effects match expected side effects`()
     }
 
     @Test
     fun `BLOCKING - fails if posted side effects do not match expected side effects`() {
-        ParameterisedSideEffectTest(blocking = true)
-            .`fails if posted side effects do not match expected side effects`()
+        testCase = ParameterisedSideEffectTest(blocking = true)
+        testCase.`fails if posted side effects do not match expected side effects`()
     }
 
     @Test
     fun `NON BLOCKING - fails if posted side effects do not match expected side effects`() {
-        ParameterisedSideEffectTest(blocking = false)
-            .`fails if posted side effects do not match expected side effects`()
+        testCase = ParameterisedSideEffectTest(blocking = false)
+        testCase.`fails if posted side effects do not match expected side effects`()
     }
 }

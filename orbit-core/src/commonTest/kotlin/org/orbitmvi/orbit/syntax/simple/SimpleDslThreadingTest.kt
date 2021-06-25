@@ -58,15 +58,14 @@ internal class SimpleDslThreadingTest {
 
     @Test
     @IgnoreIos
-    fun `blocking intent with context switch does not block the reducer`() {
+    fun `blocking intent with context switch does not block the reducer`() = runBlocking {
         val action = Random.nextInt()
         val testFlowObserver = middleware.container.stateFlow.test()
 
         middleware.backgroundIntent()
-        runBlocking {
-            withTimeout(TIMEOUT) {
-                middleware.intentMutex.withLock {}
-            }
+
+        withTimeout(TIMEOUT) {
+            middleware.intentMutex.withLock {}
         }
 
         middleware.reducer(action)
@@ -76,15 +75,13 @@ internal class SimpleDslThreadingTest {
     }
 
     @Test
-    fun `suspending intent does not block the reducer`() {
+    fun `suspending intent does not block the reducer`() = runBlocking {
         val action = Random.nextInt()
         val testFlowObserver = middleware.container.stateFlow.test()
 
         middleware.suspendingIntent()
-        runBlocking {
-            withTimeout(TIMEOUT) {
-                middleware.intentMutex.withLock {}
-            }
+        withTimeout(TIMEOUT) {
+            middleware.intentMutex.withLock {}
         }
 
         middleware.reducer(action)
@@ -94,16 +91,14 @@ internal class SimpleDslThreadingTest {
     }
 
     @Test
-    fun `blocking intent without context switch blocks the reducer`() {
+    fun `blocking intent without context switch blocks the reducer`() = runBlocking {
         val action = Random.nextInt()
         val testFlowObserver = middleware.container.stateFlow.test()
 
         middleware.blockingIntent()
 
-        runBlocking {
-            withTimeout(TIMEOUT) {
-                middleware.intentMutex.withLock {
-                }
+        withTimeout(TIMEOUT) {
+            middleware.intentMutex.withLock {
             }
         }
 
@@ -114,14 +109,12 @@ internal class SimpleDslThreadingTest {
     }
 
     @Test
-    fun `blocking reducer blocks an intent`() {
+    fun `blocking reducer blocks an intent`(): Unit = runBlocking {
         middleware.container.stateFlow.test()
 
         middleware.blockingReducer()
-        runBlocking {
-            withTimeout(TIMEOUT) {
-                middleware.reducerMutex.withLock {}
-            }
+        withTimeout(TIMEOUT) {
+            middleware.reducerMutex.withLock {}
         }
 
         middleware.simpleIntent()

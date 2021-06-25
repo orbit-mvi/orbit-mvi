@@ -22,18 +22,17 @@ package org.orbitmvi.orbit.sample.posts.app.features.postdetails.viewmodel
 
 import androidx.lifecycle.SavedStateHandle
 import com.appmattus.kotlinfixture.kotlinFixture
-import kotlinx.coroutines.runBlocking
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
-import org.mockito.kotlin.mock
-import org.mockito.kotlin.verifyZeroInteractions
-import org.mockito.kotlin.whenever
-import org.orbitmvi.orbit.assert
 import org.orbitmvi.orbit.sample.posts.InstantTaskExecutorExtension
 import org.orbitmvi.orbit.sample.posts.domain.repositories.PostDetail
 import org.orbitmvi.orbit.sample.posts.domain.repositories.PostOverview
 import org.orbitmvi.orbit.sample.posts.domain.repositories.PostRepository
 import org.orbitmvi.orbit.sample.posts.domain.repositories.Status
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.verifyZeroInteractions
+import org.mockito.kotlin.whenever
+import kotlinx.coroutines.runBlocking
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 import org.orbitmvi.orbit.test
 import java.io.IOException
 

@@ -72,16 +72,18 @@ internal class ContainerExceptionHandlerTest {
             initialState = initState,
             settings = Container.Settings(
                 exceptionHandler = exceptionHandler,
-                orbitDispatcher = Dispatchers.Unconfined
+                intentDispatcher = Dispatchers.Unconfined
             )
         )
         val newState = Random.nextInt()
 
-        container.orbit {
-            reduce { throw IllegalStateException() }
-        }
-        container.orbit {
-            reduce { newState }
+        runBlocking {
+            container.orbit {
+                reduce { throw IllegalStateException() }
+            }
+            container.orbit {
+                reduce { newState }
+            }
         }
 
         assertEquals(newState, container.stateFlow.value)

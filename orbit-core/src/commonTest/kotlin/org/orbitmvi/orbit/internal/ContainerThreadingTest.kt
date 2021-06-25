@@ -52,11 +52,13 @@ internal class ContainerThreadingTest {
         val observer = container.stateFlow.test()
         val newState = Random.nextInt()
 
-        container.orbit {
-            delay(Long.MAX_VALUE)
-        }
-        container.orbit {
-            reduce { newState }
+        runBlocking {
+            container.orbit {
+                delay(Long.MAX_VALUE)
+            }
+            container.orbit {
+                reduce { newState }
+            }
         }
 
         observer.awaitCount(2)
@@ -130,7 +132,7 @@ internal class ContainerThreadingTest {
 
     private data class TestState(val ids: List<Int> = emptyList())
 
-    private fun Container<TestState, Nothing>.one(delay: Boolean = false) = orbit {
+    private suspend fun Container<TestState, Nothing>.one(delay: Boolean = false) = orbit {
         if (delay) {
             delay(Random.nextLong(20))
         }
@@ -139,7 +141,7 @@ internal class ContainerThreadingTest {
         }
     }
 
-    private fun Container<TestState, Nothing>.two(delay: Boolean = false) = orbit {
+    private suspend fun Container<TestState, Nothing>.two(delay: Boolean = false) = orbit {
         if (delay) {
             delay(Random.nextLong(20))
         }
@@ -148,7 +150,7 @@ internal class ContainerThreadingTest {
         }
     }
 
-    private fun Container<TestState, Nothing>.three(delay: Boolean = false) = orbit {
+    private suspend fun Container<TestState, Nothing>.three(delay: Boolean = false) = orbit {
         if (delay) {
             delay(Random.nextLong(20))
         }

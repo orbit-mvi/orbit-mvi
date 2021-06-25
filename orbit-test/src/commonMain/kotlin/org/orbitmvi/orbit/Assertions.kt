@@ -122,13 +122,13 @@ private fun <T : Any> failMoreStatesThanExpected(
         // More states received than expected
         fail(
             "Expected ${assertions.size + satisfiedAssertions} states" +
-                " but more were emitted:\n$values"
+                    " but more were emitted:\n$values"
         )
     } else {
         // More states received than expected, but some assertions were dropped
         fail(
             "Expected ${assertions.size + satisfiedAssertions} states" +
-                " but more were emitted:\n$values\n\n" +
+                    " but more were emitted:\n$values\n\n" +
                     "Caution: $droppedAssertions assertions were dropped as they encountered a " +
                     "current state which already satisfied them."
         )
