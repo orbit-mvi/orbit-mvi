@@ -16,11 +16,13 @@
 
 package org.orbitmvi.orbit
 
+import kotlin.coroutines.EmptyCoroutineContext
+import kotlin.test.assertEquals
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.internal.LazyCreateContainerDecorator
-import kotlin.test.assertEquals
 
 public sealed class TestContainerHost<STATE : Any, SIDE_EFFECT : Any, T : ContainerHost<STATE, SIDE_EFFECT>>(
     actual: T
@@ -115,7 +117,12 @@ public class SuspendingTestContainerHost<STATE : Any, SIDE_EFFECT : Any, T : Con
             val intent = testContainer.savedIntents.receive()
             if (!shouldIsolateFlow || !firstIntentExecuted) {
                 firstIntentExecuted = true
-                intent()
+                val context = actual.container.settings.exceptionHandler?.plus(SupervisorJob()) ?: EmptyCoroutineContext
+                coroutineScope {
+                    launch(context) {
+                        intent()
+                    }
+                }
             }
         }
     }
