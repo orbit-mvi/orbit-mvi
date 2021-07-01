@@ -85,6 +85,8 @@ dependencies {
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.mockito.kotlin:mockito-kotlin:3.2.0")
     testImplementation("org.mockito:mockito-inline:3.11.2")
-    testImplementation("com.appmattus.fixture:fixture:1.0.0")
+    testImplementation("com.appmattus.fixture:fixture:1.0.0") {
+        exclude(module = "kotlin-reflect")
+    }
     testImplementation("com.squareup.retrofit2:retrofit-mock:2.9.0")
 }

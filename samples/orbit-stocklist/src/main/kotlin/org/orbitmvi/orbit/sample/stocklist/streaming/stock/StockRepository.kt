@@ -21,15 +21,15 @@
 package org.orbitmvi.orbit.sample.stocklist.streaming.stock
 
 import android.text.format.DateUtils
-import org.orbitmvi.orbit.sample.stocklist.streaming.EmptySubscriptionListener
-import org.orbitmvi.orbit.sample.stocklist.streaming.StreamingClient
 import com.lightstreamer.client.ItemUpdate
 import com.lightstreamer.client.Subscription
 import com.lightstreamer.client.SubscriptionListener
 import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.channels.sendBlocking
+import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import org.orbitmvi.orbit.sample.stocklist.streaming.EmptySubscriptionListener
+import org.orbitmvi.orbit.sample.stocklist.streaming.StreamingClient
 import java.math.RoundingMode
 import java.time.Instant
 import java.time.LocalDateTime
@@ -49,7 +49,7 @@ class StockRepository(private val client: StreamingClient) {
     fun stockList(): Flow<List<Stock>> = callbackFlow<List<Stock>> {
         val stockList = MutableList<Stock?>(20) { null }
 
-        sendBlocking(emptyList())
+        trySendBlocking(emptyList())
 
         val subscription = Subscription("MERGE", items, subscriptionFields).apply {
             dataAdapter = "QUOTE_ADAPTER"
@@ -68,7 +68,7 @@ class StockRepository(private val client: StreamingClient) {
                             formattedTimestamp != null
                         ) {
                             stockList[p0.itemPos - 1] = Stock(itemName, stockName, formattedBid, formattedAsk, formattedTimestamp)
-                            sendBlocking(stockList.filterNotNull())
+                            trySendBlocking(stockList.filterNotNull())
                         }
                     }
                 }
@@ -123,7 +123,7 @@ class StockRepository(private val client: StreamingClient) {
                                 max = max,
                                 timestamp = formattedTimestamp
                             )
-                            sendBlocking(stock)
+                            trySend(stock)
                         }
                     }
                 }

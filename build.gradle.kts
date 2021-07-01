@@ -100,7 +100,7 @@ subprojects {
 
     tasks.withType<Test> {
         @Suppress("UnstableApiUsage")
-        if (project.name !in listOf("orbit-core", "orbit-test")) {
+        if (project.name !in listOf("orbit-core", "orbit-test", "orbit-viewmodel")) {
             useJUnitPlatform {
                 includeEngines(
                     "junit-jupiter"

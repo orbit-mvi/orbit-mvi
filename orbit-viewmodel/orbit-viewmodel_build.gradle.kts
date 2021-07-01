@@ -42,8 +42,8 @@ dependencies {
     testImplementation(ProjectDependencies.androidxEspressoCore)
     testImplementation(ProjectDependencies.robolectric)
 
-    GroupedDependencies.testsImplementation.forEach { testImplementation(it) }
-    testRuntimeOnly(ProjectDependencies.junitJupiterEngine)
+    testImplementation(ProjectDependencies.kotlinTest)
+    testImplementation(ProjectDependencies.kotlinCoroutinesTest)
 }
 
 android {

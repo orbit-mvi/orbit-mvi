@@ -29,8 +29,8 @@ object Versions {
     const val safeargs = "2.3.3"
     const val atomicfu = "0.15.1"
 
-    const val kotlin = "1.4.30"
-    const val coroutines = "1.4.2-native-mt"
+    const val kotlin = "1.5.20"
+    const val coroutines = "1.5.0-native-mt"
 
     const val androidxLifecycles = "2.2.0"
     const val androidxEspresso = "3.3.0"
@@ -40,7 +40,7 @@ object Versions {
     // Testing
     const val junitPlatform = "1.7.1"
     const val junitRuntime = "5.7.1"
-    const val jacoco = "0.8.5"
+    const val jacoco = "0.8.7"
     const val robolectric = "4.5.1"
 }
 
@@ -48,7 +48,7 @@ object ProjectDependencies {
     // Kotlin
     const val kotlinCoroutines = "org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versions.coroutines}"
     const val kotlinCoroutinesTest = "org.jetbrains.kotlinx:kotlinx-coroutines-test:${Versions.coroutines}"
-    const val kotlinTest = "org.jetbrains.kotlin:kotlin-test:${Versions.kotlin}"
+    const val kotlinTest = "org.jetbrains.kotlin:kotlin-test-junit:${Versions.kotlin}"
 
     // AndroidX
     const val androidxLifecycleSavedState = "androidx.lifecycle:lifecycle-viewmodel-savedstate:${Versions.androidxLifecycles}"

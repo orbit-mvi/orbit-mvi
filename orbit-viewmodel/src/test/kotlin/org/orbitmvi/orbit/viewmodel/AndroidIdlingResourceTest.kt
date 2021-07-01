@@ -21,6 +21,11 @@
 package org.orbitmvi.orbit.viewmodel
 
 import androidx.test.espresso.IdlingRegistry
+import kotlin.test.AfterTest
+import kotlin.test.BeforeTest
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
@@ -32,29 +37,24 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withTimeout
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
+import org.junit.Test
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.container
 import org.orbitmvi.orbit.syntax.simple.intent
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
 
 class AndroidIdlingResourceTest {
 
     private val scope = CoroutineScope(Dispatchers.Unconfined)
 
-    @BeforeEach
+    @BeforeTest
     fun before() {
         IdlingRegistry.getInstance().apply {
             unregister(*resources.toTypedArray())
         }
     }
 
-    @AfterEach
+    @AfterTest
     fun after() {
         scope.cancel()
 
@@ -159,7 +159,7 @@ class AndroidIdlingResourceTest {
             val flow = callbackFlow {
                 IdlingRegistry.getInstance().resources.first().registerIdleTransitionCallback {
                     // Triggered when resource goes from busy to idle
-                    offer(true)
+                    trySend(true)
                 }
 
                 awaitClose { }
@@ -274,7 +274,7 @@ class AndroidIdlingResourceTest {
             val flow = callbackFlow {
                 IdlingRegistry.getInstance().resources.first().registerIdleTransitionCallback {
                     // Triggered when resource goes from busy to idle
-                    offer(true)
+                    trySend(true)
                 }
 
                 awaitClose { }
