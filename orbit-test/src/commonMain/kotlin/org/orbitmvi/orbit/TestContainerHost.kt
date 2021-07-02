@@ -122,7 +122,7 @@ public class SuspendingTestContainerHost<STATE : Any, SIDE_EFFECT : Any, T : Con
                     launch(context) {
                         intent()
                     }
-                }
+                }.join()
             }
         }
     }
