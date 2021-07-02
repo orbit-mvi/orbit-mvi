@@ -30,7 +30,6 @@ import kotlin.random.Random
 import kotlin.test.AfterTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertFails
 import kotlin.test.assertFailsWith
 import kotlin.test.assertTrue
 import org.orbitmvi.orbit.ContainerHost
@@ -154,19 +153,20 @@ internal class ContainerExceptionHandlerTest {
                     }
                 }
             }
-/*
-            // that still works - do we want it to?
+            // Note: another `intent{}` would still work
+            // as `test()` moves all the job to scope of invocation,
+            // and out of a container's scope (so it's ignored)
             val newState = Random.nextInt()
             containerHost.testIntent {
                 intent {
                     reduce { newState }
                 }
             }
-*/
+            containerHost.assert(initState) {
+                states({ newState })
+            }
         }
 
-        containerHost.assert(initState)
-        // that still works - do we want it to?
-//        assertEquals(true, scope.isActive)
+        assertEquals(true, scope.isActive)
     }
 }
