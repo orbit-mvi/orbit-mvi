@@ -26,48 +26,38 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.flowWithLifecycle
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.arkivanov.mvikotlin.core.lifecycle.asMviLifecycle
-import com.arkivanov.mvikotlin.keepers.statekeeper.get
-import com.arkivanov.mvikotlin.keepers.statekeeper.getParcelableStateKeeperRegistry
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.GroupieViewHolder
-import org.koin.android.ext.android.inject
-import org.koin.core.parameter.parametersOf
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.orbitmvi.orbit.sample.posts.R
 import org.orbitmvi.orbit.sample.posts.app.common.NavigationEvent
 import org.orbitmvi.orbit.sample.posts.app.common.SeparatorDecoration
 import org.orbitmvi.orbit.sample.posts.app.common.viewBinding
 import org.orbitmvi.orbit.sample.posts.app.features.postlist.viewmodel.OpenPostNavigationEvent
-import org.orbitmvi.orbit.sample.posts.app.features.postlist.viewmodel.PostListController
 import org.orbitmvi.orbit.sample.posts.app.features.postlist.viewmodel.PostListState
-import org.orbitmvi.orbit.sample.posts.app.features.postlist.viewmodel.PostListView
+import org.orbitmvi.orbit.sample.posts.app.features.postlist.viewmodel.PostListViewModel
 import org.orbitmvi.orbit.sample.posts.databinding.PostListFragmentBinding
 
-class PostListFragment : Fragment(R.layout.post_list_fragment), PostListView {
+class PostListFragment : Fragment(R.layout.post_list_fragment) {
 
-    private val controller by inject<PostListController> {
-        @Suppress("EXPERIMENTAL_API_USAGE")
-        (parametersOf(lifecycle.asMviLifecycle(), getParcelableStateKeeperRegistry().get()))
-    }
+    private val viewModel: PostListViewModel by viewModel()
 
     private val binding by viewBinding<PostListFragmentBinding>()
-
-    private val adapter = GroupAdapter<GroupieViewHolder>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+
         return inflater.inflate(R.layout.post_list_fragment, container, false)
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        controller.onViewCreated(this)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -83,21 +73,37 @@ class PostListFragment : Fragment(R.layout.post_list_fragment), PostListView {
             SeparatorDecoration(requireActivity(), R.dimen.separator_margin_start_icon, R.dimen.separator_margin_end)
         )
 
+        val adapter = GroupAdapter<GroupieViewHolder>()
+
         binding.content.adapter = adapter
+
+        lifecycleScope.launchWhenCreated {
+            viewModel.container.stateFlow.collect {
+                reduce(adapter, it)
+            }
+        }
+        lifecycleScope.launch {
+            viewModel.container.sideEffectFlow.flowWithLifecycle(lifecycle, Lifecycle.State.STARTED).collect {
+                sideEffect(it)
+            }
+        }
     }
 
-    override fun sideEffect(navigationEvent: NavigationEvent) {
-        when (navigationEvent) {
+    private fun sideEffect(it: NavigationEvent) {
+        when (it) {
             is OpenPostNavigationEvent ->
                 findNavController().navigate(
                     PostListFragmentDirections.actionListFragmentToDetailFragment(
-                        navigationEvent.post
+                        it.post
                     )
                 )
         }
     }
 
-    override fun render(model: PostListState) {
-        adapter.update(model.overviews.map { PostListItem(it, controller) })
+    private fun reduce(
+        adapter: GroupAdapter<GroupieViewHolder>,
+        it: PostListState
+    ) {
+        adapter.update(it.overviews.map { PostListItem(it, viewModel) })
     }
 }

@@ -35,7 +35,7 @@ android {
     defaultConfig {
         minSdkVersion(21)
         targetSdkVersion(30)
-        applicationId = "org.orbitmvi.orbit.sample.mvikotlinposts"
+        applicationId = "org.orbitmvi.orbit.sample.posts"
         versionCode = 1
         versionName = "1.0"
     }
@@ -51,12 +51,8 @@ android {
 
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
-
-    implementation("com.arkivanov.mvikotlin:mvikotlin:2.0.4")
-    implementation("com.arkivanov.mvikotlin:mvikotlin-main:2.0.4")
-    implementation("com.arkivanov.mvikotlin:mvikotlin-extensions-coroutines:2.0.4")
-    implementation("com.arkivanov.mvikotlin:keepers:2.0.4")
-    implementation("com.arkivanov.mvikotlin:rx:2.0.4")
+    implementation(project(":orbit-core"))
+    implementation(project(":orbit-viewmodel"))
 
     // UI
     implementation("androidx.constraintlayout:constraintlayout:2.0.4")
