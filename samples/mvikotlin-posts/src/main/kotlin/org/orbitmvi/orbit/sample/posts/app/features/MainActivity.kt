@@ -18,22 +18,29 @@
  * See: https://github.com/orbit-mvi/orbit-mvi/compare/c5b8b3f2b83b5972ba2ad98f73f75086a89653d3...main
  */
 
-include(
-    "orbit-core",
-    "orbit-test",
-    "orbit-viewmodel",
-    "samples:orbit-calculator",
-    "samples:orbit-posts",
-    "samples:mvikotlin-posts",
-    "samples:orbit-stocklist",
-    "test-common"
-)
+package org.orbitmvi.orbit.sample.posts.app.features
 
-fun renameBuildFileToModuleName(project: ProjectDescriptor) {
-    project.buildFileName = "${project.name}_build.gradle.kts"
-    project.children.forEach { child -> renameBuildFileToModuleName(child) }
+import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
+import androidx.navigation.findNavController
+import androidx.navigation.ui.setupActionBarWithNavController
+import org.orbitmvi.orbit.sample.posts.R
+
+class MainActivity : AppCompatActivity() {
+
+    private val navController by lazy { findNavController(R.id.nav_host_fragment) }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.main_activity)
+
+        findViewById<Toolbar>(R.id.toolbar).apply {
+            setSupportActionBar(this)
+        }
+
+        setupActionBarWithNavController(navController)
+    }
+
+    override fun onSupportNavigateUp() = navController.navigateUp()
 }
-// Will rename every module's build.gradle file to use its name instead of `build`.
-// E.g. `app/build.gradle` will become `app/app.gradle`
-// The root build.gradle file will remain untouched
-rootProject.children.forEach { subproject -> renameBuildFileToModuleName(subproject) }

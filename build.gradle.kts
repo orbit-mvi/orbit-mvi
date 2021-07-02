@@ -83,6 +83,7 @@ allprojects {
     configurations.all {
         resolutionStrategy {
             force("org.jetbrains.kotlin:kotlin-stdlib:${Versions.kotlin}")
+            force("org.jetbrains.kotlin:kotlin-stdlib-common:${Versions.kotlin}")
             force("org.jetbrains.kotlin:kotlin-stdlib-jdk8:${Versions.kotlin}")
             force("org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versions.coroutines}")
         }
