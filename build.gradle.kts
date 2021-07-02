@@ -78,12 +78,13 @@ tasks.withType<DependencyUpdatesTask> {
     }
 }
 
-// Force Kotlin versions until we upgrade Orbit to 1.5.x to fix transitive dependencies
+// Force Kotlin versions to ensure transitive dependencies don't break our build
 allprojects {
     configurations.all {
         resolutionStrategy {
             force("org.jetbrains.kotlin:kotlin-stdlib:${Versions.kotlin}")
             force("org.jetbrains.kotlin:kotlin-stdlib-jdk8:${Versions.kotlin}")
+            force("org.jetbrains.kotlin:kotlin-reflect:${Versions.kotlin}")
             force("org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versions.coroutines}")
         }
     }

@@ -68,8 +68,6 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.7.1")
     testImplementation("org.junit.jupiter:junit-jupiter-params:5.7.1")
     testImplementation("junit:junit:4.13.2")
-    testImplementation("com.appmattus.fixture:fixture:1.0.0") {
-        exclude(module = "kotlin-reflect")
-    }
+    testImplementation("com.appmattus.fixture:fixture:1.0.0")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.4.2")
 }
