@@ -97,7 +97,7 @@ internal class ContainerExceptionHandlerTest {
     }
 
     @Test
-    fun `with exception handler test() doesn't break`() {
+    fun `with exception handler test() doesn't break`() = runBlocking {
         val initState = Random.nextInt()
         val exceptions = mutableListOf<Throwable>()
         val exceptionHandler = CoroutineExceptionHandler { _, throwable -> exceptions += throwable }
@@ -134,7 +134,7 @@ internal class ContainerExceptionHandlerTest {
     }
 
     @Test
-    fun `without exception handler test() does break`() {
+    fun `without exception handler test() does break`() = runBlocking {
         val initState = Random.nextInt()
         val containerHost = object : ContainerHost<Int, Nothing> {
             override val container = scope.container<Int, Nothing>(

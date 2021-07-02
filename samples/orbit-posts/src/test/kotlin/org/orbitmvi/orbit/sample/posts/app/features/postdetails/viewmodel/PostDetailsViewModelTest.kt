@@ -43,7 +43,7 @@ class PostDetailsViewModelTest {
     private val repository = mock<PostRepository>()
 
     @Test
-    fun `loads post details from repository if no details present`() {
+    fun `loads post details from repository if no details present`() = runBlocking {
         val overview = fixture<PostOverview>()
         val details = fixture<PostDetail> {
             property(PostDetail::id) { overview.id }
@@ -70,7 +70,7 @@ class PostDetailsViewModelTest {
     }
 
     @Test
-    fun `does not load post details from repository if details present`() {
+    fun `does not load post details from repository if details present`() = runBlocking {
         val overview = fixture<PostOverview>()
         val details = fixture<PostDetail> {
             property(PostDetail::id) { overview.id }
@@ -91,7 +91,7 @@ class PostDetailsViewModelTest {
     }
 
     @Test
-    fun `no details available on failure`() {
+    fun `no details available on failure`() = runBlocking {
         val overview = fixture<PostOverview>()
         val exception = IOException()
         val initialState = PostDetailState.NoDetailsAvailable(overview)

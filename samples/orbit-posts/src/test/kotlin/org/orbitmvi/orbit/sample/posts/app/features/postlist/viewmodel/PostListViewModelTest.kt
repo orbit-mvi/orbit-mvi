@@ -39,7 +39,7 @@ class PostListViewModelTest {
     private val repository = mock<PostRepository>()
 
     @Test
-    fun `loads post overviews from repository if no overviews present`() {
+    fun `loads post overviews from repository if no overviews present`() = runBlocking {
         val overviews = fixture<List<PostOverview>>()
         val initialState = PostListState()
 
@@ -63,7 +63,7 @@ class PostListViewModelTest {
     }
 
     @Test
-    fun `does not load post overviews from repository if already populated`() {
+    fun `does not load post overviews from repository if already populated`() = runBlocking {
         val overviews = fixture<List<PostOverview>>()
         val initialState = PostListState(overviews)
 

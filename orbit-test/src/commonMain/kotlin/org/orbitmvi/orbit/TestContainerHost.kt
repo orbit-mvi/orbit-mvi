@@ -73,20 +73,18 @@ public sealed class TestContainerHost<STATE : Any, SIDE_EFFECT : Any, T : Contai
 
 public class SuspendingTestContainerHost<STATE : Any, SIDE_EFFECT : Any, T : ContainerHost<STATE, SIDE_EFFECT>>(
     private val actual: T,
-    initialState: STATE,
+    private val initialState: STATE,
     private val isolateFlow: Boolean,
-    runOnCreate: Boolean
+    private val runOnCreate: Boolean
 ) : TestContainerHost<STATE, SIDE_EFFECT, T>(actual) {
 
-    init {
+    internal suspend fun runOnCreateIfNeeded() {
         if (runOnCreate) {
             actual.container.findOnCreate().invoke(initialState)
-            runBlocking {
-                // In case onCreate launches an intent
-                runCatching {
-                    // Ignore exception, this will happen if onCreate does not launch an intent
-                    actual.suspendingIntent(false) {}
-                }
+            // In case onCreate launches an intent
+            runCatching {
+            // Ignore exception, this will happen if onCreate does not launch an intent
+                actual.suspendingIntent(false) {}
             }
         }
     }

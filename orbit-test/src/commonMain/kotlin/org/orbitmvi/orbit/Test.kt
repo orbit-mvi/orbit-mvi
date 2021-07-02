@@ -39,7 +39,7 @@ import org.orbitmvi.orbit.internal.TestingStrategy
  * @param settings Replaces the [Container.Settings] for this test
  * @return A suspending test wrapper around [ContainerHost].
  */
-public fun <STATE : Any, SIDE_EFFECT : Any, T : ContainerHost<STATE, SIDE_EFFECT>> T.test(
+public suspend fun <STATE : Any, SIDE_EFFECT : Any, T : ContainerHost<STATE, SIDE_EFFECT>> T.test(
     initialState: STATE,
     isolateFlow: Boolean = true,
     runOnCreate: Boolean = false,
@@ -50,7 +50,7 @@ public fun <STATE : Any, SIDE_EFFECT : Any, T : ContainerHost<STATE, SIDE_EFFECT
         strategy = TestingStrategy.Suspending(settings)
     )
 
-    return SuspendingTestContainerHost(this, initialState, isolateFlow, runOnCreate)
+    return SuspendingTestContainerHost(this, initialState, isolateFlow, runOnCreate).apply { runOnCreateIfNeeded() }
 }
 
 /**

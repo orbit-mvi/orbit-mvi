@@ -44,25 +44,29 @@ internal class SuspendingStrategyDispatchTest {
 
     @Test
     fun `suspending test maintains test dispatcher through runBlockingTest`() = runBlockingTest {
-        val testSubject = StateTestMiddleware().test(initialState)
-
-        val action = Random.nextInt()
-
         val executionTime = measureTimeMillis {
-            testSubject.testIntent { somethingInBackground(action) }
-        }
+            val testSubject = StateTestMiddleware().test(initialState, runOnCreate = true)
 
-        testSubject.assert(initialState) {
-            states(
-                { copy(count = action) }
-            )
+            val action = Random.nextInt()
+
+            testSubject.testIntent { somethingInBackground(action) }
+
+            testSubject.assert(initialState) {
+                states(
+                    { copy(count = action) }
+                )
+            }
         }
         assertTrue { executionTime < 1000 }
     }
 
     private inner class StateTestMiddleware :
         ContainerHost<State, Nothing> {
-        override val container = scope.container<State, Nothing>(initialState)
+        override val container = scope.container<State, Nothing>(initialState) {
+            intent {
+                delay(5000)
+            }
+        }
 
         fun somethingInBackground(action: Int): Unit = intent {
             delay(5000)
