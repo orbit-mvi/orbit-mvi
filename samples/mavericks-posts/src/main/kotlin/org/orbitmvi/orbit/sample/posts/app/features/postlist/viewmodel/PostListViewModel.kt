@@ -20,21 +20,56 @@
 
 package org.orbitmvi.orbit.sample.posts.app.features.postlist.viewmodel
 
-import android.util.Log
-import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
-import kotlinx.coroutines.CoroutineExceptionHandler
-import org.orbitmvi.orbit.Container
-import org.orbitmvi.orbit.ContainerHost
+import com.airbnb.mvrx.MavericksViewModel
+import com.airbnb.mvrx.MavericksViewModelFactory
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.channels.sendBlocking
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.receiveAsFlow
 import org.orbitmvi.orbit.sample.posts.app.common.NavigationEvent
+import org.orbitmvi.orbit.sample.posts.app.di.AssistedViewModelFactory
+import org.orbitmvi.orbit.sample.posts.app.di.hiltMavericksViewModelFactory
 import org.orbitmvi.orbit.sample.posts.domain.repositories.PostOverview
 import org.orbitmvi.orbit.sample.posts.domain.repositories.PostRepository
-import org.orbitmvi.orbit.syntax.simple.intent
-import org.orbitmvi.orbit.syntax.simple.postSideEffect
-import org.orbitmvi.orbit.syntax.simple.reduce
-import org.orbitmvi.orbit.viewmodel.container
 
-class PostListViewModel(
+class PostListViewModel @AssistedInject constructor(
+    @Assisted initialState: PostListState,
+    // and other dependencies
+    private val postRepository: PostRepository
+) : MavericksViewModel<PostListState>(initialState) {
+
+    private val _sideEffect = Channel<NavigationEvent>(Channel.BUFFERED)
+    val sideEffect: Flow<NavigationEvent> = _sideEffect.receiveAsFlow()
+
+    init {
+        loadOverviews()
+    }
+
+    private fun loadOverviews() = withState { state ->
+        suspend {
+            postRepository.getOverviews()
+        }.execute { async ->
+            async()?.let { copy(overviews = it) } ?: state
+        }
+    }
+
+    @Suppress("UNUSED_PARAMETER")
+    fun onPostClicked(post: PostOverview) {
+        _sideEffect.sendBlocking(OpenPostNavigationEvent(post))
+    }
+
+    @AssistedFactory
+    interface Factory : AssistedViewModelFactory<PostListViewModel, PostListState> {
+        override fun create(state: PostListState): PostListViewModel
+    }
+
+    companion object : MavericksViewModelFactory<PostListViewModel, PostListState> by hiltMavericksViewModelFactory()
+}
+
+/*class PostListViewModel(
     savedStateHandle: SavedStateHandle,
     private val postRepository: PostRepository,
     exceptionHandler: CoroutineExceptionHandler = CoroutineExceptionHandler { _, throwable ->
@@ -68,3 +103,4 @@ class PostListViewModel(
         throw IllegalStateException("Catch me!")
     }
 }
+*/

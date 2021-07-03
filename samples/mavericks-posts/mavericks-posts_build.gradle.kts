@@ -23,6 +23,8 @@ plugins {
     kotlin("android")
     id("kotlin-parcelize")
     id("androidx.navigation.safeargs.kotlin")
+    id("dagger.hilt.android.plugin")
+    kotlin("kapt")
 }
 
 android {
@@ -35,7 +37,7 @@ android {
     defaultConfig {
         minSdkVersion(21)
         targetSdkVersion(30)
-        applicationId = "org.orbitmvi.orbit.sample.posts"
+        applicationId = "org.orbitmvi.orbit.sample.mavericksposts"
         versionCode = 1
         versionName = "1.0"
     }
@@ -51,8 +53,7 @@ android {
 
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
-    implementation(project(":orbit-core"))
-    implementation(project(":orbit-viewmodel"))
+    implementation("com.airbnb.android:mavericks:2.3.0")
 
     // UI
     implementation("androidx.constraintlayout:constraintlayout:2.0.4")
@@ -74,7 +75,8 @@ dependencies {
     implementation(kotlin("reflect"))
 
     // Dependency Injection
-    implementation("org.koin:koin-androidx-viewmodel:2.2.1")
+    implementation("com.google.dagger:hilt-android:2.37")
+    kapt("com.google.dagger:hilt-android-compiler:2.37")
 
     // Testing
     testImplementation(project(":orbit-test"))

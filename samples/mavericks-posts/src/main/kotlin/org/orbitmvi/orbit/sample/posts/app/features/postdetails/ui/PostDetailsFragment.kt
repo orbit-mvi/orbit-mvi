@@ -27,18 +27,18 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.airbnb.mvrx.MavericksView
+import com.airbnb.mvrx.fragmentViewModel
+import com.airbnb.mvrx.withState
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.GroupieViewHolder
-import kotlinx.coroutines.flow.collect
-import org.koin.androidx.viewmodel.ext.android.viewModel
-import org.koin.core.parameter.parametersOf
+import dagger.hilt.android.AndroidEntryPoint
 import org.orbitmvi.orbit.sample.posts.R
 import org.orbitmvi.orbit.sample.posts.app.common.SeparatorDecoration
 import org.orbitmvi.orbit.sample.posts.app.common.viewBinding
@@ -46,10 +46,13 @@ import org.orbitmvi.orbit.sample.posts.app.features.postdetails.viewmodel.PostDe
 import org.orbitmvi.orbit.sample.posts.app.features.postdetails.viewmodel.PostDetailsViewModel
 import org.orbitmvi.orbit.sample.posts.databinding.PostDetailsFragmentBinding
 
-class PostDetailsFragment : Fragment(R.layout.post_details_fragment) {
+@AndroidEntryPoint
+class PostDetailsFragment : Fragment(R.layout.post_details_fragment), MavericksView {
 
+    //@Suppress("unused")
     private val args: PostDetailsFragmentArgs by navArgs()
-    private val viewModel: PostDetailsViewModel by viewModel { parametersOf(args.overview) }
+
+    private val viewModel: PostDetailsViewModel by fragmentViewModel()// { parametersOf(args.overview) }
     private var initialised: Boolean = false
     private val adapter = GroupAdapter<GroupieViewHolder>()
 
@@ -57,6 +60,8 @@ class PostDetailsFragment : Fragment(R.layout.post_details_fragment) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        viewModel.loadDetails(args.overview)
 
         binding.postCommentsList.layoutManager = LinearLayoutManager(activity)
         ViewCompat.setNestedScrollingEnabled(binding.postCommentsList, false)
@@ -70,12 +75,9 @@ class PostDetailsFragment : Fragment(R.layout.post_details_fragment) {
         )
 
         binding.postCommentsList.adapter = adapter
-
-        lifecycleScope.launchWhenCreated {
-            viewModel.container.stateFlow.collect { render(it) }
-        }
     }
 
+    @Suppress("unused")
     private fun render(state: PostDetailState) {
         if (!initialised) {
             initialised = true
@@ -102,7 +104,7 @@ class PostDetailsFragment : Fragment(R.layout.post_details_fragment) {
             binding.postTitle.text = state.postOverview.title
         }
 
-        if (state is PostDetailState.Details) {
+        if (state.post != null) {
             binding.postBody.text = state.post.body
 
             val comments = state.post.comments.size
@@ -115,4 +117,6 @@ class PostDetailsFragment : Fragment(R.layout.post_details_fragment) {
             adapter.update(state.post.comments.map(::PostCommentItem))
         }
     }
+
+    override fun invalidate() = withState(viewModel) { state -> render(state) }
 }

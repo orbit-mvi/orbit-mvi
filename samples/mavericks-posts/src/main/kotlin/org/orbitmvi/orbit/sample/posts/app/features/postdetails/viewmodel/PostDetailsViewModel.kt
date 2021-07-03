@@ -20,36 +20,40 @@
 
 package org.orbitmvi.orbit.sample.posts.app.features.postdetails.viewmodel
 
-import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
-import org.orbitmvi.orbit.ContainerHost
+import com.airbnb.mvrx.MavericksViewModel
+import com.airbnb.mvrx.MavericksViewModelFactory
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
+import org.orbitmvi.orbit.sample.posts.app.di.AssistedViewModelFactory
+import org.orbitmvi.orbit.sample.posts.app.di.hiltMavericksViewModelFactory
 import org.orbitmvi.orbit.sample.posts.domain.repositories.PostOverview
 import org.orbitmvi.orbit.sample.posts.domain.repositories.PostRepository
 import org.orbitmvi.orbit.sample.posts.domain.repositories.Status
-import org.orbitmvi.orbit.syntax.simple.intent
-import org.orbitmvi.orbit.syntax.simple.reduce
-import org.orbitmvi.orbit.viewmodel.container
 
-class PostDetailsViewModel(
-    savedStateHandle: SavedStateHandle,
-    private val postRepository: PostRepository,
-    private val postOverview: PostOverview
-) : ViewModel(), ContainerHost<PostDetailState, Nothing> {
+@Suppress("unused", "UNUSED_PARAMETER")
+class PostDetailsViewModel @AssistedInject constructor(
+    @Assisted initialState: PostDetailState,
+    private val postRepository: PostRepository
+) : MavericksViewModel<PostDetailState>(initialState) {
 
-    override val container = container<PostDetailState, Nothing>(PostDetailState.NoDetailsAvailable(postOverview), savedStateHandle) {
-        if (it !is PostDetailState.Details) {
-            loadDetails()
-        }
-    }
+    fun loadDetails(postOverview: PostOverview) {
+        setState { copy(postOverview = postOverview) }
 
-    private fun loadDetails() = intent {
-        val status = postRepository.getDetail(postOverview.id)
-
-        reduce {
-            when (status) {
-                is Status.Success -> PostDetailState.Details(state.postOverview, status.data)
-                is Status.Failure -> PostDetailState.NoDetailsAvailable(state.postOverview)
+        suspend {
+            postRepository.getDetail(postOverview.id)
+        }.execute { async ->
+            when (val result = async()) {
+                is Status.Success -> copy(post = result.data)
+                is Status.Failure, null -> copy(post = null)
             }
         }
     }
+
+    @AssistedFactory
+    interface Factory : AssistedViewModelFactory<PostDetailsViewModel, PostDetailState> {
+        override fun create(state: PostDetailState): PostDetailsViewModel
+    }
+
+    companion object : MavericksViewModelFactory<PostDetailsViewModel, PostDetailState> by hiltMavericksViewModelFactory()
 }

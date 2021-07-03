@@ -20,14 +20,15 @@
 
 package org.orbitmvi.orbit.sample.posts.data.posts.network
 
+import java.io.IOException
+import javax.inject.Inject
 import org.orbitmvi.orbit.sample.posts.data.posts.model.CommentData
 import org.orbitmvi.orbit.sample.posts.data.posts.model.PostData
 import org.orbitmvi.orbit.sample.posts.data.posts.model.UserData
 import org.orbitmvi.orbit.sample.posts.domain.repositories.Status
 import retrofit2.HttpException
-import java.io.IOException
 
-class PostNetworkDataSource(private val typicodeService: TypicodeService) {
+class PostNetworkDataSource @Inject constructor(private val typicodeService: TypicodeService) {
     suspend fun getPost(id: Int): Status<PostData> {
         return try {
             Status.Success(typicodeService.post(id))

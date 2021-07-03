@@ -21,19 +21,16 @@
 package org.orbitmvi.orbit.sample.posts.app
 
 import android.app.Application
-import org.orbitmvi.orbit.sample.posts.app.di.module
-import org.koin.android.ext.koin.androidContext
-import org.koin.core.context.startKoin
+import com.airbnb.mvrx.Mavericks
+import dagger.hilt.android.HiltAndroidApp
 
 @Suppress("unused")
+@HiltAndroidApp
 class PostsApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
 
-        startKoin {
-            androidContext(this@PostsApplication)
-            modules(listOf(module()))
-        }
+        Mavericks.initialize(this)
     }
 }

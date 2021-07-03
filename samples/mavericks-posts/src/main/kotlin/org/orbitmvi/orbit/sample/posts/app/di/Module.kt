@@ -23,6 +23,46 @@ package org.orbitmvi.orbit.sample.posts.app.di
 import com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
+import dagger.Binds
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
+import org.orbitmvi.orbit.sample.posts.data.posts.PostDataRepository
+import org.orbitmvi.orbit.sample.posts.data.posts.network.TypicodeService
+import org.orbitmvi.orbit.sample.posts.domain.repositories.PostRepository
+import retrofit2.Retrofit
+import retrofit2.converter.jackson.JacksonConverterFactory
+
+@Module
+@InstallIn(SingletonComponent::class)
+object Module {
+
+    @Provides
+    fun provideObjectMapper(): ObjectMapper = ObjectMapper().registerKotlinModule().configure(FAIL_ON_UNKNOWN_PROPERTIES, false)
+
+    @Provides
+    fun provideRetrofit(objectMapper: ObjectMapper): Retrofit = Retrofit.Builder()
+        .addConverterFactory(JacksonConverterFactory.create(objectMapper))
+        .baseUrl("https://jsonplaceholder.typicode.com").build()
+
+    @Provides
+    fun provideTypicodeService(retrofit: Retrofit): TypicodeService = retrofit.create(TypicodeService::class.java)
+}
+
+@Module
+@InstallIn(SingletonComponent::class)
+abstract class BindModule {
+
+    @Binds
+    abstract fun bindPostDataRepository(
+        postDataRepository: PostDataRepository
+    ): PostRepository
+}
+
+/*import com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 import org.orbitmvi.orbit.sample.posts.app.features.postdetails.viewmodel.PostDetailsViewModel
@@ -41,21 +81,7 @@ fun module() = module {
 
     viewModel { (postOverview: PostOverview) -> PostDetailsViewModel(get(), get(), postOverview) }
 
-    single {
-        ObjectMapper().registerKotlinModule().configure(FAIL_ON_UNKNOWN_PROPERTIES, false)
-    }
-
-    single {
-        Retrofit.Builder()
-            .addConverterFactory(JacksonConverterFactory.create(get()))
-            .baseUrl("https://jsonplaceholder.typicode.com").build()
-    }
-
-    single { get<Retrofit>().create(TypicodeService::class.java) }
-
-    single { PostNetworkDataSource(get()) }
-
-    single { AvatarUrlGenerator() }
 
     single<PostRepository> { PostDataRepository(get(), get()) }
 }
+*/

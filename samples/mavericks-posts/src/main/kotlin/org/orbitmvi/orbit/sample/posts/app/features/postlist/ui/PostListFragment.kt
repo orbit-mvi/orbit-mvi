@@ -31,37 +31,41 @@ import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.airbnb.mvrx.MavericksView
+import com.airbnb.mvrx.fragmentViewModel
+import com.airbnb.mvrx.withState
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.GroupieViewHolder
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.orbitmvi.orbit.sample.posts.R
 import org.orbitmvi.orbit.sample.posts.app.common.NavigationEvent
 import org.orbitmvi.orbit.sample.posts.app.common.SeparatorDecoration
 import org.orbitmvi.orbit.sample.posts.app.common.viewBinding
 import org.orbitmvi.orbit.sample.posts.app.features.postlist.viewmodel.OpenPostNavigationEvent
-import org.orbitmvi.orbit.sample.posts.app.features.postlist.viewmodel.PostListState
 import org.orbitmvi.orbit.sample.posts.app.features.postlist.viewmodel.PostListViewModel
 import org.orbitmvi.orbit.sample.posts.databinding.PostListFragmentBinding
 
-class PostListFragment : Fragment(R.layout.post_list_fragment) {
+@AndroidEntryPoint
+class PostListFragment : Fragment(R.layout.post_list_fragment), MavericksView {
 
-    private val viewModel: PostListViewModel by viewModel()
+    private val viewModel: PostListViewModel by fragmentViewModel()
 
     private val binding by viewBinding<PostListFragmentBinding>()
+
+    private val adapter = GroupAdapter<GroupieViewHolder>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-
         return inflater.inflate(R.layout.post_list_fragment, container, false)
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         (activity as AppCompatActivity?)?.supportActionBar?.apply {
             setTitle(R.string.app_name)
@@ -73,22 +77,20 @@ class PostListFragment : Fragment(R.layout.post_list_fragment) {
             SeparatorDecoration(requireActivity(), R.dimen.separator_margin_start_icon, R.dimen.separator_margin_end)
         )
 
-        val adapter = GroupAdapter<GroupieViewHolder>()
-
         binding.content.adapter = adapter
 
-        lifecycleScope.launchWhenCreated {
-            viewModel.container.stateFlow.collect {
-                reduce(adapter, it)
-            }
-        }
         lifecycleScope.launch {
-            viewModel.container.sideEffectFlow.flowWithLifecycle(lifecycle, Lifecycle.State.STARTED).collect {
+            viewModel.sideEffect.flowWithLifecycle(lifecycle, Lifecycle.State.STARTED).collect {
                 sideEffect(it)
             }
         }
     }
 
+    override fun invalidate() = withState(viewModel) { state ->
+        adapter.update(state.overviews.map { PostListItem(it, viewModel) })
+    }
+
+    @Suppress("unused")
     private fun sideEffect(it: NavigationEvent) {
         when (it) {
             is OpenPostNavigationEvent ->
@@ -98,12 +100,5 @@ class PostListFragment : Fragment(R.layout.post_list_fragment) {
                     )
                 )
         }
-    }
-
-    private fun reduce(
-        adapter: GroupAdapter<GroupieViewHolder>,
-        it: PostListState
-    ) {
-        adapter.update(it.overviews.map { PostListItem(it, viewModel) })
     }
 }

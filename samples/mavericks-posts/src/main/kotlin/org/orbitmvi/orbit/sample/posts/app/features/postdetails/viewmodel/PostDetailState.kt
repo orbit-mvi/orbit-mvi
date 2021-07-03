@@ -21,17 +21,13 @@
 package org.orbitmvi.orbit.sample.posts.app.features.postdetails.viewmodel
 
 import android.os.Parcelable
+import com.airbnb.mvrx.MavericksState
+import kotlinx.parcelize.Parcelize
 import org.orbitmvi.orbit.sample.posts.domain.repositories.PostDetail
 import org.orbitmvi.orbit.sample.posts.domain.repositories.PostOverview
-import kotlinx.parcelize.Parcelize
 
-sealed class PostDetailState : Parcelable {
-
-    abstract val postOverview: PostOverview
-
-    @Parcelize
-    data class Details(override val postOverview: PostOverview, val post: PostDetail) : PostDetailState()
-
-    @Parcelize
-    data class NoDetailsAvailable(override val postOverview: PostOverview) : PostDetailState()
-}
+@Parcelize
+data class PostDetailState(
+    val postOverview: PostOverview = PostOverview(-1, "", "", ""),
+    val post: PostDetail? = null
+) : Parcelable, MavericksState

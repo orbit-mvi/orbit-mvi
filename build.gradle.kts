@@ -37,6 +37,7 @@ buildscript {
         classpath(PluginDependencies.kotlin)
         classpath(PluginDependencies.safeargs)
         classpath(PluginDependencies.atomicfu)
+        classpath("com.google.dagger:hilt-android-gradle-plugin:2.37")
     }
 }
 

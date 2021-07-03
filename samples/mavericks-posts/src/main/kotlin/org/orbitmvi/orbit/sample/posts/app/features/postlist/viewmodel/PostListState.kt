@@ -21,10 +21,11 @@
 package org.orbitmvi.orbit.sample.posts.app.features.postlist.viewmodel
 
 import android.os.Parcelable
-import org.orbitmvi.orbit.sample.posts.domain.repositories.PostOverview
+import com.airbnb.mvrx.MavericksState
 import kotlinx.parcelize.Parcelize
+import org.orbitmvi.orbit.sample.posts.domain.repositories.PostOverview
 
 @Parcelize
 data class PostListState(
     val overviews: List<PostOverview> = emptyList()
-) : Parcelable
+) : Parcelable, MavericksState

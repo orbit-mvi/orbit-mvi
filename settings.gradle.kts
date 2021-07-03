@@ -22,9 +22,10 @@ include(
     "orbit-core",
     "orbit-test",
     "orbit-viewmodel",
+    "samples:mavericks-posts",
+    "samples:mvikotlin-posts",
     "samples:orbit-calculator",
     "samples:orbit-posts",
-    "samples:mvikotlin-posts",
     "samples:orbit-stocklist",
     "test-common"
 )

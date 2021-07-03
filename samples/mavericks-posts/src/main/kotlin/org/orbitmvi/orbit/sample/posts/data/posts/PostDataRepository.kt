@@ -20,6 +20,7 @@
 
 package org.orbitmvi.orbit.sample.posts.data.posts
 
+import javax.inject.Inject
 import org.orbitmvi.orbit.sample.posts.data.posts.network.AvatarUrlGenerator
 import org.orbitmvi.orbit.sample.posts.data.posts.network.PostNetworkDataSource
 import org.orbitmvi.orbit.sample.posts.domain.repositories.PostComment
@@ -30,7 +31,7 @@ import org.orbitmvi.orbit.sample.posts.domain.repositories.Status
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 
-class PostDataRepository(
+class PostDataRepository @Inject constructor(
     private val networkDataSource: PostNetworkDataSource,
     private val avatarUrlGenerator: AvatarUrlGenerator
 ) : PostRepository {

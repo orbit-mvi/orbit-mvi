@@ -20,6 +20,8 @@
 
 package org.orbitmvi.orbit.sample.posts.data.posts.network
 
-class AvatarUrlGenerator {
+import javax.inject.Inject
+
+class AvatarUrlGenerator @Inject constructor() {
     fun generateUrl(email: String) = "https://robohash.org/$email?set=set1"
 }
