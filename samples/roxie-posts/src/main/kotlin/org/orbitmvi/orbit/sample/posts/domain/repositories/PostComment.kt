@@ -18,24 +18,15 @@
  * See: https://github.com/orbit-mvi/orbit-mvi/compare/c5b8b3f2b83b5972ba2ad98f73f75086a89653d3...main
  */
 
-include(
-    "orbit-core",
-    "orbit-test",
-    "orbit-viewmodel",
-    "samples:mavericks-posts",
-    "samples:mvikotlin-posts",
-    "samples:orbit-calculator",
-    "samples:orbit-posts",
-    "samples:orbit-stocklist",
-    "samples:roxie-posts",
-    "test-common"
-)
+package org.orbitmvi.orbit.sample.posts.domain.repositories
 
-fun renameBuildFileToModuleName(project: ProjectDescriptor) {
-    project.buildFileName = "${project.name}_build.gradle.kts"
-    project.children.forEach { child -> renameBuildFileToModuleName(child) }
-}
-// Will rename every module's build.gradle file to use its name instead of `build`.
-// E.g. `app/build.gradle` will become `app/app.gradle`
-// The root build.gradle file will remain untouched
-rootProject.children.forEach { subproject -> renameBuildFileToModuleName(subproject) }
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+
+@Parcelize
+data class PostComment(
+    val id: Int,
+    val name: String,
+    val email: String,
+    val body: String
+) : Parcelable
