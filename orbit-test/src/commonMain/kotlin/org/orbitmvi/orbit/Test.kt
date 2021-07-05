@@ -35,14 +35,12 @@ import org.orbitmvi.orbit.internal.TestingStrategy
  *
  * @param initialState The state to initialize the test container with
  * @param isolateFlow Whether the intent should be isolated
- * @param runOnCreate Whether to run the container's create lambda
  * @param settings Replaces the [Container.Settings] for this test
  * @return A suspending test wrapper around [ContainerHost].
  */
-public suspend fun <STATE : Any, SIDE_EFFECT : Any, T : ContainerHost<STATE, SIDE_EFFECT>> T.test(
+public fun <STATE : Any, SIDE_EFFECT : Any, T : ContainerHost<STATE, SIDE_EFFECT>> T.test(
     initialState: STATE,
     isolateFlow: Boolean = true,
-    runOnCreate: Boolean = false,
     settings: Container.Settings = container.settings
 ): SuspendingTestContainerHost<STATE, SIDE_EFFECT, T> {
     container.findTestContainer().test(
@@ -50,7 +48,7 @@ public suspend fun <STATE : Any, SIDE_EFFECT : Any, T : ContainerHost<STATE, SID
         strategy = TestingStrategy.Suspending(settings)
     )
 
-    return SuspendingTestContainerHost(this, initialState, isolateFlow, runOnCreate).apply { runOnCreateIfNeeded() }
+    return SuspendingTestContainerHost(this, initialState, isolateFlow)
 }
 
 /**
@@ -58,13 +56,11 @@ public suspend fun <STATE : Any, SIDE_EFFECT : Any, T : ContainerHost<STATE, SID
  *  some basic test settings.
  *
  * @param initialState The state to initialize the test container with
- * @param runOnCreate Whether to run the container's create lambda
  * @param settings Replaces the [Container.Settings] for this test
  * @return A live test wrapper around [ContainerHost].
  */
 public fun <STATE : Any, SIDE_EFFECT : Any, T : ContainerHost<STATE, SIDE_EFFECT>> T.liveTest(
     initialState: STATE,
-    runOnCreate: Boolean = false,
     settings: Container.Settings = container.settings.copy(intentDispatcher = Dispatchers.Unconfined)
 ): RegularTestContainerHost<STATE, SIDE_EFFECT, T> {
     container.findTestContainer().test(
@@ -72,7 +68,7 @@ public fun <STATE : Any, SIDE_EFFECT : Any, T : ContainerHost<STATE, SIDE_EFFECT
         strategy = TestingStrategy.Live(settings)
     )
 
-    return RegularTestContainerHost(this, initialState, runOnCreate)
+    return RegularTestContainerHost(this, initialState)
 }
 
 internal fun <STATE : Any, SIDE_EFFECT : Any> Container<STATE, SIDE_EFFECT>.findTestContainer(): TestContainerDecorator<STATE, SIDE_EFFECT> {

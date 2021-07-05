@@ -50,14 +50,17 @@ particular testing need.
 
 First we need to put our
 [ContainerHost](../orbit-core/src/commonMain/kotlin/org/orbitmvi/orbit/ContainerHost.kt)
-into test mode and call our intent (method) under test. Let's assume we've
-made a `ViewModel` the host.
+into test mode and call our intent (method) under test.
+Note: to run `onCreate` property, we have to
+invoke `runOnCreate` once before any `testIntent` call.
+Let's assume we've made a `ViewModel` the host.
 
 ```kotlin
 data class State(val count: Int = 0)
 
 val testSubject = ExampleViewModel().test(State())
 
+testSubject.runOnCreate()
 testSubject.testIntent { countToFour() }
 ```
 

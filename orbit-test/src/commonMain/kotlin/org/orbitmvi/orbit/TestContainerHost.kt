@@ -18,6 +18,8 @@ package org.orbitmvi.orbit
 
 import kotlin.coroutines.EmptyCoroutineContext
 import kotlin.test.assertEquals
+import kotlinx.atomicfu.atomic
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.joinAll
@@ -75,24 +77,27 @@ public class SuspendingTestContainerHost<STATE : Any, SIDE_EFFECT : Any, T : Con
     private val actual: T,
     private val initialState: STATE,
     private val isolateFlow: Boolean,
-    private val runOnCreate: Boolean
 ) : TestContainerHost<STATE, SIDE_EFFECT, T>(actual) {
 
-    internal suspend fun runOnCreateIfNeeded() {
-        if (runOnCreate) {
-            actual.container.findOnCreate().invoke(initialState)
-            // In case onCreate launches an intent
-            runCatching {
-            // Ignore exception, this will happen if onCreate does not launch an intent
-                actual.suspendingIntent(false) {}
-            }
+    private val onCreateAllowed = atomic(true)
+
+    /**
+     * Invoke [CoroutineScope.container]'s _onCreate_ property for the [ContainerHost]
+     */
+    public suspend fun runOnCreate(): SuspendingTestContainerHost<STATE, SIDE_EFFECT, T> {
+        if (onCreateAllowed.getAndSet(false).not()) {
+            throw IllegalStateException("Should be invoked only once and before any testIntent call")
         }
+        actual.container.findOnCreate().invoke(initialState)
+        actual.suspendingIntent(shouldIsolateFlow = false) {}
+        return this
     }
 
     /**
      * Invoke an intent on the [ContainerHost] under test as a suspending function.
      */
-    public suspend fun testIntent(action: T.() -> Unit): TestContainerHost<STATE, SIDE_EFFECT, T> {
+    public suspend fun testIntent(action: T.() -> Unit): SuspendingTestContainerHost<STATE, SIDE_EFFECT, T> {
+        onCreateAllowed.compareAndSet(expect = true, update = false)
         actual.suspendingIntent(isolateFlow, action)
         return this
     }
@@ -105,10 +110,6 @@ public class SuspendingTestContainerHost<STATE : Any, SIDE_EFFECT : Any, T : Con
         val testContainer = container.findTestContainer()
 
         this.block() // Invoke the Intent
-
-        if (testContainer.savedIntents.isEmpty) {
-            throw IllegalArgumentException("testIntent block must invoke an orbit intent!")
-        }
 
         var firstIntentExecuted = false
         while (!testContainer.savedIntents.isEmpty) {
@@ -131,20 +132,24 @@ public class SuspendingTestContainerHost<STATE : Any, SIDE_EFFECT : Any, T : Con
 
 public class RegularTestContainerHost<STATE : Any, SIDE_EFFECT : Any, T : ContainerHost<STATE, SIDE_EFFECT>>(
     private val actual: T,
-    initialState: STATE,
-    runOnCreate: Boolean
+    private val initialState: STATE,
 ) : TestContainerHost<STATE, SIDE_EFFECT, T>(actual) {
 
-    init {
-        if (runOnCreate) {
-            actual.container.findOnCreate().invoke(initialState)
+    private val onCreateAllowed = atomic(true)
+
+    public fun runOnCreate(): RegularTestContainerHost<STATE, SIDE_EFFECT, T> {
+        if (onCreateAllowed.getAndSet(false).not()) {
+            throw IllegalStateException("Should be invoked only once and before any testIntent call")
         }
+        actual.container.findOnCreate().invoke(initialState)
+        return this
     }
 
     /**
      * Invoke an intent on the [ContainerHost] under test.
      */
-    public fun testIntent(action: T.() -> Unit): TestContainerHost<STATE, SIDE_EFFECT, T> {
+    public fun testIntent(action: T.() -> Unit): RegularTestContainerHost<STATE, SIDE_EFFECT, T> {
+        onCreateAllowed.compareAndSet(expect = true, update = false)
         actual.action()
         return this
     }

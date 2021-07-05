@@ -49,13 +49,15 @@ class PostListViewModelTest {
         }.thenReturn(overviews)
 
         // when we observe details from the view model
-        val testContainerHost = PostListViewModel(SavedStateHandle(), repository).test(
+        val viewModel = PostListViewModel(SavedStateHandle(), repository).test(
             initialState = initialState,
-            runOnCreate = true
         )
+        runBlocking {
+            viewModel.runOnCreate()
+        }
 
         // then the view model loads the overviews
-        testContainerHost.assert(initialState) {
+        viewModel.assert(initialState) {
             states(
                 { copy(overviews = overviews) }
             )
@@ -75,8 +77,10 @@ class PostListViewModelTest {
         // when we observe details from the view model
         val viewModel = PostListViewModel(SavedStateHandle(), repository).test(
             initialState = initialState,
-            runOnCreate = true
         )
+        runBlocking {
+            viewModel.runOnCreate()
+        }
 
         // then the view model loads the overviews
         viewModel.assert(initialState)

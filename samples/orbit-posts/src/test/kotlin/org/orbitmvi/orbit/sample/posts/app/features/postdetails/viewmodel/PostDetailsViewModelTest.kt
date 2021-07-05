@@ -58,8 +58,10 @@ class PostDetailsViewModelTest {
         // when we observe details from the view model
         val viewModel = PostDetailsViewModel(SavedStateHandle(), repository, overview).test(
             initialState = initialState,
-            runOnCreate = true
         )
+        runBlocking {
+            viewModel.runOnCreate()
+        }
 
         // then the view model loads the details
         viewModel.assert(initialState) {
@@ -82,8 +84,10 @@ class PostDetailsViewModelTest {
         // when we observe details from the view model
         val viewModel = PostDetailsViewModel(SavedStateHandle(), repository, overview).test(
             initialState = initialState,
-            runOnCreate = true
         )
+        runBlocking {
+            viewModel.runOnCreate()
+        }
 
         // then the view model only emits initial state
         viewModel.assert(initialState)
@@ -104,8 +108,10 @@ class PostDetailsViewModelTest {
         // when we observe details from the view model
         val viewModel = PostDetailsViewModel(SavedStateHandle(), repository, overview).test(
             initialState = initialState,
-            runOnCreate = true
         )
+        runBlocking {
+            viewModel.runOnCreate()
+        }
 
         // then the view model shows no details
         viewModel.assert(initialState) {
