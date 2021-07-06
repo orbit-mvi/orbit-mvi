@@ -20,7 +20,6 @@
 
 package org.orbitmvi.orbit.sample.posts.app.features.postdetails.viewmodel
 
-import androidx.lifecycle.SavedStateHandle
 import com.appmattus.kotlinfixture.kotlinFixture
 import org.orbitmvi.orbit.sample.posts.InstantTaskExecutorExtension
 import org.orbitmvi.orbit.sample.posts.domain.repositories.PostDetail
@@ -33,7 +32,6 @@ import org.mockito.kotlin.whenever
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
-import org.orbitmvi.orbit.test
 import java.io.IOException
 
 @ExtendWith(InstantTaskExecutorExtension::class)
@@ -56,7 +54,7 @@ class PostDetailsViewModelTest {
         }.thenReturn(Status.Success(details))
 
         // when we observe details from the view model
-        val viewModel = PostDetailsViewModel(SavedStateHandle(), repository, overview).test(
+        val viewModel = PostDetailsViewModel(repository, overview).test(
             initialState = initialState,
             runOnCreate = true
         )
@@ -80,7 +78,7 @@ class PostDetailsViewModelTest {
         val initialState = PostDetailState.Details(overview, details)
 
         // when we observe details from the view model
-        val viewModel = PostDetailsViewModel(SavedStateHandle(), repository, overview).test(
+        val viewModel = PostDetailsViewModel(repository, overview).test(
             initialState = initialState,
             runOnCreate = true
         )
@@ -102,7 +100,7 @@ class PostDetailsViewModelTest {
         }.thenReturn(Status.Failure(exception))
 
         // when we observe details from the view model
-        val viewModel = PostDetailsViewModel(SavedStateHandle(), repository, overview).test(
+        val viewModel = PostDetailsViewModel(repository, overview).test(
             initialState = initialState,
             runOnCreate = true
         )

@@ -20,36 +20,43 @@
 
 package org.orbitmvi.orbit.sample.posts.app.features.postdetails.viewmodel
 
-import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
-import org.orbitmvi.orbit.ContainerHost
+import androidx.lifecycle.viewModelScope
+import com.ww.roxie.BaseViewModel
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.mapLatest
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.scan
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.rx2.asFlow
 import org.orbitmvi.orbit.sample.posts.domain.repositories.PostOverview
 import org.orbitmvi.orbit.sample.posts.domain.repositories.PostRepository
 import org.orbitmvi.orbit.sample.posts.domain.repositories.Status
-import org.orbitmvi.orbit.syntax.simple.intent
-import org.orbitmvi.orbit.syntax.simple.reduce
-import org.orbitmvi.orbit.viewmodel.container
 
 class PostDetailsViewModel(
-    savedStateHandle: SavedStateHandle,
     private val postRepository: PostRepository,
     private val postOverview: PostOverview
-) : ViewModel(), ContainerHost<PostDetailState, Nothing> {
+) : BaseViewModel<PostDetailsAction, PostDetailState>() {
 
-    override val container = container<PostDetailState, Nothing>(PostDetailState.NoDetailsAvailable(postOverview), savedStateHandle) {
-        if (it !is PostDetailState.Details) {
-            loadDetails()
-        }
+    override val initialState: PostDetailState = PostDetailState.NoDetailsAvailable(postOverview)
+
+    init {
+        bindActions()
     }
 
-    private fun loadDetails() = intent {
-        val status = postRepository.getDetail(postOverview.id)
-
-        reduce {
-            when (status) {
-                is Status.Success -> PostDetailState.Details(state.postOverview, status.data)
-                is Status.Failure -> PostDetailState.NoDetailsAvailable(state.postOverview)
-            }
+    @Suppress("EXPERIMENTAL_API_USAGE")
+    private fun bindActions() {
+        /* convert Actions into States here */
+        viewModelScope.launch {
+            actions.asFlow().mapLatest {
+                postRepository.getDetail(postOverview.id)
+            }.scan(initialState) { _, change ->
+                when (change) {
+                    is Status.Success -> PostDetailState.Details(postOverview, change.data)
+                    is Status.Failure -> PostDetailState.NoDetailsAvailable(postOverview)
+                }
+            }.onEach {
+                state.value = it
+            }.launchIn(viewModelScope)
         }
     }
 }

@@ -21,11 +21,12 @@
 package org.orbitmvi.orbit.sample.posts.app.features.postdetails.viewmodel
 
 import android.os.Parcelable
+import com.ww.roxie.BaseState
 import org.orbitmvi.orbit.sample.posts.domain.repositories.PostDetail
 import org.orbitmvi.orbit.sample.posts.domain.repositories.PostOverview
 import kotlinx.parcelize.Parcelize
 
-sealed class PostDetailState : Parcelable {
+sealed class PostDetailState : Parcelable, BaseState {
 
     abstract val postOverview: PostOverview
 

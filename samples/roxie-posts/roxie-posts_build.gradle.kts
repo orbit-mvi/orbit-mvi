@@ -54,6 +54,7 @@ dependencies {
     implementation(project(":orbit-core"))
     implementation(project(":orbit-viewmodel"))
     implementation("com.ww:roxie:0.4.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-rx2:${Versions.coroutines}")
 
     // UI
     implementation("androidx.constraintlayout:constraintlayout:2.0.4")
