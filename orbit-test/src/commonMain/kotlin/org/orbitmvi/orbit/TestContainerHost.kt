@@ -82,11 +82,7 @@ public class SuspendingTestContainerHost<STATE : Any, SIDE_EFFECT : Any, T : Con
         if (runOnCreate) {
             actual.container.findOnCreate().invoke(initialState)
             runBlocking {
-                // In case onCreate launches an intent
-                runCatching {
-                    // Ignore exception, this will happen if onCreate does not launch an intent
-                    actual.suspendingIntent(false) {}
-                }
+                actual.suspendingIntent(shouldIsolateFlow = false) {}
             }
         }
     }
@@ -107,10 +103,6 @@ public class SuspendingTestContainerHost<STATE : Any, SIDE_EFFECT : Any, T : Con
         val testContainer = container.findTestContainer()
 
         this.block() // Invoke the Intent
-
-        if (testContainer.savedIntents.isEmpty) {
-            throw IllegalArgumentException("testIntent block must invoke an orbit intent!")
-        }
 
         var firstIntentExecuted = false
         while (!testContainer.savedIntents.isEmpty) {
