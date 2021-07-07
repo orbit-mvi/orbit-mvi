@@ -51,17 +51,14 @@ class PostDetailsViewModelTest {
         val initialState = PostDetailState.NoDetailsAvailable(overview)
 
         // given we mock the repository
-        runBlocking {
-            whenever(repository.getDetail(overview.id))
-        }.thenReturn(Status.Success(details))
+        whenever(repository.getDetail(overview.id))
+            .thenReturn(Status.Success(details))
 
         // when we observe details from the view model
         val viewModel = PostDetailsViewModel(SavedStateHandle(), repository, overview).test(
             initialState = initialState,
         )
-        runBlocking {
-            viewModel.runOnCreate()
-        }
+        viewModel.runOnCreate()
 
         // then the view model loads the details
         viewModel.assert(initialState) {
@@ -85,9 +82,7 @@ class PostDetailsViewModelTest {
         val viewModel = PostDetailsViewModel(SavedStateHandle(), repository, overview).test(
             initialState = initialState,
         )
-        runBlocking {
-            viewModel.runOnCreate()
-        }
+        viewModel.runOnCreate()
 
         // then the view model only emits initial state
         viewModel.assert(initialState)
@@ -101,17 +96,14 @@ class PostDetailsViewModelTest {
         val initialState = PostDetailState.NoDetailsAvailable(overview)
 
         // given we mock the repository
-        runBlocking {
-            whenever(repository.getDetail(overview.id))
-        }.thenReturn(Status.Failure(exception))
+        whenever(repository.getDetail(overview.id))
+            .thenReturn(Status.Failure(exception))
 
         // when we observe details from the view model
         val viewModel = PostDetailsViewModel(SavedStateHandle(), repository, overview).test(
             initialState = initialState,
         )
-        runBlocking {
-            viewModel.runOnCreate()
-        }
+        viewModel.runOnCreate()
 
         // then the view model shows no details
         viewModel.assert(initialState) {

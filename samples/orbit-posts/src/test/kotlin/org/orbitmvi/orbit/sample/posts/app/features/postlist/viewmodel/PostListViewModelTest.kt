@@ -44,17 +44,14 @@ class PostListViewModelTest {
         val initialState = PostListState()
 
         // given we mock the repository
-        runBlocking {
-            whenever(repository.getOverviews())
-        }.thenReturn(overviews)
+        whenever(repository.getOverviews())
+            .thenReturn(overviews)
 
         // when we observe details from the view model
         val viewModel = PostListViewModel(SavedStateHandle(), repository).test(
             initialState = initialState,
         )
-        runBlocking {
-            viewModel.runOnCreate()
-        }
+        viewModel.runOnCreate()
 
         // then the view model loads the overviews
         viewModel.assert(initialState) {
@@ -70,17 +67,14 @@ class PostListViewModelTest {
         val initialState = PostListState(overviews)
 
         // given we mock the repository
-        runBlocking {
-            whenever(repository.getOverviews())
-        }.thenReturn(overviews)
+        whenever(repository.getOverviews())
+            .thenReturn(overviews)
 
         // when we observe details from the view model
         val viewModel = PostListViewModel(SavedStateHandle(), repository).test(
             initialState = initialState,
         )
-        runBlocking {
-            viewModel.runOnCreate()
-        }
+        viewModel.runOnCreate()
 
         // then the view model loads the overviews
         viewModel.assert(initialState)

@@ -38,37 +38,32 @@ internal class ParameterisedSideEffectTest(blocking: Boolean) {
 
     private val initialState = State()
     private val scope = CoroutineScope(Job())
-    private val testSubjectFactory = suspend {
-        if (blocking) {
-            SideEffectTestMiddleware().test(
-                initialState = initialState
-            )
-        } else {
-            SideEffectTestMiddleware().liveTest(initialState)
-        }
+    private val testSubject = if (blocking) {
+        SideEffectTestMiddleware().test(
+            initialState = initialState
+        )
+    } else {
+        SideEffectTestMiddleware().liveTest(initialState)
     }
 
     fun cancel() {
         scope.cancel()
     }
 
-    fun `succeeds if posted side effects match expected side effects`() = runBlocking {
+    fun `succeeds if posted side effects match expected side effects`() {
         val sideEffects = List(Random.nextInt(1, 5)) { Random.nextInt() }
 
-        val testSubject = testSubjectFactory()
-        sideEffects.forEach {
-            testSubject.call { something(it) } }
+        sideEffects.forEach { testSubject.call { something(it) } }
 
         testSubject.assert(initialState, timeoutMillis = TIMEOUT) {
             postedSideEffects(sideEffects)
         }
     }
 
-    fun `fails if posted side effects do not match expected side effects`() = runBlocking {
+    fun `fails if posted side effects do not match expected side effects`() {
         val sideEffects = List(Random.nextInt(1, 5)) { Random.nextInt() }
         val sideEffects2 = List(Random.nextInt(1, 5)) { Random.nextInt() }
 
-        val testSubject = testSubjectFactory()
         sideEffects.forEach { testSubject.call { something(it) } }
 
         val throwable = assertFailsWith<AssertionError> {

@@ -39,31 +39,27 @@ internal class ParameterisedStateTest(blocking: Boolean) {
     private val initialState = State()
 
     private val scope = CoroutineScope(Job())
-    private val testSubjectFactory = suspend {
-        if (blocking) {
-            StateTestMiddleware().test(
-                initialState = initialState
-            )
-        } else {
-            StateTestMiddleware().liveTest(initialState)
-        }
+    private val testSubject = if (blocking) {
+        StateTestMiddleware().test(
+            initialState = initialState
+        )
+    } else {
+        StateTestMiddleware().liveTest(initialState)
     }
 
     fun cancel() {
         scope.cancel()
     }
 
-    fun `succeeds if initial state matches expected state`() = runBlocking {
-        val testSubject = testSubjectFactory()
+    fun `succeeds if initial state matches expected state`() {
         testSubject.stateObserver.awaitCount(1)
 
         testSubject.assert(initialState)
     }
 
-    fun `fails if initial state does not match expected state`() = runBlocking {
+    fun `fails if initial state does not match expected state`() {
         val someRandomState = State()
 
-        val testSubject = testSubjectFactory()
         testSubject.stateObserver.awaitCount(1)
 
         val throwable = assertFailsWith<AssertionError> {
@@ -75,11 +71,10 @@ internal class ParameterisedStateTest(blocking: Boolean) {
         )
     }
 
-    fun `succeeds if emitted states match expected states`() = runBlocking {
+    fun `succeeds if emitted states match expected states`() {
         val action = Random.nextInt()
         val action2 = Random.nextInt()
 
-        val testSubject = testSubjectFactory()
         testSubject.call { something(action) }
         testSubject.stateObserver.awaitCount(2)
         testSubject.call { something(action2) }
@@ -93,11 +88,10 @@ internal class ParameterisedStateTest(blocking: Boolean) {
         }
     }
 
-    fun `fails if more states emitted than expected`() = runBlocking {
+    fun `fails if more states emitted than expected`() {
         val action = Random.nextInt()
         val action2 = Random.nextInt()
 
-        val testSubject = testSubjectFactory()
         testSubject.call { something(action) }
         testSubject.stateObserver.awaitCount(2)
         testSubject.call { something(action2) }
@@ -117,12 +111,11 @@ internal class ParameterisedStateTest(blocking: Boolean) {
         )
     }
 
-    fun `fails if one more state expected than emitted`() = runBlocking {
+    fun `fails if one more state expected than emitted`() {
         val action = Random.nextInt()
         val action2 = Random.nextInt()
         val action3 = Random.nextInt()
 
-        val testSubject = testSubjectFactory()
         testSubject.call { something(action) }
         testSubject.stateObserver.awaitCount(2)
         testSubject.call { something(action2) }
@@ -144,13 +137,12 @@ internal class ParameterisedStateTest(blocking: Boolean) {
         )
     }
 
-    fun `fails if two more states expected than emitted`() = runBlocking {
+    fun `fails if two more states expected than emitted`() {
         val action = Random.nextInt()
         val action2 = Random.nextInt()
         val action3 = Random.nextInt()
         val action4 = Random.nextInt()
 
-        val testSubject = testSubjectFactory()
         testSubject.call { something(action) }
         testSubject.stateObserver.awaitCount(2)
         testSubject.call { something(action2) }
@@ -173,12 +165,11 @@ internal class ParameterisedStateTest(blocking: Boolean) {
         )
     }
 
-    fun `fails if first emitted state does not match expected`() = runBlocking {
+    fun `fails if first emitted state does not match expected`() {
         val action = Random.nextInt()
         val action2 = Random.nextInt()
         val action3 = Random.nextInt()
 
-        val testSubject = testSubjectFactory()
         testSubject.call { something(action) }
         testSubject.stateObserver.awaitCount(2)
         testSubject.call { something(action2) }
@@ -198,12 +189,11 @@ internal class ParameterisedStateTest(blocking: Boolean) {
         )
     }
 
-    fun `fails if second emitted state does not match expected`() = runBlocking {
+    fun `fails if second emitted state does not match expected`() {
         val action = Random.nextInt()
         val action2 = Random.nextInt()
         val action3 = Random.nextInt()
 
-        val testSubject = testSubjectFactory()
         testSubject.call { something(action) }
         testSubject.stateObserver.awaitCount(2)
         testSubject.call { something(action2) }
@@ -223,11 +213,10 @@ internal class ParameterisedStateTest(blocking: Boolean) {
         )
     }
 
-    fun `fails if expected states are out of order`() = runBlocking {
+    fun `fails if expected states are out of order`() {
         val action = Random.nextInt()
         val action2 = Random.nextInt()
 
-        val testSubject = testSubjectFactory()
         testSubject.call { something(action) }
         testSubject.stateObserver.awaitCount(2)
         testSubject.call { something(action2) }
@@ -247,12 +236,11 @@ internal class ParameterisedStateTest(blocking: Boolean) {
         )
     }
 
-    fun `succeeds with dropped assertions`() = runBlocking {
+    fun `succeeds with dropped assertions`() {
         val action = Random.nextInt()
         val action2 = Random.nextInt()
         val action3 = Random.nextInt()
 
-        val testSubject = testSubjectFactory()
         testSubject.call { something(action) }
         testSubject.stateObserver.awaitCount(2)
         testSubject.call { something(action2) }
@@ -270,11 +258,10 @@ internal class ParameterisedStateTest(blocking: Boolean) {
         }
     }
 
-    fun `fails if dropped assertions mean extra states are observed`() = runBlocking {
+    fun `fails if dropped assertions mean extra states are observed`() {
         val action = Random.nextInt()
         val action2 = Random.nextInt()
 
-        val testSubject = testSubjectFactory()
         testSubject.call { something(action) }
         testSubject.stateObserver.awaitCount(2)
         testSubject.call { something(action2) }

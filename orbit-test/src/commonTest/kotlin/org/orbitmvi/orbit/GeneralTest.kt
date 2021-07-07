@@ -42,7 +42,7 @@ internal class GeneralTest {
     }
 
     @Test
-    fun `created is not invoked by default`() = runBlocking {
+    fun `created is not invoked by default`() {
 
         val mockDependency = FakeDependency()
         val testSubject = GeneralTestMiddleware(mockDependency)
