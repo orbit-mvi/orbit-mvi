@@ -1,8 +1,7 @@
 # Orbit Unit Testing module
 
 The module provides a simple unit testing framework for your Orbit
-[ContainerHosts](../orbit-core/src/commonMain/kotlin/org/orbitmvi/orbit/ContainerHost.kt)
-.
+[ContainerHosts](../orbit-core/src/commonMain/kotlin/org/orbitmvi/orbit/ContainerHost.kt).
 
 ## Including the module
 
