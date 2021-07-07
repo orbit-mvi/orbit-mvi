@@ -38,11 +38,11 @@ import org.orbitmvi.orbit.internal.TestingStrategy
  * @param settings Replaces the [Container.Settings] for this test
  * @return A suspending test wrapper around [ContainerHost].
  */
-public fun <STATE : Any, SIDE_EFFECT : Any, T : ContainerHost<STATE, SIDE_EFFECT>> T.test(
+public fun <STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHost<STATE, SIDE_EFFECT>> CONTAINER_HOST.test(
     initialState: STATE,
     isolateFlow: Boolean = true,
     settings: Container.Settings = container.settings
-): SuspendingTestContainerHost<STATE, SIDE_EFFECT, T> {
+): SuspendingTestContainerHost<STATE, SIDE_EFFECT, CONTAINER_HOST> {
     container.findTestContainer().test(
         initialState = initialState,
         strategy = TestingStrategy.Suspending(settings)
@@ -59,10 +59,10 @@ public fun <STATE : Any, SIDE_EFFECT : Any, T : ContainerHost<STATE, SIDE_EFFECT
  * @param settings Replaces the [Container.Settings] for this test
  * @return A live test wrapper around [ContainerHost].
  */
-public fun <STATE : Any, SIDE_EFFECT : Any, T : ContainerHost<STATE, SIDE_EFFECT>> T.liveTest(
+public fun <STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHost<STATE, SIDE_EFFECT>> CONTAINER_HOST.liveTest(
     initialState: STATE,
     settings: Container.Settings = container.settings.copy(intentDispatcher = Dispatchers.Unconfined)
-): RegularTestContainerHost<STATE, SIDE_EFFECT, T> {
+): RegularTestContainerHost<STATE, SIDE_EFFECT, CONTAINER_HOST> {
     container.findTestContainer().test(
         initialState = initialState,
         strategy = TestingStrategy.Live(settings)
