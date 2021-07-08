@@ -85,6 +85,7 @@ allprojects {
             force("org.jetbrains.kotlin:kotlin-stdlib:${Versions.kotlin}")
             force("org.jetbrains.kotlin:kotlin-stdlib-jdk8:${Versions.kotlin}")
             force("org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versions.coroutines}")
+            force("junit:junit:4.13.2")
         }
     }
 }
