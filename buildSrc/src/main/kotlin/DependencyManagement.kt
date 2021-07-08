@@ -40,6 +40,7 @@ object Versions {
     // Testing
     const val junitPlatform = "1.7.1"
     const val junitRuntime = "5.7.1"
+    const val junit4 = "4.13.2"
     const val jacoco = "0.8.5"
     const val robolectric = "4.5.1"
 }
@@ -60,6 +61,7 @@ object ProjectDependencies {
     const val detektFormatting = "io.gitlab.arturbosch.detekt:detekt-formatting:${Versions.detektPlugin}"
 
     // Test prerequisites
+    const val junit4 = "junit:junit:${Versions.junit4}"
     const val junitPlatformConsole = "org.junit.platform:junit-platform-console:${Versions.junitPlatform}"
     const val junitJupiterEngine = "org.junit.jupiter:junit-jupiter-engine:${Versions.junitRuntime}"
     const val junitJupiterApi = "org.junit.jupiter:junit-jupiter-api:${Versions.junitRuntime}"
