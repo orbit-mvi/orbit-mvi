@@ -63,6 +63,7 @@ class AndroidIdlingResource : IdlingResource {
         idle.set(false)
     }
 
+    @Suppress("EXPERIMENTAL_API_USAGE")
     override fun decrement() {
         if (counter.decrementAndGet() == 0) {
             job.getAndSet(

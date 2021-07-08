@@ -22,9 +22,9 @@ package org.orbitmvi.orbit.internal
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.container
@@ -126,22 +126,22 @@ internal class SideEffectTest {
     }
 
     @Test
-    fun `only new side effects are emitted when resubscribing`() {
+    fun `only new side effects are emitted when resubscribing`() = runBlocking {
         val action = Random.nextInt()
         val container = scope.container<Unit, Int>(Unit)
 
         val testSideEffectObserver1 = container.sideEffectFlow.test()
 
-        runBlocking {
-            container.someFlow(action)
-        }
+        container.someFlow(action)
 
         testSideEffectObserver1.awaitCount(1)
         testSideEffectObserver1.close()
 
-        GlobalScope.launch {
-            repeat(1000) {
-                container.someFlow(it)
+        coroutineScope {
+            launch {
+                repeat(1000) {
+                    container.someFlow(it)
+                }
             }
         }
 

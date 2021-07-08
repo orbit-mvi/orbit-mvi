@@ -78,12 +78,13 @@ tasks.withType<DependencyUpdatesTask> {
     }
 }
 
-// Force Kotlin versions until we upgrade Orbit to 1.5.x to fix transitive dependencies
+// Force Kotlin versions to ensure transitive dependencies don't break our build
 allprojects {
     configurations.all {
         resolutionStrategy {
             force("org.jetbrains.kotlin:kotlin-stdlib:${Versions.kotlin}")
             force("org.jetbrains.kotlin:kotlin-stdlib-jdk8:${Versions.kotlin}")
+            force("org.jetbrains.kotlin:kotlin-reflect:${Versions.kotlin}")
             force("org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versions.coroutines}")
             // Force Junit version due to security issues with Junit 4.12
             force(ProjectDependencies.junit4)
@@ -102,7 +103,7 @@ subprojects {
 
     tasks.withType<Test> {
         @Suppress("UnstableApiUsage")
-        if (project.name !in listOf("orbit-core", "orbit-test")) {
+        if (project.name !in listOf("orbit-core", "orbit-test", "orbit-viewmodel")) {
             useJUnitPlatform {
                 includeEngines(
                     "junit-jupiter"

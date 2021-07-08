@@ -22,9 +22,9 @@ package org.orbitmvi.orbit
 
 import kotlinx.atomicfu.atomic
 import kotlinx.atomicfu.getAndUpdate
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
@@ -37,12 +37,13 @@ import kotlinx.coroutines.launch
  */
 public class TestFlowObserver<T>(flow: Flow<T>) {
     private val _values = atomic(emptyList<T>())
-    private val job = Job()
+    private val scope = CoroutineScope(Dispatchers.Unconfined)
     public val values: List<T>
         get() = _values.value
 
     init {
-        GlobalScope.launch(Dispatchers.Unconfined + job) {
+        @Suppress("EXPERIMENTAL_API_USAGE")
+        scope.launch {
             flow.collect { emission ->
                 _values.getAndUpdate { it + emission }
             }
@@ -89,7 +90,7 @@ public class TestFlowObserver<T>(flow: Flow<T>) {
      * Closes the subscription on the underlying stream. No further values will be received after
      * this call.
      */
-    public fun close(): Unit = job.cancel()
+    public fun close(): Unit = scope.cancel()
 
     public companion object {
         private const val AWAIT_TIMEOUT_MS = 10L

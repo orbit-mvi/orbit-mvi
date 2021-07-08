@@ -22,9 +22,9 @@ package org.orbitmvi.orbit.internal
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.Container
@@ -107,18 +107,20 @@ internal class ContainerThreadingTest {
                     emptyList()
                 )
             )
-            for (i in 0 until ITEM_COUNT) {
-                val value = (i % 3)
-                expectedStates.add(
-                    expectedStates.last().copy(ids = expectedStates.last().ids + (value + 1))
-                )
+            coroutineScope {
+                for (i in 0 until ITEM_COUNT) {
+                    val value = (i % 3)
+                    expectedStates.add(
+                        expectedStates.last().copy(ids = expectedStates.last().ids + (value + 1))
+                    )
 
-                GlobalScope.launch {
-                    when (value) {
-                        0 -> container.one(true)
-                        1 -> container.two(true)
-                        2 -> container.three(true)
-                        else -> throw IllegalStateException("misconfigured test")
+                    launch {
+                        when (value) {
+                            0 -> container.one(true)
+                            1 -> container.two(true)
+                            2 -> container.three(true)
+                            else -> throw IllegalStateException("misconfigured test")
+                        }
                     }
                 }
             }
