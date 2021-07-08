@@ -53,12 +53,12 @@ internal class GeneralTest {
     }
 
     @Test
-    fun `created is invoked upon request`() {
+    fun `created is invoked upon request`() = runBlocking {
 
         val mockDependency = FakeDependency()
         val testSubject = GeneralTestMiddleware(mockDependency)
 
-        testSubject.test(initialState = initialState, runOnCreate = true)
+        testSubject.test(initialState = initialState).runOnCreate()
 
         assertEquals(true, mockDependency.createCalled.value)
     }
@@ -80,7 +80,7 @@ internal class GeneralTest {
         val mockDependency = FakeDependency()
         val testSubject = GeneralTestMiddleware(mockDependency)
 
-        testSubject.liveTest(initialState = initialState, runOnCreate = true)
+        testSubject.liveTest(initialState = initialState).runOnCreate()
 
         assertEquals(true, mockDependency.createCalled.value)
     }

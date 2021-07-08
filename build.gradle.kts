@@ -23,8 +23,8 @@ import com.appmattus.markdown.rules.LineLengthRule
 import com.appmattus.markdown.rules.ProperNamesRule
 import com.appmattus.markdown.rules.ProperNamesRule.Companion.DefaultNames
 import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.net.URL
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 buildscript {
     repositories {
@@ -86,6 +86,8 @@ allprojects {
             force("org.jetbrains.kotlin:kotlin-stdlib-jdk8:${Versions.kotlin}")
             force("org.jetbrains.kotlin:kotlin-reflect:${Versions.kotlin}")
             force("org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versions.coroutines}")
+            // Force Junit version due to security issues with Junit 4.12
+            force(ProjectDependencies.junit4)
         }
     }
 }

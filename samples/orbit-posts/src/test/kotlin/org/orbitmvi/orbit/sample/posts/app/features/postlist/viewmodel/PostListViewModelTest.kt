@@ -39,23 +39,22 @@ class PostListViewModelTest {
     private val repository = mock<PostRepository>()
 
     @Test
-    fun `loads post overviews from repository if no overviews present`() {
+    fun `loads post overviews from repository if no overviews present`() = runBlocking {
         val overviews = fixture<List<PostOverview>>()
         val initialState = PostListState()
 
         // given we mock the repository
-        runBlocking {
-            whenever(repository.getOverviews())
-        }.thenReturn(overviews)
+        whenever(repository.getOverviews())
+            .thenReturn(overviews)
 
         // when we observe details from the view model
-        val testContainerHost = PostListViewModel(SavedStateHandle(), repository).test(
+        val viewModel = PostListViewModel(SavedStateHandle(), repository).test(
             initialState = initialState,
-            runOnCreate = true
         )
+        viewModel.runOnCreate()
 
         // then the view model loads the overviews
-        testContainerHost.assert(initialState) {
+        viewModel.assert(initialState) {
             states(
                 { copy(overviews = overviews) }
             )
@@ -63,20 +62,19 @@ class PostListViewModelTest {
     }
 
     @Test
-    fun `does not load post overviews from repository if already populated`() {
+    fun `does not load post overviews from repository if already populated`() = runBlocking {
         val overviews = fixture<List<PostOverview>>()
         val initialState = PostListState(overviews)
 
         // given we mock the repository
-        runBlocking {
-            whenever(repository.getOverviews())
-        }.thenReturn(overviews)
+        whenever(repository.getOverviews())
+            .thenReturn(overviews)
 
         // when we observe details from the view model
         val viewModel = PostListViewModel(SavedStateHandle(), repository).test(
             initialState = initialState,
-            runOnCreate = true
         )
+        viewModel.runOnCreate()
 
         // then the view model loads the overviews
         viewModel.assert(initialState)

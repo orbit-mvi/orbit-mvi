@@ -43,7 +43,7 @@ class PostDetailsViewModelTest {
     private val repository = mock<PostRepository>()
 
     @Test
-    fun `loads post details from repository if no details present`() {
+    fun `loads post details from repository if no details present`() = runBlocking {
         val overview = fixture<PostOverview>()
         val details = fixture<PostDetail> {
             property(PostDetail::id) { overview.id }
@@ -51,15 +51,14 @@ class PostDetailsViewModelTest {
         val initialState = PostDetailState.NoDetailsAvailable(overview)
 
         // given we mock the repository
-        runBlocking {
-            whenever(repository.getDetail(overview.id))
-        }.thenReturn(Status.Success(details))
+        whenever(repository.getDetail(overview.id))
+            .thenReturn(Status.Success(details))
 
         // when we observe details from the view model
         val viewModel = PostDetailsViewModel(SavedStateHandle(), repository, overview).test(
             initialState = initialState,
-            runOnCreate = true
         )
+        viewModel.runOnCreate()
 
         // then the view model loads the details
         viewModel.assert(initialState) {
@@ -70,7 +69,7 @@ class PostDetailsViewModelTest {
     }
 
     @Test
-    fun `does not load post details from repository if details present`() {
+    fun `does not load post details from repository if details present`() = runBlocking {
         val overview = fixture<PostOverview>()
         val details = fixture<PostDetail> {
             property(PostDetail::id) { overview.id }
@@ -82,8 +81,8 @@ class PostDetailsViewModelTest {
         // when we observe details from the view model
         val viewModel = PostDetailsViewModel(SavedStateHandle(), repository, overview).test(
             initialState = initialState,
-            runOnCreate = true
         )
+        viewModel.runOnCreate()
 
         // then the view model only emits initial state
         viewModel.assert(initialState)
@@ -91,21 +90,20 @@ class PostDetailsViewModelTest {
     }
 
     @Test
-    fun `no details available on failure`() {
+    fun `no details available on failure`() = runBlocking {
         val overview = fixture<PostOverview>()
         val exception = IOException()
         val initialState = PostDetailState.NoDetailsAvailable(overview)
 
         // given we mock the repository
-        runBlocking {
-            whenever(repository.getDetail(overview.id))
-        }.thenReturn(Status.Failure(exception))
+        whenever(repository.getDetail(overview.id))
+            .thenReturn(Status.Failure(exception))
 
         // when we observe details from the view model
         val viewModel = PostDetailsViewModel(SavedStateHandle(), repository, overview).test(
             initialState = initialState,
-            runOnCreate = true
         )
+        viewModel.runOnCreate()
 
         // then the view model shows no details
         viewModel.assert(initialState) {

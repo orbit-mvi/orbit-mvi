@@ -11,8 +11,8 @@ testImplementation("org.orbit-mvi:orbit-test:<latest-version>")
 
 ## Testing goals
 
-Orbit is a well structured framework and as such, the tests will wrap around
-the framework's structure.
+Orbit is a well structured framework and as such, the tests will wrap around the
+framework's structure.
 
 Experience with Orbit 1 has taught us what works and what doesn't. This helped
 us put constraints around our tests that we hope will make your tests
@@ -25,11 +25,11 @@ Things that we consider important to test:
 - Loopbacks i.e. intent A calling intent B
 - Potentially dependencies being called
 
-The last two items on the list are outside of the scope of this library
-and can be easily tested using a mocking framework like `mockito`.
+The last two items on the list are outside of the scope of this library and can
+be easily tested using a mocking framework like `mockito`.
 
-For the first two things we have created utilities that should make them
-easy to test.
+For the first two things we have created utilities that should make them easy to
+test.
 
 ### Additional constraints
 
@@ -50,8 +50,8 @@ particular testing need.
 
 First we need to put our
 [ContainerHost](../orbit-core/src/commonMain/kotlin/org/orbitmvi/orbit/ContainerHost.kt)
-into test mode and call our intent (method) under test. Let's assume we've
-made a `ViewModel` the host.
+into test mode and call our intent (method) under test. Let's assume we've made
+a `ViewModel` the host.
 
 ```kotlin
 data class State(val count: Int = 0)
@@ -61,10 +61,29 @@ val testSubject = ExampleViewModel().test(State())
 testSubject.testIntent { countToFour() }
 ```
 
+### Run `onCreate`
+
+If the `Container` is created with `CoroutineScope.container()` or
+`ViewModel.container()` there is an option to provide the `onCreate` property.
+In test mode this function has to be run manually (if needed)
+by calling `runOnCreate`, so it's effectively isolated in the test; the other
+reason why is `onCreate` could include any number of `intent{}` calls, so it's
+crucial in terms of testing.
+
+Note: `runOnCreate`
+should only be invoked once and before any `testIntent` call:
+
+```kotlin
+val testSubject = ExampleViewModel().test(State())
+
+testSubject.runOnCreate() // must be invoked once and before `testIntent`
+testSubject.testIntent { countToFour() }
+```
+
 ### Asserting states
 
-Having done the above, we can move to assertions. The initial state has
-to be explicitly asserted first, as a sanity check.
+Having done the above, we can move to assertions. The initial state has to be
+explicitly asserted first, as a sanity check.
 
 ```kotlin
 testSubject.assert(State()) {
@@ -97,9 +116,9 @@ The side effect list must match exactly the side effects that are emitted.
 
 ### Asserting loopbacks
 
-Loopbacks can be tested using a mocking framework like `Mockito` which
-will allow you to spy on your `ContainerHost`. It is not the
-responsibility of this library to provide this functionality.
+Loopbacks can be tested using a mocking framework like `Mockito` which will
+allow you to spy on your `ContainerHost`. It is not the responsibility of this
+library to provide this functionality.
 
 ```kotlin
 val testSubject = spy(SomeClass())
