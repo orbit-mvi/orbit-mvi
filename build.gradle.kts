@@ -85,6 +85,7 @@ allprojects {
             force("org.jetbrains.kotlin:kotlin-stdlib:${Versions.kotlin}")
             force("org.jetbrains.kotlin:kotlin-stdlib-jdk8:${Versions.kotlin}")
             force("org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versions.coroutines}")
+            // Force Junit version due to security issues with Junit 4.12
             force(ProjectDependencies.junit4)
         }
     }
