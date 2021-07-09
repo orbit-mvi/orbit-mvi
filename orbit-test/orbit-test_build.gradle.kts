@@ -57,6 +57,7 @@ kotlin {
             dependencies {
                 implementation(kotlin("test-junit"))
                 implementation(ProjectDependencies.kotlinCoroutines)
+                implementation(ProjectDependencies.junit4)
             }
         }
         val jvmTest by getting {
