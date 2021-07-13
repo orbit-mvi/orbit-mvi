@@ -36,7 +36,7 @@ import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.GroupieViewHolder
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.suspendCancellableCoroutine
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 import org.orbitmvi.orbit.sample.posts.R
@@ -72,8 +72,20 @@ class PostDetailsFragment : Fragment(R.layout.post_details_fragment) {
         binding.postCommentsList.adapter = adapter
 
         lifecycleScope.launchWhenCreated {
-            viewModel.container.stateFlow.collect { render(it) }
+            suspendCancellableCoroutine { continuation ->
+                val unsubscribe = viewModel.store.subscribe {
+                    render(viewModel.store.state)
+                }
+
+                continuation.invokeOnCancellation {
+                    unsubscribe()
+                }
+            }
         }
+
+        /*lifecycleScope.launchWhenCreated {
+            viewModel.container.stateFlow.collect { render(it) }
+        }*/
     }
 
     private fun render(state: PostDetailState) {

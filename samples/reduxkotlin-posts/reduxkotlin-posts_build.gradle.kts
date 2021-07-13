@@ -35,7 +35,7 @@ android {
     defaultConfig {
         minSdkVersion(21)
         targetSdkVersion(30)
-        applicationId = "org.orbitmvi.orbit.sample.posts"
+        applicationId = "org.orbitmvi.orbit.sample.reduxkotlinposts"
         versionCode = 1
         versionName = "1.0"
     }
@@ -55,6 +55,7 @@ dependencies {
     implementation(project(":orbit-viewmodel"))
 
     implementation("org.reduxkotlin:redux-kotlin-threadsafe-jvm:0.5.5")
+    implementation("org.reduxkotlin:redux-kotlin-thunk-jvm:0.5.5")
 
     // UI
     implementation("androidx.constraintlayout:constraintlayout:2.0.4")
