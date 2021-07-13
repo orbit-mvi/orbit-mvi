@@ -75,7 +75,9 @@ class PostListFragment : Fragment(R.layout.post_list_fragment) {
         binding.content.adapter = adapter
 
         onStates(viewModel) {
-            reduce(adapter, it as PostListState)
+            it as PostListState
+            println("PostListState(action1=${it.action1}, action2=${it.action2})")
+            reduce(adapter, it)
         }
         onEvents(viewModel) {
             sideEffect(it as NavigationEvent)

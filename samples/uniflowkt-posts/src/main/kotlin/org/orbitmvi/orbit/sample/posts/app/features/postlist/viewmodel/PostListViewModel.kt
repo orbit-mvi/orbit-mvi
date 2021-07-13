@@ -22,6 +22,10 @@ package org.orbitmvi.orbit.sample.posts.app.features.postlist.viewmodel
 
 import androidx.lifecycle.SavedStateHandle
 import io.uniflow.android.AndroidDataFlow
+import io.uniflow.core.flow.actionOn
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.withContext
 import org.orbitmvi.orbit.sample.posts.domain.repositories.PostOverview
 import org.orbitmvi.orbit.sample.posts.domain.repositories.PostRepository
 
@@ -31,17 +35,40 @@ class PostListViewModel(
 ) : AndroidDataFlow(defaultState = PostListState(), savedStateHandle) {
 
     init {
-        action {
-            it as PostListState
+        actionOn<PostListState> {
             if (it.overviews.isEmpty()) {
                 loadOverviews()
             }
         }
+
+        action1()
+        action2()
     }
 
-    private fun loadOverviews() = action { state ->
-        state as PostListState
+    private fun action1() = actionOn<PostListState> { state ->
+        println("action1 - PostListState(action1=${state.action1}, action2=${state.action2})")
 
+        withContext(Dispatchers.IO) {
+            delay(5000)
+        }
+
+        setState {
+            state.copy(action1 = true)
+        }
+    }
+
+    private fun action2() = actionOn<PostListState> { state ->
+        println("action2 - PostListState(action1=${state.action1}, action2=${state.action2})")
+        withContext(Dispatchers.IO) {
+            delay(2500)
+        }
+
+        setState {
+            state.copy(action2 = true)
+        }
+    }
+
+    private fun loadOverviews() = actionOn<PostListState> { state ->
         val overviews = postRepository.getOverviews()
 
         setState {
@@ -51,9 +78,5 @@ class PostListViewModel(
 
     fun onPostClicked(post: PostOverview) = action {
         sendEvent(OpenPostNavigationEvent(post))
-    }
-
-    fun onPostLongClicked() = action {
-        throw IllegalStateException("Catch me!")
     }
 }

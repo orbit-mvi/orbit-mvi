@@ -27,5 +27,7 @@ import org.orbitmvi.orbit.sample.posts.domain.repositories.PostOverview
 
 @Parcelize
 data class PostListState(
-    val overviews: List<PostOverview> = emptyList()
-) : Parcelable, UIState()
+    val overviews: List<PostOverview> = emptyList(),
+    val action1: Boolean = false,
+    val action2: Boolean = false
+    ) : Parcelable, UIState()
