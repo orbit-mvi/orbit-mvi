@@ -20,9 +20,10 @@
 
 package org.orbitmvi.orbit.sample.posts.app.features.postlist.viewmodel
 
+import io.uniflow.core.flow.data.UIEvent
 import org.orbitmvi.orbit.sample.posts.app.common.NavigationEvent
 import org.orbitmvi.orbit.sample.posts.domain.repositories.PostOverview
 
 data class OpenPostNavigationEvent(
     val post: PostOverview
-) : NavigationEvent
+) : NavigationEvent, UIEvent()

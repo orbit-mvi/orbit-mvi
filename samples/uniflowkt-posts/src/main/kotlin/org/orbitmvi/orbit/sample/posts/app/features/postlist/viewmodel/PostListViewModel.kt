@@ -20,51 +20,40 @@
 
 package org.orbitmvi.orbit.sample.posts.app.features.postlist.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
-import kotlinx.coroutines.CoroutineExceptionHandler
-import org.orbitmvi.orbit.Container
-import org.orbitmvi.orbit.ContainerHost
-import org.orbitmvi.orbit.sample.posts.app.common.NavigationEvent
+import io.uniflow.android.AndroidDataFlow
 import org.orbitmvi.orbit.sample.posts.domain.repositories.PostOverview
 import org.orbitmvi.orbit.sample.posts.domain.repositories.PostRepository
-import org.orbitmvi.orbit.syntax.simple.intent
-import org.orbitmvi.orbit.syntax.simple.postSideEffect
-import org.orbitmvi.orbit.syntax.simple.reduce
-import org.orbitmvi.orbit.viewmodel.container
 
 class PostListViewModel(
     savedStateHandle: SavedStateHandle,
-    private val postRepository: PostRepository,
-    exceptionHandler: CoroutineExceptionHandler = CoroutineExceptionHandler { _, throwable ->
-        Log.w("PostListViewModel", "orbit caught the exception", throwable)
-    }
-) : ViewModel(), ContainerHost<PostListState, NavigationEvent> {
+    private val postRepository: PostRepository
+) : AndroidDataFlow(defaultState = PostListState(), savedStateHandle) {
 
-    override val container = container<PostListState, NavigationEvent>(
-        initialState = PostListState(),
-        savedStateHandle = savedStateHandle,
-        settings = Container.Settings(exceptionHandler = exceptionHandler)
-    ) {
-        if (it.overviews.isEmpty()) {
-            loadOverviews()
+    init {
+        action {
+            it as PostListState
+            if (it.overviews.isEmpty()) {
+                loadOverviews()
+            }
         }
     }
 
-    private fun loadOverviews() = intent {
+    private fun loadOverviews() = action { state ->
+        state as PostListState
+
         val overviews = postRepository.getOverviews()
 
-        reduce {
+        setState {
             state.copy(overviews = overviews)
         }
     }
 
-    fun onPostClicked(post: PostOverview) = intent {
-        postSideEffect(OpenPostNavigationEvent(post))
+    fun onPostClicked(post: PostOverview) = action {
+        sendEvent(OpenPostNavigationEvent(post))
     }
 
-    fun onPostLongClicked() = intent {
+    fun onPostLongClicked() = action {
         throw IllegalStateException("Catch me!")
     }
 }

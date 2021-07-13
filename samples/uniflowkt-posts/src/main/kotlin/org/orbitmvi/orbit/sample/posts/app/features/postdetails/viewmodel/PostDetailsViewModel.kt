@@ -21,31 +21,29 @@
 package org.orbitmvi.orbit.sample.posts.app.features.postdetails.viewmodel
 
 import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
-import org.orbitmvi.orbit.ContainerHost
+import io.uniflow.android.AndroidDataFlow
 import org.orbitmvi.orbit.sample.posts.domain.repositories.PostOverview
 import org.orbitmvi.orbit.sample.posts.domain.repositories.PostRepository
 import org.orbitmvi.orbit.sample.posts.domain.repositories.Status
-import org.orbitmvi.orbit.syntax.simple.intent
-import org.orbitmvi.orbit.syntax.simple.reduce
-import org.orbitmvi.orbit.viewmodel.container
 
 class PostDetailsViewModel(
     savedStateHandle: SavedStateHandle,
     private val postRepository: PostRepository,
     private val postOverview: PostOverview
-) : ViewModel(), ContainerHost<PostDetailState, Nothing> {
+) : AndroidDataFlow(defaultState = (PostDetailState.NoDetailsAvailable(postOverview) as PostDetailState), savedStateHandle) {
 
-    override val container = container<PostDetailState, Nothing>(PostDetailState.NoDetailsAvailable(postOverview), savedStateHandle) {
-        if (it !is PostDetailState.Details) {
-            loadDetails()
-        }
+    init {
+        loadDetails()
     }
 
-    private fun loadDetails() = intent {
+    // Cannot use actionOn because of https://github.com/uniflow-kt/uniflow-kt/issues/71
+    // Instead we cast state manually
+    private fun loadDetails() = action { state ->
+        state as PostDetailState
+
         val status = postRepository.getDetail(postOverview.id)
 
-        reduce {
+        setState {
             when (status) {
                 is Status.Success -> PostDetailState.Details(state.postOverview, status.data)
                 is Status.Failure -> PostDetailState.NoDetailsAvailable(state.postOverview)

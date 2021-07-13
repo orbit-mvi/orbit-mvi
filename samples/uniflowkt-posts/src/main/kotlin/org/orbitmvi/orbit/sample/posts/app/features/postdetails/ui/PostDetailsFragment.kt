@@ -27,7 +27,6 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
@@ -36,7 +35,7 @@ import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.GroupieViewHolder
-import kotlinx.coroutines.flow.collect
+import io.uniflow.android.livedata.onStates
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 import org.orbitmvi.orbit.sample.posts.R
@@ -71,8 +70,8 @@ class PostDetailsFragment : Fragment(R.layout.post_details_fragment) {
 
         binding.postCommentsList.adapter = adapter
 
-        lifecycleScope.launchWhenCreated {
-            viewModel.container.stateFlow.collect { render(it) }
+        onStates(viewModel) {
+            render(it as PostDetailState)
         }
     }
 
