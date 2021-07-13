@@ -18,26 +18,31 @@
  * See: https://github.com/orbit-mvi/orbit-mvi/compare/c5b8b3f2b83b5972ba2ad98f73f75086a89653d3...main
  */
 
-include(
-    "orbit-core",
-    "orbit-test",
-    "orbit-viewmodel",
-    "samples:mavericks-posts",
-    "samples:mvikotlin-posts",
-    "samples:orbit-calculator",
-    "samples:orbit-posts",
-    "samples:orbit-stocklist",
-    "samples:reduxkotlin-posts",
-    "samples:roxie-posts",
-    "samples:uniflowkt-posts",
-    "test-common"
-)
+package org.orbitmvi.orbit.sample.posts.data.posts.network
 
-fun renameBuildFileToModuleName(project: ProjectDescriptor) {
-    project.buildFileName = "${project.name}_build.gradle.kts"
-    project.children.forEach { child -> renameBuildFileToModuleName(child) }
+import org.orbitmvi.orbit.sample.posts.data.posts.model.CommentData
+import org.orbitmvi.orbit.sample.posts.data.posts.model.PostData
+import org.orbitmvi.orbit.sample.posts.data.posts.model.UserData
+import retrofit2.http.GET
+import retrofit2.http.Path
+
+// https://jsonplaceholder.typicode.com
+interface TypicodeService {
+    @GET("posts/{id}")
+    suspend fun post(@Path("id") id: Int): PostData
+
+    @GET("posts")
+    suspend fun posts(): List<PostData>
+
+    @GET("users/{id}")
+    suspend fun user(@Path("id") id: Int): UserData
+
+    @GET("users")
+    suspend fun users(): List<UserData>
+
+    @GET("comments")
+    suspend fun comments(): List<CommentData>
+
+    @GET("posts/{id}/comments")
+    suspend fun comments(@Path("id") postId: Int): List<CommentData>
 }
-// Will rename every module's build.gradle file to use its name instead of `build`.
-// E.g. `app/build.gradle` will become `app/app.gradle`
-// The root build.gradle file will remain untouched
-rootProject.children.forEach { subproject -> renameBuildFileToModuleName(subproject) }
