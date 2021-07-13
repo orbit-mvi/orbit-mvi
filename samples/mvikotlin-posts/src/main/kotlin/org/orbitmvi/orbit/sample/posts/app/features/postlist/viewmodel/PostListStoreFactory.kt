@@ -29,29 +29,35 @@ internal class PostListStoreFactory(
 
     private fun createExecutorFactory() = ExecutorImpl(postRepository)
 
-    private object ReducerImpl : Reducer<PostListState, List<PostOverview>> {
-        override fun PostListState.reduce(result: List<PostOverview>): PostListState = copy(overviews = result)
-    }
+    private class ExecutorImpl(
+        private val postRepository: PostRepository
+    ) : SuspendExecutor<PostListIntent, Unit, PostListState, List<PostOverview>, NavigationEvent>() {
 
-    private class ExecutorImpl(private val postRepository: PostRepository) :
-        SuspendExecutor<PostListIntent, Unit, PostListState, List<PostOverview>, NavigationEvent>() {
-
+        // Only one Action triggered on create so using Unit
         override suspend fun executeAction(action: Unit, getState: () -> PostListState) = loadOverviews()
 
+        // Split the intent object back out again
         override suspend fun executeIntent(intent: PostListIntent, getState: () -> PostListState) = when (intent) {
             is PostListIntent.PostClicked -> postClicked(intent.post)
         }
 
         private fun postClicked(post: PostOverview) {
+            // Triggering a side effect
             publish(OpenPostNavigationEvent(post))
         }
 
-
+        // Load the overviews
         private suspend fun loadOverviews() {
             val overviews = withContext(Dispatchers.Default) {
                 postRepository.getOverviews()
             }
+            // Dispatch the Result
             dispatch(overviews)
         }
+    }
+
+    private object ReducerImpl : Reducer<PostListState, List<PostOverview>> {
+        // Combine State and Result
+        override fun PostListState.reduce(result: List<PostOverview>): PostListState = copy(overviews = result)
     }
 }

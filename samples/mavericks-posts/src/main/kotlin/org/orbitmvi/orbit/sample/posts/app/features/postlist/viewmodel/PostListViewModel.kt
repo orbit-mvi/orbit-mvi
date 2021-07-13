@@ -37,12 +37,13 @@ import org.orbitmvi.orbit.sample.posts.domain.repositories.PostRepository
 
 class PostListViewModel @AssistedInject constructor(
     @Assisted initialState: PostListState,
-    // and other dependencies
     private val postRepository: PostRepository
 ) : MavericksViewModel<PostListState>(initialState) {
 
-    private val _sideEffect = Channel<NavigationEvent>(Channel.BUFFERED)
-    val sideEffect: Flow<NavigationEvent> = _sideEffect.receiveAsFlow()
+    private val _sideEffect =
+        Channel<NavigationEvent>(Channel.BUFFERED)
+    val sideEffect: Flow<NavigationEvent> =
+        _sideEffect.receiveAsFlow()
 
     init {
         loadOverviews()
@@ -68,39 +69,3 @@ class PostListViewModel @AssistedInject constructor(
 
     companion object : MavericksViewModelFactory<PostListViewModel, PostListState> by hiltMavericksViewModelFactory()
 }
-
-/*class PostListViewModel(
-    savedStateHandle: SavedStateHandle,
-    private val postRepository: PostRepository,
-    exceptionHandler: CoroutineExceptionHandler = CoroutineExceptionHandler { _, throwable ->
-        Log.w("PostListViewModel", "orbit caught the exception", throwable)
-    }
-) : ViewModel(), ContainerHost<PostListState, NavigationEvent> {
-
-    override val container = container<PostListState, NavigationEvent>(
-        initialState = PostListState(),
-        savedStateHandle = savedStateHandle,
-        settings = Container.Settings(exceptionHandler = exceptionHandler)
-    ) {
-        if (it.overviews.isEmpty()) {
-            loadOverviews()
-        }
-    }
-
-    private fun loadOverviews() = intent {
-        val overviews = postRepository.getOverviews()
-
-        reduce {
-            state.copy(overviews = overviews)
-        }
-    }
-
-    fun onPostClicked(post: PostOverview) = intent {
-        postSideEffect(OpenPostNavigationEvent(post))
-    }
-
-    fun onPostLongClicked() = intent {
-        throw IllegalStateException("Catch me!")
-    }
-}
-*/
