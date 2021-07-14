@@ -18,7 +18,6 @@ package org.orbitmvi.orbit.sample.posts.app.features.postdetails.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.sample.posts.domain.repositories.PostOverview
 import org.orbitmvi.orbit.sample.posts.domain.repositories.PostRepository
@@ -32,17 +31,14 @@ import org.reduxkotlin.createThunkMiddleware
 import org.reduxkotlin.middleware
 
 class PostDetailsViewModel(
-    postRepository: PostRepository,
+    private val postRepository: PostRepository,
     private val postOverview: PostOverview
 ) : ViewModel() {
 
-    private val networkThunks = NetworkThunks(viewModelScope, postRepository)
-
     private val detailsMiddleware = middleware<PostDetailState> { store, next, action ->
-        if (action is ActionTypes.INIT) {
-            store.dispatch(networkThunks.loadDetails(postOverview.id))
-        } else {
-            next(action)
+        when (action) {
+            is ActionTypes.INIT -> store.dispatch(loadDetails(postOverview.id))
+            else -> next(action)
         }
     }
 
@@ -54,6 +50,15 @@ class PostDetailsViewModel(
         }
     }
 
+    private fun loadDetails(id: Int): Thunk<PostDetailState> = { dispatch, _, _ ->
+        viewModelScope.launch {
+            when (val status = postRepository.getDetail(id)) {
+                is Status.Success -> dispatch(PostDetailAction.DataSuccess(status.data))
+                is Status.Failure -> dispatch(PostDetailAction.DataFailure)
+            }
+        }
+    }
+
     val store = createThreadSafeStore(
         reducer = detailsReducer,
         preloadedState = PostDetailState.NoDetailsAvailable(postOverview),
@@ -61,20 +66,7 @@ class PostDetailsViewModel(
     )
 
     init {
+        // supposed to trigger automatically
         store.dispatch(ActionTypes.INIT)
-    }
-
-    class NetworkThunks(private val coroutineScope: CoroutineScope, private val postRepository: PostRepository) {
-        fun loadDetails(id: Int): Thunk<PostDetailState> = { dispatch, _, _ ->
-            coroutineScope.launch {
-                println("request")
-                val status = postRepository.getDetail(id)
-                println(status)
-                when (status) {
-                    is Status.Success -> dispatch(PostDetailAction.DataSuccess(status.data))
-                    is Status.Failure -> dispatch(PostDetailAction.DataFailure)
-                }
-            }
-        }
     }
 }
