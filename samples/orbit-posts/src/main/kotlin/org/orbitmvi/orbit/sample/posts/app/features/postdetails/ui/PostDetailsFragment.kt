@@ -71,7 +71,7 @@ class PostDetailsFragment : Fragment(R.layout.post_details_fragment) {
 
         binding.postCommentsList.adapter = adapter
 
-        lifecycleScope.launchWhenCreated {
+        viewLifecycleOwner.lifecycleScope.launchWhenCreated {
             viewModel.container.stateFlow.collect { render(it) }
         }
     }
@@ -99,8 +99,8 @@ class PostDetailsFragment : Fragment(R.layout.post_details_fragment) {
                         }
                     )
             }
-            binding.postTitle.text = state.postOverview.title
         }
+        binding.postTitle.text = state.postOverview.title
 
         if (state is PostDetailState.Details) {
             binding.postBody.text = state.post.body

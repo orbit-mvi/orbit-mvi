@@ -77,12 +77,12 @@ class PostListFragment : Fragment(R.layout.post_list_fragment) {
 
         binding.content.adapter = adapter
 
-        lifecycleScope.launchWhenCreated {
+        viewLifecycleOwner.lifecycleScope.launchWhenCreated {
             viewModel.container.stateFlow.collect {
                 reduce(adapter, it)
             }
         }
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             viewModel.container.sideEffectFlow.flowWithLifecycle(lifecycle, Lifecycle.State.STARTED).collect {
                 sideEffect(it)
             }
