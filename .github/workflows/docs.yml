@@ -1,0 +1,167 @@
+name: Android CI
+
+on:
+  push:
+    branches:
+      - main
+      - orbit/main
+      - feature/**
+    tags:
+      - '**'
+  pull_request:
+    branches:
+      - main
+      - orbit/main
+      - feature/**
+
+jobs:
+  static-checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: set up JDK 1.8
+        uses: actions/setup-java@v1
+        with:
+          java-version: 1.8
+
+      - name: gradle cache
+        uses: actions/cache@v1
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: gradle wrapper cache
+        uses: actions/cache@v1
+        with:
+          path: ~/.gradle/wrapper/dists
+          key: ${{ runner.os }}-gradlewrapper
+
+      - name: Detekt
+        run: ./gradlew detekt
+
+      - name: Markdown lint
+        run: ./gradlew markdownlint
+
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: set up JDK 1.8
+        uses: actions/setup-java@v1
+        with:
+          java-version: 1.8
+
+      - name: gradle cache
+        uses: actions/cache@v1
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: gradle wrapper cache
+        uses: actions/cache@v1
+        with:
+          path: ~/.gradle/wrapper/dists
+          key: ${{ runner.os }}-gradlewrapper
+
+      - name: Lint
+        run: ./gradlew lint
+
+  unit-tests:
+    runs-on: macOS-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: set up JDK 1.8
+        uses: actions/setup-java@v1
+        with:
+          java-version: 1.8
+
+      - name: gradle cache
+        uses: actions/cache@v1
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: gradle wrapper cache
+        uses: actions/cache@v1
+        with:
+          path: ~/.gradle/wrapper/dists
+          key: ${{ runner.os }}-gradlewrapper
+
+      - name: konan cache
+        uses: actions/cache@v1
+        with:
+          path: ~/.konan
+          key: ${{ runner.os }}-konan
+
+      - name: Unit tests
+        run: ./gradlew check -xlint
+
+      - name: Upload test artifacts
+        if: failure()
+        uses: actions/upload-artifact@master
+        with:
+          name: test-results
+          path: '**/build/reports/tests/**'
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v1.5.2
+        with:
+          token: ${{secrets.CODECOV_TOKEN}}
+
+  build:
+    needs: [ static-checks, lint, unit-tests ]
+    runs-on: macOS-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: set up JDK 1.8
+        uses: actions/setup-java@v1
+        with:
+          java-version: 1.8
+
+      - name: gradle cache
+        uses: actions/cache@v1
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: gradle wrapper cache
+        uses: actions/cache@v1
+        with:
+          path: ~/.gradle/wrapper/dists
+          key: ${{ runner.os }}-gradlewrapper
+
+      - name: konan cache
+        uses: actions/cache@v1
+        with:
+          path: ~/.konan
+          key: ${{ runner.os }}-konan
+
+      - name: Build
+        run: ./gradlew clean assemble -xassembleDebug
+
+      - name: Prepare tag properties
+        run: |
+          echo "${{secrets.GPG_SIGNING_SECRET_KEY_RING_FILE_BASE64}}" > ~/.gradle/sonatype-orbitmvi-keys.gpg.b64
+          base64 -d ~/.gradle/sonatype-orbitmvi-keys.gpg.b64 > ~/.gradle/sonatype-orbitmvi-keys.gpg
+          echo "${{secrets.GPG_GRADLE_PROPERTIES}}" > ~/.gradle/gradle.properties
+        if: startsWith(github.ref, 'refs/tags/')
+
+      - name: Upload tag
+        run: ./gradlew publish --no-daemon --no-parallel -Psigning.secretKeyRingFile=$(echo ~/.gradle/sonatype-orbitmvi-keys.gpg)
+        if: startsWith(github.ref, 'refs/tags/')
+
+      - name: Close and release tag
+        run: ./gradlew closeAndReleaseRepository
+        if: startsWith(github.ref, 'refs/tags/')
