@@ -1,4 +1,8 @@
-# Orbit ViewModel plugin
+---
+id: overview
+---
+
+# ViewModel plugin
 
 The plugin provides [Container](../orbit-core/src/commonMain/kotlin/org/orbitmvi/orbit/Container.kt)
   factory extensions on `ViewModel` for

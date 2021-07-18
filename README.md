@@ -1,3 +1,10 @@
+---
+id: intro
+sidebar_position: 1
+sidebar_label: 'Orbit in a nutshell'
+slug: /
+---
+
 # Orbit for Kotlin and Android
 
 [![CI status](https://github.com/orbit-mvi/orbit-mvi/workflows/Android%20CI/badge.svg)](https://github.com/orbit-mvi/orbit-mvi/actions)
@@ -11,17 +18,6 @@
 
 If you do not yet have an account with the Kotlinlang slack workspace,
 [sign up here](https://slack.kotlinlang.org).
-
-This library was originally developed at [Babylon Health](https://github.com/babylonhealth/orbit-mvi).
-However, as its development over there ceased, further development
-has been moved to this project maintained by the original authors.
-
-## Documentation
-
-- [How to write your own MVI library and why you shouldn't](https://www.youtube.com/watch?v=E6obYmkkdko)
-- [Core module and architecture overview](orbit-core/README.md)
-- [ViewModel](orbit-viewmodel/README.md)
-- [Test](orbit-test/README.md)
 
 ## Overview
 
@@ -40,7 +36,7 @@ And more!...
 
 ## Getting started in three simple steps
 
-```kotlin
+```kts
 implementation("org.orbit-mvi:orbit-viewmodel:<latest-version>")
 ```
 
@@ -184,9 +180,16 @@ testImplementation("org.orbit-mvi:orbit-test:<latest-version>")
 
 [![Download](https://img.shields.io/maven-central/v/org.orbit-mvi/orbit-core)](https://search.maven.org/artifact/org.orbit-mvi/orbit-core)
 
+## Learn More
+
+- [How to write your own MVI library and why you shouldn't](https://www.youtube.com/watch?v=E6obYmkkdko)
+- [Core module and architecture overview](orbit-core/README.md)
+- [ViewModel](orbit-viewmodel/README.md)
+- [Test](orbit-test/README.md)
+
 ## Contributing
 
-Please read [CONTRIBUTING.md](CONTRIBUTING.md)
+Please read [CONTRIBUTING](CONTRIBUTING.md)
 for details on our code of conduct, and the process for submitting pull
 requests to us.
 
@@ -200,4 +203,4 @@ available, see the [tags on this repository](https://github.com/orbit-mvi/orbit-
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE.md)
 
 This project is licensed under the Apache License, Version 2.0 - see the
-[LICENSE.md](LICENSE.md) file for details
+[license](LICENSE.md) file for details

@@ -1,9 +1,14 @@
-# Orbit Core
+---
+id: overview
+sidebar_label: Overview
+---
+
+# Core
 
 This is the core module for the Orbit framework.
 It provides all the basic parts of Orbit.
 
-- [Orbit Core](#orbit-core)
+- [Core](#core)
   - [Architecture](#architecture)
     - [Orbit concepts](#orbit-concepts)
     - [Side effects](#side-effects)
@@ -16,8 +21,7 @@ It provides all the basic parts of Orbit.
     - [Transformation](#transformation)
     - [Reduction](#reduction)
     - [Side effect](#side-effect)
-    - [Operator context in the simple syntax](#operator-context-in-the-simple-syntax)
-    - [Operator context in the strict syntax](#operator-context-in-the-strict-syntax)
+    - [Operator context](#operator-context)
   - [Container factories](#container-factories)
   - [Threading](#threading)
     - [Threading guarantees](#threading-guarantees)
