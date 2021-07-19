@@ -73,7 +73,7 @@ dependencies {
     implementation(project(":orbit-viewmodel"))
 
     implementation("androidx.constraintlayout:constraintlayout:2.0.4")
-    implementation("com.google.android.material:material:1.3.0")
+    implementation("com.google.android.material:material:1.4.0")
     implementation("androidx.navigation:navigation-fragment-ktx:2.3.5")
     implementation("androidx.navigation:navigation-ui-ktx:2.3.5")
     implementation("com.lightstreamer:ls-android-client:4.2.3")

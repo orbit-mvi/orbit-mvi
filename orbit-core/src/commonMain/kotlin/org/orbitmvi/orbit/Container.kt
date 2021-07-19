@@ -55,7 +55,7 @@ public interface Container<STATE : Any, SIDE_EFFECT : Any> {
      * A [Flow] of one-off side effects posted from [Container]. Caches side effects when there are no collectors.
      * The size of the cache can be controlled via Container [Settings] and determines if and when the orbit thread suspends when you
      * post a side effect. The default is unlimited. You don't have to touch this unless you are posting many side effects which could result in
-     * [OutOfMemoryError].
+     * `OutOfMemoryError`.
      *
      * This is designed to be collected by one observer only in order to ensure that side effect caching works in a predictable way.
      * If your particular use case requires multi-casting use `broadcast` on this [Flow], but be aware that caching will not work for the
