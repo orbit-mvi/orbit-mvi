@@ -18,7 +18,6 @@ package org.orbitmvi.orbit.viewmodel
 
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import kotlinx.coroutines.flow.collect
@@ -28,7 +27,7 @@ import org.orbitmvi.orbit.ContainerHost
 
 /**
  * Observe [Container.stateFlow] and [Container.sideEffectFlow] correctly on Android in one-line of code.
- * By default these streams will be observed at [Lifecycle.State.STARTED].
+ * These streams are observed when the view is in [Lifecycle.State.STARTED].
  *
  * In Activities, call from onCreate, where viewModel is a [ContainerHost]:
  *
@@ -41,31 +40,17 @@ import org.orbitmvi.orbit.ContainerHost
  * ```
  * viewModel.observe(viewLifecycleOwner, state = ::state, sideEffect = ::sideEffect)
  * ```
- *
- * See https://medium.com/androiddevelopers/a-safer-way-to-collect-flows-from-android-uis-23080b1f8bda
  */
 fun <STATE : Any, SIDE_EFFECT : Any> ContainerHost<STATE, SIDE_EFFECT>.observe(
     lifecycleOwner: LifecycleOwner,
-    stateActiveState: Lifecycle.State = Lifecycle.State.STARTED,
     state: (suspend (state: STATE) -> Unit)? = null,
-    sideEffectActiveState: Lifecycle.State = Lifecycle.State.STARTED,
     sideEffect: (suspend (sideEffect: SIDE_EFFECT) -> Unit)? = null
 ) {
-    with(lifecycleOwner) {
-        state?.let {
-            lifecycleScope.launch {
-                // repeatOnLifecycle launches the block in a new coroutine every time the
-                // lifecycle is in the `stateActiveState` state (or above) and cancels it when it's not.
-                repeatOnLifecycle(stateActiveState) {
-                    container.stateFlow.collect(state)
-                }
-            }
-        }
-
-        sideEffect?.let {
-            lifecycleScope.launch {
-                container.sideEffectFlow.flowWithLifecycle(lifecycle, sideEffectActiveState).collect(sideEffect)
-            }
+    lifecycleOwner.lifecycleScope.launch {
+        // See https://medium.com/androiddevelopers/a-safer-way-to-collect-flows-from-android-uis-23080b1f8bda
+        lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            state?.let { launch { container.stateFlow.collect(state) } }
+            sideEffect?.let { launch { container.sideEffectFlow.collect(sideEffect) } }
         }
     }
 }
