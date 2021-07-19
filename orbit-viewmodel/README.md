@@ -13,6 +13,7 @@ The plugin provides [Container](../orbit-core/src/commonMain/kotlin/org/orbitmvi
   to automatically save and restore the
   [Container](../orbit-core/src/commonMain/kotlin/org/orbitmvi/orbit/Container.kt)
   state on Activity or process death.
+- observing stateFlow and sideEffectFlow with a one-liner
 
 ## Including the module
 

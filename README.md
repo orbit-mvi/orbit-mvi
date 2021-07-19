@@ -120,8 +120,14 @@ class CalculatorActivity: AppCompatActivity() {
         ...
         addButton.setOnClickListener { viewModel.add(1234) }
 
-        lifecycleScope.launchWhenCreated {
-            viewModel.container.stateFlow.collect { render(it) }
+        // Either use the one-liner from the orbit-viewmodel module
+        viewModel.observe(state = ::render, sideEffect = ::handleSideEffect)
+
+        // Or observe the streams directly
+        lifecycleScope.launch {
+            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.container.stateFlow.collect { render(it) }
+            }
         }
         lifecycleScope.launch {
             viewModel.container.sideEffectFlow

@@ -27,8 +27,22 @@ import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 
 /**
- * One-liner to observe [Container.stateFlow] and [Container.sideEffectFlow] correctly on Android.
+ * Observe [Container.stateFlow] and [Container.sideEffectFlow] correctly on Android in one-line of code.
  * By default these streams will be observed at [Lifecycle.State.STARTED].
+ *
+ * In Activities, call from onCreate, where viewModel is a [ContainerHost]:
+ *
+ * ```
+ * viewModel.observe(this, state = ::state, sideEffect = ::sideEffect)
+ * ```
+ *
+ * In Fragments, call from onViewCreated, where viewModel is a [ContainerHost]:
+ *
+ * ```
+ * viewModel.observe(viewLifecycleOwner, state = ::state, sideEffect = ::sideEffect)
+ * ```
+ *
+ * See https://medium.com/androiddevelopers/a-safer-way-to-collect-flows-from-android-uis-23080b1f8bda
  */
 fun <STATE : Any, SIDE_EFFECT : Any> ContainerHost<STATE, SIDE_EFFECT>.observe(
     lifecycleOwner: LifecycleOwner,
@@ -40,7 +54,9 @@ fun <STATE : Any, SIDE_EFFECT : Any> ContainerHost<STATE, SIDE_EFFECT>.observe(
     with(lifecycleOwner) {
         state?.let {
             lifecycleScope.launch {
-                lifecycle.repeatOnLifecycle(stateActiveState) {
+                // repeatOnLifecycle launches the block in a new coroutine every time the
+                // lifecycle is in the `stateActiveState` state (or above) and cancels it when it's not.
+                repeatOnLifecycle(stateActiveState) {
                     container.stateFlow.collect(state)
                 }
             }
