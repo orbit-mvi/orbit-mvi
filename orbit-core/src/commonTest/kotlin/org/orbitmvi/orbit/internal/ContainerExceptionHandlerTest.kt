@@ -35,7 +35,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.isActive
-import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.container
@@ -126,28 +125,29 @@ internal class ContainerExceptionHandlerTest {
             else null
         val container = containerScope.container<Unit, Nothing>(
             initialState = Unit,
-            settings = Container.Settings(exceptionHandler = exceptionHandler)
+            settings = Container.Settings(
+                exceptionHandler = exceptionHandler,
+                intentDispatcher = Dispatchers.Unconfined
+            )
         )
         runBlocking {
-            scope.launch {
-                val exceptions = mutableListOf<Throwable>()
-                container.orbit {
-                    try {
-                        flow {
-                            while (true) {
-                                emit(Unit)
-                                delay(1000)
-                            }
-                        }.collect()
-                    } catch (e: CancellationException) {
-                        exceptions.add(e)
-                        throw e
-                    }
+            val exceptions = mutableListOf<Throwable>()
+            container.orbit {
+                try {
+                    flow {
+                        while (true) {
+                            emit(Unit)
+                            delay(1000)
+                        }
+                    }.collect()
+                } catch (e: CancellationException) {
+                    exceptions.add(e)
+                    throw e
                 }
-                containerScope.cancel()
-                scopeJob.join()
-                assertTrue { exceptions.isNotEmpty() }
-            }.join()
+            }
+            containerScope.cancel()
+            scopeJob.join()
+            assertEquals(1, exceptions.size)
         }
     }
 
