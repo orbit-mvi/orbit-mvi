@@ -26,17 +26,20 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.navArgs
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 import org.orbitmvi.orbit.sample.stocklist.R
 import org.orbitmvi.orbit.sample.stocklist.databinding.DetailFragmentBinding
 import org.orbitmvi.orbit.sample.stocklist.detail.business.DetailViewModel
 import org.orbitmvi.orbit.sample.stocklist.list.ui.JobHolder
 import org.orbitmvi.orbit.sample.stocklist.list.ui.animateChange
-import org.koin.androidx.viewmodel.ext.android.viewModel
-import org.koin.core.parameter.parametersOf
 
 class DetailFragment : Fragment() {
 
@@ -51,7 +54,7 @@ class DetailFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = DataBindingUtil.inflate(inflater, R.layout.detail_fragment, container, false)
         return binding.root
     }
@@ -64,11 +67,16 @@ class DetailFragment : Fragment() {
             lifecycleOwner = this@DetailFragment
         }
 
-        lifecycleScope.launchWhenCreated {
-            detailViewModel.container.stateFlow.collect {
-                it.stock?.let { stock ->
-                    animateChange(binding.bid, binding.bidTick, stock.bid, bidRef)
-                    animateChange(binding.ask, binding.askTick, stock.ask, askRef)
+        viewLifecycleOwner.lifecycleScope.launch {
+            // See https://medium.com/androiddevelopers/a-safer-way-to-collect-flows-from-android-uis-23080b1f8bda
+            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch {
+                    detailViewModel.container.stateFlow.collect {
+                        it.stock?.let { stock ->
+                            animateChange(binding.bid, binding.bidTick, stock.bid, bidRef)
+                            animateChange(binding.ask, binding.askTick, stock.ask, askRef)
+                        }
+                    }
                 }
             }
         }

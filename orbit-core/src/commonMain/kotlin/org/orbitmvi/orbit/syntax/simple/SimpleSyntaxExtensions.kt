@@ -20,6 +20,11 @@
 
 package org.orbitmvi.orbit.syntax.simple
 
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.idling.withIdling
@@ -72,3 +77,16 @@ public fun <STATE : Any, SIDE_EFFECT : Any> ContainerHost<STATE, SIDE_EFFECT>.in
             }
         }
     }
+
+@OrbitDsl
+public suspend fun <S : Any, SE : Any> SimpleSyntax<S, SE>.repeatOnSubscription(block: suspend CoroutineScope.() -> Unit) {
+    coroutineScope {
+        var job: Job? = null
+        launch {
+            containerContext.subscribedCounter.subscribed.collect {
+                job?.cancel()
+                job = if (it) this@coroutineScope.launch { coroutineScope { block() } } else null
+            }
+        }
+    }
+}

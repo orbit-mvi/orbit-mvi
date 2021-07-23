@@ -27,8 +27,8 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -69,20 +69,26 @@ class ListFragment : Fragment() {
             addItemDecoration(DividerItemDecoration(context, LinearLayoutManager.VERTICAL))
         }
 
-        lifecycleScope.launchWhenCreated {
-            listViewModel.container.stateFlow.collect {
-                val items = it.stocks.map { stock ->
-                    StockItem(stock, listViewModel)
+        viewLifecycleOwner.lifecycleScope.launch {
+            // See https://medium.com/androiddevelopers/a-safer-way-to-collect-flows-from-android-uis-23080b1f8bda
+            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch {
+                    listViewModel.container.stateFlow.collect {
+                        val items = it.stocks.map { stock ->
+                            StockItem(stock, listViewModel)
+                        }
+
+                        groupAdapter.update(items)
+                    }
                 }
 
-                groupAdapter.update(items)
-            }
-        }
-        lifecycleScope.launch {
-            listViewModel.container.sideEffectFlow.flowWithLifecycle(lifecycle, Lifecycle.State.STARTED).collect {
-                when (it) {
-                    is ListSideEffect.NavigateToDetail ->
-                        findNavController().navigate(ListFragmentDirections.actionListFragmentToDetailFragment(it.itemName))
+                launch {
+                    listViewModel.container.sideEffectFlow.collect {
+                        when (it) {
+                            is ListSideEffect.NavigateToDetail ->
+                                findNavController().navigate(ListFragmentDirections.actionListFragmentToDetailFragment(it.itemName))
+                        }
+                    }
                 }
             }
         }
