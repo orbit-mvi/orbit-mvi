@@ -21,9 +21,9 @@
 package org.orbitmvi.orbit.syntax.simple
 
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
@@ -81,12 +81,11 @@ public fun <STATE : Any, SIDE_EFFECT : Any> ContainerHost<STATE, SIDE_EFFECT>.in
 @OrbitDsl
 public suspend fun <S : Any, SE : Any> SimpleSyntax<S, SE>.repeatOnSubscription(block: suspend CoroutineScope.() -> Unit) {
     coroutineScope {
-        var job: Job? = null
+        @Suppress("EXPERIMENTAL_API_USAGE")
         launch {
-            containerContext.subscribedCounter.subscribed.collect {
-                job?.cancel()
-                job = if (it) this@coroutineScope.launch { coroutineScope { block() } } else null
-            }
+            containerContext.subscribedCounter.subscribed.mapLatest {
+                if (it) coroutineScope { block() } else null
+            }.collect()
         }
     }
 }
