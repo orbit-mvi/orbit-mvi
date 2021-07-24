@@ -81,10 +81,10 @@ public fun <STATE : Any, SIDE_EFFECT : Any> ContainerHost<STATE, SIDE_EFFECT>.in
 @OrbitDsl
 public suspend fun <S : Any, SE : Any> SimpleSyntax<S, SE>.repeatOnSubscription(block: suspend CoroutineScope.() -> Unit) {
     coroutineScope {
-        @Suppress("EXPERIMENTAL_API_USAGE")
         launch {
+            @Suppress("EXPERIMENTAL_API_USAGE")
             containerContext.subscribedCounter.subscribed.mapLatest {
-                if (it) coroutineScope { block() } else null
+                if (it) block() else null
             }.collect()
         }
     }
