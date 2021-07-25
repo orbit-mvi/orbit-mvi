@@ -74,7 +74,7 @@ dependencies {
     implementation(kotlin("reflect"))
 
     // Dependency Injection
-    implementation("org.koin:koin-androidx-viewmodel:2.2.2")
+    implementation("io.insert-koin:koin-android:3.1.2")
 
     // Testing
     testImplementation(project(":orbit-test"))

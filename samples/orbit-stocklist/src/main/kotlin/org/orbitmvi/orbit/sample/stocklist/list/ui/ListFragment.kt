@@ -36,7 +36,7 @@ import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.GroupieViewHolder
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.androidx.viewmodel.ext.android.stateViewModel
 import org.orbitmvi.orbit.sample.stocklist.R
 import org.orbitmvi.orbit.sample.stocklist.databinding.ListFragmentBinding
 import org.orbitmvi.orbit.sample.stocklist.list.business.ListSideEffect
@@ -44,7 +44,7 @@ import org.orbitmvi.orbit.sample.stocklist.list.business.ListViewModel
 
 class ListFragment : Fragment() {
 
-    private val listViewModel by viewModel<ListViewModel>()
+    private val listViewModel by stateViewModel<ListViewModel>()
 
     private lateinit var binding: ListFragmentBinding
 
