@@ -20,22 +20,22 @@
 
 object Versions {
 
-    const val gradleVersionsPlugin = "0.36.0"
+    const val gradleVersionsPlugin = "0.39.0"
     const val gradleAndroidPlugin = "4.2.2"
     const val gradleMavenPublishPlugin = "0.14.2"
     const val dokkaPlugin = "1.4.20"
     const val markdownLintPlugin = "0.6.0"
-    const val detektPlugin = "1.15.0"
+    const val detektPlugin = "1.17.1"
     const val safeargs = "2.3.5"
     const val atomicfu = "0.16.2"
 
     const val kotlin = "1.5.21"
     const val coroutines = "1.5.1-native-mt"
 
-    const val androidxLifecycles = "2.2.0"
+    const val androidxLifecycles = "2.3.1"
     const val androidxEspresso = "3.4.0"
 
-    const val desugar = "1.0.10"
+    const val desugar = "1.1.5"
 
     // Testing
     const val junitPlatform = "1.7.2"
