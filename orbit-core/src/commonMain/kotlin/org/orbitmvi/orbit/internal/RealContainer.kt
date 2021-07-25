@@ -39,6 +39,7 @@ import kotlinx.coroutines.sync.withLock
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.syntax.ContainerContext
 import kotlin.coroutines.EmptyCoroutineContext
+import kotlinx.coroutines.Job
 
 @Suppress("EXPERIMENTAL_API_USAGE")
 public class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
@@ -83,7 +84,8 @@ public class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
                 }
             }
             scope.launch {
-                val context = Dispatchers.Unconfined + (settings.exceptionHandler?.plus(SupervisorJob()) ?: EmptyCoroutineContext)
+                val exceptionHandlerContext = settings.exceptionHandler?.plus(SupervisorJob(scope.coroutineContext[Job]))
+                val context = Dispatchers.Unconfined + (exceptionHandlerContext ?: EmptyCoroutineContext)
 
                 for (msg in dispatchChannel) {
                     launch(context) { pluginContext.msg() }

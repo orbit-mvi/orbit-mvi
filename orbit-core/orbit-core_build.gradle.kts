@@ -46,17 +46,22 @@ kotlin {
             }
         }
 
+        @Suppress("UnusedPrivateMember")
         val jvmMain by getting {
         }
+
+        @Suppress("UnusedPrivateMember")
         val jvmTest by getting {
             dependencies {
                 implementation(kotlin("test-junit"))
             }
         }
 
+        @Suppress("UnusedPrivateMember")
         val iosMain by getting {
         }
 
+        @Suppress("UnusedPrivateMember")
         val iosTest by getting {
         }
     }

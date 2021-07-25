@@ -16,25 +16,30 @@
 
 package org.orbitmvi.orbit.internal
 
-import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.isActive
-import org.orbitmvi.orbit.Container
-import org.orbitmvi.orbit.container
-import org.orbitmvi.orbit.test
+import kotlin.coroutines.cancellation.CancellationException
 import kotlin.random.Random
 import kotlin.test.AfterTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertTrue
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.isActive
+import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
+import org.orbitmvi.orbit.container
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.reduce
+import org.orbitmvi.orbit.test
 
 @ExperimentalCoroutinesApi
 internal class ContainerExceptionHandlerTest {
@@ -94,6 +99,50 @@ internal class ContainerExceptionHandlerTest {
         assertEquals(true, scope.isActive)
         assertEquals(1, exceptions.size)
         assertTrue { exceptions.first() is IllegalStateException }
+    }
+
+    @Test
+    fun `with exception handler cancellation exception is propagated normally`() {
+        checkCancellationPropagation(withExceptionHandler = true)
+    }
+
+    @Test
+    fun `without exception handler cancellation exception is propagated normally`() {
+        checkCancellationPropagation(withExceptionHandler = false)
+    }
+
+    private fun checkCancellationPropagation(withExceptionHandler: Boolean) {
+        val scopeJob = SupervisorJob()
+        val containerScope = CoroutineScope(scopeJob)
+        val exceptionHandler =
+            if (withExceptionHandler) CoroutineExceptionHandler { _, _ -> /*don't care*/ }
+            else null
+        val container = containerScope.container<Unit, Nothing>(
+            initialState = Unit,
+            settings = Container.Settings(
+                exceptionHandler = exceptionHandler,
+                intentDispatcher = Dispatchers.Unconfined
+            )
+        )
+        runBlocking {
+            val exceptions = mutableListOf<Throwable>()
+            container.orbit {
+                try {
+                    flow {
+                        while (true) {
+                            emit(Unit)
+                            delay(1000)
+                        }
+                    }.collect()
+                } catch (e: CancellationException) {
+                    exceptions.add(e)
+                    throw e
+                }
+            }
+            containerScope.cancel()
+            scopeJob.join()
+            assertEquals(1, exceptions.size)
+        }
     }
 
     @Test

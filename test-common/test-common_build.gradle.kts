@@ -35,11 +35,15 @@ kotlin {
                 implementation(kotlin("test-annotations-common"))
             }
         }
+
+        @Suppress("UnusedPrivateMember")
         val jvmMain by getting {
             dependencies {
                 implementation(kotlin("test-junit"))
             }
         }
+
+        @Suppress("UnusedPrivateMember")
         val iosMain by getting {
         }
     }

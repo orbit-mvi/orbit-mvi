@@ -69,12 +69,12 @@ dependencies {
     implementation("com.squareup.okhttp3:okhttp:4.9.1")
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-jackson:2.9.0")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.12.2")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.12.4")
     // reflect set to override version from jackson
     implementation(kotlin("reflect"))
 
     // Dependency Injection
-    implementation("org.koin:koin-androidx-viewmodel:2.2.1")
+    implementation("org.koin:koin-androidx-viewmodel:2.2.2")
 
     // Testing
     testImplementation(project(":orbit-test"))
