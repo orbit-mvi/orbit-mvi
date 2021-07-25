@@ -49,6 +49,17 @@ android {
     }
 }
 
+repositories {
+    exclusiveContent {
+        forRepository {
+            maven { setUrl("https://jitpack.io") }
+        }
+        filter {
+            includeGroup("com.github.lisawray.groupie")
+        }
+    }
+}
+
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
     implementation(project(":orbit-core"))
@@ -58,8 +69,8 @@ dependencies {
     implementation("androidx.constraintlayout:constraintlayout:2.0.4")
     implementation("com.google.android.material:material:1.4.0")
     implementation("com.github.bumptech.glide:glide:4.12.0")
-    implementation("com.xwray:groupie:2.9.0")
-    implementation("com.xwray:groupie-viewbinding:2.9.0")
+    implementation("com.github.lisawray.groupie:groupie:2.9.0")
+    implementation("com.github.lisawray.groupie:groupie-viewbinding:2.9.0")
     implementation("androidx.navigation:navigation-fragment-ktx:2.3.5")
     implementation("androidx.navigation:navigation-ui-ktx:2.3.5")
     implementation("androidx.lifecycle:lifecycle-common-java8:2.4.0-alpha02")
@@ -85,6 +96,6 @@ dependencies {
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.mockito.kotlin:mockito-kotlin:3.2.0")
     testImplementation("org.mockito:mockito-inline:3.11.2")
-    testImplementation("com.appmattus.fixture:fixture:1.0.0")
+    testImplementation("com.appmattus.fixture:fixture:1.1.0")
     testImplementation("com.squareup.retrofit2:retrofit-mock:2.9.0")
 }

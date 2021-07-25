@@ -21,7 +21,7 @@ plugins {
 }
 
 repositories {
-    jcenter()
+    mavenCentral()
 }
 
 tasks.withType(KotlinCompile::class.java).all {
@@ -32,5 +32,5 @@ tasks.withType(KotlinCompile::class.java).all {
 
 dependencies {
     // See https://github.com/Kotlin/kotlinx.atomicfu/issues/171
-    implementation(kotlin("stdlib", "1.5.20"))
+    implementation(kotlin("stdlib", "1.5.21"))
 }
