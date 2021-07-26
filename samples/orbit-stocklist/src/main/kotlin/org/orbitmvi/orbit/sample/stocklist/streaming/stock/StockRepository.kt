@@ -57,9 +57,6 @@ class StockRepository(private val client: StreamingClient) {
             addListener(
                 object : SubscriptionListener by EmptySubscriptionListener {
                     override fun onItemUpdate(p0: ItemUpdate) {
-
-                        if (p0.itemPos == 2) println("price tick")
-
                         val itemName = p0.itemName
                         val stockName = p0.getValue("stock_name")
                         val formattedBid = p0.getValue("bid")?.to2dp()
