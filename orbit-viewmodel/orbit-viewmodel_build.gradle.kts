@@ -33,7 +33,8 @@ dependencies {
     api(project(":orbit-core"))
 
     implementation(ProjectDependencies.androidxLifecycleSavedState)
-    implementation(ProjectDependencies.androidxLifecycleKtx)
+    implementation(ProjectDependencies.androidxLifecycleViewmodelKtx)
+    implementation(ProjectDependencies.androidxLifecycleRuntimeKtx)
     implementation(ProjectDependencies.androidxEspressoIdlingResource)
 
     // Testing
