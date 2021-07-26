@@ -20,6 +20,7 @@
 
 package org.orbitmvi.orbit.sample.posts.app.di
 
+import androidx.lifecycle.SavedStateHandle
 import com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
@@ -39,7 +40,7 @@ import retrofit2.converter.jackson.JacksonConverterFactory
 fun module() = module {
     viewModel { PostListViewModel(get(), get()) }
 
-    viewModel { (postOverview: PostOverview) -> PostDetailsViewModel(get(), get(), postOverview) }
+    viewModel { (savedStateHandle: SavedStateHandle, postOverview: PostOverview) -> PostDetailsViewModel(savedStateHandle, get(), postOverview) }
 
     single {
         ObjectMapper().registerKotlinModule().configure(FAIL_ON_UNKNOWN_PROPERTIES, false)

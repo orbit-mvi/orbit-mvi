@@ -62,9 +62,16 @@ android {
 }
 
 repositories {
-    jcenter()
+    mavenCentral()
     maven { setUrl("https://www.lightstreamer.com/repo/maven") }
-    maven { setUrl("https://dl.bintray.com/lisawray/maven") }
+    exclusiveContent {
+        forRepository {
+            maven { setUrl("https://jitpack.io") }
+        }
+        filter {
+            includeGroup("com.github.lisawray.groupie")
+        }
+    }
 }
 
 dependencies {
@@ -77,9 +84,9 @@ dependencies {
     implementation("androidx.navigation:navigation-fragment-ktx:2.3.5")
     implementation("androidx.navigation:navigation-ui-ktx:2.3.5")
     implementation("com.lightstreamer:ls-android-client:4.2.5")
-    implementation("com.xwray:groupie:2.9.0")
-    implementation("com.xwray:groupie-kotlin-android-extensions:2.9.0")
-    implementation("com.xwray:groupie-viewbinding:2.9.0")
+    implementation("com.github.lisawray.groupie:groupie:2.9.0")
+    implementation("com.github.lisawray.groupie:groupie-kotlin-android-extensions:2.9.0")
+    implementation("com.github.lisawray.groupie:groupie-viewbinding:2.9.0")
     implementation("io.insert-koin:koin-android:3.1.2")
     implementation("androidx.lifecycle:lifecycle-common-java8:2.4.0-alpha02")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.4.0-alpha02")
