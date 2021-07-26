@@ -35,7 +35,7 @@ import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.GroupieViewHolder
-import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.androidx.viewmodel.ext.android.stateViewModel
 import org.koin.core.parameter.parametersOf
 import org.orbitmvi.orbit.sample.posts.R
 import org.orbitmvi.orbit.sample.posts.app.common.SeparatorDecoration
@@ -48,7 +48,7 @@ import org.orbitmvi.orbit.viewmodel.observe
 class PostDetailsFragment : Fragment(R.layout.post_details_fragment) {
 
     private val args: PostDetailsFragmentArgs by navArgs()
-    private val viewModel: PostDetailsViewModel by viewModel { parametersOf(args.overview) }
+    private val viewModel: PostDetailsViewModel by stateViewModel { parametersOf(args.overview) }
     private var initialised: Boolean = false
     private val adapter = GroupAdapter<GroupieViewHolder>()
 

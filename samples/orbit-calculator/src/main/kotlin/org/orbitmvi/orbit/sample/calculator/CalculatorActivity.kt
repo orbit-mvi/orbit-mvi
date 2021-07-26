@@ -23,8 +23,8 @@ package org.orbitmvi.orbit.sample.calculator
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
+import org.koin.androidx.viewmodel.ext.android.getStateViewModel
 import org.orbitmvi.orbit.sample.calculator.databinding.ActivityMainBinding
-import org.koin.androidx.viewmodel.ext.android.getViewModel
 
 class CalculatorActivity : AppCompatActivity() {
 
@@ -32,7 +32,7 @@ class CalculatorActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         DataBindingUtil.setContentView<ActivityMainBinding>(this, R.layout.activity_main).apply {
-            viewmodel = getViewModel()
+            viewmodel = getStateViewModel()
             lifecycleOwner = this@CalculatorActivity
         }
     }
