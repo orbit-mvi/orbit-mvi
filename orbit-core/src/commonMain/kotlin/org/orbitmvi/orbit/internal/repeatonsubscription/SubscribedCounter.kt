@@ -1,41 +1,43 @@
 package org.orbitmvi.orbit.internal.repeatonsubscription
 
+import kotlinx.atomicfu.atomic
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.mapLatest
+import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
-public class SubscribedCounter(private val repeatOnSubscribedStopTimeout: Long) {
-    private val _subscribed: MutableStateFlow<Boolean> = MutableStateFlow(false)
+public class SubscribedCounter(scope: CoroutineScope, private val repeatOnSubscribedStopTimeout: Long) {
+    private val _subscribed = Channel<Boolean>()
 
     @Suppress("EXPERIMENTAL_API_USAGE")
-    public val subscribed: Flow<Boolean> = _subscribed.mapLatest {
-        if (!it) {
-            delay(repeatOnSubscribedStopTimeout)
+    public val subscribed: StateFlow<Boolean> = _subscribed
+        .receiveAsFlow()
+        .mapLatest {
+            if (!it) {
+                delay(repeatOnSubscribedStopTimeout)
+            }
+            it
         }
-        it
-    }.distinctUntilChanged()
+        .stateIn(scope = scope, started = SharingStarted.Eagerly, initialValue = false)
 
-    private var counter = 0
+    private val counter = atomic(0)
 
     private var mutex = Mutex()
 
-    public suspend fun increment() {
-        mutex.withLock {
-            counter++
-            _subscribed.value = true
-        }
+    public suspend fun increment(): Unit = mutex.withLock {
+        counter.incrementAndGet()
+        _subscribed.send(true)
     }
 
-    public suspend fun decrement() {
-        mutex.withLock {
-            counter--
-            if (counter == 0) {
-                _subscribed.value = false
-            }
+    public suspend fun decrement(): Unit = mutex.withLock {
+        if (counter.decrementAndGet() == 0) {
+            _subscribed.send(false)
         }
     }
 }
