@@ -79,7 +79,9 @@ public fun <STATE : Any, SIDE_EFFECT : Any> ContainerHost<STATE, SIDE_EFFECT>.in
     }
 
 @OrbitDsl
-public suspend fun <S : Any, SE : Any> SimpleSyntax<S, SE>.repeatOnSubscription(block: suspend CoroutineScope.() -> Unit) {
+public suspend fun <S : Any, SE : Any> SimpleSyntax<S, SE>.repeatOnSubscription(
+    block: suspend CoroutineScope.() -> Unit
+) {
     coroutineScope {
         launch {
             @Suppress("EXPERIMENTAL_API_USAGE")
