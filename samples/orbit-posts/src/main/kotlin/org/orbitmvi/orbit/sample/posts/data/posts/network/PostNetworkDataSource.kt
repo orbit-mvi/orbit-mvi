@@ -20,12 +20,12 @@
 
 package org.orbitmvi.orbit.sample.posts.data.posts.network
 
+import java.io.IOException
 import org.orbitmvi.orbit.sample.posts.data.posts.model.CommentData
 import org.orbitmvi.orbit.sample.posts.data.posts.model.PostData
 import org.orbitmvi.orbit.sample.posts.data.posts.model.UserData
 import org.orbitmvi.orbit.sample.posts.domain.repositories.Status
 import retrofit2.HttpException
-import java.io.IOException
 
 class PostNetworkDataSource(private val typicodeService: TypicodeService) {
     suspend fun getPost(id: Int): Status<PostData> {
@@ -41,9 +41,9 @@ class PostNetworkDataSource(private val typicodeService: TypicodeService) {
     suspend fun getPosts(): List<PostData> {
         return try {
             typicodeService.posts().sortedBy { it.title }
-        } catch (e: IOException) {
+        } catch (ignore: IOException) {
             emptyList()
-        } catch (e: HttpException) {
+        } catch (ignore: HttpException) {
             emptyList()
         }
     }
@@ -51,9 +51,9 @@ class PostNetworkDataSource(private val typicodeService: TypicodeService) {
     suspend fun getUsers(): List<UserData> {
         return try {
             typicodeService.users()
-        } catch (e: IOException) {
+        } catch (ignore: IOException) {
             emptyList()
-        } catch (e: HttpException) {
+        } catch (ignore: HttpException) {
             emptyList()
         }
     }
@@ -61,9 +61,9 @@ class PostNetworkDataSource(private val typicodeService: TypicodeService) {
     suspend fun getUser(id: Int): UserData? {
         return try {
             typicodeService.user(id)
-        } catch (e: IOException) {
+        } catch (ignore: IOException) {
             null
-        } catch (e: HttpException) {
+        } catch (ignore: HttpException) {
             null
         }
     }
@@ -71,9 +71,9 @@ class PostNetworkDataSource(private val typicodeService: TypicodeService) {
     suspend fun getComments(): List<CommentData> {
         return try {
             typicodeService.comments()
-        } catch (e: IOException) {
+        } catch (ignore: IOException) {
             emptyList()
-        } catch (e: HttpException) {
+        } catch (ignore: HttpException) {
             emptyList()
         }
     }
@@ -81,9 +81,9 @@ class PostNetworkDataSource(private val typicodeService: TypicodeService) {
     suspend fun getComments(postId: Int): List<CommentData> {
         return try {
             typicodeService.comments(postId)
-        } catch (e: IOException) {
+        } catch (ignore: IOException) {
             emptyList()
-        } catch (e: HttpException) {
+        } catch (ignore: HttpException) {
             emptyList()
         }
     }

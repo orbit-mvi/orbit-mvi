@@ -33,7 +33,7 @@ internal const val SAVED_STATE_KEY = "state"
  * Creates a container scoped with ViewModelScope.
  *
  * @param initialState The initial state of the container.
- * @param settings The [Settings] to set the container up with.
+ * @param settings The [Container.Settings] to set the container up with.
  * @param onCreate The lambda to execute when the container is created. By default it is
  * executed in a lazy manner after the container has been interacted with in any way.
  * @return A [Container] implementation
@@ -56,7 +56,7 @@ fun <STATE : Any, SIDE_EFFECT : Any> ViewModel.container(
  * @param initialState The initial state of the container.
  * @param savedStateHandle The [SavedStateHandle] corresponding to this host. Typically retrieved
  * from the containing [ViewModel]
- * @param settings The [Settings] to set the container up with.
+ * @param settings The [Container.Settings] to set the container up with.
  * @param onCreate The lambda to execute when the container is created, parameter is false, or
  * recreated, parameter is true. By default it is executed in a lazy manner after the container
  * has been interacted with in any way.

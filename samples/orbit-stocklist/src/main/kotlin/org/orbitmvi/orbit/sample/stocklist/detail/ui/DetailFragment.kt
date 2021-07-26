@@ -26,25 +26,22 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.asLiveData
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.navArgs
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
-import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.androidx.viewmodel.ext.android.stateViewModel
 import org.koin.core.parameter.parametersOf
 import org.orbitmvi.orbit.sample.stocklist.R
 import org.orbitmvi.orbit.sample.stocklist.databinding.DetailFragmentBinding
+import org.orbitmvi.orbit.sample.stocklist.detail.business.DetailState
 import org.orbitmvi.orbit.sample.stocklist.detail.business.DetailViewModel
 import org.orbitmvi.orbit.sample.stocklist.list.ui.JobHolder
 import org.orbitmvi.orbit.sample.stocklist.list.ui.animateChange
+import org.orbitmvi.orbit.viewmodel.observe
 
 class DetailFragment : Fragment() {
 
     private val args: DetailFragmentArgs by navArgs()
-    private val detailViewModel by viewModel<DetailViewModel> { parametersOf(args.itemName) }
+    private val detailViewModel by stateViewModel<DetailViewModel> { parametersOf(args.itemName) }
     private lateinit var binding: DetailFragmentBinding
 
     private val bidRef = JobHolder()
@@ -59,26 +56,21 @@ class DetailFragment : Fragment() {
         return binding.root
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         binding.apply {
             state = detailViewModel.container.stateFlow.asLiveData()
             lifecycleOwner = this@DetailFragment
         }
 
-        viewLifecycleOwner.lifecycleScope.launch {
-            // See https://medium.com/androiddevelopers/a-safer-way-to-collect-flows-from-android-uis-23080b1f8bda
-            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                launch {
-                    detailViewModel.container.stateFlow.collect {
-                        it.stock?.let { stock ->
-                            animateChange(binding.bid, binding.bidTick, stock.bid, bidRef)
-                            animateChange(binding.ask, binding.askTick, stock.ask, askRef)
-                        }
-                    }
-                }
-            }
+        detailViewModel.observe(viewLifecycleOwner, state = ::render)
+    }
+
+    fun render(state: DetailState) {
+        state.stock?.let { stock ->
+            animateChange(binding.bid, binding.bidTick, stock.bid, bidRef)
+            animateChange(binding.ask, binding.askTick, stock.ask, askRef)
         }
     }
 }

@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 buildscript {
     repositories {
         google()
-        jcenter()
+        mavenCentral()
     }
 
     dependencies {
@@ -95,7 +95,7 @@ allprojects {
 subprojects {
     repositories {
         google()
-        jcenter()
+        mavenCentral()
     }
 
     version = (System.getenv("GITHUB_REF") ?: System.getProperty("GITHUB_REF"))

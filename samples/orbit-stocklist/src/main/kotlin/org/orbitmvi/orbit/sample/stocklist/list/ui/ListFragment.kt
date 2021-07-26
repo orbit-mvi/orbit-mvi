@@ -26,41 +26,38 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.GroupieViewHolder
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
-import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.androidx.viewmodel.ext.android.stateViewModel
 import org.orbitmvi.orbit.sample.stocklist.R
 import org.orbitmvi.orbit.sample.stocklist.databinding.ListFragmentBinding
 import org.orbitmvi.orbit.sample.stocklist.list.business.ListSideEffect
+import org.orbitmvi.orbit.sample.stocklist.list.business.ListState
 import org.orbitmvi.orbit.sample.stocklist.list.business.ListViewModel
+import org.orbitmvi.orbit.viewmodel.observe
 
 class ListFragment : Fragment() {
 
-    private val listViewModel by viewModel<ListViewModel>()
+    private val listViewModel by stateViewModel<ListViewModel>()
 
     private lateinit var binding: ListFragmentBinding
+
+    private val groupAdapter = GroupAdapter<GroupieViewHolder>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = DataBindingUtil.inflate(inflater, R.layout.list_fragment, container, false)
         return binding.root
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-
-        val groupAdapter = GroupAdapter<GroupieViewHolder>()
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         binding.recyclerView.apply {
             adapter = groupAdapter
@@ -69,28 +66,19 @@ class ListFragment : Fragment() {
             addItemDecoration(DividerItemDecoration(context, LinearLayoutManager.VERTICAL))
         }
 
-        viewLifecycleOwner.lifecycleScope.launch {
-            // See https://medium.com/androiddevelopers/a-safer-way-to-collect-flows-from-android-uis-23080b1f8bda
-            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                launch {
-                    listViewModel.container.stateFlow.collect {
-                        val items = it.stocks.map { stock ->
-                            StockItem(stock, listViewModel)
-                        }
+        listViewModel.observe(viewLifecycleOwner, state = ::render, sideEffect = ::sideEffect)
+    }
 
-                        groupAdapter.update(items)
-                    }
-                }
-
-                launch {
-                    listViewModel.container.sideEffectFlow.collect {
-                        when (it) {
-                            is ListSideEffect.NavigateToDetail ->
-                                findNavController().navigate(ListFragmentDirections.actionListFragmentToDetailFragment(it.itemName))
-                        }
-                    }
-                }
-            }
+    fun render(state: ListState) {
+        val items = state.stocks.map { stock ->
+            StockItem(stock, listViewModel)
         }
+
+        groupAdapter.update(items)
+    }
+
+    fun sideEffect(sideEffect: ListSideEffect): Unit = when (sideEffect) {
+        is ListSideEffect.NavigateToDetail ->
+            findNavController().navigate(ListFragmentDirections.actionListFragmentToDetailFragment(sideEffect.itemName))
     }
 }
