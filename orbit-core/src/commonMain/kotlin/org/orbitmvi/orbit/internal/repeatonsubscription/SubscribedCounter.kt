@@ -1,30 +1,24 @@
 package org.orbitmvi.orbit.internal.repeatonsubscription
 
 import kotlinx.atomicfu.atomic
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.mapLatest
-import kotlinx.coroutines.flow.receiveAsFlow
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
-public class SubscribedCounter(scope: CoroutineScope, private val repeatOnSubscribedStopTimeout: Long) {
-    private val _subscribed = Channel<Boolean>()
+public class SubscribedCounter(private val repeatOnSubscribedStopTimeout: Long) {
+    private val _subscribed: MutableStateFlow<Boolean> = MutableStateFlow(false)
 
     @Suppress("EXPERIMENTAL_API_USAGE")
-    public val subscribed: StateFlow<Boolean> = _subscribed
-        .receiveAsFlow()
-        .mapLatest {
-            if (!it) {
-                delay(repeatOnSubscribedStopTimeout)
-            }
-            it
+    public val subscribed: Flow<Boolean> = _subscribed.mapLatest {
+        if (!it) {
+            delay(repeatOnSubscribedStopTimeout)
         }
-        .stateIn(scope = scope, started = SharingStarted.Eagerly, initialValue = false)
+        it
+    }.distinctUntilChanged()
 
     private val counter = atomic(0)
 
@@ -32,12 +26,12 @@ public class SubscribedCounter(scope: CoroutineScope, private val repeatOnSubscr
 
     public suspend fun increment(): Unit = mutex.withLock {
         counter.incrementAndGet()
-        _subscribed.send(true)
+        _subscribed.value = true
     }
 
     public suspend fun decrement(): Unit = mutex.withLock {
         if (counter.decrementAndGet() == 0) {
-            _subscribed.send(false)
+            _subscribed.value = false
         }
     }
 }

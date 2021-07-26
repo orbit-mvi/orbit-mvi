@@ -53,7 +53,7 @@ public class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
     private val mutex = Mutex()
     private val initialised = atomic(false)
 
-    private val subscribedCounter = SubscribedCounter(scope, settings.repeatOnSubscribedStopTimeout)
+    private val subscribedCounter = SubscribedCounter(settings.repeatOnSubscribedStopTimeout)
 
     private val internalStateFlow = MutableStateFlow(initialState)
     override val stateFlow: StateFlow<STATE> = internalStateFlow.refCount(subscribedCounter)
