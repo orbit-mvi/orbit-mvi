@@ -2,8 +2,9 @@ package org.orbitmvi.orbit.internal.repeatonsubscription
 
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
+import kotlin.test.assertTrue
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import org.orbitmvi.orbit.internal.repeatonsubscription.Subscription.Subscribed
 import org.orbitmvi.orbit.internal.repeatonsubscription.Subscription.Unsubscribed
 import org.orbitmvi.orbit.test
@@ -63,51 +64,41 @@ class DelayingSubscribedCounterTest {
 
     // Undesirable behaviour - ideally we would receive the first unsubscribed value immediately
     @Test
-    fun `unsubscribed not received immediately on launch when delayed`() {
-        runBlocking(Dispatchers.Default) {
-            val counter = DelayingSubscribedCounter(100)
-            val testObserver = counter.subscribed.test()
-
-            assertEquals(emptyList(), testObserver.values)
-        }
-    }
-
-    // Undesirable behaviour - ideally we would receive the first unsubscribed value immediately
-    @Test
     fun `unsubscribed received on launch after delay`() {
         runBlocking {
-            val counter = DelayingSubscribedCounter(100)
-            val testObserver = counter.subscribed.test()
+            val counter = DelayingSubscribedCounter(500)
+            val testObserver = counter.subscribed.mapTimed().test()
 
-            delay(200)
-
-            assertEquals(listOf(Unsubscribed), testObserver.values)
-        }
-    }
-
-    @Test
-    fun `unsubscribed not received immediately when delayed`() {
-        runBlocking(Dispatchers.Default) {
-            val counter = DelayingSubscribedCounter(100)
-            val testObserver = counter.subscribed.test()
-
-            counter.increment()
-            counter.decrement()
-
-            assertEquals(listOf(Subscribed), testObserver.values)
+            testObserver.awaitCount(1)
+            assertEquals(Unsubscribed, testObserver.values.first().value)
+            assertTrue(testObserver.values.first().time in 450..550)
         }
     }
 
     @Test
     fun `unsubscribed received after delay`() {
         runBlocking {
-            val counter = DelayingSubscribedCounter(100)
-            val testObserver = counter.subscribed.test()
+            val counter = DelayingSubscribedCounter(500)
+            val testObserver = counter.subscribed.mapTimed().test()
 
             counter.increment()
             counter.decrement()
-            delay(200)
-            assertEquals(listOf(Subscribed, Unsubscribed), testObserver.values)
+
+            testObserver.awaitCount(2)
+            assertEquals(listOf(Subscribed, Unsubscribed), testObserver.values.map { it.value })
+            assertTrue(testObserver.values.last().time in 450..550)
         }
     }
+
+    private fun Flow<Subscription>.mapTimed(): Flow<Timed<Subscription>> {
+        var last = getSystemTimeInMillis()
+        return map {
+            val current = getSystemTimeInMillis()
+            val diff = current - last
+            last = current
+            Timed(diff, it)
+        }
+    }
+
+    private data class Timed<T>(val time: Long, val value: T)
 }

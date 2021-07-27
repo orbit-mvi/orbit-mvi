@@ -32,9 +32,9 @@ class RefCountStateFlowTest {
             try {
                 MutableStateFlow(Unit).refCount(subscribedCounter).take(1).collect {
                     assertEquals(1, subscribedCounter.counter)
-                    throw RuntimeException("forced exception")
+                    throw IllegalStateException("forced exception")
                 }
-            } catch (ignore: RuntimeException) {
+            } catch (ignore: IllegalStateException) {
                 // ignored as we just care that counter is decremented
             }
 
