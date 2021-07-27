@@ -8,7 +8,7 @@ public class ContainerContext<S : Any, SE : Any>(
     public val postSideEffect: suspend (SE) -> Unit,
     private val getState: () -> S,
     public val reduce: suspend ((S) -> S) -> Unit,
-    public val subscribedCounter: SubscribedCounter
+    internal val subscribedCounter: SubscribedCounter
 ) {
     public val state: S
         get() = getState()

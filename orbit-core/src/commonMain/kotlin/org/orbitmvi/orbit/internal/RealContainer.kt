@@ -38,7 +38,7 @@ import kotlinx.coroutines.plus
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import org.orbitmvi.orbit.Container
-import org.orbitmvi.orbit.internal.repeatonsubscription.SubscribedCounter
+import org.orbitmvi.orbit.internal.repeatonsubscription.DelayingSubscribedCounter
 import org.orbitmvi.orbit.internal.repeatonsubscription.refCount
 import org.orbitmvi.orbit.syntax.ContainerContext
 
@@ -53,7 +53,7 @@ public class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
     private val mutex = Mutex()
     private val initialised = atomic(false)
 
-    private val subscribedCounter = SubscribedCounter(settings.repeatOnSubscribedStopTimeout)
+    private val subscribedCounter = DelayingSubscribedCounter(settings.repeatOnSubscribedStopTimeout)
 
     private val internalStateFlow = MutableStateFlow(initialState)
     override val stateFlow: StateFlow<STATE> = internalStateFlow.refCount(subscribedCounter)

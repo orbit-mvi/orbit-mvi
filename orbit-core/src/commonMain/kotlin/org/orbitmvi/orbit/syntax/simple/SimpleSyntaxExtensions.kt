@@ -86,7 +86,7 @@ public suspend fun <S : Any, SE : Any> SimpleSyntax<S, SE>.repeatOnSubscription(
         launch {
             @Suppress("EXPERIMENTAL_API_USAGE")
             containerContext.subscribedCounter.subscribed.mapLatest {
-                if (it) block() else null
+                if (it.isSubscribed) block() else null
             }.collect()
         }
     }
