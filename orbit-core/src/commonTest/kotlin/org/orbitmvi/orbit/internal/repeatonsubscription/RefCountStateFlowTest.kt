@@ -29,8 +29,6 @@ class RefCountStateFlowTest {
         val subscribedCounter = CountingSubscribedCounter()
 
         runBlocking {
-            assertEquals(0, subscribedCounter.counter)
-
             try {
                 MutableStateFlow(Unit).refCount(subscribedCounter).take(1).collect {
                     assertEquals(1, subscribedCounter.counter)
