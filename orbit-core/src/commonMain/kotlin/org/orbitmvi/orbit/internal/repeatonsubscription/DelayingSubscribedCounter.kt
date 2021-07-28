@@ -1,7 +1,6 @@
 package org.orbitmvi.orbit.internal.repeatonsubscription
 
 import kotlinx.atomicfu.atomic
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,7 +18,7 @@ internal class DelayingSubscribedCounter(
     private val _subscribed: MutableStateFlow<Subscription> = MutableStateFlow(Unsubscribed)
 
     @Suppress("EXPERIMENTAL_API_USAGE")
-    public override val subscribed: Flow<Subscription> = _subscribed.mapLatest {
+    override val subscribed: Flow<Subscription> = _subscribed.mapLatest {
         if (!it.isSubscribed) {
             delay(repeatOnSubscribedStopTimeout)
         }
