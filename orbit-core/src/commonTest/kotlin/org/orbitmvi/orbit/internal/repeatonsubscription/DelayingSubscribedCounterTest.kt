@@ -116,7 +116,7 @@ class DelayingSubscribedCounterTest {
 
             testObserver.awaitCount(2)
             assertEquals(listOf(Subscribed, Unsubscribed), testObserver.values.map { it.value })
-            assertTrue(testObserver.values.last().time in 450..550)
+            assertTrue(testObserver.values.last().time > 450)
         }
     }
 
