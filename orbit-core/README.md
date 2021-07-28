@@ -16,8 +16,8 @@ It provides all the basic parts of Orbit.
     - [Transformation](#transformation)
     - [Reduction](#reduction)
     - [Side effect](#side-effect)
-    - [Operator context in the simple syntax](#operator-context-in-the-simple-syntax)
-    - [Operator context in the strict syntax](#operator-context-in-the-strict-syntax)
+    - [Repeat on subscription](#repeat-on-subscription)
+    - [Operator context](#operator-context)
   - [Container factories](#container-factories)
   - [Threading](#threading)
     - [Threading guarantees](#threading-guarantees)
@@ -252,6 +252,38 @@ You may post the side effect in order to send it to a
 [Container](src/commonMain/kotlin/org/orbitmvi/orbit/Container.kt)'s side
 effect flow. Use this for view-related side effects like Toasts, Navigation,
 etc.
+
+### Repeat on subscription
+
+``` kotlin
+class Example : ContainerHost<ExampleState, ExampleSideEffect> {
+    ...
+
+    fun simpleExample() = intent(idlingResource = false) {
+        repeatOnSubscription {
+            expensiveFlow().collect {
+                //
+            }
+        }
+    }
+}
+```
+
+Collecting flows directly in an `intent` block continues until the flow
+completes or cancels. Cancellation happens automatically when the Orbit
+coroutine scope cancels.
+
+The lifecycle of the Orbit coroutine scope, especially when set to
+`viewModelScope` may outlive the lifecycle of the UI resulting in subscriptions
+continuing in the background.
+
+For expensive subscriptions, such as location or Bluetooth, this may be
+undesirable, you only want to collect from the flow when the UI actively
+observes the state or sideEffect streams.
+
+`repeatOnSubscription` provides functionality to start (and restart) its inner
+block when the state or sideEffect streams are being observed and stop when that
+is no longer the case.
 
 ### Operator context
 
