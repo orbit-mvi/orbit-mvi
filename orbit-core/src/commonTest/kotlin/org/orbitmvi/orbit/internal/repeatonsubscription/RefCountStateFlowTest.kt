@@ -11,7 +11,7 @@ class RefCountStateFlowTest {
 
     @Test
     fun `increments on collection and decrements once completed`() {
-        val subscribedCounter = CountingSubscribedCounter()
+        val subscribedCounter = TestSubscribedCounter()
 
         runBlocking {
             assertEquals(0, subscribedCounter.counter)
@@ -26,7 +26,7 @@ class RefCountStateFlowTest {
 
     @Test
     fun `decrements even after exception`() {
-        val subscribedCounter = CountingSubscribedCounter()
+        val subscribedCounter = TestSubscribedCounter()
 
         runBlocking {
             try {
