@@ -1,6 +1,5 @@
 /*
  * Copyright 2021 Mikołaj Leszczyński & Appmattus Limited
- * Copyright 2020 Babylon Partners Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,15 +12,10 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- * File modified by Mikołaj Leszczyński & Appmattus Limited
- * See: https://github.com/orbit-mvi/orbit-mvi/compare/c5b8b3f2b83b5972ba2ad98f73f75086a89653d3...main
  */
 
-package org.orbitmvi.orbit.idling
+package org.orbitmvi.orbit.internal.repeatonsubscription
 
-internal class NoopIdlingResource : IdlingResource {
-    override fun increment(): Unit = Unit
-    override fun decrement(): Unit = Unit
-    override fun close(): Unit = Unit
-}
+import kotlin.system.getTimeMillis
+
+internal actual fun getSystemTimeInMillis() = getTimeMillis()

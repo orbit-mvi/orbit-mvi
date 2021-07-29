@@ -20,6 +20,11 @@
 
 package org.orbitmvi.orbit.syntax.simple
 
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.mapLatest
+import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.idling.withIdling
@@ -72,3 +77,17 @@ public fun <STATE : Any, SIDE_EFFECT : Any> ContainerHost<STATE, SIDE_EFFECT>.in
             }
         }
     }
+
+@OrbitDsl
+public suspend fun <S : Any, SE : Any> SimpleSyntax<S, SE>.repeatOnSubscription(
+    block: suspend CoroutineScope.() -> Unit
+) {
+    coroutineScope {
+        launch {
+            @Suppress("EXPERIMENTAL_API_USAGE")
+            containerContext.subscribedCounter.subscribed.mapLatest {
+                if (it.isSubscribed) block() else null
+            }.collect()
+        }
+    }
+}
