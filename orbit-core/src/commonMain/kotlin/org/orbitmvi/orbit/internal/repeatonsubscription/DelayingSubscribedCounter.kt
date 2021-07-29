@@ -1,6 +1,7 @@
 package org.orbitmvi.orbit.internal.repeatonsubscription
 
 import kotlinx.atomicfu.atomic
+import kotlinx.atomicfu.updateAndGet
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -34,11 +35,11 @@ internal class DelayingSubscribedCounter(
     }
 
     override suspend fun decrement(): Unit = mutex.withLock {
-        if (counter.decrementAndGet() == 0) {
-            job.value = scope.launch {
+        if (counter.updateAndGet { if (it > 0) it - 1 else 0 } == 0) {
+            job.getAndSet(scope.launch {
                 delay(repeatOnSubscribedStopTimeout)
                 _subscribed.value = Unsubscribed
-            }
+            })?.cancel()
         }
     }
 }
