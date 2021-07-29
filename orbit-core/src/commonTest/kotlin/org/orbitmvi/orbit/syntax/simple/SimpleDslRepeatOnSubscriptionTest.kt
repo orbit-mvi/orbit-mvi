@@ -15,7 +15,7 @@ import org.orbitmvi.orbit.internal.repeatonsubscription.Subscription
 import org.orbitmvi.orbit.internal.repeatonsubscription.TestSubscribedCounter
 import org.orbitmvi.orbit.syntax.ContainerContext
 
-internal class SimpleSyntaxExtensionsKtTest {
+internal class SimpleDslRepeatOnSubscriptionTest {
 
     private val testScope = CoroutineScope(Dispatchers.Unconfined)
 
