@@ -77,6 +77,23 @@ class DelayingSubscribedCounterTest {
     }
 
     @Test
+    fun `negative decrements are ignored`() {
+        runBlocking {
+            val counter = DelayingSubscribedCounter(testScope, 0)
+            val testObserver = counter.subscribed.test()
+
+            counter.decrement()
+            counter.decrement()
+            counter.decrement()
+            counter.increment()
+            counter.decrement()
+
+            testObserver.awaitCount(3)
+            assertEquals(listOf(Unsubscribed, Subscribed, Unsubscribed), testObserver.values)
+        }
+    }
+
+    @Test
     fun `unsubscribed received on launch immediately`() {
         runBlocking {
             val counter = DelayingSubscribedCounter(testScope, 500)
