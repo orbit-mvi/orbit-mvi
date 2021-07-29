@@ -26,7 +26,7 @@ class DelayingSubscribedCounterTest {
     @Test
     fun `initial value is unsubscribed`() {
         runBlocking {
-            val counter = DelayingSubscribedCounter(0)
+            val counter = DelayingSubscribedCounter(testScope, 0)
             val testObserver = counter.subscribed.test()
 
             assertEquals(listOf(Unsubscribed), testObserver.values)
@@ -36,7 +36,7 @@ class DelayingSubscribedCounterTest {
     @Test
     fun `incrementing subscribes`() {
         runBlocking {
-            val counter = DelayingSubscribedCounter(0)
+            val counter = DelayingSubscribedCounter(testScope, 0)
             val testObserver = counter.subscribed.test()
 
             counter.increment()
@@ -49,7 +49,7 @@ class DelayingSubscribedCounterTest {
     @Test
     fun `increment decrement unsubscribes`() {
         runBlocking {
-            val counter = DelayingSubscribedCounter(0)
+            val counter = DelayingSubscribedCounter(testScope, 0)
             val testObserver = counter.subscribed.test()
 
             counter.increment()
@@ -63,7 +63,7 @@ class DelayingSubscribedCounterTest {
     @Test
     fun `values received are distinct`() {
         runBlocking {
-            val counter = DelayingSubscribedCounter(0)
+            val counter = DelayingSubscribedCounter(testScope, 0)
             val testObserver = counter.subscribed.test()
 
             counter.increment()
@@ -76,24 +76,22 @@ class DelayingSubscribedCounterTest {
         }
     }
 
-    // Undesirable behaviour as would prefer unsubscribed to be received immediately on collection
     @Test
-    fun `unsubscribed received on launch after delay`() {
+    fun `unsubscribed received on launch immediately`() {
         runBlocking {
-            val counter = DelayingSubscribedCounter(500)
+            val counter = DelayingSubscribedCounter(testScope, 500)
             val testObserver = counter.subscribed.mapTimed().test()
 
             testObserver.awaitCount(1)
             assertEquals(Unsubscribed, testObserver.values.first().value)
-            assertTrue(testObserver.values.first().time > 450)
+            assertTrue(testObserver.values.first().time < 450)
         }
     }
 
-    // Undesirable behaviour as would prefer unsubscribed to be received immediately on collection
     @Test
-    fun `unsubscribed received after delay on second observation`() {
+    fun `unsubscribed received immediately on second observation`() {
         runBlocking {
-            val counter = DelayingSubscribedCounter(500)
+            val counter = DelayingSubscribedCounter(testScope, 500)
 
             // Wait to receive unsubscribed at launch
             counter.subscribed.mapTimed().test().awaitCount(1)
@@ -101,21 +99,21 @@ class DelayingSubscribedCounterTest {
             val testObserver2 = counter.subscribed.mapTimed().test()
             testObserver2.awaitCount(1)
             assertEquals(Unsubscribed, testObserver2.values.first().value)
-            assertTrue(testObserver2.values.first().time > 450)
+            assertTrue(testObserver2.values.first().time < 450)
         }
     }
 
     @Test
     fun `unsubscribed received after delay`() {
         runBlocking {
-            val counter = DelayingSubscribedCounter(500)
+            val counter = DelayingSubscribedCounter(testScope, 500)
             val testObserver = counter.subscribed.mapTimed().test()
 
             counter.increment()
             counter.decrement()
 
-            testObserver.awaitCount(2)
-            assertEquals(listOf(Subscribed, Unsubscribed), testObserver.values.map { it.value })
+            testObserver.awaitCount(3)
+            assertEquals(listOf(Unsubscribed, Subscribed, Unsubscribed), testObserver.values.map { it.value })
             assertTrue(testObserver.values.last().time > 450)
         }
     }
