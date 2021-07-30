@@ -147,7 +147,31 @@ class CalculatorActivity: AppCompatActivity() {
         }
     }
 }
+```
 
+With Jetpack Compose wire up the ViewModel as follows:
+
+```kotlin
+@Composable
+fun CalculatorScreen(viewModel: CalculatorViewModel) {
+
+    val state = viewModel.container.stateFlow.collectAsState().value
+
+    LaunchedEffect(viewModel) {
+        launch {
+            viewModel.container.sideEffectFlow.collect { handleSideEffect(navController, it) }
+        }
+    }
+
+    // render UI using data from 'state'
+    ...
+}
+
+private fun handleSideEffect(sideEffect: CalculatorSideEffect) {
+    when (sideEffect) {
+        is CalculatorSideEffect.Toast -> toast(sideEffect.text)
+    }
+}
 ```
 
 ## Syntax
