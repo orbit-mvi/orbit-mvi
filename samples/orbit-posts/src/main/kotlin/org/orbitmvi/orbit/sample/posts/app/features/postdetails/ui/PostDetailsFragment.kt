@@ -27,7 +27,6 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
@@ -36,8 +35,7 @@ import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.GroupieViewHolder
-import kotlinx.coroutines.flow.collect
-import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.androidx.viewmodel.ext.android.stateViewModel
 import org.koin.core.parameter.parametersOf
 import org.orbitmvi.orbit.sample.posts.R
 import org.orbitmvi.orbit.sample.posts.app.common.SeparatorDecoration
@@ -45,11 +43,12 @@ import org.orbitmvi.orbit.sample.posts.app.common.viewBinding
 import org.orbitmvi.orbit.sample.posts.app.features.postdetails.viewmodel.PostDetailState
 import org.orbitmvi.orbit.sample.posts.app.features.postdetails.viewmodel.PostDetailsViewModel
 import org.orbitmvi.orbit.sample.posts.databinding.PostDetailsFragmentBinding
+import org.orbitmvi.orbit.viewmodel.observe
 
 class PostDetailsFragment : Fragment(R.layout.post_details_fragment) {
 
     private val args: PostDetailsFragmentArgs by navArgs()
-    private val viewModel: PostDetailsViewModel by viewModel { parametersOf(args.overview) }
+    private val viewModel: PostDetailsViewModel by stateViewModel { parametersOf(args.overview) }
     private var initialised: Boolean = false
     private val adapter = GroupAdapter<GroupieViewHolder>()
 
@@ -71,9 +70,7 @@ class PostDetailsFragment : Fragment(R.layout.post_details_fragment) {
 
         binding.postCommentsList.adapter = adapter
 
-        lifecycleScope.launchWhenCreated {
-            viewModel.container.stateFlow.collect { render(it) }
-        }
+        viewModel.observe(viewLifecycleOwner, state = ::render)
     }
 
     private fun render(state: PostDetailState) {
@@ -99,8 +96,8 @@ class PostDetailsFragment : Fragment(R.layout.post_details_fragment) {
                         }
                     )
             }
-            binding.postTitle.text = state.postOverview.title
         }
+        binding.postTitle.text = state.postOverview.title
 
         if (state is PostDetailState.Details) {
             binding.postBody.text = state.post.body

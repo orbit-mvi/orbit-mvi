@@ -20,6 +20,10 @@
 
 package org.orbitmvi.orbit.internal
 
+import kotlin.random.Random
+import kotlin.test.AfterTest
+import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
@@ -31,10 +35,6 @@ import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.container
 import org.orbitmvi.orbit.test
 import org.orbitmvi.orbit.test.runBlocking
-import kotlin.random.Random
-import kotlin.test.AfterTest
-import kotlin.test.Test
-import kotlin.test.assertEquals
 
 @ExperimentalCoroutinesApi
 internal class ContainerThreadingTest {
@@ -90,7 +90,7 @@ internal class ContainerThreadingTest {
                 }
             }
 
-            testStateObserver.awaitFor { values.last().ids.size == ITEM_COUNT }
+            testStateObserver.awaitFor { values.isNotEmpty() && values.last().ids.size == ITEM_COUNT }
 
             assertEquals(expectedStates.last(), testStateObserver.values.last())
         }
@@ -125,7 +125,7 @@ internal class ContainerThreadingTest {
                 }
             }
 
-            testStateObserver.awaitFor { values.last().ids.size == ITEM_COUNT }
+            testStateObserver.awaitFor { values.isNotEmpty() && values.last().ids.size == ITEM_COUNT }
 
             assertEquals(ITEM_COUNT / 3, testStateObserver.values.last().ids.count { it == 1 })
             assertEquals(ITEM_COUNT / 3, testStateObserver.values.last().ids.count { it == 2 })

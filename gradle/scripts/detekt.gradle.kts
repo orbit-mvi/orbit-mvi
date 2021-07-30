@@ -27,7 +27,7 @@ buildscript {
 }
 
 repositories {
-    jcenter()
+    mavenCentral()
 }
 
 apply<DetektPlugin>()

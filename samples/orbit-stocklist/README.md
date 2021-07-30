@@ -1,6 +1,6 @@
 # Orbit Sample - Stock List
 
-This sample implements a stock list using [Orbit MVI](https://github.com/babylonhealth/orbit-mvi).
+This sample implements a stock list using [Orbit MVI](https://github.com/orbit-mvi/orbit-mvi).
 
 - The application uses Koin for dependency injection which is initialised in
   [StockListApplication](src/main/kotlin/org/orbitmvi/orbit/sample/stocklist/StockListApplication.kt).

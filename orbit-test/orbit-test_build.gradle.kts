@@ -46,13 +46,19 @@ kotlin {
                 implementation(kotlin("test-annotations-common"))
             }
         }
+
+        @Suppress("UnusedPrivateMember")
         val iosMain by getting {
             dependencies {
                 implementation(ProjectDependencies.kotlinCoroutines)
             }
         }
+
+        @Suppress("UnusedPrivateMember")
         val iosTest by getting {
         }
+
+        @Suppress("UnusedPrivateMember")
         val jvmMain by getting {
             dependencies {
                 implementation(kotlin("test-junit"))
@@ -60,6 +66,8 @@ kotlin {
                 implementation(ProjectDependencies.junit4)
             }
         }
+
+        @Suppress("UnusedPrivateMember")
         val jvmTest by getting {
             dependencies {
                 implementation(ProjectDependencies.kotlinCoroutinesTest)

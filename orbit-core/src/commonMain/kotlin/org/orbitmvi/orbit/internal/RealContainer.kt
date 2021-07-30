@@ -20,9 +20,11 @@
 
 package org.orbitmvi.orbit.internal
 
+import kotlin.coroutines.EmptyCoroutineContext
 import kotlinx.atomicfu.atomic
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.awaitClose
@@ -30,15 +32,15 @@ import kotlinx.coroutines.channels.produce
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import org.orbitmvi.orbit.Container
+import org.orbitmvi.orbit.internal.repeatonsubscription.DelayingSubscribedCounter
+import org.orbitmvi.orbit.internal.repeatonsubscription.refCount
 import org.orbitmvi.orbit.syntax.ContainerContext
-import kotlin.coroutines.EmptyCoroutineContext
 
 @Suppress("EXPERIMENTAL_API_USAGE")
 public class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
@@ -51,11 +53,13 @@ public class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
     private val mutex = Mutex()
     private val initialised = atomic(false)
 
+    private val subscribedCounter = DelayingSubscribedCounter(scope, settings.repeatOnSubscribedStopTimeout)
+
     private val internalStateFlow = MutableStateFlow(initialState)
-    override val stateFlow: StateFlow<STATE> = internalStateFlow.asStateFlow()
+    override val stateFlow: StateFlow<STATE> = internalStateFlow.refCount(subscribedCounter)
 
     private val sideEffectChannel = Channel<SIDE_EFFECT>(settings.sideEffectBufferSize)
-    override val sideEffectFlow: Flow<SIDE_EFFECT> = sideEffectChannel.receiveAsFlow()
+    override val sideEffectFlow: Flow<SIDE_EFFECT> = sideEffectChannel.receiveAsFlow().refCount(subscribedCounter)
 
     internal val pluginContext: ContainerContext<STATE, SIDE_EFFECT> = ContainerContext(
         settings = settings,
@@ -67,7 +71,8 @@ public class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
             mutex.withLock {
                 internalStateFlow.value = reducer(internalStateFlow.value)
             }
-        }
+        },
+        subscribedCounter
     )
 
     override suspend fun orbit(orbitIntent: suspend ContainerContext<STATE, SIDE_EFFECT>.() -> Unit) {
@@ -83,7 +88,8 @@ public class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
                 }
             }
             scope.launch {
-                val context = Dispatchers.Unconfined + (settings.exceptionHandler?.plus(SupervisorJob()) ?: EmptyCoroutineContext)
+                val exceptionHandlerContext = settings.exceptionHandler?.plus(SupervisorJob(scope.coroutineContext[Job]))
+                val context = Dispatchers.Unconfined + (exceptionHandlerContext ?: EmptyCoroutineContext)
 
                 for (msg in dispatchChannel) {
                     launch(context) { pluginContext.msg() }
