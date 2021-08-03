@@ -168,24 +168,24 @@ jobs:
         run: ./gradlew clean assemble -xassembleDebug
 
       - name: Prepare tag properties (*nix)
+        if: runner.os != 'Windows' && startsWith(github.ref, 'refs/tags/')
         run: |
             echo "${{secrets.GPG_SIGNING_SECRET_KEY_RING_FILE_BASE64}}" > $HOME/.gradle/sonatype-orbitmvi-keys.gpg.b64
             base64 -d $HOME/.gradle/sonatype-orbitmvi-keys.gpg.b64 > $HOME/.gradle/sonatype-orbitmvi-keys.gpg
             echo "${{secrets.GPG_GRADLE_PROPERTIES}}" > $HOME/.gradle/gradle.properties
-        if: runner.os != 'Windows' && startsWith(github.ref, 'refs/tags/')
 
       - name: Prepare tag properties (windows)
+        if: runner.os == 'Windows' &&  startsWith(github.ref, 'refs/tags/')
         run: |
             echo "${{secrets.GPG_SIGNING_SECRET_KEY_RING_FILE_BASE64}}" > $HOME/.gradle/sonatype-orbitmvi-keys.gpg.b64
             certutil -decode $HOME/.gradle/sonatype-orbitmvi-keys.gpg.b64 $HOME/.gradle/sonatype-orbitmvi-keys.gpg
             echo "${{secrets.GPG_GRADLE_PROPERTIES}}" > $HOME/.gradle/gradle.properties
-        if: runner.os == 'Windows' &&  startsWith(github.ref, 'refs/tags/')
 
       - name: Upload tag
+        if: startsWith(github.ref, 'refs/tags/')
         env:
             SONATYPE_REPOSITORY_ID: ${{ needs.create_staging_repository.outputs.repository_id }}
         run: ./gradlew publish --no-daemon --no-parallel -Psigning.secretKeyRingFile=$(echo ~/.gradle/sonatype-orbitmvi-keys.gpg)
-        if: startsWith(github.ref, 'refs/tags/')
 
   close:
     if: startsWith(github.ref, 'refs/tags/')
@@ -198,6 +198,26 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 1.8
+
+      - name: gradle cache
+        uses: actions/cache@v1
+        with:
+            path: ~/.gradle/caches
+            key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+            restore-keys: |
+                ${{ runner.os }}-gradle-
+
+      - name: gradle wrapper cache
+        uses: actions/cache@v1
+        with:
+            path: ~/.gradle/wrapper/dists
+            key: ${{ runner.os }}-gradlewrapper
+
+      - name: konan cache
+        uses: actions/cache@v1
+        with:
+            path: ~/.konan
+            key: ${{ runner.os }}-konan
 
       - name: Prepare tag properties (*nix)
         run: |
