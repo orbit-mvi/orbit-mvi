@@ -17,8 +17,8 @@ This sample implements a stock list using [Orbit MVI](https://github.com/orbit-m
 
 - Both [ListViewModel](src/main/kotlin/org/orbitmvi/orbit/sample/stocklist/list/business/ListViewModel.kt)
   and [DetailViewModel](src/main/kotlin/org/orbitmvi/orbit/sample/stocklist/detail/business/DetailViewModel.kt)
-  use `transformFlow` to receive the streaming data before reducing it to the
-  UI.
+  use `repeatOnSubscription` so streaming data is only collected when the UI is
+  active.
 
 - [Data Binding Library](https://developer.android.com/topic/libraries/data-binding)
   is used to populate layouts throughout.
