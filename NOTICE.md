@@ -1,7 +1,3 @@
----
-id: notices
----
-
 # NOTICES
 
 ## Orbit MVI

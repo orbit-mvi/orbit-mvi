@@ -57,7 +57,7 @@ module.exports = {
                     ],
                 },
             ],
-            copyright: `Copyright © ${new Date().getFullYear()} Orbit MVI. Built with Docusaurus.`,
+            copyright: `Copyright © ${new Date().getFullYear()} Appmattus Limited & Mikołaj Leszczyński. Built with Docusaurus.`,
         },
         prism: {
             theme: lightCodeTheme,

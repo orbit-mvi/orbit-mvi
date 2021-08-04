@@ -1,5 +1,5 @@
 ---
-id: overview
+sidebar_position: 1
 sidebar_label: Overview
 ---
 
@@ -8,29 +8,9 @@ sidebar_label: Overview
 This is the core module for the Orbit framework.
 It provides all the basic parts of Orbit.
 
-- [Core](#core)
-  - [Architecture](#architecture)
-    - [Orbit concepts](#orbit-concepts)
-    - [Side effects](#side-effects)
-      - [Limitations](#limitations)
-  - [Including the module](#including-the-module)
-  - [Orbit container](#orbit-container)
-    - [Subscribing to the container](#subscribing-to-the-container)
-    - [ContainerHost](#containerhost)
-  - [Core Orbit operators](#core-orbit-operators)
-    - [Transformation](#transformation)
-    - [Reduction](#reduction)
-    - [Side effect](#side-effect)
-    - [Repeat on subscription](#repeat-on-subscription)
-    - [Operator context](#operator-context)
-  - [Container factories](#container-factories)
-  - [Threading](#threading)
-    - [Threading guarantees](#threading-guarantees)
-  - [Error handling](#error-handling)
-
 ## Architecture
 
-![Orbit overview 1](docs/orbit-overview-1.svg)
+![Orbit overview 1](images/orbit-overview-1.svg)
 
 This diagram shows a simple representation of how an Orbit system (or similar
 systems like MVI/Redux/Cycle) works in simple principles.
@@ -48,19 +28,19 @@ by itself. It should know only how to render itself based on the input state.
 
 ### Orbit concepts
 
-![Orbit overview 2](docs/orbit-overview-2.svg)
+![Orbit overview 2](images/orbit-overview-2.svg)
 
 We can map the above logic onto real components.
 
 1. UI invokes functions on a class implementing the
-   [ContainerHost](src/commonMain/kotlin/org/orbitmvi/orbit/ContainerHost.kt)
+   [ContainerHost](pathname:///dokka/orbit-core/orbit-core/org.orbitmvi.orbit/-container-host/)
    interface. Typically in Android this might be an Activity, Fragment
    or a simple View. However, an Orbit system can also be run without
    any UI, for example as a background service.
 1. The functions call through to a
-   [Container](src/commonMain/kotlin/org/orbitmvi/orbit/Container.kt) instance
-   through the `intent` block which offloads work to a background coroutine
-   and provides a DSL for side effects and reductions.
+   [Container](pathname:///dokka/orbit-core/orbit-core/org.orbitmvi.orbit/-container/)
+   instance through the `intent` block which offloads work to a background
+   coroutine and provides a DSL for side effects and reductions.
 1. Transformations are performed through user-defined business logic within
    the `intent` block.
 1. The reduce operator reduces the current state of the system with the
@@ -76,10 +56,10 @@ Notes:
 In the real world such a system cannot exist without side effects. Side effects
 are commonly truly one-off events like navigation, logging, analytics, toasts
 etc that do not alter the state of the Orbit
-[Container](src/commonMain/kotlin/org/orbitmvi/orbit/Container.kt). As such
-there's a third Orbit operator that can deal with side effects.
+[Container](pathname:///dokka/orbit-core/orbit-core/org.orbitmvi.orbit/-container/).
+As such there's a third Orbit operator that can deal with side effects.
 
-![Orbit overview 3](docs/orbit-overview-3.svg)
+![Orbit overview 3](images/orbit-overview-3.svg)
 
 The UI does not have to be aware of all side effects (e.g. why should the UI
 care if you send analytics events?). As such you can have side effects that do
@@ -108,21 +88,21 @@ implementation("org.orbit-mvi:orbit-core:<latest-version>")
 
 ## Orbit container
 
-A [Container](src/commonMain/kotlin/org/orbitmvi/orbit/Container.kt) is the
-heart of the Orbit MVI system. It retains the state, allows you to
-listen to side effects and state updates and allows you to modify the
-state through the `orbit` function which executes Orbit operators of
-your desired business logic.
+A
+[Container](pathname:///dokka/orbit-core/orbit-core/org.orbitmvi.orbit/-container/)
+is the heart of the Orbit MVI system. It retains the state, allows you to listen
+to side effects and state updates and allows you to modify the state through the
+`orbit` function which executes Orbit operators of your desired business logic.
 
 ### Subscribing to the container
 
-[Container](src/commonMain/kotlin/org/orbitmvi/orbit/Container.kt) exposes flows
-that emit updates to the container state and side effects.
+[Container](pathname:///dokka/orbit-core/orbit-core/org.orbitmvi.orbit/-container/)
+exposes flows that emit updates to the container state and side effects.
 
 - State emissions are conflated
 - Side effects are cached by default if no observers are listening. This
   can be changed via
-  [Container Settings](src/commonMain/kotlin/org/orbitmvi/orbit/Container.kt#Settings)
+  [Container Settings](pathname:///dokka/orbit-core/orbit-core/org.orbitmvi.orbit/-container/-settings/)
 
 ``` kotlin
 data class ExampleState(val seen: List<String> = emptyList())
@@ -152,21 +132,22 @@ fun main() {
 
 ### ContainerHost
 
-A [ContainerHost](src/commonMain/kotlin/org/orbitmvi/orbit/ContainerHost.kt) is
-not strictly required to work with an Orbit
-[Container](src/commonMain/kotlin/org/orbitmvi/orbit/Container.kt). However,
-Orbit's syntax is defined as an extension on this class. Additionally it
-simplifies and organises your business logic and so is highly recommended. A
-[ContainerHost](src/commonMain/kotlin/org/orbitmvi/orbit/ContainerHost.kt)
+A
+[ContainerHost](pathname:///dokka/orbit-core/orbit-core/org.orbitmvi.orbit/-container-host/)
+is not strictly required to work with an Orbit
+[Container](pathname:///dokka/orbit-core/orbit-core/org.orbitmvi.orbit/-container/).
+However, Orbit's syntax is defined as an extension on this class. Additionally
+it simplifies and organises your business logic and so is highly recommended. A
+[ContainerHost](pathname:///dokka/orbit-core/orbit-core/org.orbitmvi.orbit/-container-host/)
 typically defines MVI flows (your business logic and Orbit operators to be
 invoked on the
-[Container](src/commonMain/kotlin/org/orbitmvi/orbit/Container.kt)) as
-functions that can be called by e.g. the UI.
+[Container](pathname:///dokka/orbit-core/orbit-core/org.orbitmvi.orbit/-container/))
+as functions that can be called by e.g. the UI.
 
 In a typical implementation you would subclass Android's `ViewModel` and
 implement
-[ContainerHost](src/commonMain/kotlin/org/orbitmvi/orbit/ContainerHost.kt) in
-order to create an Orbit-enabled Android `ViewModel`.
+[ContainerHost](pathname:///dokka/orbit-core/orbit-core/org.orbitmvi.orbit/-container-host/)
+in order to create an Orbit-enabled Android `ViewModel`.
 
 ``` kotlin
 class ExampleViewModel(
@@ -192,8 +173,8 @@ they map to MVI concepts:
 | reduction           | `reduce { ... }`              |
 
 Operators are invoked through the block function in a
-[ContainerHost](src/commonMain/kotlin/org/orbitmvi/orbit/ContainerHost.kt). For
-more information about which threads these operators run on please see
+[ContainerHost](pathname:///dokka/orbit-core/orbit-core/org.orbitmvi.orbit/-container-host/).
+For more information about which threads these operators run on please see
 [Threading](#threading).
 
 ### Transformation
@@ -254,9 +235,9 @@ This functionality is commonly used for things like truly one-off events,
 navigation, logging, analytics etc.
 
 You may post the side effect in order to send it to a
-[Container](src/commonMain/kotlin/org/orbitmvi/orbit/Container.kt)'s side
-effect flow. Use this for view-related side effects like Toasts, Navigation,
-etc.
+[Container](pathname:///dokka/orbit-core/orbit-core/org.orbitmvi.orbit/-container/)'s
+side effect flow. Use this for view-related side effects like Toasts,
+Navigation, etc.
 
 ### Repeat on subscription
 
@@ -292,9 +273,10 @@ is no longer the case.
 
 ### Operator context
 
-Each simple syntax operator lambda has a receiver that exposes the
-current state of the
-[Container](src/commonMain/kotlin/org/orbitmvi/orbit/Container.kt) as `state`
+Each simple syntax operator lambda has a receiver that exposes the current state
+of the
+[Container](pathname:///dokka/orbit-core/orbit-core/org.orbitmvi.orbit/-container/)
+as `state`
 
 ``` kotlin
 perform("Toast the current state")
@@ -330,13 +312,15 @@ class Example : ContainerHost<ExampleState, ExampleSideEffect> {
 
 Containers are typically not created directly but through convenient factory
 functions. This allows you to pass through extra settings or a lambda to invoke
-when the [Container](src/commonMain/kotlin/org/orbitmvi/orbit/Container.kt) is
-first created (important for containers that can be recreated from a saved
+when the
+[Container](pathname:///dokka/orbit-core/orbit-core/org.orbitmvi.orbit/-container/)
+is first created (important for containers that can be recreated from a saved
 state or live longer than the UI).
 
-Extra [Container](src/commonMain/kotlin/org/orbitmvi/orbit/Container.kt) factory
-functionality is provided via extension functions. One example is `ViewModel`
-saved state support via a `SavedStateHandle`.
+Extra
+[Container](pathname:///dokka/orbit-core/orbit-core/org.orbitmvi.orbit/-container/)
+factory functionality is provided via extension functions. One example is
+`ViewModel` saved state support via a `SavedStateHandle`.
 
 ## Threading
 
@@ -359,7 +343,7 @@ It is good practice to handle all of your errors within your intents.
 By default Orbit doesn't handle or process any exceptions because it cannot
 make assumptions about how you respond to errors. However you could install
 default exception handler via
-[Container Settings](src/commonMain/kotlin/org/orbitmvi/orbit/Container.kt)
+[Container Settings](pathname:///dokka/orbit-core/orbit-core/org.orbitmvi.orbit/-container/-settings/)
 property `orbitExceptionHandler` -> if defined exceptions are caught here so
 parent scope is not affected and Orbit container
 would continue to operate normally.
