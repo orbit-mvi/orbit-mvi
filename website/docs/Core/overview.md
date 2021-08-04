@@ -8,83 +8,14 @@ sidebar_label: Overview
 This is the core module for the Orbit framework.
 It provides all the basic parts of Orbit.
 
-## Architecture
-
-![Orbit overview 1](images/orbit-overview-1.svg)
-
-This diagram shows a simple representation of how an Orbit system (or similar
-systems like MVI/Redux/Cycle) works in simple principles.
-
-1. The UI sends actions asynchronously to a business component.
-1. The business component transforms the incoming events with business logic
-1. The business component then emits these events further down the chain
-1. Every event is reduced with the current state of the system to produce a new
-   state
-1. The state is then emitted back to the UI which renders itself based upon
-   information within
-
-The main thing to remember is that the UI cannot make any business decisions
-by itself. It should know only how to render itself based on the input state.
-
-### Orbit concepts
-
-![Orbit overview 2](images/orbit-overview-2.svg)
-
-We can map the above logic onto real components.
-
-1. UI invokes functions on a class implementing the
-   [ContainerHost](pathname:///dokka/orbit-core/orbit-core/org.orbitmvi.orbit/-container-host/)
-   interface. Typically in Android this might be an Activity, Fragment
-   or a simple View. However, an Orbit system can also be run without
-   any UI, for example as a background service.
-1. The functions call through to a
-   [Container](pathname:///dokka/orbit-core/orbit-core/org.orbitmvi.orbit/-container/)
-   instance through the `intent` block which offloads work to a background
-   coroutine and provides a DSL for side effects and reductions.
-1. Transformations are performed through user-defined business logic within
-   the `intent` block.
-1. The reduce operator reduces the current state of the system with the
-   incoming events to produce new states.
-1. The new state is sent to observers.
-
-Notes:
-
-- All Orbit operators are optional.
-
-### Side effects
-
-In the real world such a system cannot exist without side effects. Side effects
-are commonly truly one-off events like navigation, logging, analytics, toasts
-etc that do not alter the state of the Orbit
-[Container](pathname:///dokka/orbit-core/orbit-core/org.orbitmvi.orbit/-container/).
-As such there's a third Orbit operator that can deal with side effects.
-
-![Orbit overview 3](images/orbit-overview-3.svg)
-
-The UI does not have to be aware of all side effects (e.g. why should the UI
-care if you send analytics events?). As such you can have side effects that do
-not post any event back to the UI.
-
-Side effects are cached if there are no observers, guaranteeing critical
-events such as navigation are delivered after re-subscription.
-
-#### Limitations
-
-`Container.sideEffectFlow` is designed to be collected by only one
-observer. This ensures that side effect caching works in a predictable
-way. If your particular use case requires multi-casting use `broadcast`
-on the side effect flow, but be aware that caching will not work for the
-resulting `BroadcastChannel`.
-
-## Including the module
-
-Orbit is a modular framework. You will need this module to get started!
-
-Additional functionality is provided through optional modules.
+You will need this module (or modules that include it) to get started!
 
 ```kotlin
 implementation("org.orbit-mvi:orbit-core:<latest-version>")
 ```
+
+See [architecture](architecture.md) if you're interested in learning more about
+MVI and how its concepts map onto Orbit's components.
 
 ## Orbit container
 
@@ -160,19 +91,20 @@ class ExampleViewModel(
 }
 ```
 
-## Core Orbit operators
+## Core operators
 
 The Core module contains built-in Orbit operators. Here's how
 they map to MVI concepts:
 
-| MVI Operation       | Orbit DSL                     |
-|---------------------|-------------------------------|
-| block               | `intent { ... }`              |
-| transformation      | operations within `intent`    |
-| posted side effect  | `postSideEffect(...)`         |
-| reduction           | `reduce { ... }`              |
+| MVI Operation      | Orbit DSL                      | Purpose                                                                       |
+| ------------------ | ------------------------------ | ----------------------------------------------------------------------------- |
+| block              | `intent { ... }`               | Contains business logic journeys, allows you to invoke other operators within |
+| transformation     | operations within `intent`     | Run business operations to transform data                                     |
+| posted side effect | `postSideEffect(...)`          | Sends one-off events to the side effect channel                               |
+| reduction          | `reduce { ... }`               | Atomically updates the Container's  state                                     |
+| -                  | `repeatOnSubscription { ... }` | Helps collect infinite flows only when there are active subscribers           |
 
-Operators are invoked through the block function in a
+Operators are invoked through the `intent` block in a
 [ContainerHost](pathname:///dokka/orbit-core/orbit-core/org.orbitmvi.orbit/-container-host/).
 For more information about which threads these operators run on please see
 [Threading](#threading).
@@ -191,7 +123,14 @@ class Example : ContainerHost<ExampleState, ExampleSideEffect> {
 
 Transformations change upstream data into a different type. Transformations
 can do a simple mapping or something more complex like call a backend API or
-subscribing to a `Flow` of location updates.
+subscribing to a `Flow`.
+
+:::tip
+
+Infinite `Flow`s are best collected within a
+[repeatOnSubscription](#repeat-on-subscription) block.
+
+:::
 
 In Orbit, the transformations are simply suspend function calls in the block
 function. It is your responsibility to ensure you are using the correct
@@ -238,6 +177,19 @@ You may post the side effect in order to send it to a
 [Container](pathname:///dokka/orbit-core/orbit-core/org.orbitmvi.orbit/-container/)'s
 side effect flow. Use this for view-related side effects like Toasts,
 Navigation, etc.
+
+Side effects are cached if there are no observers, guaranteeing critical
+events such as navigation are delivered after re-subscription.
+
+:::caution
+
+`Container.sideEffectFlow` is designed to be collected by only one
+observer. This ensures that side effect caching works in a predictable
+way. If your particular use case requires multi-casting use `broadcast`
+on the side effect flow, but be aware that caching will not work for the
+resulting `BroadcastChannel`.
+
+:::
 
 ### Repeat on subscription
 
@@ -291,9 +243,13 @@ class Example : ContainerHost<ExampleState, ExampleSideEffect> {
 }
 ```
 
+:::note
+
 `reduce` is a special operator, where state is captured when it's lambda is
 invoked. This means that within a `reduce` block, your state is guaranteed
 not to change.
+
+:::
 
 ## Container factories
 
