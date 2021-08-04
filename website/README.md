@@ -1,33 +1,47 @@
 # Website
 
-This website is built using [Docusaurus 2](https://docusaurus.io/), a modern static website generator.
+This website is built using [Docusaurus 2](https://docusaurus.io/), a modern
+static website generator.
 
-## Installation
+## Preparations
+
+Before running any website commands, build the bundled docusaurus dockerfile and
+copy the dokka static documentation.
 
 ```console
-yarn install
+cd ..
+./gradlew copyDokkaToWebsite
+cd website
+docker build -t orbit-web:latest .
 ```
+
+When run, the image will install necessary node modules if the `node_modules`
+folder is not present.
 
 ## Local Development
 
 ```console
-yarn start
+docker run --rm -p 3000:3000 -v `pwd`:/docusaurus -e RUN_MODE='dev' orbit-web
 ```
 
-This command starts a local development server and opens up a browser window. Most changes are reflected live without having to restart the server.
+This command starts a local development server. Most changes are reflected live
+without having to restart the server. The container will be auto-removed after
+it's stopped.
 
 ## Build
 
 ```console
-yarn build
+docker run --rm -p 3000:3000 -v `pwd`:/docusaurus -e RUN_MODE='build' orbit-web
 ```
 
-This command generates static content into the `build` directory and can be served using any static contents hosting service.
+This command generates static content into the `build` directory that can be
+served using any static contents hosting service.
 
-## Deployment
+## Update
 
 ```console
-GIT_USER=<Your GitHub username> USE_SSH=true yarn deploy
+docker run --rm -p 3000:3000 -v `pwd`:/docusaurus -e RUN_MODE='update' orbit-web
 ```
 
-If you are using GitHub pages for hosting, this command is a convenient way to build the website and push to the `gh-pages` branch.
+Run this command after updating the docusaurus version in `package.json` to
+update node modules.

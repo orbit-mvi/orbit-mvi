@@ -208,7 +208,7 @@ markdownlint {
         ".*/build/.*",
         ".*/.docusaurus/.*",
         ".*/node_modules/.*",
-        ".*/website/.*"  // This is temporary until markdownlint can ignore frontmatter
+        ".*/website/.*" // This is temporary until markdownlint can ignore frontmatter
         )
     rules {
         +LineLengthRule(codeBlocks = false, tables = false)

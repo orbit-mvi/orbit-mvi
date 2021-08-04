@@ -8,6 +8,7 @@ build
 .docusaurus
 .cache-loader
 supervisord.pid
+supervisord.log
 
 # Misc
 .DS_Store
