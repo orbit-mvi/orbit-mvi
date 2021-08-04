@@ -3,9 +3,9 @@ sidebar_position: 1
 sidebar_label: 'Overview'
 ---
 
-# ViewModel plugin
+# Android ViewModel module
 
-The plugin provides [Container](pathname:///dokka/orbit-core/orbit-core/org.orbitmvi.orbit/-container/)
+The module provides [Container](pathname:///dokka/orbit-core/orbit-core/org.orbitmvi.orbit/-container/)
   factory extensions on `ViewModel` for
 
 - creating containers scoped with

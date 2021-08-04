@@ -12,10 +12,10 @@
 [![slack logo](images/slack-logo-icon.png)](https://kotlinlang.slack.com/messages/CPM6UMD2P)
 [![twitter logo](images/twitter-small.png)](https://twitter.com/orbit_mvi')
 
-## What is Orbit?
+## What is Orbit
 
-Orbit is a Redux/MVI-like library - but without the baggage! It's so simple we think
-of it as MVVM+.
+Orbit is a Redux/MVI-like library - but without the baggage! It's so simple we
+think of it as MVVM+.
 
 - Simple, type-safe, coroutine-style, extensible API
 - Multiplatform, targetting Android and iOS (iOS support is in alpha and being
@@ -25,7 +25,7 @@ of it as MVVM+.
 - ViewModel support, along with SavedState!
 - Optional, simple unit test library
 - Built-in espresso idling resource support
-- Compatible with [RxJava](orbit-core/docs/rxjava.md), [LiveData](orbit-core/docs/livedata.md)
+- Compatible with [RxJava](https://orbit-mvi.org/Core/rxjava), [LiveData](https://orbit-mvi.org/Core/livedata.md)
   etc. through coroutine wrappers
 - And more...
 
@@ -127,7 +127,7 @@ class CalculatorActivity: AppCompatActivity() {
 
 ## Contributing
 
-Please read [CONTRIBUTING](CONTRIBUTING.md)
+Please read [contributing](CONTRIBUTING.md)
 for details on our code of conduct, and the process for submitting pull
 requests to us.
 
@@ -141,4 +141,4 @@ available, see the [tags on this repository](https://github.com/orbit-mvi/orbit-
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE.md)
 
 This project is licensed under the Apache License, Version 2.0 - see the
-[license](LICENSE.md) file for details
+[license](LICENSE.md) file for *details*
