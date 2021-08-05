@@ -1,7 +1,12 @@
-# Orbit Unit Testing module
+---
+sidebar_position: 1
+sidebar_label: 'Overview'
+---
+
+# Unit Testing module
 
 The module provides a simple unit testing framework for your Orbit
-[ContainerHosts](../orbit-core/src/commonMain/kotlin/org/orbitmvi/orbit/ContainerHost.kt).
+[ContainerHosts](pathname:///dokka/orbit-core/orbit-core/org.orbitmvi.orbit/-container-host/).
 
 ## Including the module
 
@@ -37,10 +42,10 @@ There are a couple of additional constraints that we can put on our tests to
 make them more predictable.
 
 - Run the calls invoked on your
-  [Container](../orbit-core/src/commonMain/kotlin/org/orbitmvi/orbit/Container.kt)
+  [Container](pathname:///dokka/orbit-core/orbit-core/org.orbitmvi.orbit/-container/)
   as suspending function
 - Isolate the first function called on the
-  [ContainerHost](../orbit-core/src/commonMain/kotlin/org/orbitmvi/orbit/ContainerHost.kt)
+  [ContainerHost](pathname:///dokka/orbit-core/orbit-core/org.orbitmvi.orbit/-container-host/)
 
 Isolating intents helps avoid unexpected state/side effect emissions from
 loopbacks in your intent under test. This can be turned off if you have a
@@ -49,7 +54,7 @@ particular testing need.
 ## Testing method
 
 First we need to put our
-[ContainerHost](../orbit-core/src/commonMain/kotlin/org/orbitmvi/orbit/ContainerHost.kt)
+[ContainerHost](pathname:///dokka/orbit-core/orbit-core/org.orbitmvi.orbit/-container-host/)
 into test mode and call our intent (method) under test. Let's assume we've made
 a `ViewModel` the host.
 

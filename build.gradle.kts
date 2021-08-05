@@ -211,8 +211,20 @@ subprojects {
 }
 
 markdownlint {
+    excludes = listOf(
+        ".*/build/.*",
+        ".*/.docusaurus/.*",
+        ".*/node_modules/.*",
+        ".*/website/.*" // This is temporary until markdownlint can ignore frontmatter
+        )
     rules {
         +LineLengthRule(codeBlocks = false, tables = false)
         +ProperNamesRule(names = DefaultNames + "Orbit")
     }
+}
+
+val copyDokkaToWebsite by tasks.registering(Copy::class) {
+    dependsOn("dokkaHtmlMultiModule")
+    from(files("build/dokka/htmlMultiModule"))
+    into(file("website/static/dokka"))
 }

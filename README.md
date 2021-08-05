@@ -1,4 +1,4 @@
-# Orbit for Kotlin and Android
+# Orbit Multiplatform
 
 [![CI status](https://github.com/orbit-mvi/orbit-mvi/workflows/Android%20CI/badge.svg)](https://github.com/orbit-mvi/orbit-mvi/actions)
 [![codecov](https://codecov.io/gh/orbit-mvi/orbit-mvi/branch/main/graph/badge.svg)](https://codecov.io/gh/orbit-mvi/orbit-mvi)
@@ -7,48 +7,56 @@
 
 ![Logo](images/logo.png)
 
-![slack logo](images/slack-logo-icon.png) [Join us at the Kotlinlang slack!](https://kotlinlang.slack.com/messages/CPM6UMD2P)
+## Get in touch
 
-If you do not yet have an account with the Kotlinlang slack workspace,
-[sign up here](https://slack.kotlinlang.org).
+[![slack logo](images/slack-logo-icon.png)](https://kotlinlang.slack.com/messages/CPM6UMD2P)
+[![twitter logo](images/twitter-small.png)](https://twitter.com/orbit_mvi')
 
-This library was originally developed at [Babylon Health](https://github.com/babylonhealth/orbit-mvi).
-However, as its development over there ceased, further development
-has been moved to this project maintained by the original authors.
+## What is Orbit
+
+Orbit is a Redux/MVI-like library - but without the baggage. It's so simple we
+think of it as MVVM+.
+
+- Simple, type-safe, coroutine-style, extensible API
+- Multiplatform, targetting Android and iOS (iOS support is in alpha and being
+  actively worked on)
+- Full support for Kotlin Coroutines (it's built on top of them after all)
+- Lifecycle-safe collection of infinite flows
+- ViewModel support, along with SavedState
+- Optional, simple unit test library
+- Built-in espresso idling resource support
+- Compatible with [RxJava](https://orbit-mvi.org/Core/rxjava), [LiveData](https://orbit-mvi.org/Core/livedata.md)
+  etc. through coroutine wrappers
+- And more...
 
 ## Documentation
 
+- [Getting Started](https://orbit-mvi.org)
+- [Core](https://orbit-mvi.org/Core/overview)
+- [Android ViewModel](https://orbit-mvi.org/Android-Viewmodel/overview)
+- [Test](https://orbit-mvi.org/Test/overview)
+- [Dokka source code documentation](https://orbit-mvi.org/dokka/)
+- [Resources](https://orbit-mvi.org/resources)
+
+### Articles & Talks
+
 - [How to write your own MVI library and why you shouldn't](https://www.youtube.com/watch?v=E6obYmkkdko)
-- [Core module and architecture overview](orbit-core/README.md)
-- [ViewModel](orbit-viewmodel/README.md)
-- [Test](orbit-test/README.md)
+- [Top Android MVI libraries in 2021](https://appmattus.medium.com/top-android-mvi-libraries-in-2021-de1afe890f27)
 
-## Overview
-
-Orbit is a simple scaffolding you can build a Redux/MVI-like architecture
-around.
-
-- Easy to use, type-safe, extensible API
-- Built on top of coroutines
-- Compatible with [RxJava](orbit-core/docs/rxjava.md), [LiveData](orbit-core/docs/livedata.md)
-  etc. through coroutine wrappers
-- ViewModel support, along with SavedState!
-- Unit test framework designed in step with the framework
-- Built-in espresso idling resource support
-
-And more!...
-
-## Getting started in three simple steps
-
-```kotlin
-implementation("org.orbit-mvi:orbit-viewmodel:<latest-version>")
-```
+## Getting started
 
 [![Download](https://img.shields.io/maven-central/v/org.orbit-mvi/orbit-viewmodel)](https://search.maven.org/artifact/org.orbit-mvi/orbit-viewmodel)
 
-### Define the contract
+```kotlin
+implementation("org.orbit-mvi:orbit-core:<latest-version>")
+// or, if on Android:
+implementation("org.orbit-mvi:orbit-viewmodel:<latest-version>")
 
-First, we need to define its state and declared side effects.
+// Tests
+testImplementation("org.orbit-mvi:orbit-test:<latest-version>")
+```
+
+### Define the contract
 
 ``` kotlin
 data class CalculatorState(
@@ -60,14 +68,7 @@ sealed class CalculatorSideEffect {
 }
 ```
 
-The only requirement here is that the objects are comparable. We also recommend
-they be immutable. Therefore we suggest using a mix of data classes, sealed
-classes and objects.
-
 ### Create the ViewModel
-
-Using the core Orbit functionality, we can create a simple, functional
-ViewModel.
 
 1. Implement the
    [ContainerHost](orbit-core/src/commonMain/kotlin/org/orbitmvi/orbit/ContainerHost.kt)
@@ -95,20 +96,9 @@ class CalculatorViewModel: ContainerHost<CalculatorState, CalculatorSideEffect>,
 ```
 
 We have used an Android `ViewModel` as the most common example, but there is no
-requirement to do so. You can host an Orbit
-[Container](orbit-core/src/commonMain/kotlin/org/orbitmvi/orbit/Container.kt)
-in a simple class if you wish. This makes it possible to use in simple Kotlin
-projects as well as lifecycle independent services.
+requirement to do so.
 
 ### Connect to the ViewModel in your Activity or Fragment
-
-Now we need to wire up the `ViewModel` to our UI. We expose coroutine
-`Flow`s through which one can conveniently subscribe to updates.
-Alternatively you can convert these to your preferred type using
-externally provided extension methods e.g.
-[asLiveData](https://developer.android.com/reference/kotlin/androidx/lifecycle/package-summary#(kotlinx.coroutines.flow.Flow).asLiveData(kotlin.coroutines.CoroutineContext,%20kotlin.Long))
-or
-[asObservable](https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-rx3/kotlinx.coroutines.rx3/kotlinx.coroutines.flow.-flow/as-observable.html).
 
 ``` kotlin
 class CalculatorActivity: AppCompatActivity() {
@@ -118,23 +108,10 @@ class CalculatorActivity: AppCompatActivity() {
 
     override fun onCreate(savedState: Bundle?) {
         ...
+
         addButton.setOnClickListener { viewModel.add(1234) }
 
-        // Use the one-liner from the orbit-viewmodel module to observe when
-        // Lifecycle.State.STARTED
         viewModel.observe(state = ::render, sideEffect = ::handleSideEffect)
-
-        // Or observe the streams directly
-        lifecycleScope.launch {
-            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                launch {
-                    viewModel.container.stateFlow.collect { render(it) }
-                }
-                launch {
-                    viewModel.container.sideEffectFlow.collect { handleSideEffect(it) }
-                }
-            }
-        }
     }
 
     private fun render(state: CalculatorState) {
@@ -174,50 +151,9 @@ private fun handleSideEffect(sideEffect: CalculatorSideEffect) {
 }
 ```
 
-## Syntax
-
-``` kotlin
-class MyViewModel: ContainerHost<MyState, MySideEffect>, ViewModel() {
-
-    override val container = container<MyState, MySideEffect>(MyState())
-
-    fun loadDataForId(id: Int) = intent {
-        postSideEffect(MySideEffect.Toast("Loading data for $id!"))
-
-        val result = repository.loadData(id)
-
-        reduce {
-            state.copy(data = result)
-        }
-    }
-}
-```
-
-## Modules
-
-Orbit is a modular framework. The Core module provides basic Orbit
-functionality with additional features provided through optional modules.
-
-Orbit supports using various async/stream frameworks at the same time so it is
-perfect for legacy codebases. For example, it can support both [RxJava](orbit-core/docs/rxjava.md)
-and coroutines if you are in the process of migrating from one to the other.
-
-At the very least you will need the `orbit-core` module to get started,
-alternatively include one of the other modules which already include
-`orbit-core`.
-
-```kotlin
-implementation("org.orbit-mvi:orbit-core:<latest-version>")
-implementation("org.orbit-mvi:orbit-viewmodel:<latest-version>")
-
-testImplementation("org.orbit-mvi:orbit-test:<latest-version>")
-```
-
-[![Download](https://img.shields.io/maven-central/v/org.orbit-mvi/orbit-core)](https://search.maven.org/artifact/org.orbit-mvi/orbit-core)
-
 ## Contributing
 
-Please read [CONTRIBUTING.md](CONTRIBUTING.md)
+Please read [contributing](CONTRIBUTING.md)
 for details on our code of conduct, and the process for submitting pull
 requests to us.
 
@@ -231,4 +167,4 @@ available, see the [tags on this repository](https://github.com/orbit-mvi/orbit-
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE.md)
 
 This project is licensed under the Apache License, Version 2.0 - see the
-[LICENSE.md](LICENSE.md) file for details
+[license](LICENSE.md) file for details
