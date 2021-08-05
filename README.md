@@ -14,15 +14,15 @@
 
 ## What is Orbit
 
-Orbit is a Redux/MVI-like library - but without the baggage! It's so simple we
+Orbit is a Redux/MVI-like library - but without the baggage. It's so simple we
 think of it as MVVM+.
 
 - Simple, type-safe, coroutine-style, extensible API
 - Multiplatform, targetting Android and iOS (iOS support is in alpha and being
   actively worked on)
-- Full support for Kotlin Coroutines (it's built on top of them after all!)
+- Full support for Kotlin Coroutines (it's built on top of them after all)
 - Lifecycle-safe collection of infinite flows
-- ViewModel support, along with SavedState!
+- ViewModel support, along with SavedState
 - Optional, simple unit test library
 - Built-in espresso idling resource support
 - Compatible with [RxJava](https://orbit-mvi.org/Core/rxjava), [LiveData](https://orbit-mvi.org/Core/livedata.md)
@@ -165,4 +165,4 @@ available, see the [tags on this repository](https://github.com/orbit-mvi/orbit-
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE.md)
 
 This project is licensed under the Apache License, Version 2.0 - see the
-[license](LICENSE.md) file for *details*
+[license](LICENSE.md) file for details

@@ -224,7 +224,7 @@ markdownlint {
 }
 
 val copyDokkaToWebsite by tasks.registering(Copy::class) {
+    dependsOn("dokkaHtmlMultiModule")
     from(files("build/dokka/htmlMultiModule"))
     into(file("website/static/dokka"))
-    dependsOn("dokkaHtmlMultiModule")
 }

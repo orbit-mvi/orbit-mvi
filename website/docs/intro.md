@@ -9,7 +9,7 @@ slug: /
 
 ![Logo](images/logo.png)
 
-Orbit is a Redux/MVI-like library - but without the baggage! It's so simple we think of it as MVVM+.
+Orbit is a Redux/MVI-like library - but without the baggage. It's so simple we think of it as MVVM+.
 
 ## Documentation
 
