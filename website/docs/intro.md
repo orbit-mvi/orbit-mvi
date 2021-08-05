@@ -9,7 +9,8 @@ slug: /
 
 ![Logo](images/logo.png)
 
-Orbit is a Redux/MVI-like library - but without the baggage. It's so simple we think of it as MVVM+.
+Orbit is a Redux/MVI-like library - but without the baggage. It's so simple we
+think of it as MVVM+.
 
 ## Documentation
 
@@ -17,6 +18,7 @@ Orbit is a Redux/MVI-like library - but without the baggage. It's so simple we t
 - [Android ViewModel](Android-ViewModel/overview.md)
 - [Test](Test/overview.md)
 - [Dokka source code documentation](pathname://dokka/)
+- [Resources](resources.md)
 
 ## Getting started
 
@@ -86,7 +88,6 @@ On Android, we expose an easy one-liner function to connect your UI to the
 ViewModel. Alternatively, you can use the
 [Container](pathname:///dokka/orbit-core/orbit-core/org.orbitmvi.orbit/-container/)'s
 `Flow`s directly.
-
 
 ``` kotlin
 class CalculatorActivity: AppCompatActivity() {

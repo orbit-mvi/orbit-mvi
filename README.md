@@ -36,10 +36,12 @@ think of it as MVVM+.
 - [Android ViewModel](https://orbit-mvi.org/Android-Viewmodel/overview)
 - [Test](https://orbit-mvi.org/Test/overview)
 - [Dokka source code documentation](https://orbit-mvi.org/dokka/)
+- [Resources](https://orbit-mvi.org/resources)
 
 ### Articles & Talks
 
 - [How to write your own MVI library and why you shouldn't](https://www.youtube.com/watch?v=E6obYmkkdko)
+- [Top Android MVI libraries in 2021](https://appmattus.medium.com/top-android-mvi-libraries-in-2021-de1afe890f27)
 
 ## Getting started
 
