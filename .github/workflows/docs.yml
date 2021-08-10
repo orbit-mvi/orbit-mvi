@@ -16,7 +16,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     steps:
       - uses: actions/checkout@v2
 
@@ -48,7 +48,7 @@ jobs:
       - name: Build Dokka
         run: ./gradlew dokkaHtmlMultiModule
 
-      - name: Build Docusaurus
+      - name: Build Docusaurus Docker Image
         uses: docker/build-push-action@v2
         with:
           context: website
@@ -58,9 +58,9 @@ jobs:
       - name: Build Docusaurus
         uses: addnab/docker-run-action@v3
         with:
-          context: website
           image: orbit-web:latest
-          options: --rm -p 3000:3000 -v `pwd`/website:/docusaurus -e RUN_MODE='build'
+          options: --rm -p 3000:3000 -v ${{ github.workspace }}/website:/docusaurus -e RUN_MODE='build'
+
       - name: Archive website
         uses: actions/upload-artifact@v2
         with:
