@@ -84,7 +84,6 @@ public class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
         if (initialised.compareAndSet(expect = false, update = true)) {
             scope.produce<Unit>(Dispatchers.Unconfined) {
                 awaitClose {
-                    dispatchChannel.cancel()
                     settings.idlingRegistry.close()
                 }
             }
