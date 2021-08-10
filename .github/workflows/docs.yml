@@ -56,11 +56,9 @@ jobs:
           tags: orbit-web:latest
 
       - name: Build Docusaurus
-        uses: addnab/docker-run-action@v3
-        with:
-          image: orbit-web:latest
-          options: --rm -v ${{ github.workspace }}/website:/docusaurus -e RUN_MODE='build'
-          run: ./init.sh
+        run: |
+          cd website
+          docker run --rm -v ${{ github.workspace }}/website:/docusaurus -e RUN_MODE='build' orbit-web:latest
 
       - name: Archive website
         uses: actions/upload-artifact@v2
