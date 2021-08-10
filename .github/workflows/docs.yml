@@ -59,11 +59,12 @@ jobs:
         uses: addnab/docker-run-action@v3
         with:
           image: orbit-web:latest
-          options: --rm -p 3000:3000 -v ${{ github.workspace }}/website:/docusaurus -e RUN_MODE='build'
+          options: --rm -v ${{ github.workspace }}/website:/docusaurus -e RUN_MODE='build'
+          run: ./init.sh
 
       - name: Archive website
         uses: actions/upload-artifact@v2
         with:
           name: website
           path: |
-            website
+            website/build
