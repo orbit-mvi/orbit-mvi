@@ -51,7 +51,7 @@ jobs:
       - name: Build Docusaurus
         run: |
           cd website
-          docker run --rm -v ${{ github.workspace }}/website:/docusaurus -e RUN_MODE='build' orbit-web:latest
+          docker run --rm -v ${{ github.workspace }}/website:/docusaurus -e RUN_MODE='build'
 
       - name: Archive website
         uses: actions/upload-artifact@v2
