@@ -46,14 +46,7 @@ jobs:
           key: ${{ runner.os }}-konan
 
       - name: Build Dokka
-        run: ./gradlew dokkaHtmlMultiModule
-
-      - name: Build Docusaurus Docker Image
-        uses: docker/build-push-action@v2
-        with:
-          context: website
-          push: false
-          tags: orbit-web:latest
+        run: ./gradlew copyDokkaToWebsite
 
       - name: Build Docusaurus
         run: |
