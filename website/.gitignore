@@ -9,6 +9,7 @@ build
 .cache-loader
 supervisord.pid
 supervisord.log
+dokka
 
 # Misc
 .DS_Store

@@ -5,18 +5,18 @@ sidebar_label: 'Overview'
 
 # Android ViewModel module
 
-The module provides [Container](pathname:///dokka/orbit-core/orbit-core/org.orbitmvi.orbit/-container/)
+The module provides [Container](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-container/)
   factory extensions on `ViewModel` for
 
 - creating containers scoped with
   [ViewModelScope](https://developer.android.com/topic/libraries/architecture/coroutines)
   to automatically cancel the
-  [Container](pathname:///dokka/orbit-core/orbit-core/org.orbitmvi.orbit/-container/)
+  [Container](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-container/)
   whenever the `ViewModel` is cleared.
 - saved state functionality via Jetpack's
   [Saved State module for ViewModel](https://developer.android.com/topic/libraries/architecture/viewmodel-savedstate)
   to automatically save and restore the
-  [Container](pathname:///dokka/orbit-core/orbit-core/org.orbitmvi.orbit/-container/)
+  [Container](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-container/)
   state on Activity or process death.
 
 ## Including the module
@@ -28,7 +28,7 @@ implementation("org.orbit-mvi:orbit-viewmodel:<latest-version>")
 ## Creating a container in a ViewModel
 
 This module contains a
-[Container](pathname:///dokka/orbit-core/orbit-core/org.orbitmvi.orbit/-container/)
+[Container](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-container/)
 factory extension function on `ViewModel` to facilitate creating a scoped
 container.
 
@@ -56,7 +56,7 @@ destroyed there are two conditions:
 1. You need to pass in a
    [SavedStateHandle](https://developer.android.com/reference/androidx/lifecycle/SavedStateHandle)
    to your
-   [Container](pathname:///dokka/orbit-core/orbit-core/org.orbitmvi.orbit/-container/)
+   [Container](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-container/)
    factory function. The easiest way to do this is via
    [Koin's support](https://doc.insert-koin.io/#/koin-android/viewmodel?id=viewmodel-and-state-bundle).
    This can be set up using Dagger as well but this could mean creating your own

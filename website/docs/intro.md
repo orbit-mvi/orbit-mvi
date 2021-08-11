@@ -52,13 +52,13 @@ objects.
 ### Create the ViewModel
 
 1. Implement the
-   [ContainerHost](pathname:///dokka/orbit-core/orbit-core/org.orbitmvi.orbit/-container/)
+   [ContainerHost](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-container/)
    interface
 1. Override the `container` field and use the `ViewModel.container` factory
    function to build an Orbit
-   [Container](pathname:///dokka/orbit-core/orbit-core/org.orbitmvi.orbit/-container/)
+   [Container](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-container/)
    in your
-   [ContainerHost](pathname:///dokka/orbit-core/orbit-core/org.orbitmvi.orbit/-container-host/)
+   [ContainerHost](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-container-host/)
 
 ``` kotlin
 class CalculatorViewModel: ContainerHost<CalculatorState, CalculatorSideEffect>, ViewModel() {
@@ -78,7 +78,7 @@ class CalculatorViewModel: ContainerHost<CalculatorState, CalculatorSideEffect>,
 
 We have used an Android `ViewModel` as the most common example, but it's not
 required. You can host an Orbit
-[Container](pathname:///dokka/orbit-core/orbit-core/org.orbitmvi.orbit/-container/)
+[Container](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-container/)
 in a simple Kotlin class if you wish. This makes it possible to use in UI
 independent components as well as Kotlin Multiplatform projects.
 
@@ -86,7 +86,7 @@ independent components as well as Kotlin Multiplatform projects.
 
 On Android, we expose an easy one-liner function to connect your UI to the
 ViewModel. Alternatively, you can use the
-[Container](pathname:///dokka/orbit-core/orbit-core/org.orbitmvi.orbit/-container/)'s
+[Container](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-container/)'s
 `Flow`s directly.
 
 ``` kotlin
