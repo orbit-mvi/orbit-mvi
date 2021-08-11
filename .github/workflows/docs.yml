@@ -48,10 +48,17 @@ jobs:
       - name: Build Dokka
         run: ./gradlew copyDokkaToWebsite
 
+      - name: Build Docusaurus Docker Image
+        uses: docker/build-push-action@v2
+        with:
+          context: website
+          push: false
+          tags: orbit-web:latest
+
       - name: Build Docusaurus
         run: |
           cd website
-          docker run --rm -v ${{ github.workspace }}/website:/docusaurus -e RUN_MODE='build' .
+          docker run --rm -v ${{ github.workspace }}/website:/docusaurus -e RUN_MODE='build' orbit-web:latest
 
       - name: Archive website
         uses: actions/upload-artifact@v2
