@@ -10,7 +10,7 @@
 ## Get in touch
 
 [![slack logo](images/slack-logo-icon.png)](https://kotlinlang.slack.com/messages/CPM6UMD2P)
-[![twitter logo](images/twitter-small.png)](https://twitter.com/orbit_mvi')
+[![twitter logo](images/twitter-small.png)](https://twitter.com/orbit_mvi)
 
 ## What is Orbit
 
