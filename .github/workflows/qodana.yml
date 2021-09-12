@@ -1,0 +1,23 @@
+name: "Qodana"
+
+on:
+    push:
+        branches:
+            - main
+            - orbit/main
+            - feature/**
+        tags:
+            - '*'
+    pull_request:
+        branches:
+            - main
+            - orbit/main
+            - feature/**
+
+jobs:
+    qodana:
+        name: "Qodana - Code Inspection"
+        runs-on: ubuntu-latest
+        steps:
+            -   uses: actions/checkout@v2
+            -   uses: JetBrains/qodana-action@v2.1-eap
