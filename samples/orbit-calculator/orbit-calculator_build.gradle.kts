@@ -25,10 +25,10 @@ plugins {
 }
 
 android {
-    compileSdkVersion(30)
+    compileSdk = 30
     defaultConfig {
-        minSdkVersion(21)
-        targetSdkVersion(30)
+        minSdk = 21
+        targetSdk = 30
         versionCode = 1
         versionName = "1.0"
         applicationId = "org.orbitmvi.orbit.sample.calculator"
@@ -55,11 +55,11 @@ dependencies {
     implementation(project(":orbit-core"))
     implementation(project(":orbit-viewmodel"))
 
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.1")
-    implementation("androidx.constraintlayout:constraintlayout:2.0.4")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2")
+    implementation("androidx.constraintlayout:constraintlayout:2.1.0")
     implementation("com.google.android.material:material:1.4.0")
     implementation("io.insert-koin:koin-android:3.1.2")
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.3.1")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.4.0-alpha03")
 
     // Testing
     testImplementation(project(":orbit-test"))
@@ -69,5 +69,5 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-params:5.7.2")
     testImplementation("junit:junit:4.13.2")
     testImplementation("com.appmattus.fixture:fixture:1.1.0")
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.5.1")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.5.2")
 }
