@@ -45,6 +45,14 @@ jobs:
       - name: Markdown lint
         run: ./gradlew markdownlint
 
+      - name: Qodana
+        uses: JetBrains/qodana-action@v2.1-eap
+
+      - name: Qodana Result Upload
+        uses: actions/upload-artifact@v2
+        with:
+          path: qodana
+
   lint:
     runs-on: ubuntu-latest
     steps:
