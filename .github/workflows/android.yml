@@ -51,6 +51,7 @@ jobs:
       - name: Qodana Result Upload
         uses: actions/upload-artifact@v2
         with:
+          name: qodana
           path: qodana
 
   lint:
