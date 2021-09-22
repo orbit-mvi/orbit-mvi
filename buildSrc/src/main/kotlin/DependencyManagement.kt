@@ -29,8 +29,8 @@ object Versions {
     const val safeargs = "2.3.5"
     const val atomicfu = "0.16.3"
 
-    const val kotlin = "1.5.30"
-    const val coroutines = "1.5.2-native-mt"
+    const val kotlin = "1.6.0-M1-139"
+    const val coroutines = "1.5.1-new-mm-dev2"
 
     const val androidxLifecycles = "2.4.0-alpha03"
     const val androidxEspresso = "3.4.0"

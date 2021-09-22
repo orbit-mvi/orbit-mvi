@@ -98,6 +98,8 @@ subprojects {
     repositories {
         google()
         mavenCentral()
+        maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/temporary")
+        maven("https://maven.pkg.jetbrains.space/public/p/kotlinx-coroutines/maven")
     }
 
     version = (System.getenv("GITHUB_REF") ?: System.getProperty("GITHUB_REF"))

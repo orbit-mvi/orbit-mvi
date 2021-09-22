@@ -36,3 +36,10 @@ fun renameBuildFileToModuleName(project: ProjectDescriptor) {
 // E.g. `app/build.gradle` will become `app/app.gradle`
 // The root build.gradle file will remain untouched
 rootProject.children.forEach { subproject -> renameBuildFileToModuleName(subproject) }
+
+pluginManagement {
+    repositories {
+        maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/temporary")
+        gradlePluginPortal()
+    }
+}
