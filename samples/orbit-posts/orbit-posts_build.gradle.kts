@@ -66,15 +66,15 @@ dependencies {
     implementation(project(":orbit-viewmodel"))
 
     // UI
-    implementation("androidx.constraintlayout:constraintlayout:2.1.0")
+    implementation("androidx.constraintlayout:constraintlayout:2.1.1")
     implementation("com.google.android.material:material:1.4.0")
     implementation("com.github.bumptech.glide:glide:4.12.0")
     implementation("com.github.lisawray.groupie:groupie:2.9.0")
     implementation("com.github.lisawray.groupie:groupie-viewbinding:2.9.0")
     implementation("androidx.navigation:navigation-fragment-ktx:2.3.5")
     implementation("androidx.navigation:navigation-ui-ktx:2.3.5")
-    implementation("androidx.lifecycle:lifecycle-common-java8:2.4.0-alpha03")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.4.0-alpha03")
+    implementation("androidx.lifecycle:lifecycle-common-java8:2.4.0-beta01")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.4.0-beta01")
 
     // Networking
     implementation("com.squareup.okhttp3:okhttp:4.9.1")

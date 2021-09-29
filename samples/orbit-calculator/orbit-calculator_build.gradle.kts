@@ -56,10 +56,10 @@ dependencies {
     implementation(project(":orbit-viewmodel"))
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2")
-    implementation("androidx.constraintlayout:constraintlayout:2.1.0")
+    implementation("androidx.constraintlayout:constraintlayout:2.1.1")
     implementation("com.google.android.material:material:1.4.0")
     implementation("io.insert-koin:koin-android:3.1.2")
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.4.0-alpha03")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.4.0-beta01")
 
     // Testing
     testImplementation(project(":orbit-test"))
