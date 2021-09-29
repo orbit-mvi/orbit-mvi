@@ -21,18 +21,18 @@
 object Versions {
 
     const val gradleVersionsPlugin = "0.39.0"
-    const val gradleAndroidPlugin = "4.2.2"
+    const val gradleAndroidPlugin = "7.0.2"
     const val gradleMavenPublishPlugin = "0.17.0"
     const val dokkaPlugin = "1.5.0"
     const val markdownLintPlugin = "0.6.0"
-    const val detektPlugin = "1.17.1"
+    const val detektPlugin = "1.18.1"
     const val safeargs = "2.3.5"
-    const val atomicfu = "0.16.2"
+    const val atomicfu = "0.16.3"
 
-    const val kotlin = "1.5.21"
-    const val coroutines = "1.5.1-native-mt"
+    const val kotlin = "1.5.31"
+    const val coroutines = "1.5.2-native-mt"
 
-    const val androidxLifecycles = "2.4.0-alpha02"
+    const val androidxLifecycles = "2.4.0-beta01"
     const val androidxEspresso = "3.4.0"
 
     const val desugar = "1.1.5"

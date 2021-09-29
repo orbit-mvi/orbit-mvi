@@ -26,10 +26,10 @@ plugins {
 }
 
 android {
-    compileSdkVersion(30)
+    compileSdk = 31
     defaultConfig {
-        minSdkVersion(23)
-        targetSdkVersion(30)
+        minSdk = 23
+        targetSdk = 31
         versionCode = 1
         versionName = "1.0"
         applicationId = "org.orbitmvi.orbit.sample.stocklist"
@@ -79,7 +79,7 @@ dependencies {
     implementation(project(":orbit-core"))
     implementation(project(":orbit-viewmodel"))
 
-    implementation("androidx.constraintlayout:constraintlayout:2.0.4")
+    implementation("androidx.constraintlayout:constraintlayout:2.1.1")
     implementation("com.google.android.material:material:1.4.0")
     implementation("androidx.navigation:navigation-fragment-ktx:2.3.5")
     implementation("androidx.navigation:navigation-ui-ktx:2.3.5")
@@ -88,9 +88,9 @@ dependencies {
     implementation("com.github.lisawray.groupie:groupie-kotlin-android-extensions:2.9.0")
     implementation("com.github.lisawray.groupie:groupie-viewbinding:2.9.0")
     implementation("io.insert-koin:koin-android:3.1.2")
-    implementation("androidx.lifecycle:lifecycle-common-java8:2.4.0-alpha02")
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.4.0-alpha02")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.4.0-alpha02")
+    implementation("androidx.lifecycle:lifecycle-common-java8:2.4.0-beta01")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.4.0-beta01")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.4.0-beta01")
 
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:${Versions.desugar}")
 }

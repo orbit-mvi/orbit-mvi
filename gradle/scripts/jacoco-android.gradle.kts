@@ -51,4 +51,5 @@ val jacocoTask = tasks.register<JacocoReport>("jacocoTestReport") {
 tasks.withType<Test> {
     finalizedBy(jacocoTask)
     extensions.getByType<JacocoTaskExtension>().isIncludeNoLocationClasses = true
+    extensions.getByType<JacocoTaskExtension>().setExcludes(listOf("jdk.internal.*"))
 }

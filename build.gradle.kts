@@ -185,10 +185,10 @@ subprojects {
         apply(from = "$rootDir/gradle/scripts/jacoco-android.gradle.kts")
 
         configure<LibraryExtension> {
-            compileSdkVersion(30)
+            compileSdk = 31
             defaultConfig {
-                minSdkVersion(21)
-                targetSdkVersion(30)
+                minSdk = 21
+                targetSdk = 31
             }
 
             buildTypes {
@@ -216,7 +216,7 @@ markdownlint {
         ".*/.docusaurus/.*",
         ".*/node_modules/.*",
         ".*/website/.*" // This is temporary until markdownlint can ignore frontmatter
-        )
+    )
     rules {
         +LineLengthRule(codeBlocks = false, tables = false)
         +ProperNamesRule(names = DefaultNames + "Orbit")
