@@ -34,6 +34,7 @@ object Versions {
 
     const val androidxLifecycles = "2.4.0-beta01"
     const val androidxEspresso = "3.4.0"
+    const val androidxCompose = "1.0.4"
 
     const val desugar = "1.1.5"
 
@@ -55,6 +56,7 @@ object ProjectDependencies {
     const val androidxLifecycleRuntimeKtx = "androidx.lifecycle:lifecycle-runtime-ktx:${Versions.androidxLifecycles}"
     const val androidxEspressoIdlingResource = "androidx.test.espresso:espresso-idling-resource:${Versions.androidxEspresso}"
     const val androidxEspressoCore = "androidx.test.espresso:espresso-core:${Versions.androidxEspresso}"
+    const val androidxComposeRuntime = "androidx.compose.runtime:runtime:${Versions.androidxCompose}"
 
     // Tools
     const val detektFormatting = "io.gitlab.arturbosch.detekt:detekt-formatting:${Versions.detektPlugin}"
