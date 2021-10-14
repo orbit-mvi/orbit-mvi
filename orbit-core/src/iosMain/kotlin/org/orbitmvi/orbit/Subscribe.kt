@@ -13,7 +13,12 @@ import kotlinx.coroutines.flow.onEach
 public fun Flow<*>.subscribe(onEach: (item: Any) -> Unit, onComplete: () -> Unit, onThrow: (error: Throwable) -> Unit): Job =
     this.subscribe(Dispatchers.Main, onEach, onComplete, onThrow)
 
-public fun Flow<*>.subscribe(dispatcher: CoroutineDispatcher, onEach: (item: Any) -> Unit, onComplete: () -> Unit, onThrow: (error: Throwable) -> Unit): Job =
+public fun Flow<*>.subscribe(
+    dispatcher: CoroutineDispatcher,
+    onEach: (item: Any) -> Unit,
+    onComplete: () -> Unit,
+    onThrow: (error: Throwable) -> Unit
+): Job =
     this.onEach { onEach(it as Any) }
         .catch { onThrow(it) }
         .onCompletion { onComplete() }
