@@ -24,7 +24,7 @@ import org.orbitmvi.orbit.syntax.OrbitDsl
 import org.orbitmvi.orbit.syntax.ContainerContext
 
 @OrbitDsl
-public class SimpleSyntax<S : Any, SE : Any>(internal val containerContext: ContainerContext<S, SE>) {
+public class SimpleSyntax<S : Any, SE : Any>(public val containerContext: ContainerContext<S, SE>) {
 
     /**
      * The current state which can change throughout execution of the orbit block
