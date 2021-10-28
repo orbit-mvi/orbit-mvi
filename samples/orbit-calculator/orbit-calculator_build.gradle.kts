@@ -58,16 +58,16 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2")
     implementation("androidx.constraintlayout:constraintlayout:2.1.1")
     implementation("com.google.android.material:material:1.4.0")
-    implementation("io.insert-koin:koin-android:3.1.2")
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.4.0-beta01")
+    implementation("io.insert-koin:koin-android:3.1.3")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.4.0")
 
     // Testing
     testImplementation(project(":orbit-test"))
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.7.2")
-    testImplementation("org.junit.platform:junit-platform-console:1.7.2")
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.7.2")
-    testImplementation("org.junit.jupiter:junit-jupiter-params:5.7.2")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.1")
+    testImplementation("org.junit.platform:junit-platform-console:1.8.1")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.1")
+    testImplementation("org.junit.jupiter:junit-jupiter-params:5.8.1")
     testImplementation("junit:junit:4.13.2")
-    testImplementation("com.appmattus.fixture:fixture:1.1.0")
+    testImplementation("com.appmattus.fixture:fixture:1.2.0")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.5.2")
 }

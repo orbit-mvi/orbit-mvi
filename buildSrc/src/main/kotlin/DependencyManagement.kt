@@ -21,9 +21,8 @@
 object Versions {
 
     const val gradleVersionsPlugin = "0.39.0"
-    const val gradleAndroidPlugin = "7.0.2"
-    const val gradleMavenPublishPlugin = "0.17.0"
-    const val dokkaPlugin = "1.5.0"
+    const val gradleAndroidPlugin = "7.0.3"
+    const val gradleMavenPublishPlugin = "0.18.0"
     const val markdownLintPlugin = "0.6.0"
     const val detektPlugin = "1.18.1"
     const val safeargs = "2.3.5"
@@ -32,7 +31,7 @@ object Versions {
     const val kotlin = "1.5.31"
     const val coroutines = "1.5.2-native-mt"
 
-    const val androidxLifecycles = "2.4.0-beta01"
+    const val androidxLifecycles = "2.4.0"
     const val androidxEspresso = "3.4.0"
     const val androidxCompose = "1.0.4"
 

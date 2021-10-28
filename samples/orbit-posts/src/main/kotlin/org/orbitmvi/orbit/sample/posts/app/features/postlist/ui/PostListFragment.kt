@@ -30,7 +30,9 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.GroupieViewHolder
+import org.koin.androidx.viewmodel.ext.android.getViewModel
 import org.koin.androidx.viewmodel.ext.android.stateViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.orbitmvi.orbit.sample.posts.R
 import org.orbitmvi.orbit.sample.posts.app.common.NavigationEvent
 import org.orbitmvi.orbit.sample.posts.app.common.SeparatorDecoration
@@ -43,7 +45,7 @@ import org.orbitmvi.orbit.viewmodel.observe
 
 class PostListFragment : Fragment(R.layout.post_list_fragment) {
 
-    private val viewModel: PostListViewModel by stateViewModel()
+    private val viewModel: PostListViewModel by viewModel()
 
     private val binding by viewBinding<PostListFragmentBinding>()
 

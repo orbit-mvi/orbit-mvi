@@ -89,5 +89,5 @@ class SeparatorDecoration(context: Context, @DimenRes marginStart: Int, @DimenRe
     }
 
     private fun isLastItem(params: RecyclerView.LayoutParams, state: RecyclerView.State) =
-        params.viewAdapterPosition == state.itemCount - 1
+        params.bindingAdapterPosition == state.itemCount - 1
 }
