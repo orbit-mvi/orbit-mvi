@@ -23,7 +23,6 @@ package org.orbitmvi.orbit.sample.calculator
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
-import org.koin.androidx.viewmodel.ext.android.getStateViewModel
 import org.koin.androidx.viewmodel.ext.android.getViewModel
 import org.orbitmvi.orbit.sample.calculator.databinding.ActivityMainBinding
 
