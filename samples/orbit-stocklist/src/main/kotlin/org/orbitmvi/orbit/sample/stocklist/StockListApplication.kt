@@ -48,6 +48,6 @@ class StockListApplication : Application() {
         single { StockRepository(get()) }
 
         viewModel { ListViewModel(get(), get()) }
-        viewModel { (savedStateHandle: SavedStateHandle, itemName: String) -> DetailViewModel(savedStateHandle, itemName, get()) }
+        viewModel { (itemName: String) -> DetailViewModel(get(), itemName, get()) }
     }
 }
