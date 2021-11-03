@@ -63,8 +63,4 @@ class PostListViewModel(
     fun onPostClicked(post: PostOverview) = intent {
         postSideEffect(OpenPostNavigationEvent(post))
     }
-
-    fun onPostLongClicked() = intent {
-        throw IllegalStateException("Catch me!")
-    }
 }

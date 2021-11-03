@@ -21,13 +21,13 @@
 package org.orbitmvi.orbit.sample.posts.app.features.postlist.ui
 
 import android.view.View
-import org.orbitmvi.orbit.sample.posts.R
-import org.orbitmvi.orbit.sample.posts.app.features.postlist.viewmodel.PostListViewModel
-import org.orbitmvi.orbit.sample.posts.domain.repositories.PostOverview
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.xwray.groupie.viewbinding.BindableItem
+import org.orbitmvi.orbit.sample.posts.R
+import org.orbitmvi.orbit.sample.posts.app.features.postlist.viewmodel.PostListViewModel
 import org.orbitmvi.orbit.sample.posts.databinding.PostListItemBinding
+import org.orbitmvi.orbit.sample.posts.domain.repositories.PostOverview
 
 data class PostListItem(private val post: PostOverview, private val viewModel: PostListViewModel) : BindableItem<PostListItemBinding>() {
 
@@ -48,11 +48,6 @@ data class PostListItem(private val post: PostOverview, private val viewModel: P
 
         viewBinding.root.setOnClickListener {
             viewModel.onPostClicked(post)
-        }
-
-        viewBinding.root.setOnLongClickListener {
-            viewModel.onPostLongClicked()
-            true
         }
     }
 }

@@ -22,9 +22,7 @@ package org.orbitmvi.orbit.sample.posts.app.features
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
 import androidx.navigation.findNavController
-import androidx.navigation.ui.setupActionBarWithNavController
 import org.orbitmvi.orbit.sample.posts.R
 
 class MainActivity : AppCompatActivity() {
@@ -34,12 +32,6 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main_activity)
-
-        findViewById<Toolbar>(R.id.toolbar).apply {
-            setSupportActionBar(this)
-        }
-
-        setupActionBarWithNavController(navController)
     }
 
     override fun onSupportNavigateUp() = navController.navigateUp()
