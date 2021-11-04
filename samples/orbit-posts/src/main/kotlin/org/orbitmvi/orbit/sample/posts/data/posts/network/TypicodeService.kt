@@ -34,15 +34,9 @@ interface TypicodeService {
     @GET("posts")
     suspend fun posts(): List<PostData>
 
-    @GET("users/{id}")
-    suspend fun user(@Path("id") id: Int): UserData
-
     @GET("users")
     suspend fun users(): List<UserData>
 
     @GET("comments")
     suspend fun comments(): List<CommentData>
-
-    @GET("posts/{id}/comments")
-    suspend fun comments(@Path("id") postId: Int): List<CommentData>
 }

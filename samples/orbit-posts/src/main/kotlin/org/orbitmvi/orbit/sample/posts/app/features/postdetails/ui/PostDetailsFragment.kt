@@ -27,7 +27,9 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import androidx.navigation.ui.NavigationUI.setupActionBarWithNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
@@ -57,15 +59,15 @@ class PostDetailsFragment : Fragment(R.layout.post_details_fragment) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val appCompatActivity = activity as AppCompatActivity
+        appCompatActivity.setSupportActionBar(binding.toolbar)
+        setupActionBarWithNavController(appCompatActivity, findNavController())
+
         binding.postCommentsList.layoutManager = LinearLayoutManager(activity)
         ViewCompat.setNestedScrollingEnabled(binding.postCommentsList, false)
 
         binding.postCommentsList.addItemDecoration(
-            SeparatorDecoration(
-                requireActivity(),
-                R.dimen.separator_margin_start,
-                R.dimen.separator_margin_end
-            )
+            SeparatorDecoration(requireActivity(), R.dimen.separator_margin_start, R.dimen.separator_margin_end)
         )
 
         binding.postCommentsList.adapter = adapter
@@ -76,7 +78,7 @@ class PostDetailsFragment : Fragment(R.layout.post_details_fragment) {
     private fun render(state: PostDetailState) {
         if (!initialised) {
             initialised = true
-            (activity as AppCompatActivity?)?.supportActionBar?.apply {
+            binding.toolbar.apply {
                 title = state.postOverview.username
                 Glide.with(requireContext()).load(state.postOverview.avatarUrl)
                     .apply(RequestOptions.overrideOf(resources.getDimensionPixelSize(R.dimen.toolbar_logo_size)))

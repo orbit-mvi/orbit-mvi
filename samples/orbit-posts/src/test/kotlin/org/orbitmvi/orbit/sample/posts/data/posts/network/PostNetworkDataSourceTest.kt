@@ -20,6 +20,7 @@
 
 package org.orbitmvi.orbit.sample.posts.data.posts.network
 
+import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.jupiter.api.BeforeEach
@@ -31,7 +32,6 @@ import retrofit2.Retrofit
 import retrofit2.mock.BehaviorDelegate
 import retrofit2.mock.MockRetrofit
 import retrofit2.mock.NetworkBehavior
-import java.util.concurrent.TimeUnit
 
 class PostNetworkDataSourceTest {
     private lateinit var behavior: NetworkBehavior
@@ -163,20 +163,12 @@ class PostNetworkDataSourceTest {
             return delegate.returningResponse(posts).posts()
         }
 
-        override suspend fun user(id: Int): UserData {
-            TODO("Not yet implemented")
-        }
-
         override suspend fun users(): List<UserData> {
             return delegate.returningResponse(users).users()
         }
 
         override suspend fun comments(): List<CommentData> {
             return delegate.returningResponse(comments).comments()
-        }
-
-        override suspend fun comments(postId: Int): List<CommentData> {
-            TODO("Not yet implemented")
         }
     }
 }
