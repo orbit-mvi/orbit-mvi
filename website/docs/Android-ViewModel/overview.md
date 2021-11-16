@@ -71,7 +71,7 @@ val viewModelModule = module {
 }
 
 // Inject as a stateViewModel in your Activity or Fragment
-private val viewModel by stateViewModel<TodoViewModel>()
+private val viewModel by viewModel<TodoViewModel>()
 
 // Pass the SavedStateHandle to  your ViewModel
 class ExampleViewModel(savedStateHandle: SavedStateHandle) : ContainerHost<ExampleState, Nothing>, ViewModel() {
