@@ -47,7 +47,7 @@ plugins {
     id("com.github.ben-manes.versions") version Versions.gradleVersionsPlugin
     id("com.appmattus.markdown") version Versions.markdownLintPlugin
     id("com.vanniktech.maven.publish") version Versions.gradleMavenPublishPlugin apply false
-    id("org.jetbrains.dokka") version Versions.kotlin
+    id("org.jetbrains.dokka") version Versions.dokka
 }
 
 apply(from = "gradle/scripts/detekt.gradle.kts")
