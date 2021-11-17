@@ -67,11 +67,11 @@ Usage with Koin:
 ``` kotlin
 // Declare the ViewModel with a saved state handle in your Koin module
 val viewModelModule = module {
-    viewModel { (handle: SavedStateHandle) -> MyViewModel(handle) }
+    viewModel { (handle: SavedStateHandle) -> ExampleViewModel(handle) }
 }
 
 // Inject as a stateViewModel in your Activity or Fragment
-private val viewModel by viewModel<TodoViewModel>()
+private val viewModel by viewModel<ExampleViewModel>()
 
 // Pass the SavedStateHandle to  your ViewModel
 class ExampleViewModel(savedStateHandle: SavedStateHandle) : ContainerHost<ExampleState, Nothing>, ViewModel() {
