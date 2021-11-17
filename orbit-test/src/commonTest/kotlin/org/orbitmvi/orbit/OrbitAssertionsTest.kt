@@ -53,7 +53,7 @@ internal class OrbitAssertionsTest {
     }
 
     @Test
-    fun `PASS - No states, no assertions`() {
+    fun `PASS - No states = no assertions`() {
         // Given Empty state list"
         val stateList: List<TestState> = emptyList()
 
@@ -65,7 +65,7 @@ internal class OrbitAssertionsTest {
     }
 
     @Test
-    fun `PASS - Several states in order, matching assertions`() {
+    fun `PASS - Several states in order = matching assertions`() {
 
         // Given State list with several states
         val stateList: List<TestState> = listOf(
