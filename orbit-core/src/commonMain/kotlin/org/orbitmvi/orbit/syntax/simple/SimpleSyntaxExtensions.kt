@@ -40,9 +40,7 @@ import org.orbitmvi.orbit.syntax.OrbitDsl
 public suspend fun <S : Any, SE : Any> SimpleSyntax<S, SE>.reduce(reducer: SimpleContext<S>.() -> S) {
     containerContext.apply {
         reduce { reducerState ->
-            object : SimpleContext<S> {
-                override val state: S = reducerState
-            }.reducer()
+            SimpleContext(reducerState).reducer()
         }
     }
 }

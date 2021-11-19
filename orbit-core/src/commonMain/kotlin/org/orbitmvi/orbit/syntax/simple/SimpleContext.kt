@@ -28,6 +28,4 @@ import org.orbitmvi.orbit.syntax.OrbitDsl
  * @property state The current state of the container
  */
 @OrbitDsl
-public interface SimpleContext<STATE : Any> {
-    public val state: STATE
-}
+public data class SimpleContext<STATE : Any>(public val state: STATE)
