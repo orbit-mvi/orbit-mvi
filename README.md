@@ -33,7 +33,7 @@ think of it as MVVM+.
 
 - [Getting Started](https://orbit-mvi.org)
 - [Core](https://orbit-mvi.org/Core/overview)
-- [Android ViewModel](https://orbit-mvi.org/Android-Viewmodel/overview)
+- [Android ViewModel](https://orbit-mvi.org/Android-ViewModel/overview)
 - [Test](https://orbit-mvi.org/Test/overview)
 - [Dokka source code documentation](https://orbit-mvi.org/dokka/)
 - [Resources](https://orbit-mvi.org/resources)
