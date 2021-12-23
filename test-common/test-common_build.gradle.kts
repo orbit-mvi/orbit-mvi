@@ -26,6 +26,7 @@ apply<kotlinx.atomicfu.plugin.gradle.AtomicFUGradlePlugin>()
 kotlin {
     jvm()
     ios()
+    iosSimulatorArm64()
     sourceSets {
         commonMain {
             dependencies {
@@ -43,8 +44,10 @@ kotlin {
             }
         }
 
-        @Suppress("UnusedPrivateMember")
         val iosMain by getting {
         }
+        val iosSimulatorArm64Main by getting {
+        }
+        iosSimulatorArm64Main.dependsOn(iosMain)
     }
 }
