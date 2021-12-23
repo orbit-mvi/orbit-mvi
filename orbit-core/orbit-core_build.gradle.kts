@@ -62,17 +62,12 @@ kotlin {
             }
         }
 
-        @Suppress("UnusedPrivateMember")
         val iosMain by getting {
         }
-
-        @Suppress("UnusedPrivateMember")
         val iosTest by getting {
         }
-        @Suppress("UnusedPrivateMember")
         val iosSimulatorArm64Main by getting {
         }
-        @Suppress("UnusedPrivateMember")
         val iosSimulatorArm64Test by getting {
         }
         iosSimulatorArm64Main.dependsOn(iosMain)
