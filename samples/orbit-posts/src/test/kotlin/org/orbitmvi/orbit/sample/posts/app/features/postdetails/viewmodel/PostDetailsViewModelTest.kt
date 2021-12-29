@@ -28,13 +28,13 @@ import org.orbitmvi.orbit.sample.posts.domain.repositories.PostOverview
 import org.orbitmvi.orbit.sample.posts.domain.repositories.PostRepository
 import org.orbitmvi.orbit.sample.posts.domain.repositories.Status
 import org.mockito.kotlin.mock
-import org.mockito.kotlin.verifyZeroInteractions
 import org.mockito.kotlin.whenever
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.orbitmvi.orbit.test
 import java.io.IOException
+import org.mockito.kotlin.verifyNoMoreInteractions
 
 @ExtendWith(InstantTaskExecutorExtension::class)
 class PostDetailsViewModelTest {
@@ -86,7 +86,7 @@ class PostDetailsViewModelTest {
 
         // then the view model only emits initial state
         viewModel.assert(initialState)
-        verifyZeroInteractions(repository)
+        verifyNoMoreInteractions(repository)
     }
 
     @Test

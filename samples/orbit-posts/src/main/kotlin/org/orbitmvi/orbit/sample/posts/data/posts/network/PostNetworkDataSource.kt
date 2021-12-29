@@ -58,29 +58,9 @@ class PostNetworkDataSource(private val typicodeService: TypicodeService) {
         }
     }
 
-    suspend fun getUser(id: Int): UserData? {
-        return try {
-            typicodeService.user(id)
-        } catch (ignore: IOException) {
-            null
-        } catch (ignore: HttpException) {
-            null
-        }
-    }
-
     suspend fun getComments(): List<CommentData> {
         return try {
             typicodeService.comments()
-        } catch (ignore: IOException) {
-            emptyList()
-        } catch (ignore: HttpException) {
-            emptyList()
-        }
-    }
-
-    suspend fun getComments(postId: Int): List<CommentData> {
-        return try {
-            typicodeService.comments(postId)
         } catch (ignore: IOException) {
             emptyList()
         } catch (ignore: HttpException) {

@@ -22,15 +22,15 @@ package org.orbitmvi.orbit.viewmodel
 
 import androidx.test.espresso.IdlingRegistry
 import androidx.test.espresso.IdlingResource.ResourceCallback
+import java.util.UUID
+import java.util.concurrent.atomic.AtomicBoolean
+import java.util.concurrent.atomic.AtomicInteger
+import java.util.concurrent.atomic.AtomicReference
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.idling.IdlingResource
-import java.util.UUID
-import java.util.concurrent.atomic.AtomicBoolean
-import java.util.concurrent.atomic.AtomicInteger
-import java.util.concurrent.atomic.AtomicReference
 
 class AndroidIdlingResource : IdlingResource {
 
@@ -63,10 +63,10 @@ class AndroidIdlingResource : IdlingResource {
         idle.set(false)
     }
 
-    @Suppress("EXPERIMENTAL_API_USAGE")
     override fun decrement() {
         if (counter.decrementAndGet() == 0) {
             job.getAndSet(
+                @Suppress("EXPERIMENTAL_API_USAGE")
                 GlobalScope.launch {
                     delay(MILLIS_BEFORE_IDLE)
                     idle.set(true)

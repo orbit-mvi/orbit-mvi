@@ -25,10 +25,10 @@ plugins {
 }
 
 android {
-    compileSdk = 30
+    compileSdk = 31
     defaultConfig {
         minSdk = 21
-        targetSdk = 30
+        targetSdk = 31
         versionCode = 1
         versionName = "1.0"
         applicationId = "org.orbitmvi.orbit.sample.calculator"
@@ -55,19 +55,19 @@ dependencies {
     implementation(project(":orbit-core"))
     implementation(project(":orbit-viewmodel"))
 
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2")
-    implementation("androidx.constraintlayout:constraintlayout:2.1.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0")
+    implementation("androidx.constraintlayout:constraintlayout:2.1.2")
     implementation("com.google.android.material:material:1.4.0")
-    implementation("io.insert-koin:koin-android:3.1.2")
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.4.0-alpha03")
+    implementation("io.insert-koin:koin-android:3.1.4")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.4.0")
 
     // Testing
     testImplementation(project(":orbit-test"))
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.7.2")
-    testImplementation("org.junit.platform:junit-platform-console:1.7.2")
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.7.2")
-    testImplementation("org.junit.jupiter:junit-jupiter-params:5.7.2")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.2")
+    testImplementation("org.junit.platform:junit-platform-console:1.8.2")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.2")
+    testImplementation("org.junit.jupiter:junit-jupiter-params:5.8.2")
     testImplementation("junit:junit:4.13.2")
-    testImplementation("com.appmattus.fixture:fixture:1.1.0")
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.5.2")
+    testImplementation("com.appmattus.fixture:fixture:1.2.0")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.0")
 }

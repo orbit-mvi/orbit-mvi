@@ -31,6 +31,10 @@ kotlin {
     jvm()
     ios()
     sourceSets {
+        all {
+            languageSettings.optIn("kotlin.RequiresOptIn")
+            languageSettings.optIn("org.orbitmvi.orbit.annotation.OrbitInternal")
+        }
         commonMain {
             dependencies {
                 implementation(ProjectDependencies.kotlinCoroutines)

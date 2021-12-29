@@ -21,26 +21,27 @@
 object Versions {
 
     const val gradleVersionsPlugin = "0.39.0"
-    const val gradleAndroidPlugin = "7.0.2"
-    const val gradleMavenPublishPlugin = "0.17.0"
-    const val dokkaPlugin = "1.5.0"
+    const val gradleAndroidPlugin = "7.0.4"
+    const val gradleMavenPublishPlugin = "0.18.0"
     const val markdownLintPlugin = "0.6.0"
-    const val detektPlugin = "1.18.1"
+    const val detektPlugin = "1.19.0"
     const val safeargs = "2.3.5"
-    const val atomicfu = "0.16.3"
+    const val atomicfu = "0.17.0"
+    const val dokka = "1.6.10"
 
-    const val kotlin = "1.6.0-M1-139"
-    const val coroutines = "1.5.1-new-mm-dev2"
+    const val kotlin = "1.6.10"
+    const val coroutines = "1.6.0"
 
-    const val androidxLifecycles = "2.4.0-alpha03"
+    const val androidxLifecycles = "2.4.0"
     const val androidxEspresso = "3.4.0"
+    const val androidxCompose = "1.0.5"
 
     const val desugar = "1.1.5"
 
     // Testing
     const val jacoco = "0.8.7"
     const val junit4 = "4.13.2"
-    const val robolectric = "4.6.1"
+    const val robolectric = "4.7.3"
 }
 
 object ProjectDependencies {
@@ -55,6 +56,7 @@ object ProjectDependencies {
     const val androidxLifecycleRuntimeKtx = "androidx.lifecycle:lifecycle-runtime-ktx:${Versions.androidxLifecycles}"
     const val androidxEspressoIdlingResource = "androidx.test.espresso:espresso-idling-resource:${Versions.androidxEspresso}"
     const val androidxEspressoCore = "androidx.test.espresso:espresso-core:${Versions.androidxEspresso}"
+    const val androidxComposeRuntime = "androidx.compose.runtime:runtime:${Versions.androidxCompose}"
 
     // Tools
     const val detektFormatting = "io.gitlab.arturbosch.detekt:detekt-formatting:${Versions.detektPlugin}"

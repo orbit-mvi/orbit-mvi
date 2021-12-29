@@ -42,22 +42,37 @@ sealed class ExampleSideEffect {
    data class Toast(val text: String)
 }
 
-fun main() {
+class ExampleContainerHost(scope: CoroutineScope): ContainerHost<ExampleState, ExampleSideEffect> {
+    
     // create a container
-    val container = container<ExampleState, ExampleSideEffect>(ExampleState())
+    override val container = scope.container<ExampleState, ExampleSideEffect>(ExampleState())
+
+    fun doSomethingUseful() = intent {
+        ...
+    }
+}
+
+private val scope = CoroutineScope(Dispatchers.Main)
+private val viewModel = ExampleContainerHost(scope)
+
+fun main() {
 
     // subscribe to updates
     // On Android, use ContainerHost.observe() from the orbit-viewmodel module
-    CoroutineScope(Dispatchers.Main).launch {
-        container.stateFlow.collect {
+    scope.launch {
+        viewModel.container.stateFlow.collect {
             // do something with the state
         }
     }
-    CoroutineScope(Dispatchers.Main).launch {
-        container.sideEffectFlow.collect {
+    scope.launch {
+        viewModel.container.sideEffectFlow.collect {
             // do something with the side effect
         }
     }
+
+    viewModel.doSomethingUseful()
+    
+    // Ensure the main function does not complete so we can do something useful with the container.
 }
 ```
 

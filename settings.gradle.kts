@@ -22,6 +22,7 @@ include(
     "orbit-core",
     "orbit-test",
     "orbit-viewmodel",
+    "orbit-compose",
     "samples:orbit-calculator",
     "samples:orbit-posts",
     "samples:orbit-stocklist",

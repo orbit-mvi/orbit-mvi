@@ -42,7 +42,6 @@ import org.orbitmvi.orbit.internal.repeatonsubscription.DelayingSubscribedCounte
 import org.orbitmvi.orbit.internal.repeatonsubscription.refCount
 import org.orbitmvi.orbit.syntax.ContainerContext
 
-@Suppress("EXPERIMENTAL_API_USAGE")
 public class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
     initialState: STATE,
     parentScope: CoroutineScope,
@@ -56,9 +55,11 @@ public class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
     private val subscribedCounter = DelayingSubscribedCounter(scope, settings.repeatOnSubscribedStopTimeout)
 
     private val internalStateFlow = MutableStateFlow(initialState)
+
     override val stateFlow: StateFlow<STATE> = internalStateFlow.refCount(subscribedCounter)
 
     private val sideEffectChannel = Channel<SIDE_EFFECT>(settings.sideEffectBufferSize)
+
     override val sideEffectFlow: Flow<SIDE_EFFECT> = sideEffectChannel.receiveAsFlow().refCount(subscribedCounter)
 
     internal val pluginContext: ContainerContext<STATE, SIDE_EFFECT> = ContainerContext(
@@ -82,6 +83,7 @@ public class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
 
     private fun initialiseIfNeeded() {
         if (initialised.compareAndSet(expect = false, update = true)) {
+            @Suppress("EXPERIMENTAL_API_USAGE")
             scope.produce<Unit>(Dispatchers.Unconfined) {
                 awaitClose {
                     settings.idlingRegistry.close()

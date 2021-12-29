@@ -27,7 +27,9 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import androidx.navigation.ui.NavigationUI.setupActionBarWithNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
@@ -35,7 +37,7 @@ import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.GroupieViewHolder
-import org.koin.androidx.viewmodel.ext.android.stateViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 import org.orbitmvi.orbit.sample.posts.R
 import org.orbitmvi.orbit.sample.posts.app.common.SeparatorDecoration
@@ -48,7 +50,7 @@ import org.orbitmvi.orbit.viewmodel.observe
 class PostDetailsFragment : Fragment(R.layout.post_details_fragment) {
 
     private val args: PostDetailsFragmentArgs by navArgs()
-    private val viewModel: PostDetailsViewModel by stateViewModel { parametersOf(args.overview) }
+    private val viewModel: PostDetailsViewModel by viewModel { parametersOf(args.overview) }
     private var initialised: Boolean = false
     private val adapter = GroupAdapter<GroupieViewHolder>()
 
@@ -57,15 +59,15 @@ class PostDetailsFragment : Fragment(R.layout.post_details_fragment) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val appCompatActivity = activity as AppCompatActivity
+        appCompatActivity.setSupportActionBar(binding.toolbar)
+        setupActionBarWithNavController(appCompatActivity, findNavController())
+
         binding.postCommentsList.layoutManager = LinearLayoutManager(activity)
         ViewCompat.setNestedScrollingEnabled(binding.postCommentsList, false)
 
         binding.postCommentsList.addItemDecoration(
-            SeparatorDecoration(
-                requireActivity(),
-                R.dimen.separator_margin_start,
-                R.dimen.separator_margin_end
-            )
+            SeparatorDecoration(requireActivity(), R.dimen.separator_margin_start, R.dimen.separator_margin_end)
         )
 
         binding.postCommentsList.adapter = adapter
@@ -76,7 +78,7 @@ class PostDetailsFragment : Fragment(R.layout.post_details_fragment) {
     private fun render(state: PostDetailState) {
         if (!initialised) {
             initialised = true
-            (activity as AppCompatActivity?)?.supportActionBar?.apply {
+            binding.toolbar.apply {
                 title = state.postOverview.username
                 Glide.with(requireContext()).load(state.postOverview.avatarUrl)
                     .apply(RequestOptions.overrideOf(resources.getDimensionPixelSize(R.dimen.toolbar_logo_size)))

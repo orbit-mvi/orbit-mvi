@@ -47,7 +47,7 @@ plugins {
     id("com.github.ben-manes.versions") version Versions.gradleVersionsPlugin
     id("com.appmattus.markdown") version Versions.markdownLintPlugin
     id("com.vanniktech.maven.publish") version Versions.gradleMavenPublishPlugin apply false
-    id("org.jetbrains.dokka") version Versions.dokkaPlugin
+    id("org.jetbrains.dokka") version Versions.dokka
 }
 
 apply(from = "gradle/scripts/detekt.gradle.kts")
@@ -187,10 +187,10 @@ subprojects {
         apply(from = "$rootDir/gradle/scripts/jacoco-android.gradle.kts")
 
         configure<LibraryExtension> {
-            compileSdk = 30
+            compileSdk = 31
             defaultConfig {
                 minSdk = 21
-                targetSdk = 30
+                targetSdk = 31
             }
 
             buildTypes {

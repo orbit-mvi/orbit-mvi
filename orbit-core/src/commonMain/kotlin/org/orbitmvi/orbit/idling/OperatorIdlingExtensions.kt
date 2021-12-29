@@ -20,11 +20,11 @@
 
 package org.orbitmvi.orbit.idling
 
-import org.orbitmvi.orbit.syntax.Operator
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onStart
 import org.orbitmvi.orbit.syntax.ContainerContext
+import org.orbitmvi.orbit.syntax.Operator
 
 public suspend fun <O : Operator<*, *>, T> ContainerContext<*, *>.withIdling(
     operator: O,
@@ -36,7 +36,6 @@ public suspend fun <O : Operator<*, *>, T> ContainerContext<*, *>.withIdling(
     }
 }
 
-@Suppress("EXPERIMENTAL_API_USAGE")
 public suspend fun <O : Operator<*, *>, T> ContainerContext<*, *>.withIdlingFlow(
     operator: O,
     block: suspend O.() -> Flow<T>

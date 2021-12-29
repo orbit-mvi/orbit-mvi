@@ -17,19 +17,19 @@
 
 package org.orbitmvi.orbit
 
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.test.runBlockingTest
-import org.orbitmvi.orbit.syntax.simple.intent
-import org.orbitmvi.orbit.syntax.simple.reduce
 import kotlin.random.Random
 import kotlin.system.measureTimeMillis
 import kotlin.test.AfterTest
 import kotlin.test.Test
 import kotlin.test.assertTrue
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.test.runTest
+import org.orbitmvi.orbit.syntax.simple.intent
+import org.orbitmvi.orbit.syntax.simple.reduce
 
 @ExperimentalCoroutinesApi
 internal class SuspendingStrategyDispatchTest {
@@ -43,7 +43,7 @@ internal class SuspendingStrategyDispatchTest {
     }
 
     @Test
-    fun `suspending test maintains test dispatcher through runBlockingTest`() = runBlockingTest {
+    fun `suspending test maintains test dispatcher through runTest`() = runTest {
         val executionTime = measureTimeMillis {
             val initAction = Random.nextInt()
             val action = Random.nextInt()

@@ -28,7 +28,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.asLiveData
 import androidx.navigation.fragment.navArgs
-import org.koin.androidx.viewmodel.ext.android.stateViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 import org.orbitmvi.orbit.sample.stocklist.R
 import org.orbitmvi.orbit.sample.stocklist.databinding.DetailFragmentBinding
@@ -41,7 +41,7 @@ import org.orbitmvi.orbit.viewmodel.observe
 class DetailFragment : Fragment() {
 
     private val args: DetailFragmentArgs by navArgs()
-    private val detailViewModel by stateViewModel<DetailViewModel> { parametersOf(args.itemName) }
+    private val detailViewModel by viewModel<DetailViewModel> { parametersOf(args.itemName) }
     private lateinit var binding: DetailFragmentBinding
 
     private val bidRef = JobHolder()

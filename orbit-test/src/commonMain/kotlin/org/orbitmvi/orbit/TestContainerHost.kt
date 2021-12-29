@@ -103,7 +103,6 @@ public class SuspendingTestContainerHost<STATE : Any, SIDE_EFFECT : Any, CONTAIN
         return this
     }
 
-    @Suppress("EXPERIMENTAL_API_USAGE")
     private suspend fun <STATE : Any, SIDE_EFFECT : Any, T : ContainerHost<STATE, SIDE_EFFECT>> T.suspendingIntent(
         shouldIsolateFlow: Boolean,
         block: T.() -> Unit
@@ -113,6 +112,7 @@ public class SuspendingTestContainerHost<STATE : Any, SIDE_EFFECT : Any, CONTAIN
         this.block() // Invoke the Intent
 
         var firstIntentExecuted = false
+        @Suppress("EXPERIMENTAL_API_USAGE")
         while (!testContainer.savedIntents.isEmpty) {
             val intent = testContainer.savedIntents.receive()
             if (!shouldIsolateFlow || !firstIntentExecuted) {
