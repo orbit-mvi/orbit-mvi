@@ -21,12 +21,12 @@
 package org.orbitmvi.orbit.sample.stocklist.list.ui
 
 import android.view.View
+import com.xwray.groupie.Item
+import com.xwray.groupie.viewbinding.BindableItem
 import org.orbitmvi.orbit.sample.stocklist.R
 import org.orbitmvi.orbit.sample.stocklist.databinding.ListItemBinding
 import org.orbitmvi.orbit.sample.stocklist.list.business.ListViewModel
 import org.orbitmvi.orbit.sample.stocklist.streaming.stock.Stock
-import com.xwray.groupie.Item
-import com.xwray.groupie.viewbinding.BindableItem
 
 class StockItem(
     private val stock: Stock,

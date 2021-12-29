@@ -17,11 +17,6 @@
 
 package org.orbitmvi.orbit
 
-import kotlin.random.Random
-import kotlin.system.measureTimeMillis
-import kotlin.test.AfterTest
-import kotlin.test.Test
-import kotlin.test.assertTrue
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
@@ -30,6 +25,11 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.test.runTest
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.reduce
+import kotlin.random.Random
+import kotlin.system.measureTimeMillis
+import kotlin.test.AfterTest
+import kotlin.test.Test
+import kotlin.test.assertTrue
 
 @ExperimentalCoroutinesApi
 internal class SuspendingStrategyDispatchTest {

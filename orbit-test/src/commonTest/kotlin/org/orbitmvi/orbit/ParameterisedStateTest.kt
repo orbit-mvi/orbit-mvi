@@ -107,7 +107,7 @@ internal class ParameterisedStateTest(blocking: Boolean) {
 
         throwable.message.assertContains(
             "Expected 1 states but more were emitted:\n" +
-                    "[State(count=$action2)]"
+                "[State(count=$action2)]"
         )
     }
 
@@ -133,7 +133,7 @@ internal class ParameterisedStateTest(blocking: Boolean) {
 
         throwable.message.assertContains(
             "Failed assertions at indices 2..2, expected states but never received:\n" +
-                    "[State(count=$action3)]"
+                "[State(count=$action3)]"
         )
     }
 
@@ -161,7 +161,7 @@ internal class ParameterisedStateTest(blocking: Boolean) {
 
         throwable.message.assertContains(
             "Failed assertions at indices 2..3, expected states but never received:\n" +
-                    "[State(count=$action3), State(count=$action4)]"
+                "[State(count=$action3), State(count=$action4)]"
         )
     }
 
@@ -278,9 +278,9 @@ internal class ParameterisedStateTest(blocking: Boolean) {
 
         throwable.message.assertContains(
             "Expected 2 states but more were emitted:\n" +
-                    "[State(count=$action2)]\n\n" +
-                    "Caution: 1 assertions were dropped as they encountered a current state " +
-                    "which already satisfied them."
+                "[State(count=$action2)]\n\n" +
+                "Caution: 1 assertions were dropped as they encountered a current state " +
+                "which already satisfied them."
         )
     }
 

@@ -103,12 +103,12 @@ private fun <T : Any> failLessStatesReceivedThanExpected(
         assertions
             .fold(emptyList<T>()) { list, reducer ->
                 list + (
-                        list.lastOrNull() ?: previousState
-                        ).reducer()
+                    list.lastOrNull() ?: previousState
+                    ).reducer()
             }
     fail(
         "Failed assertions at indices ${satisfiedAssertions until (satisfiedAssertions + assertions.size)}, " +
-                "expected states but never received:\n$expectedStates"
+            "expected states but never received:\n$expectedStates"
     )
 }
 
@@ -122,15 +122,15 @@ private fun <T : Any> failMoreStatesThanExpected(
         // More states received than expected
         fail(
             "Expected ${assertions.size + satisfiedAssertions} states" +
-                    " but more were emitted:\n$values"
+                " but more were emitted:\n$values"
         )
     } else {
         // More states received than expected, but some assertions were dropped
         fail(
             "Expected ${assertions.size + satisfiedAssertions} states" +
-                    " but more were emitted:\n$values\n\n" +
-                    "Caution: $droppedAssertions assertions were dropped as they encountered a " +
-                    "current state which already satisfied them."
+                " but more were emitted:\n$values\n\n" +
+                "Caution: $droppedAssertions assertions were dropped as they encountered a " +
+                "current state which already satisfied them."
         )
     }
 }

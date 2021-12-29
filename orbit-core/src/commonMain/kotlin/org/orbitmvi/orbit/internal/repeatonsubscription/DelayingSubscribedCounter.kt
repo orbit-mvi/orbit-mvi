@@ -35,10 +35,12 @@ internal class DelayingSubscribedCounter(
 
     override suspend fun decrement(): Unit = mutex.withLock {
         if (counter.getAndUpdate { if (it > 0) it - 1 else 0 } == 1) {
-            job.getAndSet(scope.launch {
-                delay(repeatOnSubscribedStopTimeout)
-                _subscribed.value = Unsubscribed
-            })?.cancel()
+            job.getAndSet(
+                scope.launch {
+                    delay(repeatOnSubscribedStopTimeout)
+                    _subscribed.value = Unsubscribed
+                }
+            )?.cancel()
         }
     }
 }

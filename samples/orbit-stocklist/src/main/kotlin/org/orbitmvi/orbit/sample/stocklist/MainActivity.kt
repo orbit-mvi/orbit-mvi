@@ -25,8 +25,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.navigation.findNavController
 import androidx.navigation.ui.setupActionBarWithNavController
-import org.orbitmvi.orbit.sample.stocklist.streaming.StreamingClient
 import org.koin.android.ext.android.inject
+import org.orbitmvi.orbit.sample.stocklist.streaming.StreamingClient
 
 class MainActivity : AppCompatActivity() {
 
