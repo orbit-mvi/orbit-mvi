@@ -20,6 +20,8 @@
 
 package org.orbitmvi.orbit.sample.posts.data.posts
 
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import org.orbitmvi.orbit.sample.posts.data.posts.network.AvatarUrlGenerator
 import org.orbitmvi.orbit.sample.posts.data.posts.network.PostNetworkDataSource
 import org.orbitmvi.orbit.sample.posts.domain.repositories.PostComment
@@ -27,8 +29,6 @@ import org.orbitmvi.orbit.sample.posts.domain.repositories.PostDetail
 import org.orbitmvi.orbit.sample.posts.domain.repositories.PostOverview
 import org.orbitmvi.orbit.sample.posts.domain.repositories.PostRepository
 import org.orbitmvi.orbit.sample.posts.domain.repositories.Status
-import kotlinx.coroutines.async
-import kotlinx.coroutines.coroutineScope
 
 class PostDataRepository(
     private val networkDataSource: PostNetworkDataSource,

@@ -20,10 +20,6 @@
 
 package org.orbitmvi.orbit.internal
 
-import kotlin.random.Random
-import kotlin.test.AfterTest
-import kotlin.test.Test
-import kotlin.test.assertEquals
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
@@ -35,6 +31,10 @@ import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.container
 import org.orbitmvi.orbit.test
 import org.orbitmvi.orbit.test.runBlocking
+import kotlin.random.Random
+import kotlin.test.AfterTest
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
 @ExperimentalCoroutinesApi
 internal class ContainerThreadingTest {

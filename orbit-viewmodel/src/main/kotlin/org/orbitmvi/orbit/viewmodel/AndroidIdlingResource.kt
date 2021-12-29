@@ -22,15 +22,15 @@ package org.orbitmvi.orbit.viewmodel
 
 import androidx.test.espresso.IdlingRegistry
 import androidx.test.espresso.IdlingResource.ResourceCallback
-import java.util.UUID
-import java.util.concurrent.atomic.AtomicBoolean
-import java.util.concurrent.atomic.AtomicInteger
-import java.util.concurrent.atomic.AtomicReference
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.idling.IdlingResource
+import java.util.UUID
+import java.util.concurrent.atomic.AtomicBoolean
+import java.util.concurrent.atomic.AtomicInteger
+import java.util.concurrent.atomic.AtomicReference
 
 class AndroidIdlingResource : IdlingResource {
 

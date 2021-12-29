@@ -22,14 +22,14 @@ package org.orbitmvi.orbit.viewmodel
 
 import androidx.test.espresso.Espresso
 import androidx.test.espresso.idling.CountingIdlingResource
-import org.orbitmvi.orbit.Container
-import org.orbitmvi.orbit.container
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
 import org.junit.After
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.orbitmvi.orbit.Container
+import org.orbitmvi.orbit.container
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 import kotlin.test.assertEquals

@@ -24,17 +24,17 @@ import android.text.format.DateUtils
 import com.lightstreamer.client.ItemUpdate
 import com.lightstreamer.client.Subscription
 import com.lightstreamer.client.SubscriptionListener
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
+import org.orbitmvi.orbit.sample.stocklist.streaming.EmptySubscriptionListener
+import org.orbitmvi.orbit.sample.stocklist.streaming.StreamingClient
 import java.math.RoundingMode
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
-import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.callbackFlow
-import org.orbitmvi.orbit.sample.stocklist.streaming.EmptySubscriptionListener
-import org.orbitmvi.orbit.sample.stocklist.streaming.StreamingClient
 
 @Suppress("MagicNumber", "ComplexCondition")
 class StockRepository(private val client: StreamingClient) {

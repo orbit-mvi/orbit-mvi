@@ -20,7 +20,6 @@
 
 package org.orbitmvi.orbit.internal
 
-import kotlin.coroutines.EmptyCoroutineContext
 import kotlinx.atomicfu.atomic
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -41,6 +40,7 @@ import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.internal.repeatonsubscription.DelayingSubscribedCounter
 import org.orbitmvi.orbit.internal.repeatonsubscription.refCount
 import org.orbitmvi.orbit.syntax.ContainerContext
+import kotlin.coroutines.EmptyCoroutineContext
 
 public class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
     initialState: STATE,

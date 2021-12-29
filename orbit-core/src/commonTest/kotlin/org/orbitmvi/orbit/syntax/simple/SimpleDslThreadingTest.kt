@@ -20,10 +20,6 @@
 
 package org.orbitmvi.orbit.syntax.simple
 
-import kotlin.random.Random
-import kotlin.test.AfterTest
-import kotlin.test.Test
-import kotlin.test.assertFailsWith
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -44,6 +40,10 @@ import org.orbitmvi.orbit.test.IgnoreIos
 import org.orbitmvi.orbit.test.ScopedBlockingWorkSimulator
 import org.orbitmvi.orbit.test.assertContainExactly
 import org.orbitmvi.orbit.test.runBlocking
+import kotlin.random.Random
+import kotlin.test.AfterTest
+import kotlin.test.Test
+import kotlin.test.assertFailsWith
 
 @ExperimentalCoroutinesApi
 internal class SimpleDslThreadingTest {

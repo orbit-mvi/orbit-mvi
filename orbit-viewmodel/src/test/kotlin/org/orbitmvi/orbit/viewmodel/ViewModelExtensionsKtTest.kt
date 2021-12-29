@@ -24,13 +24,13 @@ import android.os.Parcelable
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import kotlinx.parcelize.Parcelize
+import org.junit.Test
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.reduce
 import org.orbitmvi.orbit.test
 import kotlin.random.Random
 import kotlin.test.assertEquals
-import org.junit.Test
 
 class ViewModelExtensionsKtTest {
     @Test

@@ -1,9 +1,5 @@
 package org.orbitmvi.orbit.internal.repeatonsubscription
 
-import kotlin.test.AfterTest
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
@@ -13,6 +9,10 @@ import org.orbitmvi.orbit.internal.repeatonsubscription.Subscription.Subscribed
 import org.orbitmvi.orbit.internal.repeatonsubscription.Subscription.Unsubscribed
 import org.orbitmvi.orbit.test
 import org.orbitmvi.orbit.test.runBlocking
+import kotlin.test.AfterTest
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class DelayingSubscribedCounterTest {
 

@@ -20,7 +20,6 @@
 
 package org.orbitmvi.orbit.sample.posts.data.posts.network
 
-import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.jupiter.api.BeforeEach
@@ -32,6 +31,7 @@ import retrofit2.Retrofit
 import retrofit2.mock.BehaviorDelegate
 import retrofit2.mock.MockRetrofit
 import retrofit2.mock.NetworkBehavior
+import java.util.concurrent.TimeUnit
 
 class PostNetworkDataSourceTest {
     private lateinit var behavior: NetworkBehavior

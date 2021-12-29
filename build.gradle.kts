@@ -25,8 +25,8 @@ import com.appmattus.markdown.rules.ProperNamesRule.Companion.DefaultNames
 import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 import com.vanniktech.maven.publish.MavenPublishBaseExtension
 import com.vanniktech.maven.publish.SonatypeHost.DEFAULT
-import java.net.URL
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import java.net.URL
 
 buildscript {
     repositories {

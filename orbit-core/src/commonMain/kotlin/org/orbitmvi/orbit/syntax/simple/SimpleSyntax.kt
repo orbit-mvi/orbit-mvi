@@ -20,8 +20,8 @@
 
 package org.orbitmvi.orbit.syntax.simple
 
-import org.orbitmvi.orbit.syntax.OrbitDsl
 import org.orbitmvi.orbit.syntax.ContainerContext
+import org.orbitmvi.orbit.syntax.OrbitDsl
 
 @OrbitDsl
 public class SimpleSyntax<S : Any, SE : Any>(public val containerContext: ContainerContext<S, SE>) {
