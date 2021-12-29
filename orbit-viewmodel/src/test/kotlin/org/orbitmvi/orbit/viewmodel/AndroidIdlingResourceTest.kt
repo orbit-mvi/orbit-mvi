@@ -155,7 +155,6 @@ class AndroidIdlingResourceTest {
 
             val mutex = Mutex(locked = true)
 
-            @Suppress("EXPERIMENTAL_API_USAGE")
             val flow = callbackFlow {
                 IdlingRegistry.getInstance().resources.first().registerIdleTransitionCallback {
                     // Triggered when resource goes from busy to idle
@@ -270,7 +269,6 @@ class AndroidIdlingResourceTest {
         runBlocking {
             val containerHost = scope.createContainerHost()
 
-            @Suppress("EXPERIMENTAL_API_USAGE")
             val flow = callbackFlow {
                 IdlingRegistry.getInstance().resources.first().registerIdleTransitionCallback {
                     // Triggered when resource goes from busy to idle

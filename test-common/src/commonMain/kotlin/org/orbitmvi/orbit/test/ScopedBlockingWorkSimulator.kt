@@ -31,12 +31,12 @@ import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
-@Suppress("EXPERIMENTAL_API_USAGE")
 public class ScopedBlockingWorkSimulator(private val scope: CoroutineScope) {
 
     private val job = atomic<Job?>(null)
 
     init {
+        @Suppress("EXPERIMENTAL_API_USAGE")
         scope.produce<Unit>(Dispatchers.Default) {
             awaitClose {
                 job.value?.cancel()

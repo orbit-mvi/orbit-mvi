@@ -21,7 +21,6 @@ internal class DelayingSubscribedCounter(
 
     private val _subscribed: MutableStateFlow<Subscription> = MutableStateFlow(Unsubscribed)
 
-    @Suppress("EXPERIMENTAL_API_USAGE")
     override val subscribed: Flow<Subscription> = _subscribed.asStateFlow()
 
     private val counter = atomic(0)

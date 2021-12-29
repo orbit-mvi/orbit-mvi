@@ -44,7 +44,7 @@ class StockRepository(private val client: StreamingClient) {
     private val detailSubscriptionFields =
         arrayOf("stock_name", "timestamp", "pct_change", "bid_quantity", "bid", "ask", "ask_quantity", "min", "max")
 
-    @Suppress("EXPERIMENTAL_API_USAGE", "RemoveExplicitTypeArguments")
+    @Suppress("RemoveExplicitTypeArguments")
     fun stockList(): Flow<List<Stock>> = callbackFlow<List<Stock>> {
         val stockList = MutableList<Stock?>(20) { null }
 
@@ -81,7 +81,7 @@ class StockRepository(private val client: StreamingClient) {
         }
     }
 
-    @Suppress("EXPERIMENTAL_API_USAGE", "RemoveExplicitTypeArguments")
+    @Suppress("RemoveExplicitTypeArguments")
     fun stockDetails(itemName: String): Flow<StockDetail> = callbackFlow<StockDetail> {
         val subscription = Subscription("MERGE", itemName, detailSubscriptionFields).apply {
             dataAdapter = "QUOTE_ADAPTER"

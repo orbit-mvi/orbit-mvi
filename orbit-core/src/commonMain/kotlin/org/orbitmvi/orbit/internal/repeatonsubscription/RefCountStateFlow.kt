@@ -1,6 +1,5 @@
 package org.orbitmvi.orbit.internal.repeatonsubscription
 
-import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.StateFlow
 
@@ -15,8 +14,7 @@ private class RefCountStateFlow<T>(
     override val value: T
         get() = upStream.value
 
-    @InternalCoroutinesApi
-    override suspend fun collect(collector: FlowCollector<T>) {
+    override suspend fun collect(collector: FlowCollector<T>): Nothing {
         try {
             subscribedCounter.increment()
             upStream.collect(collector)

@@ -20,7 +20,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
@@ -49,8 +48,8 @@ fun <STATE : Any, SIDE_EFFECT : Any> ContainerHost<STATE, SIDE_EFFECT>.observe(
     lifecycleOwner.lifecycleScope.launch {
         // See https://medium.com/androiddevelopers/a-safer-way-to-collect-flows-from-android-uis-23080b1f8bda
         lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-            state?.let { launch { container.stateFlow.collect(state) } }
-            sideEffect?.let { launch { container.sideEffectFlow.collect(sideEffect) } }
+            state?.let { launch { container.stateFlow.collect { state(it) } } }
+            sideEffect?.let { launch { container.sideEffectFlow.collect { sideEffect(it) } } }
         }
     }
 }
