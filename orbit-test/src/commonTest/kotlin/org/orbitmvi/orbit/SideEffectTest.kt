@@ -26,7 +26,7 @@ import kotlin.test.Test
 
 @ExperimentalCoroutinesApi
 internal class SideEffectTest {
-    lateinit var testCase: ParameterisedSideEffectTest
+    private lateinit var testCase: ParameterisedSideEffectTest
 
     @AfterTest
     fun afterTest() {

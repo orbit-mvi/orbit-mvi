@@ -26,7 +26,7 @@ import kotlin.test.Test
 
 @ExperimentalCoroutinesApi
 internal class StateTest {
-    lateinit var testCase: ParameterisedStateTest
+    private lateinit var testCase: ParameterisedStateTest
 
     @AfterTest
     fun afterTest() {
