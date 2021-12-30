@@ -62,7 +62,7 @@ kotlin {
         }
         iosSimulatorArm64Main.dependsOn(iosMain)
         iosSimulatorArm64Test.dependsOn(iosTest)
-        
+
         @Suppress("UnusedPrivateMember")
         val jvmMain by getting {
             dependencies {
