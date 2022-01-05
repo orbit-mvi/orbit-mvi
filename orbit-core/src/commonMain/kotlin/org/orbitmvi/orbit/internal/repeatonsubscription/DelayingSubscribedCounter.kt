@@ -21,7 +21,6 @@ internal class DelayingSubscribedCounter(
 
     private val _subscribed: MutableStateFlow<Subscription> = MutableStateFlow(Unsubscribed)
 
-    @Suppress("EXPERIMENTAL_API_USAGE")
     override val subscribed: Flow<Subscription> = _subscribed.asStateFlow()
 
     private val counter = atomic(0)
@@ -36,10 +35,12 @@ internal class DelayingSubscribedCounter(
 
     override suspend fun decrement(): Unit = mutex.withLock {
         if (counter.getAndUpdate { if (it > 0) it - 1 else 0 } == 1) {
-            job.getAndSet(scope.launch {
-                delay(repeatOnSubscribedStopTimeout)
-                _subscribed.value = Unsubscribed
-            })?.cancel()
+            job.getAndSet(
+                scope.launch {
+                    delay(repeatOnSubscribedStopTimeout)
+                    _subscribed.value = Unsubscribed
+                }
+            )?.cancel()
         }
     }
 }

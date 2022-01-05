@@ -79,7 +79,7 @@ dependencies {
     implementation(project(":orbit-core"))
     implementation(project(":orbit-viewmodel"))
 
-    implementation("androidx.constraintlayout:constraintlayout:2.1.1")
+    implementation("androidx.constraintlayout:constraintlayout:2.1.2")
     implementation("com.google.android.material:material:1.4.0")
     implementation("androidx.navigation:navigation-fragment-ktx:2.3.5")
     implementation("androidx.navigation:navigation-ui-ktx:2.3.5")
@@ -87,7 +87,7 @@ dependencies {
     implementation("com.github.lisawray.groupie:groupie:2.10.0")
     implementation("com.github.lisawray.groupie:groupie-kotlin-android-extensions:2.10.0")
     implementation("com.github.lisawray.groupie:groupie-viewbinding:2.10.0")
-    implementation("io.insert-koin:koin-android:3.1.3")
+    implementation("io.insert-koin:koin-android:3.1.4")
     implementation("androidx.lifecycle:lifecycle-common-java8:2.4.0")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.4.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.4.0")

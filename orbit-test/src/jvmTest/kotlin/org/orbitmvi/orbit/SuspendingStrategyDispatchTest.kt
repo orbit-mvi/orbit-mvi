@@ -22,7 +22,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.reduce
 import kotlin.random.Random
@@ -43,7 +43,7 @@ internal class SuspendingStrategyDispatchTest {
     }
 
     @Test
-    fun `suspending test maintains test dispatcher through runBlockingTest`() = runBlockingTest {
+    fun `suspending test maintains test dispatcher through runTest`() = runTest {
         val executionTime = measureTimeMillis {
             val initAction = Random.nextInt()
             val action = Random.nextInt()

@@ -16,8 +16,6 @@
 
 package org.orbitmvi.orbit
 
-import kotlin.coroutines.EmptyCoroutineContext
-import kotlin.test.assertEquals
 import kotlinx.atomicfu.atomic
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
@@ -25,6 +23,8 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.internal.LazyCreateContainerDecorator
+import kotlin.coroutines.EmptyCoroutineContext
+import kotlin.test.assertEquals
 
 public sealed class TestContainerHost<STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHost<STATE, SIDE_EFFECT>>(
     actual: CONTAINER_HOST
@@ -103,7 +103,6 @@ public class SuspendingTestContainerHost<STATE : Any, SIDE_EFFECT : Any, CONTAIN
         return this
     }
 
-    @Suppress("EXPERIMENTAL_API_USAGE")
     private suspend fun <STATE : Any, SIDE_EFFECT : Any, T : ContainerHost<STATE, SIDE_EFFECT>> T.suspendingIntent(
         shouldIsolateFlow: Boolean,
         block: T.() -> Unit
@@ -113,6 +112,7 @@ public class SuspendingTestContainerHost<STATE : Any, SIDE_EFFECT : Any, CONTAIN
         this.block() // Invoke the Intent
 
         var firstIntentExecuted = false
+        @Suppress("EXPERIMENTAL_API_USAGE")
         while (!testContainer.savedIntents.isEmpty) {
             val intent = testContainer.savedIntents.receive()
             if (!shouldIsolateFlow || !firstIntentExecuted) {

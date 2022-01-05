@@ -1,11 +1,11 @@
 package org.orbitmvi.orbit.internal.repeatonsubscription
 
-import kotlin.test.Test
-import kotlin.test.assertEquals
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.take
 import org.orbitmvi.orbit.test.runBlocking
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
 class RefCountStateFlowTest {
 

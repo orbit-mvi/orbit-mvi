@@ -133,7 +133,6 @@ internal class SimpleDslThreadingTest {
     @Suppress("ControlFlowWithEmptyBody", "EmptyWhileBlock")
     private inner class BaseDslMiddleware : ContainerHost<TestState, String> {
 
-        @Suppress("EXPERIMENTAL_API_USAGE")
         override val container = scope.container<TestState, String>(TestState(42))
 
         val intentMutex = Mutex(locked = true)

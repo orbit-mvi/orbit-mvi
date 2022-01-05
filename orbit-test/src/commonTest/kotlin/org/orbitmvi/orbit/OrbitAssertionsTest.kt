@@ -44,11 +44,11 @@ internal class OrbitAssertionsTest {
         // Then The failure message points us to the failed assertion
         throwable.message.assertContains(
             "Failed assertions at indices 0..2, expected states but never received:\n" +
-                    "[" +
-                    "TestState(label=foobar, index=1), " +
-                    "TestState(label=foobarbaz, index=1), " +
-                    "TestState(label=foobarbaz, index=2)" +
-                    "]"
+                "[" +
+                "TestState(label=foobar, index=1), " +
+                "TestState(label=foobarbaz, index=1), " +
+                "TestState(label=foobarbaz, index=2)" +
+                "]"
         )
     }
 
@@ -150,7 +150,7 @@ internal class OrbitAssertionsTest {
         // Then The failure message points us to the failed assertion
         throwable.message.assertContains(
             "Expected 3 states but more were emitted:\n" +
-                    "[TestState(label=foobarbaz, index=4), TestState(label=foobarbaz, index=6)]"
+                "[TestState(label=foobarbaz, index=4), TestState(label=foobarbaz, index=6)]"
         )
     }
 

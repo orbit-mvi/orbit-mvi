@@ -27,7 +27,6 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 
-@Suppress("EXPERIMENTAL_API_USAGE")
 fun animateChange(textView: TextView, tick: CheckableImageView, newValue: String, jobReference: JobHolder) {
     val currentValue = textView.text.toString()
     if (newValue != currentValue && currentValue.isNotEmpty()) {
@@ -39,6 +38,7 @@ fun animateChange(textView: TextView, tick: CheckableImageView, newValue: String
 
             jobReference.job?.cancel()
 
+            @Suppress("EXPERIMENTAL_API_USAGE")
             jobReference.job = GlobalScope.async {
                 @Suppress("MagicNumber")
                 (delay(300))

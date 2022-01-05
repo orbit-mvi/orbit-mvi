@@ -63,10 +63,10 @@ class AndroidIdlingResource : IdlingResource {
         idle.set(false)
     }
 
-    @Suppress("EXPERIMENTAL_API_USAGE")
     override fun decrement() {
         if (counter.decrementAndGet() == 0) {
             job.getAndSet(
+                @Suppress("EXPERIMENTAL_API_USAGE")
                 GlobalScope.launch {
                     delay(MILLIS_BEFORE_IDLE)
                     idle.set(true)

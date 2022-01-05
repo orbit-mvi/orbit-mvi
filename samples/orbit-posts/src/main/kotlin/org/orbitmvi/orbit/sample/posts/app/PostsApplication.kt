@@ -21,9 +21,9 @@
 package org.orbitmvi.orbit.sample.posts.app
 
 import android.app.Application
-import org.orbitmvi.orbit.sample.posts.app.di.module
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
+import org.orbitmvi.orbit.sample.posts.app.di.module
 
 @Suppress("unused")
 class PostsApplication : Application() {

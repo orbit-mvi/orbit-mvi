@@ -21,11 +21,6 @@
 package org.orbitmvi.orbit.viewmodel
 
 import androidx.test.espresso.IdlingRegistry
-import kotlin.test.AfterTest
-import kotlin.test.BeforeTest
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
@@ -42,6 +37,11 @@ import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.container
 import org.orbitmvi.orbit.syntax.simple.intent
+import kotlin.test.AfterTest
+import kotlin.test.BeforeTest
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 class AndroidIdlingResourceTest {
 
@@ -155,7 +155,6 @@ class AndroidIdlingResourceTest {
 
             val mutex = Mutex(locked = true)
 
-            @Suppress("EXPERIMENTAL_API_USAGE")
             val flow = callbackFlow {
                 IdlingRegistry.getInstance().resources.first().registerIdleTransitionCallback {
                     // Triggered when resource goes from busy to idle
@@ -270,7 +269,6 @@ class AndroidIdlingResourceTest {
         runBlocking {
             val containerHost = scope.createContainerHost()
 
-            @Suppress("EXPERIMENTAL_API_USAGE")
             val flow = callbackFlow {
                 IdlingRegistry.getInstance().resources.first().registerIdleTransitionCallback {
                     // Triggered when resource goes from busy to idle
