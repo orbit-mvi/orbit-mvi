@@ -30,6 +30,7 @@ apply<AtomicFUGradlePlugin>()
 kotlin {
     jvm()
     ios()
+    iosSimulatorArm64()
     sourceSets {
         all {
             languageSettings.optIn("kotlin.RequiresOptIn")
@@ -61,12 +62,15 @@ kotlin {
             }
         }
 
-        @Suppress("UnusedPrivateMember")
         val iosMain by getting {
         }
-
-        @Suppress("UnusedPrivateMember")
         val iosTest by getting {
         }
+        val iosSimulatorArm64Main by getting {
+        }
+        val iosSimulatorArm64Test by getting {
+        }
+        iosSimulatorArm64Main.dependsOn(iosMain)
+        iosSimulatorArm64Test.dependsOn(iosTest)
     }
 }
