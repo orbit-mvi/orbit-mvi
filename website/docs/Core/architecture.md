@@ -6,7 +6,7 @@ This diagram shows a simple representation of how an Orbit system (or similar
 systems like MVI/Redux/Cycle) works in simple principles.
 
 1. The UI sends actions asynchronously to a business component.
-1. The business component transforms the incoming events with business logic
+1. The business component transforms the incoming actions with business logic
 1. The business component then emits these events further down the chain
 1. Every event is reduced with the current state of the system to produce a new
    state
