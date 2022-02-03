@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 2021-2022 Mikołaj Leszczyński & Appmattus Limited
  * Copyright 2020 Babylon Partners Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -57,6 +57,7 @@ object ProjectDependencies {
     const val androidxEspressoIdlingResource = "androidx.test.espresso:espresso-idling-resource:${Versions.androidxEspresso}"
     const val androidxEspressoCore = "androidx.test.espresso:espresso-core:${Versions.androidxEspresso}"
     const val androidxComposeRuntime = "androidx.compose.runtime:runtime:${Versions.androidxCompose}"
+    const val androidxComposeUi = "androidx.compose.ui:ui:${Versions.androidxCompose}"
 
     // Tools
     const val detektFormatting = "io.gitlab.arturbosch.detekt:detekt-formatting:${Versions.detektPlugin}"

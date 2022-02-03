@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 2021-2022 Mikołaj Leszczyński & Appmattus Limited
  * Copyright 2020 Babylon Partners Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -52,8 +52,7 @@ kotlin {
         }
 
         @Suppress("UnusedPrivateMember")
-        val jvmMain by getting {
-        }
+        val jvmMain by getting
 
         @Suppress("UnusedPrivateMember")
         val jvmTest by getting {
