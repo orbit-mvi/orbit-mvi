@@ -79,7 +79,7 @@ public class TestContainerDecorator<STATE : Any, SIDE_EFFECT : Any>(
     }
 }
 
-private object AlwaysSubscribedCounter: SubscribedCounter {
+private object AlwaysSubscribedCounter : SubscribedCounter {
     override val subscribed: Flow<Subscription> = flowOf(Subscription.Subscribed)
 
     override suspend fun increment() = Unit
