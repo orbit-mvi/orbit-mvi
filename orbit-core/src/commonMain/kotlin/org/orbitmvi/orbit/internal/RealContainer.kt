@@ -20,6 +20,7 @@
 
 package org.orbitmvi.orbit.internal
 
+import kotlin.coroutines.EmptyCoroutineContext
 import kotlinx.atomicfu.atomic
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -38,21 +39,22 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.internal.repeatonsubscription.DelayingSubscribedCounter
+import org.orbitmvi.orbit.internal.repeatonsubscription.SubscribedCounter
 import org.orbitmvi.orbit.internal.repeatonsubscription.refCount
 import org.orbitmvi.orbit.syntax.ContainerContext
-import kotlin.coroutines.EmptyCoroutineContext
 
 public class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
     initialState: STATE,
     parentScope: CoroutineScope,
-    public override val settings: Container.Settings
+    public override val settings: Container.Settings,
+    subscribedCounterOverride: SubscribedCounter? = null
 ) : Container<STATE, SIDE_EFFECT> {
     private val scope = parentScope + settings.intentDispatcher
     private val dispatchChannel = Channel<suspend ContainerContext<STATE, SIDE_EFFECT>.() -> Unit>(Channel.UNLIMITED)
     private val mutex = Mutex()
     private val initialised = atomic(false)
 
-    private val subscribedCounter = DelayingSubscribedCounter(scope, settings.repeatOnSubscribedStopTimeout)
+    private val subscribedCounter = subscribedCounterOverride ?: DelayingSubscribedCounter(scope, settings.repeatOnSubscribedStopTimeout)
 
     private val internalStateFlow = MutableStateFlow(initialState)
 

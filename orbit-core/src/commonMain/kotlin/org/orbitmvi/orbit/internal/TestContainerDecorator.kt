@@ -21,8 +21,11 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.flowOf
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerDecorator
+import org.orbitmvi.orbit.internal.repeatonsubscription.SubscribedCounter
+import org.orbitmvi.orbit.internal.repeatonsubscription.Subscription
 import org.orbitmvi.orbit.syntax.ContainerContext
 
 public class TestContainerDecorator<STATE : Any, SIDE_EFFECT : Any>(
@@ -55,7 +58,8 @@ public class TestContainerDecorator<STATE : Any, SIDE_EFFECT : Any>(
         val testDelegate = RealContainer<STATE, SIDE_EFFECT>(
             initialState = initialState,
             parentScope = parentScope,
-            settings = strategy.settings
+            settings = strategy.settings,
+            subscribedCounterOverride = AlwaysSubscribedCounter
         ).let {
             if (strategy is TestingStrategy.Suspending) {
                 InterceptingContainerDecorator(it)
@@ -73,4 +77,12 @@ public class TestContainerDecorator<STATE : Any, SIDE_EFFECT : Any>(
             throw IllegalStateException("Can only call test() once")
         }
     }
+}
+
+private object AlwaysSubscribedCounter: SubscribedCounter {
+    override val subscribed: Flow<Subscription> = flowOf(Subscription.Subscribed)
+
+    override suspend fun increment() = Unit
+
+    override suspend fun decrement() = Unit
 }
