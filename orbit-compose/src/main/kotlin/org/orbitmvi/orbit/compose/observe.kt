@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 2021-2022 Mikołaj Leszczyński & Appmattus Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,8 +21,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.flowWithLifecycle
+import androidx.lifecycle.repeatOnLifecycle
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 
@@ -34,9 +38,12 @@ import org.orbitmvi.orbit.ContainerHost
 public fun <STATE : Any, SIDE_EFFECT : Any> ContainerHost<STATE, SIDE_EFFECT>.collectSideEffect(
     sideEffect: (suspend (sideEffect: SIDE_EFFECT) -> Unit)
 ) {
-    LaunchedEffect(this) {
-        launch {
-            container.sideEffectFlow.collect { sideEffect(it) }
+    val sideEffectFlow = container.sideEffectFlow
+    val lifecycleOwner = LocalLifecycleOwner.current
+
+    LaunchedEffect(sideEffectFlow, lifecycleOwner) {
+        lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            sideEffectFlow.collect { sideEffect(it) }
         }
     }
 }
@@ -47,11 +54,14 @@ public fun <STATE : Any, SIDE_EFFECT : Any> ContainerHost<STATE, SIDE_EFFECT>.co
 @SuppressLint("ComposableNaming")
 @Composable
 public fun <STATE : Any, SIDE_EFFECT : Any> ContainerHost<STATE, SIDE_EFFECT>.collectState(
-    sideEffect: (suspend (state: STATE) -> Unit)
+    state: (suspend (state: STATE) -> Unit)
 ) {
-    LaunchedEffect(this) {
-        launch {
-            container.stateFlow.collect { sideEffect(it) }
+    val stateFlow = container.stateFlow
+    val lifecycleOwner = LocalLifecycleOwner.current
+
+    LaunchedEffect(stateFlow, lifecycleOwner) {
+        lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            stateFlow.collect { state(it) }
         }
     }
 }
@@ -60,5 +70,12 @@ public fun <STATE : Any, SIDE_EFFECT : Any> ContainerHost<STATE, SIDE_EFFECT>.co
  * Observe [Container.stateFlow] as [State].
  */
 @Composable
-public fun <STATE : Any, SIDE_EFFECT : Any> ContainerHost<STATE, SIDE_EFFECT>.collectAsState(): State<STATE> =
-    container.stateFlow.collectAsState()
+public fun <STATE : Any, SIDE_EFFECT : Any> ContainerHost<STATE, SIDE_EFFECT>.collectAsState(): State<STATE> {
+    val stateFlow = container.stateFlow
+    val lifecycleOwner = LocalLifecycleOwner.current
+
+    val stateFlowLifecycleAware = remember(stateFlow, lifecycleOwner) {
+        stateFlow.flowWithLifecycle(lifecycleOwner.lifecycle, Lifecycle.State.STARTED)
+    }
+    return stateFlowLifecycleAware.collectAsState(stateFlow.value)
+}
