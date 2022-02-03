@@ -16,9 +16,6 @@
 
 package org.orbitmvi.orbit
 
-import kotlin.random.Random
-import kotlin.test.AfterTest
-import kotlin.test.Test
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
@@ -27,6 +24,9 @@ import kotlinx.coroutines.withTimeout
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.reduce
 import org.orbitmvi.orbit.syntax.simple.repeatOnSubscription
+import kotlin.random.Random
+import kotlin.test.AfterTest
+import kotlin.test.Test
 
 @ExperimentalCoroutinesApi
 internal class RepeatOnSubscriptionTest {
