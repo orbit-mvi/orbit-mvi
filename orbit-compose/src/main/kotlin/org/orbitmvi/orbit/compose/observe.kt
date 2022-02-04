@@ -26,7 +26,6 @@ import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
-import kotlinx.coroutines.flow.collect
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 
