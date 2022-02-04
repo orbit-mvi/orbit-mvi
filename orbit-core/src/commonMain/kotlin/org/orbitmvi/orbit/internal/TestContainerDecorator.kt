@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 2021-2022 Mikołaj Leszczyński & Appmattus Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -55,7 +55,8 @@ public class TestContainerDecorator<STATE : Any, SIDE_EFFECT : Any>(
         val testDelegate = RealContainer<STATE, SIDE_EFFECT>(
             initialState = initialState,
             parentScope = parentScope,
-            settings = strategy.settings
+            settings = strategy.settings,
+            subscribedCounterOverride = AlwaysSubscribedCounter
         ).let {
             if (strategy is TestingStrategy.Suspending) {
                 InterceptingContainerDecorator(it)
