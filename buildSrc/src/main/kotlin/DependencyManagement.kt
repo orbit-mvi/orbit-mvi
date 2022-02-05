@@ -34,7 +34,8 @@ object Versions {
 
     const val androidxLifecycles = "2.4.0"
     const val androidxEspresso = "3.4.0"
-    const val androidxCompose = "1.0.5"
+    const val androidxCompose = "1.1.0-rc03"
+    const val androidxCoreTesting = "2.1.0"
 
     const val desugar = "1.1.5"
 
@@ -58,6 +59,10 @@ object ProjectDependencies {
     const val androidxEspressoCore = "androidx.test.espresso:espresso-core:${Versions.androidxEspresso}"
     const val androidxComposeRuntime = "androidx.compose.runtime:runtime:${Versions.androidxCompose}"
     const val androidxComposeUi = "androidx.compose.ui:ui:${Versions.androidxCompose}"
+    // Testing
+    const val androidxComposeUiTestJunit4 = "androidx.compose.ui:ui-test-junit4:${Versions.androidxCompose}"
+    const val androidxComposeUiTestManifest = "androidx.compose.ui:ui-test-manifest:${Versions.androidxCompose}"
+    const val androidxCoreTesting = "androidx.arch.core:core-testing:${Versions.androidxCoreTesting}"
 
     // Tools
     const val detektFormatting = "io.gitlab.arturbosch.detekt:detekt-formatting:${Versions.detektPlugin}"
