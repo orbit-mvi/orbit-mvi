@@ -18,8 +18,6 @@ package org.orbitmvi.orbit.viewmodel
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Lifecycle
-import kotlin.random.Random
-import kotlin.test.assertEquals
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -34,6 +32,8 @@ import org.junit.Test
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.internal.RealContainer
+import kotlin.random.Random
+import kotlin.test.assertEquals
 
 @ExperimentalCoroutinesApi
 class ContainerHostExtensionsKtTest {
