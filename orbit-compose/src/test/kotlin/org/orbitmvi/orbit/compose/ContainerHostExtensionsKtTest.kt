@@ -40,10 +40,8 @@ import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.internal.RealContainer
 import org.robolectric.RobolectricTestRunner
-import org.robolectric.annotation.Config
 
 @RunWith(RobolectricTestRunner::class)
-@Config(instrumentedPackages = ["androidx.loader.content"])
 @ExperimentalCoroutinesApi
 class ContainerHostExtensionsKtTest {
 
@@ -118,6 +116,48 @@ class ContainerHostExtensionsKtTest {
     @Test
     fun `state resubscribes when restarted`() {
         initialiseContainerHost { collectState { } }
+
+        // Start and ensure there is one subscriber
+        mockLifecycleOwner.dispatchEvent(Lifecycle.Event.ON_START)
+        assertEquals(1, testSubscribedCounter.counter)
+
+        // Stop and ensure there are no subscribers
+        mockLifecycleOwner.dispatchEvent(Lifecycle.Event.ON_STOP)
+        assertEquals(0, testSubscribedCounter.counter)
+
+        // Re-start and ensure there is one subscriber
+        mockLifecycleOwner.dispatchEvent(Lifecycle.Event.ON_START)
+        assertEquals(1, testSubscribedCounter.counter)
+    }
+
+    @Test
+    fun `as state subscribes on start`() {
+        initialiseContainerHost { collectAsState() }
+
+        // Ensure there are no subscribers
+        assertEquals(0, testSubscribedCounter.counter)
+
+        // Start and ensure there is one subscriber
+        mockLifecycleOwner.dispatchEvent(Lifecycle.Event.ON_START)
+        assertEquals(1, testSubscribedCounter.counter)
+    }
+
+    @Test
+    fun `sas tate unsubscribes on stop`() {
+        initialiseContainerHost { collectAsState() }
+
+        // Start and ensure there is one subscriber
+        mockLifecycleOwner.dispatchEvent(Lifecycle.Event.ON_START)
+        assertEquals(1, testSubscribedCounter.counter)
+
+        // Stop and ensure there are no subscribers
+        mockLifecycleOwner.dispatchEvent(Lifecycle.Event.ON_STOP)
+        assertEquals(0, testSubscribedCounter.counter)
+    }
+
+    @Test
+    fun `as state resubscribes when restarted`() {
+        initialiseContainerHost { collectAsState() }
 
         // Start and ensure there is one subscriber
         mockLifecycleOwner.dispatchEvent(Lifecycle.Event.ON_START)
