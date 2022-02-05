@@ -76,5 +76,9 @@ public fun <STATE : Any, SIDE_EFFECT : Any> ContainerHost<STATE, SIDE_EFFECT>.co
     val stateFlowLifecycleAware = remember(stateFlow, lifecycleOwner) {
         stateFlow.flowWithLifecycle(lifecycleOwner.lifecycle, Lifecycle.State.STARTED)
     }
-    return stateFlowLifecycleAware.collectAsState(stateFlow.value)
+
+    // Need to access the initial value to convert to State - collectAsState() suppresses this lint warning too
+    @SuppressLint("StateFlowValueCalledInComposition")
+    val initialValue = stateFlow.value
+    return stateFlowLifecycleAware.collectAsState(initialValue)
 }
