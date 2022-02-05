@@ -46,8 +46,7 @@ dependencies {
     testImplementation(ProjectDependencies.kotlinTest)
     testImplementation(ProjectDependencies.kotlinCoroutinesTest)
 
-    testImplementation("androidx.arch.core:core-testing:2.1.0")
-    testImplementation("androidx.arch.core:core-runtime:2.1.0")
+    testImplementation(ProjectDependencies.androidxCoreTesting)
 }
 
 android {

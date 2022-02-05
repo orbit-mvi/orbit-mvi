@@ -21,10 +21,40 @@ plugins {
     id("org.jetbrains.dokka")
 }
 
+android {
+    testOptions {
+        unitTests {
+            isIncludeAndroidResources = true
+        }
+    }
+
+    buildFeatures {
+        compose = true
+    }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion = Versions.androidxCompose
+    }
+}
+
 dependencies {
     api(project(":orbit-core"))
 
     implementation(ProjectDependencies.androidxComposeRuntime)
     implementation(ProjectDependencies.androidxLifecycleRuntimeKtx)
     implementation(ProjectDependencies.androidxComposeUi)
+
+    // Testing
+    implementation(kotlin("test-junit"))
+    testImplementation(project(":orbit-test"))
+    testImplementation(project(":test-common"))
+    testImplementation(ProjectDependencies.androidxEspressoCore)
+    testImplementation(ProjectDependencies.robolectric)
+
+    testImplementation(ProjectDependencies.kotlinTest)
+    testImplementation(ProjectDependencies.kotlinCoroutinesTest)
+
+    testImplementation(ProjectDependencies.androidxCoreTesting)
+    testImplementation(ProjectDependencies.androidxComposeUiTestJunit4)
+    testImplementation(ProjectDependencies.androidxComposeUiTestManifest)
 }
