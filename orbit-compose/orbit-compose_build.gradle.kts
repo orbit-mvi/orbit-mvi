@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 2021-2022 Mikołaj Leszczyński & Appmattus Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,8 +21,40 @@ plugins {
     id("org.jetbrains.dokka")
 }
 
+android {
+    testOptions {
+        unitTests {
+            isIncludeAndroidResources = true
+        }
+    }
+
+    buildFeatures {
+        compose = true
+    }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion = Versions.androidxCompose
+    }
+}
+
 dependencies {
     api(project(":orbit-core"))
 
     implementation(ProjectDependencies.androidxComposeRuntime)
+    implementation(ProjectDependencies.androidxLifecycleRuntimeKtx)
+    implementation(ProjectDependencies.androidxComposeUi)
+
+    // Testing
+    implementation(kotlin("test-junit"))
+    testImplementation(project(":orbit-test"))
+    testImplementation(project(":test-common"))
+    testImplementation(ProjectDependencies.androidxEspressoCore)
+    testImplementation(ProjectDependencies.robolectric)
+
+    testImplementation(ProjectDependencies.kotlinTest)
+    testImplementation(ProjectDependencies.kotlinCoroutinesTest)
+
+    testImplementation(ProjectDependencies.androidxCoreTesting)
+    testImplementation(ProjectDependencies.androidxComposeUiTestJunit4)
+    testImplementation(ProjectDependencies.androidxComposeUiTestManifest)
 }

@@ -45,6 +45,8 @@ dependencies {
 
     testImplementation(ProjectDependencies.kotlinTest)
     testImplementation(ProjectDependencies.kotlinCoroutinesTest)
+
+    testImplementation(ProjectDependencies.androidxCoreTesting)
 }
 
 android {

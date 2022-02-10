@@ -132,13 +132,9 @@ With Jetpack Compose wire up the ViewModel as follows:
 @Composable
 fun CalculatorScreen(viewModel: CalculatorViewModel) {
 
-    val state = viewModel.container.stateFlow.collectAsState().value
+    val state = viewModel.collectAsState().value
 
-    LaunchedEffect(viewModel) {
-        launch {
-            viewModel.container.sideEffectFlow.collect { handleSideEffect(navController, it) }
-        }
-    }
+    viewModel.collectSideEffect { handleSideEffect(navController, it) }
 
     // render UI using data from 'state'
     ...
