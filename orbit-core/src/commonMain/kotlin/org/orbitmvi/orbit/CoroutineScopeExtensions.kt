@@ -42,6 +42,7 @@ public fun <STATE : Any, SIDE_EFFECT : Any> CoroutineScope.container(
 ): Container<STATE, SIDE_EFFECT> =
     if (onCreate == null) {
         TestContainerDecorator(
+            initialState,
             parentScope = this,
             RealContainer(
                 initialState = initialState,
@@ -51,6 +52,7 @@ public fun <STATE : Any, SIDE_EFFECT : Any> CoroutineScope.container(
         )
     } else {
         TestContainerDecorator(
+            initialState,
             parentScope = this,
             LazyCreateContainerDecorator(
                 RealContainer(

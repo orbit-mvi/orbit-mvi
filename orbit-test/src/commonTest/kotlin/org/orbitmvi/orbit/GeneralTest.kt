@@ -29,11 +29,12 @@ import org.orbitmvi.orbit.syntax.simple.intent
 import kotlin.random.Random
 import kotlin.test.AfterTest
 import kotlin.test.Test
+import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 
 @ExperimentalCoroutinesApi
 internal class GeneralTest {
-    private val initialState = State()
+    private val initialState = State(Random.nextInt())
     private val scope by lazy { CoroutineScope(Job()) }
 
     @AfterTest
@@ -95,6 +96,16 @@ internal class GeneralTest {
 
         assertEquals(true, (testSubject.dependency as FakeDependency).something1Called.value)
         assertEquals(false, testSubject.dependency.something2Called.value)
+    }
+
+    @Test
+    fun `initial state can be omitted from test`() = runBlocking {
+
+        val testSubject = GeneralTestMiddleware()
+        val testContainerHost = testSubject.test()
+
+        assertContentEquals(listOf(initialState), testContainerHost.stateObserver.values)
+        testContainerHost.assert(initialState)
     }
 
     private inner class GeneralTestMiddleware(val dependency: BogusDependency = FakeDependency()) :
