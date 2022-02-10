@@ -34,7 +34,7 @@ object Versions {
 
     const val androidxLifecycles = "2.4.0"
     const val androidxEspresso = "3.4.0"
-    const val androidxCompose = "1.1.0-rc03"
+    const val androidxCompose = "1.1.0"
     const val androidxCoreTesting = "2.1.0"
 
     const val desugar = "1.1.5"
