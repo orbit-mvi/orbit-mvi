@@ -143,7 +143,7 @@ class ContainerHostExtensionsKtTest {
     }
 
     @Test
-    fun `sas tate unsubscribes on stop`() {
+    fun `as state unsubscribes on stop`() {
         initialiseContainerHost { collectAsState() }
 
         // Start and ensure there is one subscriber
