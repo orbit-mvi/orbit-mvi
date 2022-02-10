@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 2021-2022 Mikołaj Leszczyński & Appmattus Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -75,7 +75,7 @@ public sealed class TestContainerHost<STATE : Any, SIDE_EFFECT : Any, CONTAINER_
 
 public class SuspendingTestContainerHost<STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHost<STATE, SIDE_EFFECT>>(
     private val actual: CONTAINER_HOST,
-    private val initialState: STATE,
+    private val initialState: STATE?,
     private val isolateFlow: Boolean,
 ) : TestContainerHost<STATE, SIDE_EFFECT, CONTAINER_HOST>(actual) {
 
@@ -89,7 +89,7 @@ public class SuspendingTestContainerHost<STATE : Any, SIDE_EFFECT : Any, CONTAIN
         if (!onCreateAllowed.compareAndSet(expect = true, update = false)) {
             throw IllegalStateException("runOnCreate should only be invoked once and before any testIntent call")
         }
-        actual.container.findOnCreate().invoke(initialState)
+        actual.container.findOnCreate().invoke(initialState ?: actual.container.findTestContainer().originalInitialState)
         actual.suspendingIntent(shouldIsolateFlow = false) {}
         return this
     }
@@ -133,7 +133,7 @@ public class SuspendingTestContainerHost<STATE : Any, SIDE_EFFECT : Any, CONTAIN
 
 public class RegularTestContainerHost<STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHost<STATE, SIDE_EFFECT>>(
     private val actual: CONTAINER_HOST,
-    private val initialState: STATE,
+    private val initialState: STATE?,
 ) : TestContainerHost<STATE, SIDE_EFFECT, CONTAINER_HOST>(actual) {
 
     private val onCreateAllowed = atomic(true)
@@ -146,7 +146,8 @@ public class RegularTestContainerHost<STATE : Any, SIDE_EFFECT : Any, CONTAINER_
         if (!onCreateAllowed.compareAndSet(expect = true, update = false)) {
             throw IllegalStateException("runOnCreate should only be invoked once and before any testIntent call")
         }
-        actual.container.findOnCreate().invoke(initialState)
+
+        actual.container.findOnCreate().invoke(initialState ?: actual.container.findTestContainer().originalInitialState)
         return this
     }
 

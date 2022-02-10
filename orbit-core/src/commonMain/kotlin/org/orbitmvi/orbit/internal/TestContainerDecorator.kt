@@ -26,6 +26,7 @@ import org.orbitmvi.orbit.ContainerDecorator
 import org.orbitmvi.orbit.syntax.ContainerContext
 
 public class TestContainerDecorator<STATE : Any, SIDE_EFFECT : Any>(
+    public val originalInitialState: STATE,
     private val parentScope: CoroutineScope,
     override val actual: Container<STATE, SIDE_EFFECT>
 ) : ContainerDecorator<STATE, SIDE_EFFECT> {
@@ -49,11 +50,11 @@ public class TestContainerDecorator<STATE : Any, SIDE_EFFECT : Any>(
     }
 
     public fun test(
-        initialState: STATE,
+        initialState: STATE? = null,
         strategy: TestingStrategy
     ) {
         val testDelegate = RealContainer<STATE, SIDE_EFFECT>(
-            initialState = initialState,
+            initialState = initialState ?: originalInitialState,
             parentScope = parentScope,
             settings = strategy.settings,
             subscribedCounterOverride = AlwaysSubscribedCounter

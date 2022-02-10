@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 2021-2022 Mikołaj Leszczyński & Appmattus Limited
  * Copyright 2020 Babylon Partners Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -42,6 +42,7 @@ public fun <STATE : Any, SIDE_EFFECT : Any> CoroutineScope.container(
 ): Container<STATE, SIDE_EFFECT> =
     if (onCreate == null) {
         TestContainerDecorator(
+            initialState,
             parentScope = this,
             RealContainer(
                 initialState = initialState,
@@ -51,6 +52,7 @@ public fun <STATE : Any, SIDE_EFFECT : Any> CoroutineScope.container(
         )
     } else {
         TestContainerDecorator(
+            initialState,
             parentScope = this,
             LazyCreateContainerDecorator(
                 RealContainer(

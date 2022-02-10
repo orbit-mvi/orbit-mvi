@@ -55,8 +55,9 @@ particular testing need.
 
 First we need to put our
 [ContainerHost](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-container-host/)
-into test mode and call our intent (method) under test. Let's assume we've made
-a `ViewModel` the host.
+into test mode. We pass in the initial state to seed the container with (or omit
+it entirely to use the initial state from the real container). Next, we call our
+intent method under test. Let's assume we've made a `ViewModel` the host.
 
 ```kotlin
 data class State(val count: Int = 0)
