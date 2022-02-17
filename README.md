@@ -134,7 +134,7 @@ fun CalculatorScreen(viewModel: CalculatorViewModel) {
 
     val state = viewModel.collectAsState().value
 
-    viewModel.collectSideEffect { handleSideEffect(navController, it) }
+    viewModel.collectSideEffect { handleSideEffect(it) }
 
     // render UI using data from 'state'
     ...
