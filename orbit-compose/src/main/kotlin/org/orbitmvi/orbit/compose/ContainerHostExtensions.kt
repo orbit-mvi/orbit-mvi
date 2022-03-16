@@ -31,17 +31,19 @@ import org.orbitmvi.orbit.ContainerHost
 
 /**
  * Observe [Container.sideEffectFlow] in a Compose [LaunchedEffect].
+ * @param lifecycleState [Lifecycle.State] in which [state] block runs.
  */
 @SuppressLint("ComposableNaming")
 @Composable
 public fun <STATE : Any, SIDE_EFFECT : Any> ContainerHost<STATE, SIDE_EFFECT>.collectSideEffect(
+    lifecycleState: Lifecycle.State = Lifecycle.State.STARTED,
     sideEffect: (suspend (sideEffect: SIDE_EFFECT) -> Unit)
 ) {
     val sideEffectFlow = container.sideEffectFlow
     val lifecycleOwner = LocalLifecycleOwner.current
 
     LaunchedEffect(sideEffectFlow, lifecycleOwner) {
-        lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+        lifecycleOwner.lifecycle.repeatOnLifecycle(lifecycleState) {
             sideEffectFlow.collect { sideEffect(it) }
         }
     }
@@ -49,17 +51,19 @@ public fun <STATE : Any, SIDE_EFFECT : Any> ContainerHost<STATE, SIDE_EFFECT>.co
 
 /**
  * Observe [Container.stateFlow] in a Compose [LaunchedEffect].
+ * @param lifecycleState [Lifecycle.State] in which [state] block runs.
  */
 @SuppressLint("ComposableNaming")
 @Composable
 public fun <STATE : Any, SIDE_EFFECT : Any> ContainerHost<STATE, SIDE_EFFECT>.collectState(
+    lifecycleState: Lifecycle.State = Lifecycle.State.STARTED,
     state: (suspend (state: STATE) -> Unit)
 ) {
     val stateFlow = container.stateFlow
     val lifecycleOwner = LocalLifecycleOwner.current
 
     LaunchedEffect(stateFlow, lifecycleOwner) {
-        lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+        lifecycleOwner.lifecycle.repeatOnLifecycle(lifecycleState) {
             stateFlow.collect { state(it) }
         }
     }
@@ -67,14 +71,17 @@ public fun <STATE : Any, SIDE_EFFECT : Any> ContainerHost<STATE, SIDE_EFFECT>.co
 
 /**
  * Observe [Container.stateFlow] as [State].
+ * @param lifecycleState The Lifecycle where the restarting collecting from this flow work will be kept alive.
  */
 @Composable
-public fun <STATE : Any, SIDE_EFFECT : Any> ContainerHost<STATE, SIDE_EFFECT>.collectAsState(): State<STATE> {
+public fun <STATE : Any, SIDE_EFFECT : Any> ContainerHost<STATE, SIDE_EFFECT>.collectAsState(
+    lifecycleState: Lifecycle.State = Lifecycle.State.STARTED
+): State<STATE> {
     val stateFlow = container.stateFlow
     val lifecycleOwner = LocalLifecycleOwner.current
 
     val stateFlowLifecycleAware = remember(stateFlow, lifecycleOwner) {
-        stateFlow.flowWithLifecycle(lifecycleOwner.lifecycle, Lifecycle.State.STARTED)
+        stateFlow.flowWithLifecycle(lifecycleOwner.lifecycle, lifecycleState)
     }
 
     // Need to access the initial value to convert to State - collectAsState() suppresses this lint warning too

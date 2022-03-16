@@ -131,6 +131,48 @@ class ContainerHostExtensionsKtTest {
     }
 
     @Test
+    fun `state subscribes on custom lifecycle`() {
+        initialiseContainerHost { collectState(Lifecycle.State.RESUMED) { } }
+
+        // Ensure there are no subscribers
+        assertEquals(0, testSubscribedCounter.counter)
+
+        // Start and ensure there is one subscriber
+        mockLifecycleOwner.dispatchEvent(Lifecycle.Event.ON_RESUME)
+        assertEquals(1, testSubscribedCounter.counter)
+    }
+
+    @Test
+    fun `state unsubscribes on stop with custom lifecycle`() {
+        initialiseContainerHost { collectState(Lifecycle.State.RESUMED) { } }
+
+        // Start and ensure there is one subscriber
+        mockLifecycleOwner.dispatchEvent(Lifecycle.Event.ON_RESUME)
+        assertEquals(1, testSubscribedCounter.counter)
+
+        // Stop and ensure there are no subscribers
+        mockLifecycleOwner.dispatchEvent(Lifecycle.Event.ON_STOP)
+        assertEquals(0, testSubscribedCounter.counter)
+    }
+
+    @Test
+    fun `state resubscribes when restarted on custom lifecycle`() {
+        initialiseContainerHost { collectState(Lifecycle.State.RESUMED) { } }
+
+        // Start and ensure there is one subscriber
+        mockLifecycleOwner.dispatchEvent(Lifecycle.Event.ON_RESUME)
+        assertEquals(1, testSubscribedCounter.counter)
+
+        // Stop and ensure there are no subscribers
+        mockLifecycleOwner.dispatchEvent(Lifecycle.Event.ON_STOP)
+        assertEquals(0, testSubscribedCounter.counter)
+
+        // Re-start and ensure there is one subscriber
+        mockLifecycleOwner.dispatchEvent(Lifecycle.Event.ON_RESUME)
+        assertEquals(1, testSubscribedCounter.counter)
+    }
+
+    @Test
     fun `as state subscribes on start`() {
         initialiseContainerHost { collectAsState() }
 
@@ -173,6 +215,48 @@ class ContainerHostExtensionsKtTest {
     }
 
     @Test
+    fun `as state subscribes on custom lifecycle`() {
+        initialiseContainerHost { collectAsState(Lifecycle.State.RESUMED) }
+
+        // Ensure there are no subscribers
+        assertEquals(0, testSubscribedCounter.counter)
+
+        // Start and ensure there is one subscriber
+        mockLifecycleOwner.dispatchEvent(Lifecycle.Event.ON_RESUME)
+        assertEquals(1, testSubscribedCounter.counter)
+    }
+
+    @Test
+    fun `as state unsubscribes on stop with custom lifecycle`() {
+        initialiseContainerHost { collectAsState(Lifecycle.State.RESUMED) }
+
+        // Start and ensure there is one subscriber
+        mockLifecycleOwner.dispatchEvent(Lifecycle.Event.ON_RESUME)
+        assertEquals(1, testSubscribedCounter.counter)
+
+        // Stop and ensure there are no subscribers
+        mockLifecycleOwner.dispatchEvent(Lifecycle.Event.ON_STOP)
+        assertEquals(0, testSubscribedCounter.counter)
+    }
+
+    @Test
+    fun `as state resubscribes when restarted on custom lifecycle`() {
+        initialiseContainerHost { collectAsState(Lifecycle.State.RESUMED) }
+
+        // Start and ensure there is one subscriber
+        mockLifecycleOwner.dispatchEvent(Lifecycle.Event.ON_RESUME)
+        assertEquals(1, testSubscribedCounter.counter)
+
+        // Stop and ensure there are no subscribers
+        mockLifecycleOwner.dispatchEvent(Lifecycle.Event.ON_STOP)
+        assertEquals(0, testSubscribedCounter.counter)
+
+        // Re-start and ensure there is one subscriber
+        mockLifecycleOwner.dispatchEvent(Lifecycle.Event.ON_RESUME)
+        assertEquals(1, testSubscribedCounter.counter)
+    }
+
+    @Test
     fun `side effect subscribes on start`() {
         initialiseContainerHost { collectSideEffect { } }
 
@@ -211,6 +295,48 @@ class ContainerHostExtensionsKtTest {
 
         // Re-start and ensure there is one subscriber
         mockLifecycleOwner.dispatchEvent(Lifecycle.Event.ON_START)
+        assertEquals(1, testSubscribedCounter.counter)
+    }
+
+    @Test
+    fun `side effect subscribes on custom lifecycle`() {
+        initialiseContainerHost { collectSideEffect(Lifecycle.State.RESUMED) { } }
+
+        // Ensure there are no subscribers
+        assertEquals(0, testSubscribedCounter.counter)
+
+        // Start and ensure there is one subscriber
+        mockLifecycleOwner.dispatchEvent(Lifecycle.Event.ON_RESUME)
+        assertEquals(1, testSubscribedCounter.counter)
+    }
+
+    @Test
+    fun `side effect unsubscribes on stop with custom lifecycle`() {
+        initialiseContainerHost { collectSideEffect(Lifecycle.State.RESUMED) { } }
+
+        // Start and ensure there is one subscriber
+        mockLifecycleOwner.dispatchEvent(Lifecycle.Event.ON_RESUME)
+        assertEquals(1, testSubscribedCounter.counter)
+
+        // Stop and ensure there are no subscribers
+        mockLifecycleOwner.dispatchEvent(Lifecycle.Event.ON_STOP)
+        assertEquals(0, testSubscribedCounter.counter)
+    }
+
+    @Test
+    fun `side effect resubscribes when restarted on custom lifecycle`() {
+        initialiseContainerHost { collectSideEffect(Lifecycle.State.RESUMED) { } }
+
+        // Start and ensure there is one subscriber
+        mockLifecycleOwner.dispatchEvent(Lifecycle.Event.ON_RESUME)
+        assertEquals(1, testSubscribedCounter.counter)
+
+        // Stop and ensure there are no subscribers
+        mockLifecycleOwner.dispatchEvent(Lifecycle.Event.ON_STOP)
+        assertEquals(0, testSubscribedCounter.counter)
+
+        // Re-start and ensure there is one subscriber
+        mockLifecycleOwner.dispatchEvent(Lifecycle.Event.ON_RESUME)
         assertEquals(1, testSubscribedCounter.counter)
     }
 }
