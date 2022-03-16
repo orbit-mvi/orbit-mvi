@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 2021-2022 Mikołaj Leszczyński & Appmattus Limited
  * Copyright 2020 Babylon Partners Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -32,6 +32,7 @@ import org.orbitmvi.orbit.sample.posts.domain.repositories.PostRepository
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.postSideEffect
 import org.orbitmvi.orbit.syntax.simple.reduce
+import org.orbitmvi.orbit.viewmodel.BuildConfig
 import org.orbitmvi.orbit.viewmodel.container
 
 class PostListViewModel(
@@ -45,7 +46,7 @@ class PostListViewModel(
     override val container = container<PostListState, NavigationEvent>(
         initialState = PostListState(),
         savedStateHandle = savedStateHandle,
-        settings = Container.Settings(exceptionHandler = exceptionHandler)
+        settings = Container.Settings(exceptionHandler = exceptionHandler, debugMode = BuildConfig.DEBUG)
     ) {
         if (it.overviews.isEmpty()) {
             loadOverviews()

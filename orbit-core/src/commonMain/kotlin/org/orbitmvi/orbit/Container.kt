@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 2021-2022 Mikołaj Leszczyński & Appmattus Limited
  * Copyright 2020 Babylon Partners Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -86,6 +86,7 @@ public interface Container<STATE : Any, SIDE_EFFECT : Any> {
         public val idlingRegistry: IdlingResource = NoopIdlingResource(),
         public val intentDispatcher: CoroutineDispatcher = Dispatchers.Default,
         public val exceptionHandler: CoroutineExceptionHandler? = null,
-        public val repeatOnSubscribedStopTimeout: Long = 100L
+        public val repeatOnSubscribedStopTimeout: Long = 100L,
+        public val debugMode: Boolean = false
     )
 }

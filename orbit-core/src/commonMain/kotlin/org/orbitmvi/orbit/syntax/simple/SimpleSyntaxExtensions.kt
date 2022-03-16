@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 2021-2022 Mikołaj Leszczyński & Appmattus Limited
  * Copyright 2020 Babylon Partners Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -69,6 +69,8 @@ public fun <STATE : Any, SIDE_EFFECT : Any> ContainerHost<STATE, SIDE_EFFECT>.in
     transformer: suspend SimpleSyntax<STATE, SIDE_EFFECT>.() -> Unit
 ): Unit =
     runBlocking {
+        debugModeContainerHostVerification()
+
         container.orbit {
             withIdling(registerIdling) {
                 SimpleSyntax(this).transformer()
@@ -86,6 +88,15 @@ public suspend fun <S : Any, SE : Any> SimpleSyntax<S, SE>.repeatOnSubscription(
             containerContext.subscribedCounter.subscribed.mapLatest {
                 if (it.isSubscribed) block() else null
             }.collect()
+        }
+    }
+}
+
+public fun <STATE : Any, SIDE_EFFECT : Any> ContainerHost<STATE, SIDE_EFFECT>.debugModeContainerHostVerification() {
+    if (container.settings.debugMode) {
+        //
+        if (container != container) {
+            throw IllegalStateException("container should use a backing field")
         }
     }
 }
