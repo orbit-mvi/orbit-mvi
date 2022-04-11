@@ -14,10 +14,16 @@
  * limitations under the License.
  */
 
-package org.orbitmvi.orbit.viewmodel
+package org.orbitmvi.orbit.compose
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.lifecycle.Lifecycle
+import kotlin.random.Random
+import kotlin.test.assertEquals
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -29,17 +35,21 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.junit.runner.RunWith
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.internal.RealContainer
-import kotlin.random.Random
-import kotlin.test.assertEquals
+import org.robolectric.RobolectricTestRunner
 
+@RunWith(RobolectricTestRunner::class)
 @ExperimentalCoroutinesApi
-class ContainerHostExtensionsKtTest {
+class StateFlowExtensionsKtTest {
 
     @get:Rule
     val rule = InstantTaskExecutorRule()
+
+    @get:Rule
+    val composeTestRule = createComposeRule()
 
     private val mockLifecycleOwner = MockLifecycleOwner()
 
@@ -68,9 +78,19 @@ class ContainerHostExtensionsKtTest {
         scope.cancel()
     }
 
+    private fun initialiseContainerHost(block: @Composable ContainerHost<Int, Int>.() -> Unit) {
+        composeTestRule.setContent {
+            CompositionLocalProvider(
+                LocalLifecycleOwner provides mockLifecycleOwner
+            ) {
+                block(containerHost)
+            }
+        }
+    }
+
     @Test
     fun `state subscribes on start`() {
-        containerHost.observe(mockLifecycleOwner, state = { })
+        initialiseContainerHost { this.container.stateFlow.collectAsStateLifecycleAware() }
 
         // Ensure there are no subscribers
         assertEquals(0, testSubscribedCounter.counter)
@@ -82,7 +102,7 @@ class ContainerHostExtensionsKtTest {
 
     @Test
     fun `state unsubscribes on stop`() {
-        containerHost.observe(mockLifecycleOwner, state = { })
+        initialiseContainerHost { this.container.stateFlow.collectStateLifecycleAware { } }
 
         // Start and ensure there is one subscriber
         mockLifecycleOwner.dispatchEvent(Lifecycle.Event.ON_START)
@@ -95,7 +115,7 @@ class ContainerHostExtensionsKtTest {
 
     @Test
     fun `state resubscribes when restarted`() {
-        containerHost.observe(mockLifecycleOwner, state = { })
+        initialiseContainerHost { this.container.stateFlow.collectStateLifecycleAware { } }
 
         // Start and ensure there is one subscriber
         mockLifecycleOwner.dispatchEvent(Lifecycle.Event.ON_START)
@@ -112,7 +132,7 @@ class ContainerHostExtensionsKtTest {
 
     @Test
     fun `state subscribes on custom lifecycle`() {
-        containerHost.observe(mockLifecycleOwner, lifecycleState = Lifecycle.State.RESUMED, state = { })
+        initialiseContainerHost { this.container.stateFlow.collectStateLifecycleAware(Lifecycle.State.RESUMED) { } }
 
         // Ensure there are no subscribers
         assertEquals(0, testSubscribedCounter.counter)
@@ -124,7 +144,7 @@ class ContainerHostExtensionsKtTest {
 
     @Test
     fun `state unsubscribes on stop with custom lifecycle`() {
-        containerHost.observe(mockLifecycleOwner, lifecycleState = Lifecycle.State.RESUMED, state = { })
+        initialiseContainerHost { this.container.stateFlow.collectStateLifecycleAware(Lifecycle.State.RESUMED) { } }
 
         // Start and ensure there is one subscriber
         mockLifecycleOwner.dispatchEvent(Lifecycle.Event.ON_RESUME)
@@ -137,7 +157,91 @@ class ContainerHostExtensionsKtTest {
 
     @Test
     fun `state resubscribes when restarted on custom lifecycle`() {
-        containerHost.observe(mockLifecycleOwner, lifecycleState = Lifecycle.State.RESUMED, state = { })
+        initialiseContainerHost { this.container.stateFlow.collectStateLifecycleAware(Lifecycle.State.RESUMED) { } }
+
+        // Start and ensure there is one subscriber
+        mockLifecycleOwner.dispatchEvent(Lifecycle.Event.ON_RESUME)
+        assertEquals(1, testSubscribedCounter.counter)
+
+        // Stop and ensure there are no subscribers
+        mockLifecycleOwner.dispatchEvent(Lifecycle.Event.ON_STOP)
+        assertEquals(0, testSubscribedCounter.counter)
+
+        // Re-start and ensure there is one subscriber
+        mockLifecycleOwner.dispatchEvent(Lifecycle.Event.ON_RESUME)
+        assertEquals(1, testSubscribedCounter.counter)
+    }
+
+    @Test
+    fun `as state subscribes on start`() {
+        initialiseContainerHost { this.container.stateFlow.collectAsStateLifecycleAware() }
+
+        // Ensure there are no subscribers
+        assertEquals(0, testSubscribedCounter.counter)
+
+        // Start and ensure there is one subscriber
+        mockLifecycleOwner.dispatchEvent(Lifecycle.Event.ON_START)
+        assertEquals(1, testSubscribedCounter.counter)
+    }
+
+    @Test
+    fun `as state unsubscribes on stop`() {
+        initialiseContainerHost { this.container.stateFlow.collectAsStateLifecycleAware() }
+
+        // Start and ensure there is one subscriber
+        mockLifecycleOwner.dispatchEvent(Lifecycle.Event.ON_START)
+        assertEquals(1, testSubscribedCounter.counter)
+
+        // Stop and ensure there are no subscribers
+        mockLifecycleOwner.dispatchEvent(Lifecycle.Event.ON_STOP)
+        assertEquals(0, testSubscribedCounter.counter)
+    }
+
+    @Test
+    fun `as state resubscribes when restarted`() {
+        initialiseContainerHost { this.container.stateFlow.collectAsStateLifecycleAware() }
+
+        // Start and ensure there is one subscriber
+        mockLifecycleOwner.dispatchEvent(Lifecycle.Event.ON_START)
+        assertEquals(1, testSubscribedCounter.counter)
+
+        // Stop and ensure there are no subscribers
+        mockLifecycleOwner.dispatchEvent(Lifecycle.Event.ON_STOP)
+        assertEquals(0, testSubscribedCounter.counter)
+
+        // Re-start and ensure there is one subscriber
+        mockLifecycleOwner.dispatchEvent(Lifecycle.Event.ON_START)
+        assertEquals(1, testSubscribedCounter.counter)
+    }
+
+    @Test
+    fun `as state subscribes on custom lifecycle`() {
+        initialiseContainerHost { this.container.stateFlow.collectAsStateLifecycleAware(Lifecycle.State.RESUMED) }
+
+        // Ensure there are no subscribers
+        assertEquals(0, testSubscribedCounter.counter)
+
+        // Start and ensure there is one subscriber
+        mockLifecycleOwner.dispatchEvent(Lifecycle.Event.ON_RESUME)
+        assertEquals(1, testSubscribedCounter.counter)
+    }
+
+    @Test
+    fun `as state unsubscribes on stop with custom lifecycle`() {
+        initialiseContainerHost { this.container.stateFlow.collectAsStateLifecycleAware(Lifecycle.State.RESUMED) }
+
+        // Start and ensure there is one subscriber
+        mockLifecycleOwner.dispatchEvent(Lifecycle.Event.ON_RESUME)
+        assertEquals(1, testSubscribedCounter.counter)
+
+        // Stop and ensure there are no subscribers
+        mockLifecycleOwner.dispatchEvent(Lifecycle.Event.ON_STOP)
+        assertEquals(0, testSubscribedCounter.counter)
+    }
+
+    @Test
+    fun `as state resubscribes when restarted on custom lifecycle`() {
+        initialiseContainerHost { this.container.stateFlow.collectAsStateLifecycleAware(Lifecycle.State.RESUMED) }
 
         // Start and ensure there is one subscriber
         mockLifecycleOwner.dispatchEvent(Lifecycle.Event.ON_RESUME)
@@ -154,7 +258,7 @@ class ContainerHostExtensionsKtTest {
 
     @Test
     fun `side effect subscribes on start`() {
-        containerHost.observe(mockLifecycleOwner, sideEffect = { })
+        initialiseContainerHost { this.container.stateFlow.collectSideEffectLifecycleAware { } }
 
         // Ensure there are no subscribers
         assertEquals(0, testSubscribedCounter.counter)
@@ -166,7 +270,7 @@ class ContainerHostExtensionsKtTest {
 
     @Test
     fun `side effect unsubscribes on stop`() {
-        containerHost.observe(mockLifecycleOwner, sideEffect = { })
+        initialiseContainerHost { this.container.stateFlow.collectSideEffectLifecycleAware { } }
 
         // Start and ensure there is one subscriber
         mockLifecycleOwner.dispatchEvent(Lifecycle.Event.ON_START)
@@ -179,7 +283,7 @@ class ContainerHostExtensionsKtTest {
 
     @Test
     fun `side effect resubscribes when restarted`() {
-        containerHost.observe(mockLifecycleOwner, sideEffect = { })
+        initialiseContainerHost { this.container.stateFlow.collectSideEffectLifecycleAware { } }
 
         // Start and ensure there is one subscriber
         mockLifecycleOwner.dispatchEvent(Lifecycle.Event.ON_START)
@@ -196,7 +300,7 @@ class ContainerHostExtensionsKtTest {
 
     @Test
     fun `side effect subscribes on custom lifecycle`() {
-        containerHost.observe(mockLifecycleOwner, lifecycleState = Lifecycle.State.RESUMED, sideEffect = { })
+        initialiseContainerHost { this.container.stateFlow.collectSideEffectLifecycleAware(Lifecycle.State.RESUMED) { } }
 
         // Ensure there are no subscribers
         assertEquals(0, testSubscribedCounter.counter)
@@ -208,7 +312,7 @@ class ContainerHostExtensionsKtTest {
 
     @Test
     fun `side effect unsubscribes on stop with custom lifecycle`() {
-        containerHost.observe(mockLifecycleOwner, lifecycleState = Lifecycle.State.RESUMED, sideEffect = { })
+        initialiseContainerHost { this.container.stateFlow.collectSideEffectLifecycleAware(Lifecycle.State.RESUMED) { } }
 
         // Start and ensure there is one subscriber
         mockLifecycleOwner.dispatchEvent(Lifecycle.Event.ON_RESUME)
@@ -221,7 +325,7 @@ class ContainerHostExtensionsKtTest {
 
     @Test
     fun `side effect resubscribes when restarted on custom lifecycle`() {
-        containerHost.observe(mockLifecycleOwner, lifecycleState = Lifecycle.State.RESUMED, sideEffect = { })
+        initialiseContainerHost { this.container.stateFlow.collectSideEffectLifecycleAware(Lifecycle.State.RESUMED) { } }
 
         // Start and ensure there is one subscriber
         mockLifecycleOwner.dispatchEvent(Lifecycle.Event.ON_RESUME)
