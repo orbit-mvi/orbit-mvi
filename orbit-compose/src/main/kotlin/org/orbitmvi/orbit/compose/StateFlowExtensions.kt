@@ -26,20 +26,21 @@ import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
+import kotlinx.coroutines.flow.StateFlow
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 
 /**
- * Observe [Container.sideEffectFlow] in a Compose [LaunchedEffect].
+ * Observe [StateFlow] of [SideEffectFlow] in a Compose [LaunchedEffect].
  * @param lifecycleState [Lifecycle.State] in which [state] block runs.
  */
 @SuppressLint("ComposableNaming")
 @Composable
-fun <STATE : Any, SIDE_EFFECT : Any> ContainerHost<STATE, SIDE_EFFECT>.collectSideEffect(
+fun <SIDE_EFFECT : Any> StateFlow<SIDE_EFFECT>.collectSideEffectLifecycleAware(
     lifecycleState: Lifecycle.State = Lifecycle.State.STARTED,
     sideEffect: (suspend (sideEffect: SIDE_EFFECT) -> Unit)
 ) {
-    val sideEffectFlow = container.sideEffectFlow
+    val sideEffectFlow = this
     val lifecycleOwner = LocalLifecycleOwner.current
 
     LaunchedEffect(sideEffectFlow, lifecycleOwner) {
@@ -50,16 +51,16 @@ fun <STATE : Any, SIDE_EFFECT : Any> ContainerHost<STATE, SIDE_EFFECT>.collectSi
 }
 
 /**
- * Observe [Container.stateFlow] in a Compose [LaunchedEffect].
+ * Observe [StateFlow] of [STATE] in a Compose [LaunchedEffect].
  * @param lifecycleState [Lifecycle.State] in which [state] block runs.
  */
 @SuppressLint("ComposableNaming")
 @Composable
-fun <STATE : Any, SIDE_EFFECT : Any> ContainerHost<STATE, SIDE_EFFECT>.collectState(
+fun <STATE : Any> StateFlow<STATE>.collectStateLifecycleAware(
     lifecycleState: Lifecycle.State = Lifecycle.State.STARTED,
     state: (suspend (state: STATE) -> Unit)
 ) {
-    val stateFlow = container.stateFlow
+    val stateFlow = this
     val lifecycleOwner = LocalLifecycleOwner.current
 
     LaunchedEffect(stateFlow, lifecycleOwner) {
@@ -70,22 +71,19 @@ fun <STATE : Any, SIDE_EFFECT : Any> ContainerHost<STATE, SIDE_EFFECT>.collectSt
 }
 
 /**
- * Observe [Container.stateFlow] as [State].
+ * Observe [StateFlow] of [STATE] as [State].
  * @param lifecycleState The Lifecycle where the restarting collecting from this flow work will be kept alive.
  */
 @Composable
-fun <STATE : Any, SIDE_EFFECT : Any> ContainerHost<STATE, SIDE_EFFECT>.collectAsState(
+fun <STATE : Any> StateFlow<STATE>.collectAsStateLifecycleAware(
     lifecycleState: Lifecycle.State = Lifecycle.State.STARTED
 ): State<STATE> {
-    val stateFlow = container.stateFlow
     val lifecycleOwner = LocalLifecycleOwner.current
-
-    val stateFlowLifecycleAware = remember(stateFlow, lifecycleOwner) {
-        stateFlow.flowWithLifecycle(lifecycleOwner.lifecycle, lifecycleState)
+    val stateFlowLifecycleAware = remember(this, lifecycleOwner) {
+        this.flowWithLifecycle(lifecycleOwner.lifecycle, lifecycleState)
     }
-
     // Need to access the initial value to convert to State - collectAsState() suppresses this lint warning too
     @SuppressLint("StateFlowValueCalledInComposition")
-    val initialValue = stateFlow.value
+    val initialValue = this.value
     return stateFlowLifecycleAware.collectAsState(initialValue)
 }
