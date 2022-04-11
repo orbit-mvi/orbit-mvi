@@ -22,8 +22,6 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.lifecycle.Lifecycle
-import kotlin.random.Random
-import kotlin.test.assertEquals
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -40,6 +38,8 @@ import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.internal.RealContainer
 import org.robolectric.RobolectricTestRunner
+import kotlin.random.Random
+import kotlin.test.assertEquals
 
 @RunWith(RobolectricTestRunner::class)
 @ExperimentalCoroutinesApi
