@@ -51,6 +51,8 @@ think of it as MVVM+.
 implementation("org.orbit-mvi:orbit-core:<latest-version>")
 // or, if on Android:
 implementation("org.orbit-mvi:orbit-viewmodel:<latest-version>")
+// when using Jetpack Compose with ViewModels
+implementation("org.orbit-mvi:orbit-compose:<latest-version>")
 
 // Tests
 testImplementation("org.orbit-mvi:orbit-test:<latest-version>")
