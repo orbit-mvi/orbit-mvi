@@ -37,7 +37,7 @@ object Versions {
     const val androidxCompose = "1.3.0"
     const val androidxCoreTesting = "2.1.0"
 
-    const val desugar = "1.2.2"
+    const val desugar = "1.1.5"
 
     // Testing
     const val jacoco = "0.8.8"
