@@ -72,7 +72,7 @@ public class TestContainerDecorator<STATE : Any, SIDE_EFFECT : Any>(
         )
 
         if (!testDelegateSet) {
-            throw IllegalStateException("Can only call test() once")
+            error("Can only call test() once")
         }
     }
 }

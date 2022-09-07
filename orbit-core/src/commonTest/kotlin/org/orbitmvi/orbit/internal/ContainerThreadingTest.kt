@@ -86,7 +86,7 @@ internal class ContainerThreadingTest {
                     0 -> container.one()
                     1 -> container.two()
                     2 -> container.three()
-                    else -> throw IllegalStateException("misconfigured test")
+                    else -> error("misconfigured test")
                 }
             }
 
@@ -119,7 +119,7 @@ internal class ContainerThreadingTest {
                             0 -> container.one(true)
                             1 -> container.two(true)
                             2 -> container.three(true)
-                            else -> throw IllegalStateException("misconfigured test")
+                            else -> error("misconfigured test")
                         }
                     }
                 }

@@ -32,7 +32,7 @@ class RefCountFlowTest {
             try {
                 flowOf(Unit).refCount(subscribedCounter).take(1).collect {
                     assertEquals(1, subscribedCounter.counter)
-                    throw IllegalStateException("forced exception")
+                    error("forced exception")
                 }
             } catch (ignore: IllegalStateException) {
                 // ignored as we just care that counter is decremented
