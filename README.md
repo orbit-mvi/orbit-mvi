@@ -34,6 +34,7 @@ think of it as MVVM+.
 - [Getting Started](https://orbit-mvi.org)
 - [Core](https://orbit-mvi.org/Core/overview)
 - [Android ViewModel](https://orbit-mvi.org/Android-ViewModel/overview)
+- [Compose](https://orbit-mvi.org/Compose/overview)
 - [Test](https://orbit-mvi.org/Test/overview)
 - [Dokka source code documentation](https://orbit-mvi.org/dokka/)
 - [Resources](https://orbit-mvi.org/resources)
@@ -51,6 +52,8 @@ think of it as MVVM+.
 implementation("org.orbit-mvi:orbit-core:<latest-version>")
 // or, if on Android:
 implementation("org.orbit-mvi:orbit-viewmodel:<latest-version>")
+// If using Jetpack Compose include
+implementation("org.orbit-mvi:orbit-compose:<latest-version>")
 
 // Tests
 testImplementation("org.orbit-mvi:orbit-test:<latest-version>")
