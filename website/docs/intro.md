@@ -16,6 +16,7 @@ think of it as MVVM+.
 
 - [Core](Core/overview.md)
 - [Android ViewModel](Android-ViewModel/overview.md)
+- [Compose](Compose/overview.md)
 - [Test](Test/overview.md)
 - [Dokka source code documentation](pathname://dokka/)
 - [Resources](resources.md)
@@ -28,6 +29,8 @@ think of it as MVVM+.
 implementation("org.orbit-mvi:orbit-core:<latest-version>")
 // or, if on Android:
 implementation("org.orbit-mvi:orbit-viewmodel:<latest-version>")
+// If using Jetpack Compose include
+implementation("org.orbit-mvi:orbit-compose:<latest-version>")
 
 // Tests
 testImplementation("org.orbit-mvi:orbit-test:<latest-version>")

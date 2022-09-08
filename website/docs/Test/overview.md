@@ -5,10 +5,8 @@ sidebar_label: 'Overview'
 
 # Unit Testing module
 
-The module provides a simple unit testing framework for your Orbit
+This module provides a simple unit testing framework for your Orbit
 [ContainerHosts](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-container-host/).
-
-## Including the module
 
 ```kotlin
 testImplementation("org.orbit-mvi:orbit-test:<latest-version>")
@@ -16,48 +14,86 @@ testImplementation("org.orbit-mvi:orbit-test:<latest-version>")
 
 ## Testing goals
 
-Orbit is a well structured framework and as such, the tests will wrap around the
-framework's structure.
-
 Experience with Orbit 1 has taught us what works and what doesn't. This helped
 us put constraints around our tests that we hope will make your tests
 predictable and easy to write and maintain.
 
-Things that we consider important to test:
+The testing methodology adopted here conforms to the typical testing goals of
+MVI.
+
+Concepts that we consider important to test:
 
 - Emitted states
 - Emitted side effects
 - Loopbacks i.e. intent A calling intent B
-- Potentially dependencies being called
+- Dependencies being called
 
 The last two items on the list are outside of the scope of this library and can
 be easily tested using a mocking framework like `mockito`.
 
-For the first two things we have created utilities that should make them easy to
-test.
+For the first two items we have created utilities that should make them easy to
+test. The framework follows the Arrange/Act/Assert methodology.
 
-### Additional constraints
+### Test modes
 
-There are a couple of additional constraints that we can put on our tests to
-make them more predictable.
+The testing framework adds two testing modes for your
+[ContainerHosts](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-container-host/).
+Below is a quick summary of what they are and what are the benefits and
+downsides.
 
-- Run the calls invoked on your
-  [Container](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-container/)
-  as suspending function
-- Isolate the first function called on the
-  [ContainerHost](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-container-host/)
+1. **Suspending test mode** is the default test mode. Use it by calling
+   `ContainerHost.test()`. In this mode we focus on testing the business logic
+   in your `ContainerHost` by running the intercepted intents directly in the
+   test as simple suspending functions. 
+   - Tests must run in a coroutine - e.g. `runTest`
+   - Tests circumvent the Orbit dispatching/threading mechanisms completely. We 
+     believe there is no benefit to gain from running on a live container for
+     most of your code. Orbit is well unit-tested, so there's no point in
+     testing the framework along with your business logic.
+   - Pitfalls inherent in testing a multi-threaded system are avoided
+   - Assertions run instantly after all intents called are processed
+   - Your tests fail fast
+   - Testing infinite flows can be more difficult. See [Testing Flows](#testing-flows).
+   - By default this mode isolates the first intent called on the
+     [ContainerHost](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-container-host/)
+     Isolating intents helps avoid unexpected state/side effect emissions from
+     loopbacks in your intent under test. This can be turned off if you have a
+     particular testing need.
+2. **Live test mode** is an alternative test mode. Use it by calling
+   `ContainerHost.liveTest()`. This is recommended for more complex scenarios
+   that might be difficult to test in suspending mode.
+   - Tests run on a normal Orbit [Container](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-container/)
+     with `Unconfined` dispatcher set by default.
+   - Assertions await for emissions with a timeout
+   - Your tests may take some time to fail e.g. if awaiting for a missing
+     emission
+   - Testing infinite flows can be easier. See [Testing Flows](#testing-flows).
 
-Isolating intents helps avoid unexpected state/side effect emissions from
-loopbacks in your intent under test. This can be turned off if you have a
-particular testing need.
+Other than that both test modes are very similar in terms of how you actually
+write the tests.
 
-## Testing method
+## Testing process
 
-First we need to put our
+Here's the testing process for both test modes:
+
+1. Put the [ContainerHost](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-container-host/)
+   in your chosen test mode using `test()` or `liveTest()` You may optionally
+   provide them with the initial state to seed the container with. This helps
+   avoid having to call several intents just to get the container in the right
+   state for the test.
+2. (Optional) Run `testContainerHost.runOnCreate()` to run the container create
+   lambda.
+3. (Optional) Run `testContainerHost.testIntent { foo() }` to run the 
+   [ContainerHost](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-container-host/)
+   intent of your choice.
+4. Run assertions on states and side effects using
+   `testContainerHost.assert { ... }`.
+
+Let's start and put our
 [ContainerHost](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-container-host/)
 into test mode. We pass in the initial state to seed the container with (or omit
 it entirely to use the initial state from the real container). Next, we call our
-intent method under test. Let's assume we've made a `ViewModel` the host.
+intent method under test.
 
 ```kotlin
 data class State(val count: Int = 0)
@@ -70,7 +106,7 @@ testSubject.testIntent { countToFour() }
 ### Run `onCreate`
 
 If the `Container` is created with `CoroutineScope.container()` or
-`ViewModel.container()` there is an option to provide the `onCreate` property.
+`ViewModel.container()` there is an option to provide the `onCreate` lambda.
 In test mode this function has to be run manually (if needed)
 by calling `runOnCreate`, so it's effectively isolated in the test; the other
 reason why is `onCreate` could include any number of `intent{}` calls, so it's
@@ -162,3 +198,55 @@ testSubject.assert(State()) {
 verify(testSubject).doSomething()
 verify(testSubject).doSomethingElse(2)
 ```
+## Testing Flows
+
+We can run into situations where we subscribe our [ContainerHost](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-container-host/)
+to an infinite (hot) flow of data like so:
+
+```kotlin
+val container = container<SomeState, Unit> {
+    listenToLocationUpdates()
+}
+
+private fun listenToLocationUpdates() = intent {
+    runOnSubscription {
+        locationService.locationUpdates.collect {
+            reduce { state.copy(lng = it.lng, lat = it.lat) }
+        }
+    }
+}
+```
+
+We have two options to test code like this.
+
+### Flows in suspending test mode
+
+In this mode an infinite flow would hang our test, since the collect lambda
+would never complete. To get around this, we need to provide a fake/mock
+finite (cold) flow (e.g. using `flowOf(...)`)
+
+```kotlin
+// Fake returning a cold, finite flow. Alternatively use Mockito.
+val fakeService = FakeService()
+val testSubject = ExampleViewModel(fakeService).test()
+
+testSubject.runOnCreate()
+
+testSubject.assert(State()) {
+    states(
+        { copy(lng = 1, lat = 1) },
+        { copy(lng = 2, lat = 2) },
+        { copy(lng = 3, lat = 3) },
+    )
+}
+```
+
+### Flows in live test mode
+
+Flows in this mode don't need to be cold, finite flows. They can remain hot. 
+The test won't hang if the
+[ContainerHost](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-container-host/)
+connects to such flow, since we're running a real container underneath.
+
+We can therefore test without special treatment (other than making the flow
+return the data we want)

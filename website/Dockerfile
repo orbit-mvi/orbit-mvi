@@ -1,10 +1,10 @@
-FROM node:16.5-alpine
+FROM node:18-alpine
 LABEL maintainer="Mikolaj Leszczynski <mikolaj@herebedragons.pl>" \
       description="Docusaurus container for local development and production build on CI"
 
 RUN apk add --no-cache \
     bash supervisor
-    
+
 #autoconf automake build-base libtool nasm
 
 # Environments
