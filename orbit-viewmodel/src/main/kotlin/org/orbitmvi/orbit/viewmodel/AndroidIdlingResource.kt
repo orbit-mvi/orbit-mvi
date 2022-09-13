@@ -22,6 +22,7 @@ package org.orbitmvi.orbit.viewmodel
 
 import androidx.test.espresso.IdlingRegistry
 import androidx.test.espresso.IdlingResource.ResourceCallback
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -63,10 +64,10 @@ class AndroidIdlingResource : IdlingResource {
         idle.set(false)
     }
 
+    @OptIn(DelicateCoroutinesApi::class)
     override fun decrement() {
         if (counter.decrementAndGet() == 0) {
             job.getAndSet(
-                @Suppress("EXPERIMENTAL_API_USAGE")
                 GlobalScope.launch {
                     delay(MILLIS_BEFORE_IDLE)
                     idle.set(true)

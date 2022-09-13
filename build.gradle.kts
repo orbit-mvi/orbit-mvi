@@ -185,10 +185,10 @@ subprojects {
         apply(from = "$rootDir/gradle/scripts/jacoco-android.gradle.kts")
 
         configure<LibraryExtension> {
-            compileSdk = 31
+            compileSdk = 32
             defaultConfig {
                 minSdk = 21
-                targetSdk = 31
+                targetSdk = 32
             }
 
             buildTypes {

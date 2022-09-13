@@ -32,10 +32,9 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.internal.repeatonsubscription.DelayingSubscribedCounter
 import org.orbitmvi.orbit.internal.repeatonsubscription.SubscribedCounter
@@ -51,7 +50,6 @@ public class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
 ) : Container<STATE, SIDE_EFFECT> {
     private val scope = parentScope + settings.intentDispatcher
     private val dispatchChannel = Channel<suspend ContainerContext<STATE, SIDE_EFFECT>.() -> Unit>(Channel.UNLIMITED)
-    private val mutex = Mutex()
     private val initialised = atomic(false)
 
     private val subscribedCounter = subscribedCounterOverride ?: DelayingSubscribedCounter(scope, settings.repeatOnSubscribedStopTimeout)
@@ -71,9 +69,7 @@ public class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
             internalStateFlow.value
         },
         reduce = { reducer ->
-            mutex.withLock {
-                internalStateFlow.value = reducer(internalStateFlow.value)
-            }
+            internalStateFlow.update(reducer)
         },
         subscribedCounter
     )
@@ -83,9 +79,9 @@ public class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
         dispatchChannel.send(orbitIntent)
     }
 
+    @OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
     private fun initialiseIfNeeded() {
         if (initialised.compareAndSet(expect = false, update = true)) {
-            @Suppress("EXPERIMENTAL_API_USAGE")
             scope.produce<Unit>(Dispatchers.Unconfined) {
                 awaitClose {
                     settings.idlingRegistry.close()

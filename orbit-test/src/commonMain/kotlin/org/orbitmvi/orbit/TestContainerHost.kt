@@ -87,7 +87,7 @@ public class SuspendingTestContainerHost<STATE : Any, SIDE_EFFECT : Any, CONTAIN
      */
     public suspend fun runOnCreate(): SuspendingTestContainerHost<STATE, SIDE_EFFECT, CONTAINER_HOST> {
         if (!onCreateAllowed.compareAndSet(expect = true, update = false)) {
-            throw IllegalStateException("runOnCreate should only be invoked once and before any testIntent call")
+            error("runOnCreate should only be invoked once and before any testIntent call")
         }
         actual.container.findOnCreate().invoke(initialState ?: actual.container.findTestContainer().originalInitialState)
         actual.suspendingIntent(shouldIsolateFlow = false) {}
@@ -103,6 +103,7 @@ public class SuspendingTestContainerHost<STATE : Any, SIDE_EFFECT : Any, CONTAIN
         return this
     }
 
+    @OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
     private suspend fun <STATE : Any, SIDE_EFFECT : Any, T : ContainerHost<STATE, SIDE_EFFECT>> T.suspendingIntent(
         shouldIsolateFlow: Boolean,
         block: T.() -> Unit
@@ -112,7 +113,6 @@ public class SuspendingTestContainerHost<STATE : Any, SIDE_EFFECT : Any, CONTAIN
         this.block() // Invoke the Intent
 
         var firstIntentExecuted = false
-        @Suppress("EXPERIMENTAL_API_USAGE")
         while (!testContainer.savedIntents.isEmpty) {
             val intent = testContainer.savedIntents.receive()
             if (!shouldIsolateFlow || !firstIntentExecuted) {
@@ -144,7 +144,7 @@ public class RegularTestContainerHost<STATE : Any, SIDE_EFFECT : Any, CONTAINER_
      */
     public fun runOnCreate(): RegularTestContainerHost<STATE, SIDE_EFFECT, CONTAINER_HOST> {
         if (!onCreateAllowed.compareAndSet(expect = true, update = false)) {
-            throw IllegalStateException("runOnCreate should only be invoked once and before any testIntent call")
+            error("runOnCreate should only be invoked once and before any testIntent call")
         }
 
         actual.container.findOnCreate().invoke(initialState ?: actual.container.findTestContainer().originalInitialState)

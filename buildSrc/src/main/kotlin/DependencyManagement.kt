@@ -20,29 +20,30 @@
 
 object Versions {
 
-    const val gradleVersionsPlugin = "0.39.0"
-    const val gradleAndroidPlugin = "7.0.4"
-    const val gradleMavenPublishPlugin = "0.18.0"
+    const val gradleVersionsPlugin = "0.42.0"
+    const val gradleAndroidPlugin = "7.2.2"
+    const val gradleMavenPublishPlugin = "0.21.0"
     const val markdownLintPlugin = "0.6.0"
-    const val detektPlugin = "1.19.0"
-    const val safeargs = "2.3.5"
-    const val atomicfu = "0.17.0"
-    const val dokka = "1.6.10"
+    const val detektPlugin = "1.21.0"
+    const val safeargs = "2.5.1"
+    const val atomicfu = "0.18.3"
+    const val dokka = "1.7.10"
 
-    const val kotlin = "1.6.10"
+    const val kotlin = "1.7.10"
     const val coroutines = "1.6.0-native-mt"
 
-    const val androidxLifecycles = "2.4.0"
+    const val androidxLifecycles = "2.5.1"
     const val androidxEspresso = "3.4.0"
-    const val androidxCompose = "1.1.0"
+    const val androidxCompose = "1.2.1"
+    const val androidxComposeCompiler = "1.3.1"
     const val androidxCoreTesting = "2.1.0"
 
     const val desugar = "1.1.5"
 
     // Testing
-    const val jacoco = "0.8.7"
+    const val jacoco = "0.8.8"
     const val junit4 = "4.13.2"
-    const val robolectric = "4.7.3"
+    const val robolectric = "4.8.2"
 }
 
 object ProjectDependencies {

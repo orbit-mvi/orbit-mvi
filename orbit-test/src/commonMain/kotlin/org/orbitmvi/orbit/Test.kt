@@ -75,5 +75,5 @@ public fun <STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHost<STATE
 internal fun <STATE : Any, SIDE_EFFECT : Any> Container<STATE, SIDE_EFFECT>.findTestContainer(): TestContainerDecorator<STATE, SIDE_EFFECT> {
     return (this as? TestContainerDecorator<STATE, SIDE_EFFECT>)
         ?: (this as? ContainerDecorator<STATE, SIDE_EFFECT>)?.actual?.findTestContainer()
-        ?: throw IllegalStateException("No TestContainerDecorator found!")
+        ?: error("No TestContainerDecorator found!")
 }
