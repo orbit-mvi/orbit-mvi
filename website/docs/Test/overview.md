@@ -248,5 +248,41 @@ The test won't hang if the
 [ContainerHost](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-container-host/)
 connects to such flow, since we're running a real container underneath.
 
-We can therefore test without special treatment (other than making the flow
-return the data we want)
+If we're dealing with a producer-style source of infinite values that we can't
+control, or some sort of infinite loop it can help to override the dispatchers
+with something we can control the scheduling of. For example:
+
+```kotlin
+private inner class InfiniteFlowMiddleware : ContainerHost<List<Int>, Nothing> {
+    override val container: Container<List<Int>, Nothing> = scope.container(listOf(42))
+
+    fun incrementForever() = intent {
+        while (true) {
+            delay(30000)
+            reduce { state + (state.last() + 1) }
+        }
+    }
+}
+
+@Test
+fun `infinite flow test`() = runTest {
+        val dispatcher = UnconfinedTestDispatcher()
+        val middleware = InfiniteFlowMiddleware().liveTest(
+            testDispatcherOverride = dispatcher
+        )
+
+        middleware.testIntent {
+            incrementForever()
+        }
+
+        dispatcher.scheduler.advanceTimeBy(100000)
+
+        middleware.assert(listOf(42)) {
+            states(
+                { listOf(42, 43) },
+                { listOf(42, 43, 44) },
+                { listOf(42, 43, 44, 45) }
+            )
+        }
+    }
+```

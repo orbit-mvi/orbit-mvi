@@ -26,10 +26,7 @@ internal class InfiniteFlowTest {
     fun `infinite flow can be tested`() = runTest {
         val dispatcher = UnconfinedTestDispatcher()
         val middleware = InfiniteFlowMiddleware().liveTest(
-            settings = Container.Settings(
-                eventLoopDispatcher = dispatcher,
-                intentLaunchingDispatcher = dispatcher,
-            )
+            testDispatcherOverride = dispatcher
         )
 
         middleware.testIntent {
