@@ -28,6 +28,7 @@ import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
+import org.orbitmvi.orbit.syntax.simple.debugModeContainerHostVerification
 
 /**
  * Observe [Container.sideEffectFlow] in a Compose [LaunchedEffect].
@@ -39,6 +40,8 @@ public fun <STATE : Any, SIDE_EFFECT : Any> ContainerHost<STATE, SIDE_EFFECT>.co
     lifecycleState: Lifecycle.State = Lifecycle.State.STARTED,
     sideEffect: (suspend (sideEffect: SIDE_EFFECT) -> Unit)
 ) {
+    debugModeContainerHostVerification()
+
     val sideEffectFlow = container.sideEffectFlow
     val lifecycleOwner = LocalLifecycleOwner.current
 
@@ -59,6 +62,8 @@ public fun <STATE : Any, SIDE_EFFECT : Any> ContainerHost<STATE, SIDE_EFFECT>.co
     lifecycleState: Lifecycle.State = Lifecycle.State.STARTED,
     state: (suspend (state: STATE) -> Unit)
 ) {
+    debugModeContainerHostVerification()
+
     val stateFlow = container.stateFlow
     val lifecycleOwner = LocalLifecycleOwner.current
 
@@ -77,6 +82,8 @@ public fun <STATE : Any, SIDE_EFFECT : Any> ContainerHost<STATE, SIDE_EFFECT>.co
 public fun <STATE : Any, SIDE_EFFECT : Any> ContainerHost<STATE, SIDE_EFFECT>.collectAsState(
     lifecycleState: Lifecycle.State = Lifecycle.State.STARTED
 ): State<STATE> {
+    debugModeContainerHostVerification()
+
     val stateFlow = container.stateFlow
     val lifecycleOwner = LocalLifecycleOwner.current
 

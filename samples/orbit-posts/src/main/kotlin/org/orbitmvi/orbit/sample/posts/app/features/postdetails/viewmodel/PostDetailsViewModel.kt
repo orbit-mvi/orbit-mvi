@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 2021-2022 Mikołaj Leszczyński & Appmattus Limited
  * Copyright 2020 Babylon Partners Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,12 +22,14 @@ package org.orbitmvi.orbit.sample.posts.app.features.postdetails.viewmodel
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.sample.posts.domain.repositories.PostOverview
 import org.orbitmvi.orbit.sample.posts.domain.repositories.PostRepository
 import org.orbitmvi.orbit.sample.posts.domain.repositories.Status
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.reduce
+import org.orbitmvi.orbit.viewmodel.BuildConfig
 import org.orbitmvi.orbit.viewmodel.container
 
 class PostDetailsViewModel(
@@ -36,7 +38,11 @@ class PostDetailsViewModel(
     private val postOverview: PostOverview
 ) : ViewModel(), ContainerHost<PostDetailState, Nothing> {
 
-    override val container = container<PostDetailState, Nothing>(PostDetailState.NoDetailsAvailable(postOverview), savedStateHandle) {
+    override val container = container<PostDetailState, Nothing>(
+        initialState = PostDetailState.NoDetailsAvailable(postOverview),
+        savedStateHandle = savedStateHandle,
+        settings = Container.Settings(debugMode = BuildConfig.DEBUG)
+    ) {
         if (it !is PostDetailState.Details) {
             loadDetails()
         }

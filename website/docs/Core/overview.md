@@ -318,3 +318,10 @@ default exception handler via
 property `orbitExceptionHandler` -> if defined exceptions are caught here so
 parent scope is not affected and Orbit container
 would continue to operate normally.
+
+## Debug mode
+
+Setting the [Container Settings](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-container/-settings/)
+property `debugMode` to `true` enables additional guardrail checks:
+- Enforces [ContainerHost](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-container-host/)
+  property `container` uses a backing field.

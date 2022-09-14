@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 2021-2022 Mikołaj Leszczyński & Appmattus Limited
  * Copyright 2020 Babylon Partners Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -79,13 +79,14 @@ public interface Container<STATE : Any, SIDE_EFFECT : Any> {
      * @property idlingRegistry The registry used by the container for signalling idling for UI tests
      * @property intentDispatcher The dispatcher used for handling incoming [orbit] intents
      * @property repeatOnSubscribedStopTimeout A delay (in milliseconds) between the disappearance of the last subscriber and
-     * the stopping of the repeatOnSubscribed block
+     * @property debugMode Enables additional guardrail checks
      */
     public data class Settings(
         public val sideEffectBufferSize: Int = Channel.UNLIMITED,
         public val idlingRegistry: IdlingResource = NoopIdlingResource(),
         public val intentDispatcher: CoroutineDispatcher = Dispatchers.Default,
         public val exceptionHandler: CoroutineExceptionHandler? = null,
-        public val repeatOnSubscribedStopTimeout: Long = 100L
+        public val repeatOnSubscribedStopTimeout: Long = 100L,
+        public val debugMode: Boolean = false
     )
 }

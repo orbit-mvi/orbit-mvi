@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 2021-2022 Mikołaj Leszczyński & Appmattus Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
+import org.orbitmvi.orbit.syntax.simple.debugModeContainerHostVerification
 
 /**
  * Observe [Container.stateFlow] and [Container.sideEffectFlow] correctly on Android in one-line of code.
@@ -46,6 +47,8 @@ fun <STATE : Any, SIDE_EFFECT : Any> ContainerHost<STATE, SIDE_EFFECT>.observe(
     state: (suspend (state: STATE) -> Unit)? = null,
     sideEffect: (suspend (sideEffect: SIDE_EFFECT) -> Unit)? = null
 ) {
+    debugModeContainerHostVerification()
+
     lifecycleOwner.lifecycleScope.launch {
         // See https://medium.com/androiddevelopers/a-safer-way-to-collect-flows-from-android-uis-23080b1f8bda
         lifecycleOwner.lifecycle.repeatOnLifecycle(lifecycleState) {
