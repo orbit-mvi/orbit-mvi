@@ -81,7 +81,7 @@ internal class ContainerExceptionHandlerTest {
             initialState = initState,
             settings = Container.Settings(
                 exceptionHandler = exceptionHandler,
-                intentDispatcher = Dispatchers.Unconfined
+                eventLoopDispatcher = Dispatchers.Unconfined
             )
         )
         val newState = Random.nextInt()
@@ -121,7 +121,7 @@ internal class ContainerExceptionHandlerTest {
             initialState = Unit,
             settings = Container.Settings(
                 exceptionHandler = exceptionHandler,
-                intentDispatcher = Dispatchers.Unconfined
+                eventLoopDispatcher = Dispatchers.Unconfined
             )
         )
         runBlocking {
@@ -155,7 +155,7 @@ internal class ContainerExceptionHandlerTest {
                 initialState = initState,
                 settings = Container.Settings(
                     exceptionHandler = exceptionHandler,
-                    intentDispatcher = Dispatchers.Unconfined
+                    eventLoopDispatcher = Dispatchers.Unconfined
                 )
             )
         }.test(initState, isolateFlow = false)
@@ -189,7 +189,7 @@ internal class ContainerExceptionHandlerTest {
             override val container = scope.container<Int, Nothing>(
                 initialState = initState,
                 settings = Container.Settings(
-                    intentDispatcher = Dispatchers.Unconfined
+                    eventLoopDispatcher = Dispatchers.Unconfined
                 )
             )
         }.test(initState, isolateFlow = false)

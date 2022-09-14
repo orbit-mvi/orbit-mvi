@@ -20,7 +20,9 @@
 
 package org.orbitmvi.orbit
 
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.TestDispatcher
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import org.orbitmvi.orbit.internal.TestContainerDecorator
 import org.orbitmvi.orbit.internal.TestingStrategy
 
@@ -53,7 +55,23 @@ public fun <STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHost<STATE
 
 /**
  *  Puts your [ContainerHost] into live test mode. This mode uses a real Orbit container with
- *  some basic test settings.
+ *  some basic test settings. Orbit dispatchers are overridden with [UnconfinedTestDispatcher] by default.
+ *
+ * @param initialState The state to initialize the test container with. Omit this parameter to use the real initial state of the container.
+ * @param testDispatcherOverride The test dispatcher to override all Orbit dispatchers with.
+ * @return A live test wrapper around [ContainerHost].
+ */
+@OptIn(ExperimentalCoroutinesApi::class)
+public fun <STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHost<STATE, SIDE_EFFECT>> CONTAINER_HOST.liveTest(
+    initialState: STATE? = null,
+    testDispatcherOverride: TestDispatcher = UnconfinedTestDispatcher()
+): RegularTestContainerHost<STATE, SIDE_EFFECT, CONTAINER_HOST> = liveTest(
+    initialState,
+    Container.Settings(eventLoopDispatcher = testDispatcherOverride, intentLaunchingDispatcher = testDispatcherOverride)
+)
+
+/**
+ *  Puts your [ContainerHost] into live test mode. This mode uses a real Orbit container.
  *
  * @param initialState The state to initialize the test container with. Omit this parameter to use the real initial state of the container.
  * @param settings Replaces the [Container.Settings] for this test
@@ -61,7 +79,7 @@ public fun <STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHost<STATE
  */
 public fun <STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHost<STATE, SIDE_EFFECT>> CONTAINER_HOST.liveTest(
     initialState: STATE? = null,
-    settings: Container.Settings = container.settings.copy(intentDispatcher = Dispatchers.Unconfined)
+    settings: Container.Settings
 ): RegularTestContainerHost<STATE, SIDE_EFFECT, CONTAINER_HOST> {
     return container.findTestContainer().test(
         initialState = initialState,
