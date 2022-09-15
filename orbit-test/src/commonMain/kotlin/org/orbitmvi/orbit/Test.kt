@@ -40,7 +40,7 @@ import org.orbitmvi.orbit.internal.TestingStrategy
  * @param settings Replaces the [Container.Settings] for this test
  * @return A suspending test wrapper around [ContainerHost].
  */
-@Deprecated(message = "Use version with settings builder instead")
+@Deprecated(message = "Use overload with settings builder instead. This will be removed in the future.")
 public fun <STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHost<STATE, SIDE_EFFECT>> CONTAINER_HOST.test(
     initialState: STATE? = null,
     isolateFlow: Boolean = true,
@@ -64,20 +64,19 @@ public fun <STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHost<STATE
  *  that might make your tests too complex.
  *
  * @param initialState The state to initialize the test container with. Omit this parameter to use the real initial state of the container.
- * @param isolateFlow Whether the intent should be isolated
  * @param buildSettings Builds the [RealSettings] for this test
  * @return A suspending test wrapper around [ContainerHost].
  */
 public fun <STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHost<STATE, SIDE_EFFECT>> CONTAINER_HOST.test(
     initialState: STATE? = null,
-    isolateFlow: Boolean = true,
     buildSettings: TestSettingsBuilder.() -> Unit = {},
 ): SuspendingTestContainerHost<STATE, SIDE_EFFECT, CONTAINER_HOST> {
+    val settingsBuilder = TestSettingsBuilder(container.settings).apply(buildSettings)
     return container.findTestContainer().test(
         initialState = initialState,
-        strategy = TestingStrategy.Suspending(TestSettingsBuilder(container.settings).apply(buildSettings).settings)
+        strategy = TestingStrategy.Suspending(settingsBuilder.settings)
     ).let {
-        SuspendingTestContainerHost(this, initialState, isolateFlow)
+        SuspendingTestContainerHost(this, initialState, settingsBuilder.isolateFlow)
     }
 }
 
@@ -109,7 +108,7 @@ public fun <STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHost<STATE
  * @param settings Replaces the [Container.Settings] for this test
  * @return A live test wrapper around [ContainerHost].
  */
-@Deprecated(message = "Use version with settings builder instead")
+@Deprecated(message = "Use overload with settings builder instead. This will be removed in the future.")
 public fun <STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHost<STATE, SIDE_EFFECT>> CONTAINER_HOST.liveTest(
     initialState: STATE? = null,
     settings: Container.Settings

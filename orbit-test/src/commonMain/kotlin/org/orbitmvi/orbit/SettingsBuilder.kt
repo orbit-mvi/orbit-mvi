@@ -24,6 +24,8 @@ public class TestSettingsBuilder(
         public set(value) {
             settings = settings.copy(exceptionHandler = value)
         }
+
+    public var isolateFlow: Boolean = true
 }
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -72,6 +74,7 @@ internal fun Container.Settings.toRealSettings() = RealSettings(
     sideEffectBufferSize = sideEffectBufferSize,
     idlingRegistry = idlingRegistry,
     eventLoopDispatcher = intentDispatcher,
+    intentLaunchingDispatcher = intentDispatcher,
     exceptionHandler = exceptionHandler,
     repeatOnSubscribedStopTimeout = repeatOnSubscribedStopTimeout
 )

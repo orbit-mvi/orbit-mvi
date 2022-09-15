@@ -37,7 +37,7 @@ import org.orbitmvi.orbit.internal.TestContainerDecorator
  * executed in a lazy manner when the container is first interacted with in any way.
  * @return A [Container] implementation
  */
-@Deprecated(message = "Use version with settings builder instead")
+@Deprecated(message = "Use overload with settings builder instead. This will be removed in the future.")
 public fun <STATE : Any, SIDE_EFFECT : Any> CoroutineScope.container(
     initialState: STATE,
     settings: Settings,
