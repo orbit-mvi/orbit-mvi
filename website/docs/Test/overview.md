@@ -267,9 +267,9 @@ private inner class InfiniteFlowMiddleware : ContainerHost<List<Int>, Nothing> {
 @Test
 fun `infinite flow test`() = runTest {
         val dispatcher = UnconfinedTestDispatcher()
-        val middleware = InfiniteFlowMiddleware().liveTest(
-            testDispatcherOverride = dispatcher
-        )
+        val middleware = InfiniteFlowMiddleware().liveTest {
+            this.dispatcher = dispatcher
+        }
 
         middleware.testIntent {
             incrementForever()

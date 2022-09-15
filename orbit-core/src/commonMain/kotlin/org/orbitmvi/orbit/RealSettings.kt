@@ -18,6 +18,7 @@ public data class RealSettings(
 
 public class SettingsBuilder {
     internal var settings = RealSettings()
+        private set
 
     public var idlingRegistry: IdlingResource
         get() = settings.idlingRegistry
@@ -29,6 +30,12 @@ public class SettingsBuilder {
         get() = settings.exceptionHandler
         public set(value) {
             settings = settings.copy(exceptionHandler = value)
+        }
+
+    public var repeatOnSubscribedStopTimeout: Long
+        get() = settings.repeatOnSubscribedStopTimeout
+        public set(value) {
+            settings = settings.copy(repeatOnSubscribedStopTimeout = value)
         }
 }
 
