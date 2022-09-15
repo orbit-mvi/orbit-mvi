@@ -37,7 +37,7 @@ public interface ContainerDecorator<STATE : Any, SIDE_EFFECT : Any> : Container<
      */
     public val actual: Container<STATE, SIDE_EFFECT>
 
-    override val settings: Container.Settings
+    override val settings: RealSettings
         get() = actual.settings
     override val stateFlow: StateFlow<STATE>
         get() = actual.stateFlow

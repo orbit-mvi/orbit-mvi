@@ -34,8 +34,8 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
+import org.orbitmvi.orbit.RealSettings
 import org.orbitmvi.orbit.internal.RealContainer
 import org.robolectric.RobolectricTestRunner
 import kotlin.random.Random
@@ -61,7 +61,7 @@ class ContainerHostExtensionsKtTest {
         override val container = RealContainer<Int, Int>(
             initialState = Random.nextInt(),
             parentScope = scope,
-            settings = Container.Settings(),
+            settings = RealSettings(),
             subscribedCounterOverride = testSubscribedCounter
         )
     }

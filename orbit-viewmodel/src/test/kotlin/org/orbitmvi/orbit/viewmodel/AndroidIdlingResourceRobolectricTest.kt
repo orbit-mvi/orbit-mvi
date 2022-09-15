@@ -28,7 +28,6 @@ import kotlinx.coroutines.cancel
 import org.junit.After
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.container
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
@@ -49,12 +48,12 @@ class AndroidIdlingResourceRobolectricTest {
     fun `idling resources have unique names`() {
         scope.container<TestState, Int>(
             initialState = TestState(0),
-            settings = Container.Settings(idlingRegistry = AndroidIdlingResource())
+            buildSettings = { idlingRegistry = AndroidIdlingResource() }
         )
 
         scope.container<TestState, Int>(
             initialState = TestState(0),
-            settings = Container.Settings(idlingRegistry = AndroidIdlingResource())
+            buildSettings = { idlingRegistry = AndroidIdlingResource() }
         )
 
         forceIdlingResourceSync()

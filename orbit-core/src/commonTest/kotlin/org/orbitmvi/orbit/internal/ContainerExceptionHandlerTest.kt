@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("DEPRECATION")
+
 package org.orbitmvi.orbit.internal
 
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -81,7 +83,7 @@ internal class ContainerExceptionHandlerTest {
             initialState = initState,
             settings = Container.Settings(
                 exceptionHandler = exceptionHandler,
-                eventLoopDispatcher = Dispatchers.Unconfined
+                intentDispatcher = Dispatchers.Unconfined
             )
         )
         val newState = Random.nextInt()
@@ -121,7 +123,7 @@ internal class ContainerExceptionHandlerTest {
             initialState = Unit,
             settings = Container.Settings(
                 exceptionHandler = exceptionHandler,
-                eventLoopDispatcher = Dispatchers.Unconfined
+                intentDispatcher = Dispatchers.Unconfined
             )
         )
         runBlocking {
@@ -155,7 +157,7 @@ internal class ContainerExceptionHandlerTest {
                 initialState = initState,
                 settings = Container.Settings(
                     exceptionHandler = exceptionHandler,
-                    eventLoopDispatcher = Dispatchers.Unconfined
+                    intentDispatcher = Dispatchers.Unconfined
                 )
             )
         }.test(initState, isolateFlow = false)
@@ -189,7 +191,7 @@ internal class ContainerExceptionHandlerTest {
             override val container = scope.container<Int, Nothing>(
                 initialState = initState,
                 settings = Container.Settings(
-                    eventLoopDispatcher = Dispatchers.Unconfined
+                    intentDispatcher = Dispatchers.Unconfined
                 )
             )
         }.test(initState, isolateFlow = false)

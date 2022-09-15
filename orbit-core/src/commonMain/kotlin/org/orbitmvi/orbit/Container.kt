@@ -43,7 +43,7 @@ public interface Container<STATE : Any, SIDE_EFFECT : Any> {
     /**
      * Settings that the container was set up with
      */
-    public val settings: Settings
+    public val settings: RealSettings
 
     /**
      * A [StateFlow] of state updates. Emits the latest state upon subscription and serves only distinct
@@ -77,16 +77,15 @@ public interface Container<STATE : Any, SIDE_EFFECT : Any> {
      * sending many side effects and getting out of memory exceptions this can be turned down to suspend the container instead.
      * Unlimited by default.
      * @property idlingRegistry The registry used by the container for signalling idling for UI tests
-     * @property eventLoopDispatcher The dispatcher the event loop coroutine runs on
-     * @property intentLaunchingDispatcher The dispatcher used for handling incoming [orbit] intents
+     * @property intentDispatcher The dispatcher used for handling incoming [orbit] intents
      * @property repeatOnSubscribedStopTimeout A delay (in milliseconds) between the disappearance of the last subscriber and
      * the stopping of the repeatOnSubscribed block
      */
+    @Deprecated("Use the builder function in [container] or [test/liveTest]")
     public data class Settings(
         public val sideEffectBufferSize: Int = Channel.UNLIMITED,
         public val idlingRegistry: IdlingResource = NoopIdlingResource(),
-        public val eventLoopDispatcher: CoroutineDispatcher = Dispatchers.Default,
-        public val intentLaunchingDispatcher: CoroutineDispatcher = Dispatchers.Unconfined,
+        public val intentDispatcher: CoroutineDispatcher = Dispatchers.Default,
         public val exceptionHandler: CoroutineExceptionHandler? = null,
         public val repeatOnSubscribedStopTimeout: Long = 100L
     )

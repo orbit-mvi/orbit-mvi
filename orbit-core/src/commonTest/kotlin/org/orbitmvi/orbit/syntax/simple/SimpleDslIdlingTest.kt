@@ -124,7 +124,9 @@ internal class SimpleDslIdlingTest {
         return object : ContainerHost<TestState, Int> {
             override val container: Container<TestState, Int> = container(
                 initialState = TestState(0),
-                settings = Container.Settings(idlingRegistry = testIdlingResource),
+                buildSettings = {
+                    idlingRegistry = testIdlingResource
+                },
             )
         }
     }

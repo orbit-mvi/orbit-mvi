@@ -23,6 +23,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerDecorator
+import org.orbitmvi.orbit.RealSettings
 import org.orbitmvi.orbit.syntax.ContainerContext
 
 public class TestContainerDecorator<STATE : Any, SIDE_EFFECT : Any>(
@@ -36,7 +37,7 @@ public class TestContainerDecorator<STATE : Any, SIDE_EFFECT : Any>(
     public val savedIntents: Channel<(suspend () -> Unit)>
         get() = (delegate.value as? InterceptingContainerDecorator)?.savedIntents ?: Channel()
 
-    override val settings: Container.Settings
+    override val settings: RealSettings
         get() = delegate.value.settings
 
     override val stateFlow: StateFlow<STATE>
