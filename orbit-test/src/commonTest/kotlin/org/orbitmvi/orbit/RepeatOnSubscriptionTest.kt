@@ -40,7 +40,7 @@ internal class RepeatOnSubscriptionTest {
 
     @Test
     fun `test does not hang when using repeatOnSubscription`() = runBlocking {
-        val testSubject = TestMiddleware().test(initialState = initialState, settings = Container.Settings())
+        val testSubject = TestMiddleware().test(initialState = initialState)
 
         withTimeout(1000L) {
             testSubject.testIntent {

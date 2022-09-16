@@ -18,9 +18,11 @@
  * See: https://github.com/orbit-mvi/orbit-mvi/compare/c5b8b3f2b83b5972ba2ad98f73f75086a89653d3...main
  */
 
+@file:Suppress("DEPRECATION")
+
 package org.orbitmvi.orbit
 
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import org.orbitmvi.orbit.internal.TestContainerDecorator
 import org.orbitmvi.orbit.internal.TestingStrategy
 
@@ -38,34 +40,111 @@ import org.orbitmvi.orbit.internal.TestingStrategy
  * @param settings Replaces the [Container.Settings] for this test
  * @return A suspending test wrapper around [ContainerHost].
  */
+@Deprecated(message = "Use overload with settings builder instead. This will be removed in the future.")
 public fun <STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHost<STATE, SIDE_EFFECT>> CONTAINER_HOST.test(
     initialState: STATE? = null,
     isolateFlow: Boolean = true,
-    settings: Container.Settings = container.settings
+    settings: Container.Settings
 ): SuspendingTestContainerHost<STATE, SIDE_EFFECT, CONTAINER_HOST> {
     return container.findTestContainer().test(
         initialState = initialState,
-        strategy = TestingStrategy.Suspending(settings)
+        strategy = TestingStrategy.Suspending(settings.toRealSettings())
     ).let {
         SuspendingTestContainerHost(this, initialState, isolateFlow)
     }
 }
 
 /**
+ *  Puts your [ContainerHost] into suspending test mode. Intents are intercepted and executed as
+ *  suspending functions.
+ *
+ *  Allows you to test your intents in isolation. Only the intent called will actually run.
+ *  Method calls on the [ContainerHost] beyond the first will be registered but not
+ *  actually execute. This allows you to test your intents in isolation, disabling loopbacks
+ *  that might make your tests too complex.
+ *
+ * @param initialState The state to initialize the test container with. Omit this parameter to use the real initial state of the container.
+ * @param isolateFlow Whether the intent should be isolated
+ * @param buildSettings Builds the [RealSettings] for this test
+ * @return A suspending test wrapper around [ContainerHost].
+ */
+@Deprecated(message = "Use overload with settings builder instead. This will be removed in the future.")
+public fun <STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHost<STATE, SIDE_EFFECT>> CONTAINER_HOST.test(
+    initialState: STATE? = null,
+    isolateFlow: Boolean = true,
+    buildSettings: TestSettingsBuilder.() -> Unit = {},
+): SuspendingTestContainerHost<STATE, SIDE_EFFECT, CONTAINER_HOST> {
+    val settingsBuilder = TestSettingsBuilder(container.settings).apply(buildSettings)
+    return container.findTestContainer().test(
+        initialState = initialState,
+        strategy = TestingStrategy.Suspending(settingsBuilder.build())
+    ).let {
+        SuspendingTestContainerHost(this, initialState, isolateFlow)
+    }
+}
+
+/**
+ *  Puts your [ContainerHost] into suspending test mode. Intents are intercepted and executed as
+ *  suspending functions.
+ *
+ *  Allows you to test your intents in isolation. Only the intent called will actually run.
+ *  Method calls on the [ContainerHost] beyond the first will be registered but not
+ *  actually execute. This allows you to test your intents in isolation, disabling loopbacks
+ *  that might make your tests too complex.
+ *
+ * @param initialState The state to initialize the test container with. Omit this parameter to use the real initial state of the container.
+ * @param buildSettings Builds the [RealSettings] for this test
+ * @return A suspending test wrapper around [ContainerHost].
+ */
+public fun <STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHost<STATE, SIDE_EFFECT>> CONTAINER_HOST.test(
+    initialState: STATE? = null,
+    buildSettings: TestSettingsBuilder.() -> Unit = {},
+): SuspendingTestContainerHost<STATE, SIDE_EFFECT, CONTAINER_HOST> {
+    val settingsBuilder = TestSettingsBuilder(container.settings).apply(buildSettings)
+    return container.findTestContainer().test(
+        initialState = initialState,
+        strategy = TestingStrategy.Suspending(settingsBuilder.build())
+    ).let {
+        SuspendingTestContainerHost(this, initialState, settingsBuilder.isolateFlow)
+    }
+}
+
+/**
  *  Puts your [ContainerHost] into live test mode. This mode uses a real Orbit container with
- *  some basic test settings.
+ *  some basic test settings. Orbit dispatchers are overridden with [UnconfinedTestDispatcher] by default.
+ *
+ * @param initialState The state to initialize the test container with. Omit this parameter to use the real initial state of the container.
+ * @param buildSettings Builds the [RealSettings] for this test
+ * @return A live test wrapper around [ContainerHost].
+ */
+public fun <STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHost<STATE, SIDE_EFFECT>> CONTAINER_HOST.liveTest(
+    initialState: STATE? = null,
+    buildSettings: LiveTestSettingsBuilder.() -> Unit = {},
+): RegularTestContainerHost<STATE, SIDE_EFFECT, CONTAINER_HOST> {
+    return container.findTestContainer().test(
+        initialState = initialState,
+        strategy = TestingStrategy.Live(LiveTestSettingsBuilder(container.settings).apply(buildSettings).build())
+    )
+        .let {
+            RegularTestContainerHost(this, initialState)
+        }
+}
+
+/**
+ *  Puts your [ContainerHost] into live test mode. This mode uses a real Orbit container.
  *
  * @param initialState The state to initialize the test container with. Omit this parameter to use the real initial state of the container.
  * @param settings Replaces the [Container.Settings] for this test
  * @return A live test wrapper around [ContainerHost].
  */
+@Deprecated(message = "Use overload with settings builder instead. This will be removed in the future.")
 public fun <STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHost<STATE, SIDE_EFFECT>> CONTAINER_HOST.liveTest(
     initialState: STATE? = null,
-    settings: Container.Settings = container.settings.copy(intentDispatcher = Dispatchers.Unconfined)
+    settings: Container.Settings
 ): RegularTestContainerHost<STATE, SIDE_EFFECT, CONTAINER_HOST> {
     return container.findTestContainer().test(
         initialState = initialState,
-        strategy = TestingStrategy.Live(settings)
+        strategy = TestingStrategy.Live(settings.toRealSettings())
     )
         .let {
             RegularTestContainerHost(this, initialState)

@@ -29,8 +29,8 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
+import org.orbitmvi.orbit.RealSettings
 import org.orbitmvi.orbit.internal.RealContainer
 import kotlin.random.Random
 import kotlin.test.assertEquals
@@ -51,7 +51,7 @@ class ContainerHostExtensionsKtTest {
         override val container = RealContainer<Int, Int>(
             initialState = Random.nextInt(),
             parentScope = scope,
-            settings = Container.Settings(),
+            settings = RealSettings(),
             subscribedCounterOverride = testSubscribedCounter
         )
     }

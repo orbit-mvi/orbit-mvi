@@ -7,7 +7,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import org.orbitmvi.orbit.Container
+import org.orbitmvi.orbit.RealSettings
 import org.orbitmvi.orbit.internal.repeatonsubscription.Subscription
 import org.orbitmvi.orbit.internal.repeatonsubscription.TestSubscribedCounter
 import org.orbitmvi.orbit.syntax.ContainerContext
@@ -25,7 +25,7 @@ internal class SimpleDslRepeatOnSubscriptionTest {
 
     private val simpleSyntax = SimpleSyntax(
         containerContext = ContainerContext<Unit, Unit>(
-            settings = Container.Settings(),
+            settings = RealSettings(),
             postSideEffect = {},
             getState = {},
             reduce = {},

@@ -43,7 +43,7 @@ public interface Container<STATE : Any, SIDE_EFFECT : Any> {
     /**
      * Settings that the container was set up with
      */
-    public val settings: Settings
+    public val settings: RealSettings
 
     /**
      * A [StateFlow] of state updates. Emits the latest state upon subscription and serves only distinct
@@ -81,6 +81,7 @@ public interface Container<STATE : Any, SIDE_EFFECT : Any> {
      * @property repeatOnSubscribedStopTimeout A delay (in milliseconds) between the disappearance of the last subscriber and
      * the stopping of the repeatOnSubscribed block
      */
+    @Deprecated("Use the builder function in [container] or [test/liveTest]")
     public data class Settings(
         public val sideEffectBufferSize: Int = Channel.UNLIMITED,
         public val idlingRegistry: IdlingResource = NoopIdlingResource(),

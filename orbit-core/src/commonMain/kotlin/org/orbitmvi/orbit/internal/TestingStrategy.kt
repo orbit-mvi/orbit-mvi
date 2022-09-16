@@ -16,17 +16,17 @@
 
 package org.orbitmvi.orbit.internal
 
-import org.orbitmvi.orbit.Container
+import org.orbitmvi.orbit.RealSettings
 
 public sealed class TestingStrategy {
 
-    internal abstract val settings: Container.Settings
+    internal abstract val settings: RealSettings
 
     public class Suspending(
-        override val settings: Container.Settings
+        override val settings: RealSettings
     ) : TestingStrategy()
 
     public class Live(
-        override val settings: Container.Settings
+        override val settings: RealSettings
     ) : TestingStrategy()
 }

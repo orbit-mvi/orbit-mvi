@@ -24,7 +24,6 @@ import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
-import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.sample.posts.app.common.NavigationEvent
 import org.orbitmvi.orbit.sample.posts.domain.repositories.PostOverview
@@ -45,7 +44,7 @@ class PostListViewModel(
     override val container = container<PostListState, NavigationEvent>(
         initialState = PostListState(),
         savedStateHandle = savedStateHandle,
-        settings = Container.Settings(exceptionHandler = exceptionHandler)
+        buildSettings = { this.exceptionHandler = exceptionHandler }
     ) {
         if (it.overviews.isEmpty()) {
             loadOverviews()

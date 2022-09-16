@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("DEPRECATION")
+
 package org.orbitmvi.orbit.internal
 
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -158,7 +160,9 @@ internal class ContainerExceptionHandlerTest {
                     intentDispatcher = Dispatchers.Unconfined
                 )
             )
-        }.test(initState, isolateFlow = false)
+        }.test(initState) {
+            isolateFlow = false
+        }
         val newState = Random.nextInt()
 
         runBlocking {
@@ -192,7 +196,9 @@ internal class ContainerExceptionHandlerTest {
                     intentDispatcher = Dispatchers.Unconfined
                 )
             )
-        }.test(initState, isolateFlow = false)
+        }.test(initState) {
+            isolateFlow = false
+        }
 
         runBlocking {
             assertFailsWith<IllegalStateException> {
