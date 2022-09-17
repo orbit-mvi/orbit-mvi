@@ -27,7 +27,7 @@ object Versions {
     const val detektPlugin = "1.21.0"
     const val safeargs = "2.5.1"
     const val atomicfu = "0.18.3"
-    const val dokka = "1.7.10"
+    const val dokka = "1.6.10"
 
     const val kotlin = "1.7.10"
     const val coroutines = "1.6.0-native-mt"
