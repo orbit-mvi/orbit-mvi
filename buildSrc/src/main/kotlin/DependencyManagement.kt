@@ -22,7 +22,7 @@ object Versions {
 
     const val gradleVersionsPlugin = "0.42.0"
     const val gradleAndroidPlugin = "7.2.2"
-    const val gradleMavenPublishPlugin = "0.21.0"
+    const val gradleMavenPublishPlugin = "0.18.0"
     const val markdownLintPlugin = "0.6.0"
     const val detektPlugin = "1.21.0"
     const val safeargs = "2.5.1"
