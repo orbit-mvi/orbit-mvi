@@ -181,7 +181,8 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/')
         env:
             SONATYPE_REPOSITORY_ID: ${{ needs.create_staging_repository.outputs.repository_id }}
-        run: ./gradlew publish --no-daemon --no-parallel -Psigning.secretKeyRingFile=$(echo ~/.gradle/sonatype-orbitmvi-keys.gpg)
+        run: ./gradlew publish --no-daemon --no-parallel -Psigning.secretKeyRingFile=$(echo ~/.gradle/sonatype-orbitmvi-keys.gpg)\
+             -PmavenCentralUsername="${{secrets.SONATYPE_PROFILE_ID}}" -PmavenCentralPassword="${{secrets.SONATYPE_PASSWORD}}"
 
   close:
     if: startsWith(github.ref, 'refs/tags/')
