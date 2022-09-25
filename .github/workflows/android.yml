@@ -177,11 +177,22 @@ jobs:
             certutil -decode $HOME/.gradle/sonatype-orbitmvi-keys.gpg.b64 $HOME/.gradle/sonatype-orbitmvi-keys.gpg
             echo "${{secrets.GPG_GRADLE_PROPERTIES}}" > $HOME/.gradle/gradle.properties
 
+      - name: Upload to local repo
+        if: startsWith(github.ref, 'refs/tags/')
+        run: ./gradlew publishToMavenLocal --no-daemon --no-parallel -Psigning.secretKeyRingFile=$(echo ~/.gradle/sonatype-orbitmvi-keys.gpg)
+
+      - name: Archive repo
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: actions/upload-artifact@master
+        with:
+            name: repo
+            path: '~/m2/repository'
+
       - name: Upload tag
         if: startsWith(github.ref, 'refs/tags/')
         env:
             SONATYPE_REPOSITORY_ID: ${{ needs.create_staging_repository.outputs.repository_id }}
-        run: ./gradlew publish --no-daemon --no-parallel -PmavenCentralUsername="${{secrets.SONATYPE_PROFILE_ID}}" -PmavenCentralPassword="${{secrets.SONATYPE_PASSWORD}}" -Psigning.secretKeyRingFile=$(echo ~/.gradle/sonatype-orbitmvi-keys.gpg)
+        run: ./gradlew publish --no-daemon --no-parallel -PmavenCentralUsername="${{secrets.ORG_GRADLE_PROJECT_MAVENCENTRALUSERNAME}}" -PmavenCentralPassword="${{secrets.ORG_GRADLE_PROJECT_MAVENCENTRALPASSWORD}}" -Psigning.secretKeyRingFile=$(echo ~/.gradle/sonatype-orbitmvi-keys.gpg)
 
   close:
     if: startsWith(github.ref, 'refs/tags/')
