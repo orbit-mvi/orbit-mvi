@@ -14,7 +14,7 @@ testImplementation("org.orbit-mvi:orbit-test:<latest-version>")
 
 ## Testing goals
 
-Experience with Orbit 1 has taught us what works and what doesn't. This helped
+Experience with [Orbit 1](https://github.com/babylonhealth/orbit-mvi/blob/main/history.md) has taught us what works and what doesn't. This helped
 us put constraints around our tests that we hope will make your tests
 predictable and easy to write and maintain.
 
