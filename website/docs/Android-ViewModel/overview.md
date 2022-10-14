@@ -6,7 +6,7 @@ sidebar_label: 'Overview'
 # Android ViewModel module
 
 The module provides [Container](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-container/)
-  factory extensions on `ViewModel` for
+factory extensions on Android's [ViewModel](https://developer.android.com/topic/libraries/architecture/viewmodel) for:
 
 - Creating containers scoped with
   [ViewModelScope](https://developer.android.com/topic/libraries/architecture/coroutines#viewmodelscope)
