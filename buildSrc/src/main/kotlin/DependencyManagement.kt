@@ -26,11 +26,11 @@ object Versions {
     const val markdownLintPlugin = "0.6.0"
     const val detektPlugin = "1.21.0"
     const val safeargs = "2.5.1"
-    const val atomicfu = "0.18.3"
+    const val atomicfu = "0.18.5"
     const val dokka = "1.6.10"
 
-    const val kotlin = "1.7.10"
-    const val coroutines = "1.6.0-native-mt"
+    const val kotlin = "1.7.20"
+    const val coroutines = "1.6.4"
 
     const val androidxLifecycles = "2.5.1"
     const val androidxEspresso = "3.4.0"
