@@ -44,6 +44,7 @@ object Versions {
     const val jacoco = "0.8.8"
     const val junit4 = "4.13.2"
     const val robolectric = "4.8.2"
+    const val turbine = "0.12.0"
 }
 
 object ProjectDependencies {
@@ -64,6 +65,7 @@ object ProjectDependencies {
     const val androidxComposeUiTestJunit4 = "androidx.compose.ui:ui-test-junit4:${Versions.androidxCompose}"
     const val androidxComposeUiTestManifest = "androidx.compose.ui:ui-test-manifest:${Versions.androidxCompose}"
     const val androidxCoreTesting = "androidx.arch.core:core-testing:${Versions.androidxCoreTesting}"
+    const val turbine = "app.cash.turbine:turbine:${Versions.turbine}"
 
     // Tools
     const val detektFormatting = "io.gitlab.arturbosch.detekt:detekt-formatting:${Versions.detektPlugin}"

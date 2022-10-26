@@ -21,6 +21,7 @@
 include(
     "orbit-core",
     "orbit-test",
+    "orbit-test2",
     "orbit-viewmodel",
     "orbit-compose",
     "samples:orbit-calculator",
