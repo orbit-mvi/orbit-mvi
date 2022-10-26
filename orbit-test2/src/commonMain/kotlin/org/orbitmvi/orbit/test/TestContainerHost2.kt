@@ -17,32 +17,24 @@
 package org.orbitmvi.orbit.test
 
 import app.cash.turbine.ReceiveTurbine
-import app.cash.turbine.testIn
 import kotlin.coroutines.EmptyCoroutineContext
 import kotlin.test.assertEquals
 import kotlin.test.fail
-import kotlin.time.Duration.Companion.seconds
 import kotlinx.atomicfu.atomic
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.merge
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerDecorator
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.internal.LazyCreateContainerDecorator
 import org.orbitmvi.orbit.internal.TestContainerDecorator
 
-public abstract class BaseTestContainerHost2<STATE : Any, SIDE_EFFECT : Any>(
-    coroutineScope: CoroutineScope,
-    private val actual: ContainerHost<STATE, SIDE_EFFECT>,
+public abstract class BaseTestContainerHost2<STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHost<STATE, SIDE_EFFECT>>(
+    private val actual: CONTAINER_HOST,
     initialState: STATE?,
+    private val emissions: ReceiveTurbine<Item<STATE, SIDE_EFFECT>>
 ) : OrbitTestContext<STATE, SIDE_EFFECT> {
-    private val emissions: ReceiveTurbine<Item<STATE, SIDE_EFFECT>> = merge(
-        actual.container.stateFlow
-            .map<STATE, Item<STATE, SIDE_EFFECT>> { Item.StateItem(it) },
-        actual.container.sideEffectFlow
-            .map<SIDE_EFFECT, Item<STATE, SIDE_EFFECT>> { Item.SideEffectItem(it) }
-    ).testIn(scope = coroutineScope, timeout = 1.seconds)
+
+    private val onCreateAllowed = atomic(true)
 
     private lateinit var _previousState: STATE
 
@@ -52,6 +44,26 @@ public abstract class BaseTestContainerHost2<STATE : Any, SIDE_EFFECT : Any>(
         get() = _previousState
 
     protected val resolvedInitialState: STATE by lazy { initialState ?: actual.container.findTestContainer().originalInitialState }
+
+    /**
+     * Invoke `onCreate` property for the [ContainerHost] backed by [LazyCreateContainerDecorator],
+     * e.g.: created by [CoroutineScope.container]
+     */
+    protected fun runOnCreateInternal() {
+        if (!onCreateAllowed.compareAndSet(expect = true, update = false)) {
+            error("runOnCreate should only be invoked once and before any testIntent call")
+        }
+
+        actual.container.findOnCreate().invoke(resolvedInitialState)
+    }
+
+    /**
+     * Invoke an intent on the [ContainerHost] under test.
+     */
+    public fun invokeIntentInternal(action: CONTAINER_HOST.() -> Unit) {
+        onCreateAllowed.lazySet(false)
+        actual.action()
+    }
 
     override suspend fun awaitItem(): Item<STATE, SIDE_EFFECT> {
         upcomingState?.let { _previousState = it }
@@ -97,45 +109,34 @@ public abstract class BaseTestContainerHost2<STATE : Any, SIDE_EFFECT : Any>(
     }
 }
 
-public class SuspendingTestContainerHost2<STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST: ContainerHost<STATE, SIDE_EFFECT>>(
-    coroutineScope: CoroutineScope,
+public class SuspendingTestContainerHost2<STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHost<STATE, SIDE_EFFECT>>(
     private val actual: CONTAINER_HOST,
     initialState: STATE?,
     private val isolateFlow: Boolean,
-) : BaseTestContainerHost2<STATE, SIDE_EFFECT>(
-    coroutineScope, actual, initialState
+    emissions: ReceiveTurbine<Item<STATE, SIDE_EFFECT>>
+) : BaseTestContainerHost2<STATE, SIDE_EFFECT, CONTAINER_HOST>(
+    actual, initialState, emissions
 ) {
-
-    private val onCreateAllowed = atomic(true)
-
     /**
      * Invoke `onCreate` property for the [ContainerHost] backed by [LazyCreateContainerDecorator],
      * e.g.: created by [CoroutineScope.container]
      */
     public suspend fun runOnCreate() {
-        if (!onCreateAllowed.compareAndSet(expect = true, update = false)) {
-            error("runOnCreate should only be invoked once and before any testIntent call")
-        }
-        actual.container.findOnCreate().invoke(resolvedInitialState)
-        actual.suspendingIntent(shouldIsolateFlow = false) {}
+        super.runOnCreateInternal()
+        actual.suspendingIntent(shouldIsolateFlow = false)
     }
 
     /**
      * Invoke an intent on the [ContainerHost] under test as a suspending function.
      */
     public suspend fun invokeIntent(action: CONTAINER_HOST.() -> Unit) {
-        onCreateAllowed.lazySet(false)
-        actual.suspendingIntent(isolateFlow, action)
+        super.invokeIntentInternal(action)
+        actual.suspendingIntent(isolateFlow)
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    private suspend fun CONTAINER_HOST.suspendingIntent(
-        shouldIsolateFlow: Boolean,
-        block: CONTAINER_HOST.() -> Unit
-    ) {
+    private suspend fun CONTAINER_HOST.suspendingIntent(shouldIsolateFlow: Boolean) {
         val testContainer = container.findTestContainer()
-
-        this.block() // Invoke the Intent
 
         var firstIntentExecuted = false
         while (!testContainer.savedIntents.isEmpty) {
@@ -153,34 +154,27 @@ public class SuspendingTestContainerHost2<STATE : Any, SIDE_EFFECT : Any, CONTAI
     }
 }
 
-public class RegularTestContainerHost2<STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST: ContainerHost<STATE, SIDE_EFFECT>>(
-    coroutineScope: CoroutineScope,
-    private val actual: CONTAINER_HOST,
-    initialState: STATE?
-) : BaseTestContainerHost2<STATE, SIDE_EFFECT>(
-    coroutineScope, actual, initialState
+public class RegularTestContainerHost2<STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHost<STATE, SIDE_EFFECT>>(
+    actual: CONTAINER_HOST,
+    initialState: STATE?,
+    emissions: ReceiveTurbine<Item<STATE, SIDE_EFFECT>>
+) : BaseTestContainerHost2<STATE, SIDE_EFFECT, CONTAINER_HOST>(
+    actual, initialState, emissions
 ) {
-
-    private val onCreateAllowed = atomic(true)
 
     /**
      * Invoke `onCreate` property for the [ContainerHost] backed by [LazyCreateContainerDecorator],
      * e.g.: created by [CoroutineScope.container]
      */
     public fun runOnCreate() {
-        if (!onCreateAllowed.compareAndSet(expect = true, update = false)) {
-            error("runOnCreate should only be invoked once and before any testIntent call")
-        }
-
-        actual.container.findOnCreate().invoke(resolvedInitialState)
+        super.runOnCreateInternal()
     }
 
     /**
      * Invoke an intent on the [ContainerHost] under test.
      */
     public fun invokeIntent(action: CONTAINER_HOST.() -> Unit) {
-        onCreateAllowed.lazySet(false)
-        actual.action()
+        super.invokeIntentInternal(action)
     }
 }
 

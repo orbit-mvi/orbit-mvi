@@ -20,8 +20,11 @@
 
 package org.orbitmvi.orbit.test
 
+import app.cash.turbine.test
+import app.cash.turbine.testIn
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.merge
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.internal.TestingStrategy
 
@@ -47,12 +50,16 @@ public suspend fun <STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHo
     container.findTestContainer().test(
         initialState = initialState,
         strategy = TestingStrategy.Suspending(settingsBuilder.build())
-    ).let {
-        coroutineScope {
-            SuspendingTestContainerHost2(this, this@turbineTest, initialState, settingsBuilder.isolateFlow).apply {
-                validate(this)
-                cancel()
-            }
+    )
+
+    mergedFlow().test {
+        SuspendingTestContainerHost2(
+            this@turbineTest,
+            initialState,
+            settingsBuilder.isolateFlow,
+            this
+        ).apply {
+            validate(this)
         }
     }
 }
@@ -74,14 +81,15 @@ public suspend fun <STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHo
         initialState = initialState,
         strategy = TestingStrategy.Live(settingsBuilder.build())
     )
-        .let {
-            coroutineScope {
-                RegularTestContainerHost2(this, this@turbineLiveTest, initialState).apply {
-                    validate(this)
-                    cancel()
-                }
-            }
+    mergedFlow().test {
+        RegularTestContainerHost2(
+            this@turbineLiveTest,
+            initialState,
+            this
+        ).apply {
+            validate(this)
         }
+    }
 }
 
 /**
@@ -107,9 +115,13 @@ public fun <STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHost<STATE
     return container.findTestContainer().test(
         initialState = initialState,
         strategy = TestingStrategy.Suspending(settingsBuilder.build())
-    ).let {
-        SuspendingTestContainerHost2(coroutineScope, this, initialState, settingsBuilder.isolateFlow)
-    }
+    )
+        .let {
+            mergedFlow().testIn(coroutineScope)
+        }
+        .let {
+            SuspendingTestContainerHost2(this, initialState, settingsBuilder.isolateFlow, it)
+        }
 }
 
 /**
@@ -130,6 +142,17 @@ public fun <STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHost<STATE
         strategy = TestingStrategy.Live(settingsBuilder.build())
     )
         .let {
-            RegularTestContainerHost2(coroutineScope, this, initialState)
+            mergedFlow().testIn(coroutineScope)
+        }
+        .let {
+            RegularTestContainerHost2(this, initialState, it)
         }
 }
+
+private fun <STATE : Any, SIDE_EFFECT : Any> ContainerHost<STATE, SIDE_EFFECT>.mergedFlow() =
+    merge(
+        container.stateFlow
+            .map<STATE, Item<STATE, SIDE_EFFECT>> { Item.StateItem(it) },
+        container.sideEffectFlow
+            .map<SIDE_EFFECT, Item<STATE, SIDE_EFFECT>> { Item.SideEffectItem(it) }
+    )
