@@ -20,7 +20,7 @@
 
 package org.orbitmvi.orbit.syntax.simple
 
-import org.orbitmvi.orbit.syntax.OrbitDsl
+import org.orbitmvi.orbit.annotation.OrbitDsl
 
 /**
  * Represents the current context in which a simple orbit is executing.

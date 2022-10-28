@@ -26,6 +26,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
 import org.orbitmvi.orbit.ContainerHost
+import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.internal.TestingStrategy
 
 /**
@@ -41,20 +42,22 @@ import org.orbitmvi.orbit.internal.TestingStrategy
  * @param buildSettings Builds the [RealSettings] for this test
  * @return A suspending test wrapper around [ContainerHost].
  */
-public suspend fun <STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHost<STATE, SIDE_EFFECT>> CONTAINER_HOST.turbineTest(
+@OrbitExperimental
+public suspend fun <STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHost<STATE, SIDE_EFFECT>> CONTAINER_HOST.test(
     initialState: STATE? = null,
-    buildSettings: TestSettingsBuilder2.() -> Unit = {},
-    validate: suspend SuspendingTestContainerHost2<STATE, SIDE_EFFECT, CONTAINER_HOST>.() -> Unit
+    buildSettings: TestSettingsBuilder.() -> Unit = {},
+    validate: suspend SuspendingTestContainerHost<STATE, SIDE_EFFECT, CONTAINER_HOST>.() -> Unit
 ) {
-    val settingsBuilder = TestSettingsBuilder2(container.settings).apply(buildSettings)
+    val settingsBuilder = TestSettingsBuilder(container.settings).apply(buildSettings)
     container.findTestContainer().test(
         initialState = initialState,
         strategy = TestingStrategy.Suspending(settingsBuilder.build())
     )
+    val containerHost = this
 
     mergedFlow().test {
-        SuspendingTestContainerHost2(
-            this@turbineTest,
+        SuspendingTestContainerHost(
+            containerHost,
             initialState,
             settingsBuilder.isolateFlow,
             this
@@ -71,19 +74,20 @@ public suspend fun <STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHo
  * @param settings Replaces the [Container.Settings] for this test
  * @return A live test wrapper around [ContainerHost].
  */
-public suspend fun <STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHost<STATE, SIDE_EFFECT>> CONTAINER_HOST.turbineLiveTest(
+@OrbitExperimental
+public suspend fun <STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHost<STATE, SIDE_EFFECT>> CONTAINER_HOST.liveTest(
     initialState: STATE? = null,
-    buildSettings: LiveTestSettingsBuilder2.() -> Unit = {},
-    validate: suspend RegularTestContainerHost2<STATE, SIDE_EFFECT, CONTAINER_HOST>.() -> Unit
+    buildSettings: LiveTestSettingsBuilder.() -> Unit = {},
+    validate: suspend RegularTestContainerHost<STATE, SIDE_EFFECT, CONTAINER_HOST>.() -> Unit
 ) {
-    val settingsBuilder = LiveTestSettingsBuilder2(container.settings).apply(buildSettings)
+    val settingsBuilder = LiveTestSettingsBuilder(container.settings).apply(buildSettings)
     container.findTestContainer().test(
         initialState = initialState,
         strategy = TestingStrategy.Live(settingsBuilder.build())
     )
     mergedFlow().test {
-        RegularTestContainerHost2(
-            this@turbineLiveTest,
+        RegularTestContainerHost(
+            this@liveTest,
             initialState,
             this
         ).apply {
@@ -105,12 +109,13 @@ public suspend fun <STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHo
  * @param buildSettings Builds the [RealSettings] for this test
  * @return A suspending test wrapper around [ContainerHost].
  */
-public fun <STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHost<STATE, SIDE_EFFECT>> CONTAINER_HOST.turbineTestIn(
+@OrbitExperimental
+public fun <STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHost<STATE, SIDE_EFFECT>> CONTAINER_HOST.testInScope(
     coroutineScope: CoroutineScope,
     initialState: STATE? = null,
-    buildSettings: TestSettingsBuilder2.() -> Unit = {}
-): SuspendingTestContainerHost2<STATE, SIDE_EFFECT, CONTAINER_HOST> {
-    val settingsBuilder = TestSettingsBuilder2(container.settings).apply(buildSettings)
+    buildSettings: TestSettingsBuilder.() -> Unit = {}
+): SuspendingTestContainerHost<STATE, SIDE_EFFECT, CONTAINER_HOST> {
+    val settingsBuilder = TestSettingsBuilder(container.settings).apply(buildSettings)
 
     return container.findTestContainer().test(
         initialState = initialState,
@@ -120,7 +125,7 @@ public fun <STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHost<STATE
             mergedFlow().testIn(coroutineScope)
         }
         .let {
-            SuspendingTestContainerHost2(this, initialState, settingsBuilder.isolateFlow, it)
+            SuspendingTestContainerHost(this, initialState, settingsBuilder.isolateFlow, it)
         }
 }
 
@@ -131,12 +136,13 @@ public fun <STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHost<STATE
  * @param settings Replaces the [Container.Settings] for this test
  * @return A live test wrapper around [ContainerHost].
  */
-public fun <STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHost<STATE, SIDE_EFFECT>> CONTAINER_HOST.turbineLiveTestIn(
+@OrbitExperimental
+public fun <STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHost<STATE, SIDE_EFFECT>> CONTAINER_HOST.liveTestInScope(
     coroutineScope: CoroutineScope,
     initialState: STATE? = null,
-    buildSettings: LiveTestSettingsBuilder2.() -> Unit = {}
-): RegularTestContainerHost2<STATE, SIDE_EFFECT, CONTAINER_HOST> {
-    val settingsBuilder = LiveTestSettingsBuilder2(container.settings).apply(buildSettings)
+    buildSettings: LiveTestSettingsBuilder.() -> Unit = {}
+): RegularTestContainerHost<STATE, SIDE_EFFECT, CONTAINER_HOST> {
+    val settingsBuilder = LiveTestSettingsBuilder(container.settings).apply(buildSettings)
     return container.findTestContainer().test(
         initialState = initialState,
         strategy = TestingStrategy.Live(settingsBuilder.build())
@@ -145,7 +151,7 @@ public fun <STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHost<STATE
             mergedFlow().testIn(coroutineScope)
         }
         .let {
-            RegularTestContainerHost2(this, initialState, it)
+            RegularTestContainerHost(this, initialState, it)
         }
 }
 

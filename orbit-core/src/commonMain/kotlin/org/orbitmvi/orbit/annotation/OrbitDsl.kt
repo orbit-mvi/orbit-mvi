@@ -18,7 +18,7 @@
  * See: https://github.com/orbit-mvi/orbit-mvi/compare/c5b8b3f2b83b5972ba2ad98f73f75086a89653d3...main
  */
 
-package org.orbitmvi.orbit.syntax
+package org.orbitmvi.orbit.annotation
 
 @DslMarker
 public annotation class OrbitDsl

@@ -29,9 +29,11 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
 import org.orbitmvi.orbit.ContainerHost
+import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.container
 import org.orbitmvi.orbit.syntax.simple.intent
 
+@OptIn(OrbitExperimental::class)
 @ExperimentalCoroutinesApi
 internal class GeneralTest {
     private val initialState = State(Random.nextInt())
@@ -41,7 +43,7 @@ internal class GeneralTest {
         val mockDependency = FakeDependency()
         val testSubject = createMiddleware(mockDependency)
 
-        testSubject.turbineTest(initialState) {
+        testSubject.test(initialState) {
             expectInitialState()
         }
 
@@ -52,7 +54,7 @@ internal class GeneralTest {
     fun `created is invoked upon request`() = runTest {
 
         val mockDependency = FakeDependency()
-        val testSubject = createMiddleware(mockDependency).turbineTestIn(this, initialState = initialState)
+        val testSubject = createMiddleware(mockDependency).testInScope(this, initialState = initialState)
 
         testSubject.expectInitialState()
         testSubject.runOnCreate()
@@ -67,7 +69,7 @@ internal class GeneralTest {
         val mockDependency = FakeDependency()
         val testSubject = createMiddleware(mockDependency)
 
-        testSubject.turbineTest(initialState = initialState) {
+        testSubject.test(initialState = initialState) {
             expectInitialState()
             runOnCreate()
         }
@@ -79,7 +81,7 @@ internal class GeneralTest {
     fun `created is not invoked by default in live test`() = runTest {
 
         val mockDependency = FakeDependency()
-        createMiddleware(mockDependency).turbineLiveTest(initialState = initialState) {
+        createMiddleware(mockDependency).liveTest(initialState = initialState) {
             expectInitialState()
             assertEquals(false, mockDependency.createCalled.value)
         }
@@ -89,7 +91,7 @@ internal class GeneralTest {
     fun `created is invoked upon request in live test`() = runTest {
 
         val mockDependency = FakeDependency()
-        val testSubject = createMiddleware(mockDependency).turbineLiveTestIn(this, initialState = initialState)
+        val testSubject = createMiddleware(mockDependency).liveTestInScope(this, initialState = initialState)
 
         testSubject.runOnCreate()
 
@@ -104,7 +106,7 @@ internal class GeneralTest {
 
         val mockDependency = FakeDependency()
         val testSubject = createMiddleware(mockDependency)
-        val testContainerHost = testSubject.turbineTestIn(this, initialState = initialState)
+        val testContainerHost = testSubject.testInScope(this, initialState = initialState)
 
         testContainerHost.expectInitialState()
         testContainerHost.invokeIntent { something() }
@@ -119,7 +121,7 @@ internal class GeneralTest {
 
         val mockDependency = FakeDependency()
         val testSubject = createMiddleware(mockDependency)
-        val testContainerHost = testSubject.turbineTestIn(this, initialState = initialState, buildSettings = { isolateFlow = true })
+        val testContainerHost = testSubject.testInScope(this, initialState = initialState, buildSettings = { isolateFlow = true })
 
         testContainerHost.invokeIntent { something() }
         testContainerHost.expectInitialState()
@@ -133,7 +135,7 @@ internal class GeneralTest {
     fun `initial state can be omitted from test`() = runTest {
 
         val testSubject = createMiddleware()
-        val testContainerHost = testSubject.turbineTestIn(this)
+        val testContainerHost = testSubject.testInScope(this)
 
         val state = testContainerHost.awaitState()
         testContainerHost.cancel()
