@@ -19,12 +19,7 @@ module.exports = {
                 alt: 'Orbit Logo',
                 src: 'img/orbit.svg',
             },
-            items: [{
-                type: 'doc',
-                docId: 'intro',
-                position: 'left',
-                label: 'Docs',
-            },
+            items: [
             {
                 href: 'https://github.com/orbit-mvi/orbit-mvi',
                 label: 'GitHub',
