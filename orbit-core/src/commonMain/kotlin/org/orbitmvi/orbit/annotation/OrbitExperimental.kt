@@ -1,6 +1,5 @@
 /*
- * Copyright 2021 Mikołaj Leszczyński & Appmattus Limited
- * Copyright 2020 Babylon Partners Limited
+ * Copyright 2022 Mikołaj Leszczyński & Appmattus Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,15 +16,9 @@
  * File modified by Mikołaj Leszczyński & Appmattus Limited
  * See: https://github.com/orbit-mvi/orbit-mvi/compare/c5b8b3f2b83b5972ba2ad98f73f75086a89653d3...main
  */
+package org.orbitmvi.orbit.annotation
 
-package org.orbitmvi.orbit.syntax.simple
-
-import org.orbitmvi.orbit.annotation.OrbitDsl
-
-/**
- * Represents the current context in which a simple orbit is executing.
- *
- * @property state The current state of the container
- */
-@OrbitDsl
-public data class SimpleContext<STATE : Any>(public val state: STATE)
+@RequiresOptIn(message = "This in an experimental API and may be subject to change.", level = RequiresOptIn.Level.WARNING)
+@Retention(AnnotationRetention.BINARY)
+@Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION)
+public annotation class OrbitExperimental

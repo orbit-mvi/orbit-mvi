@@ -28,4 +28,8 @@ public class InterceptingContainerDecorator<STATE : Any, SIDE_EFFECT : Any>(
     override suspend fun orbit(orbitIntent: suspend ContainerContext<STATE, SIDE_EFFECT>.() -> Unit) {
         savedIntents.send { actual.pluginContext.orbitIntent() }
     }
+
+    override suspend fun inlineOrbit(orbitIntent: suspend ContainerContext<STATE, SIDE_EFFECT>.() -> Unit) {
+        savedIntents.send { actual.pluginContext.orbitIntent() }
+    }
 }

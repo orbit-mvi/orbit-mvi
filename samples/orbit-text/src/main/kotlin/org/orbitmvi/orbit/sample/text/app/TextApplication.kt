@@ -1,6 +1,5 @@
 /*
- * Copyright 2021 Mikołaj Leszczyński & Appmattus Limited
- * Copyright 2020 Babylon Partners Limited
+ * Copyright 2022 Mikołaj Leszczyński & Appmattus Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,14 +17,9 @@
  * See: https://github.com/orbit-mvi/orbit-mvi/compare/c5b8b3f2b83b5972ba2ad98f73f75086a89653d3...main
  */
 
-package org.orbitmvi.orbit.syntax.simple
+package org.orbitmvi.orbit.sample.text.app
 
-import org.orbitmvi.orbit.annotation.OrbitDsl
+import android.app.Application
 
-/**
- * Represents the current context in which a simple orbit is executing.
- *
- * @property state The current state of the container
- */
-@OrbitDsl
-public data class SimpleContext<STATE : Any>(public val state: STATE)
+@Suppress("unused")
+class TextApplication : Application()
