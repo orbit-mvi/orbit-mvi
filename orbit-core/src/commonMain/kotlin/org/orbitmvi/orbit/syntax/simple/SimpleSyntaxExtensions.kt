@@ -27,9 +27,10 @@ import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
+import org.orbitmvi.orbit.annotation.OrbitDsl
+import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.idling.withIdling
 import org.orbitmvi.orbit.internal.runBlocking
-import org.orbitmvi.orbit.syntax.OrbitDsl
 
 /**
  * Reducers reduce the current state and incoming events to produce a new state.
@@ -70,6 +71,28 @@ public fun <STATE : Any, SIDE_EFFECT : Any> ContainerHost<STATE, SIDE_EFFECT>.in
 ): Unit =
     runBlocking {
         container.orbit {
+            withIdling(registerIdling) {
+                SimpleSyntax(this).transformer()
+            }
+        }
+    }
+
+/**
+ * Build and execute an intent on [Container] in a blocking manner, without dispatching.
+ *
+ * This API is reserved for special cases e.g. storing text input in the state.
+ *
+ * @param registerIdling whether to register an idling resource when executing this intent. Defaults to true.
+ * @param transformer lambda representing the transformer
+ */
+@OrbitDsl
+@OrbitExperimental
+public fun <STATE : Any, SIDE_EFFECT : Any> ContainerHost<STATE, SIDE_EFFECT>.blockingIntent(
+    registerIdling: Boolean = true,
+    transformer: suspend SimpleSyntax<STATE, SIDE_EFFECT>.() -> Unit
+): Unit =
+    runBlocking {
+        container.inlineOrbit {
             withIdling(registerIdling) {
                 SimpleSyntax(this).transformer()
             }

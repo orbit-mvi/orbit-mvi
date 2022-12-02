@@ -26,6 +26,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
+import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.idling.IdlingResource
 import org.orbitmvi.orbit.idling.NoopIdlingResource
 import org.orbitmvi.orbit.syntax.ContainerContext
@@ -69,6 +70,14 @@ public interface Container<STATE : Any, SIDE_EFFECT : Any> {
      * @param orbitIntent lambda returning the suspend function representing the intent
      */
     public suspend fun orbit(orbitIntent: suspend ContainerContext<STATE, SIDE_EFFECT>.() -> Unit)
+
+    /**
+     * Executes an orbit intent inline, circumventing orbit's dispatching. The intents are built in the [ContainerHost] using your chosen syntax.
+     *
+     * @param orbitIntent lambda returning the suspend function representing the intent
+     */
+    @OrbitExperimental
+    public suspend fun inlineOrbit(orbitIntent: suspend ContainerContext<STATE, SIDE_EFFECT>.() -> Unit)
 
     /**
      * Represents additional settings to create the container with.

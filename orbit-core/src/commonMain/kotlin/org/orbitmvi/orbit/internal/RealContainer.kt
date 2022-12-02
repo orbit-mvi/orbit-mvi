@@ -37,6 +37,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.RealSettings
+import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.internal.repeatonsubscription.DelayingSubscribedCounter
 import org.orbitmvi.orbit.internal.repeatonsubscription.SubscribedCounter
 import org.orbitmvi.orbit.internal.repeatonsubscription.refCount
@@ -78,6 +79,12 @@ public class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
     override suspend fun orbit(orbitIntent: suspend ContainerContext<STATE, SIDE_EFFECT>.() -> Unit) {
         initialiseIfNeeded()
         dispatchChannel.send(orbitIntent)
+    }
+
+    @OrbitExperimental
+    override suspend fun inlineOrbit(orbitIntent: suspend ContainerContext<STATE, SIDE_EFFECT>.() -> Unit) {
+        initialiseIfNeeded()
+        pluginContext.orbitIntent()
     }
 
     @OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
