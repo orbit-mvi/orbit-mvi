@@ -1,0 +1,4 @@
+# Orbit Sample - Posts
+
+This sample presents how to store text within state produced by
+[Orbit MVI](https://github.com/orbit-mvi/orbit-mvi).

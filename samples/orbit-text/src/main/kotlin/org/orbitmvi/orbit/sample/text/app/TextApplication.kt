@@ -13,9 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.orbitmvi.orbit.annotation
 
-@RequiresOptIn(message = "This is an experimental API and may be subject to change.", level = RequiresOptIn.Level.WARNING)
-@Retention(AnnotationRetention.BINARY)
-@Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION)
-public annotation class OrbitExperimental
+package org.orbitmvi.orbit.sample.text.app
+
+import android.app.Application
+
+@Suppress("unused")
+class TextApplication : Application()

@@ -6,14 +6,14 @@ sidebar_label: 'Overview'
 # Android ViewModel module
 
 The module provides [Container](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-container/)
-  factory extensions on `ViewModel` for
+factory extensions on Android's [ViewModel](https://developer.android.com/topic/libraries/architecture/viewmodel) for:
 
-- creating containers scoped with
-  [ViewModelScope](https://developer.android.com/topic/libraries/architecture/coroutines)
+- Creating containers scoped with
+  [ViewModelScope](https://developer.android.com/topic/libraries/architecture/coroutines#viewmodelscope)
   to automatically cancel the
   [Container](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-container/)
   whenever the `ViewModel` is cleared.
-- saved state functionality via Jetpack's
+- Saved state functionality via Jetpack's
   [Saved State module for ViewModel](https://developer.android.com/topic/libraries/architecture/viewmodel-savedstate)
   to automatically save and restore the
   [Container](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-container/)
