@@ -44,7 +44,7 @@ object Versions {
     const val jacoco = "0.8.8"
     const val junit4 = "4.13.2"
     const val robolectric = "4.8.2"
-    const val turbine = "0.12.0"
+    const val turbine = "0.12.1"
 }
 
 object ProjectDependencies {

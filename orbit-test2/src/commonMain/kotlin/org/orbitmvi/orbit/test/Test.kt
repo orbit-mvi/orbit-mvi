@@ -21,45 +21,44 @@
 package org.orbitmvi.orbit.test
 
 import app.cash.turbine.test
-import app.cash.turbine.testIn
-import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
+import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.TestScope
 import org.orbitmvi.orbit.ContainerHost
+import org.orbitmvi.orbit.RealSettings
 import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.internal.TestingStrategy
 
 /**
- *  Puts your [ContainerHost] into suspending test mode. Intents are intercepted and executed as
- *  suspending functions.
- *
- *  Allows you to test your intents in isolation. Only the intent called will actually run.
- *  Method calls on the [ContainerHost] beyond the first will be registered but not
- *  actually execute. This allows you to test your intents in isolation, disabling loopbacks
- *  that might make your tests too complex.
+ *  Puts your [ContainerHost] into live test mode. This mode uses a real Orbit container.
  *
  * @param initialState The state to initialize the test container with. Omit this parameter to use the real initial state of the container.
- * @param buildSettings Builds the [RealSettings] for this test
- * @return A suspending test wrapper around [ContainerHost].
+ * @param settings Replaces the [Container.Settings] for this test
+ * @return A live test wrapper around [ContainerHost].
  */
+@OptIn(ExperimentalStdlibApi::class, ExperimentalCoroutinesApi::class)
 @OrbitExperimental
 public suspend fun <STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHost<STATE, SIDE_EFFECT>> CONTAINER_HOST.test(
+    testScope: TestScope,
     initialState: STATE? = null,
-    buildSettings: TestSettingsBuilder.() -> Unit = {},
-    validate: suspend SuspendingTestContainerHost<STATE, SIDE_EFFECT, CONTAINER_HOST>.() -> Unit
+    settings: LiveTestSettings = LiveTestSettings(),
+    validate: suspend TestContainerHost<STATE, SIDE_EFFECT, CONTAINER_HOST>.() -> Unit
 ) {
-    val settingsBuilder = TestSettingsBuilder(container.settings).apply(buildSettings)
+    val containerHost = this
+    val testDispatcher = testScope.backgroundScope.coroutineContext[CoroutineDispatcher.Key]
+
     container.findTestContainer().test(
         initialState = initialState,
-        strategy = TestingStrategy.Suspending(settingsBuilder.build())
+        strategy = TestingStrategy.Live(settings.toRealSettings(testDispatcher)),
+        testScope = testScope.backgroundScope
     )
-    val containerHost = this
-
     mergedFlow().test {
-        SuspendingTestContainerHost(
+        TestContainerHost(
             containerHost,
             initialState,
-            settingsBuilder.isolateFlow,
             this
         ).apply {
             validate(this)
@@ -67,92 +66,16 @@ public suspend fun <STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHo
     }
 }
 
-/**
- *  Puts your [ContainerHost] into live test mode. This mode uses a real Orbit container.
- *
- * @param initialState The state to initialize the test container with. Omit this parameter to use the real initial state of the container.
- * @param settings Replaces the [Container.Settings] for this test
- * @return A live test wrapper around [ContainerHost].
- */
-@OrbitExperimental
-public suspend fun <STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHost<STATE, SIDE_EFFECT>> CONTAINER_HOST.liveTest(
-    initialState: STATE? = null,
-    buildSettings: LiveTestSettingsBuilder.() -> Unit = {},
-    validate: suspend RegularTestContainerHost<STATE, SIDE_EFFECT, CONTAINER_HOST>.() -> Unit
-) {
-    val settingsBuilder = LiveTestSettingsBuilder(container.settings).apply(buildSettings)
-    container.findTestContainer().test(
-        initialState = initialState,
-        strategy = TestingStrategy.Live(settingsBuilder.build())
-    )
-    mergedFlow().test {
-        RegularTestContainerHost(
-            this@liveTest,
-            initialState,
-            this
-        ).apply {
-            validate(this)
-        }
-    }
-}
+@OptIn(ExperimentalCoroutinesApi::class)
+private fun LiveTestSettings.toRealSettings(testDispatcher: CoroutineDispatcher?): RealSettings {
+    val dispatcher = testDispatcher ?: StandardTestDispatcher()
 
-/**
- *  Puts your [ContainerHost] into suspending test mode. Intents are intercepted and executed as
- *  suspending functions.
- *
- *  Allows you to test your intents in isolation. Only the intent called will actually run.
- *  Method calls on the [ContainerHost] beyond the first will be registered but not
- *  actually execute. This allows you to test your intents in isolation, disabling loopbacks
- *  that might make your tests too complex.
- *
- * @param initialState The state to initialize the test container with. Omit this parameter to use the real initial state of the container.
- * @param buildSettings Builds the [RealSettings] for this test
- * @return A suspending test wrapper around [ContainerHost].
- */
-@OrbitExperimental
-public fun <STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHost<STATE, SIDE_EFFECT>> CONTAINER_HOST.testInScope(
-    coroutineScope: CoroutineScope,
-    initialState: STATE? = null,
-    buildSettings: TestSettingsBuilder.() -> Unit = {}
-): SuspendingTestContainerHost<STATE, SIDE_EFFECT, CONTAINER_HOST> {
-    val settingsBuilder = TestSettingsBuilder(container.settings).apply(buildSettings)
-
-    return container.findTestContainer().test(
-        initialState = initialState,
-        strategy = TestingStrategy.Suspending(settingsBuilder.build())
+    return RealSettings(
+        eventLoopDispatcher = dispatcher,
+        intentLaunchingDispatcher = dispatcher,
+        exceptionHandler = exceptionHandlerOverride,
+        repeatOnSubscribedStopTimeout = 0L
     )
-        .let {
-            mergedFlow().testIn(coroutineScope)
-        }
-        .let {
-            SuspendingTestContainerHost(this, initialState, settingsBuilder.isolateFlow, it)
-        }
-}
-
-/**
- *  Puts your [ContainerHost] into live test mode. This mode uses a real Orbit container.
- *
- * @param initialState The state to initialize the test container with. Omit this parameter to use the real initial state of the container.
- * @param settings Replaces the [Container.Settings] for this test
- * @return A live test wrapper around [ContainerHost].
- */
-@OrbitExperimental
-public fun <STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHost<STATE, SIDE_EFFECT>> CONTAINER_HOST.liveTestInScope(
-    coroutineScope: CoroutineScope,
-    initialState: STATE? = null,
-    buildSettings: LiveTestSettingsBuilder.() -> Unit = {}
-): RegularTestContainerHost<STATE, SIDE_EFFECT, CONTAINER_HOST> {
-    val settingsBuilder = LiveTestSettingsBuilder(container.settings).apply(buildSettings)
-    return container.findTestContainer().test(
-        initialState = initialState,
-        strategy = TestingStrategy.Live(settingsBuilder.build())
-    )
-        .let {
-            mergedFlow().testIn(coroutineScope)
-        }
-        .let {
-            RegularTestContainerHost(this, initialState, it)
-        }
 }
 
 private fun <STATE : Any, SIDE_EFFECT : Any> ContainerHost<STATE, SIDE_EFFECT>.mergedFlow() =

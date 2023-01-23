@@ -20,9 +20,6 @@
 
 package org.orbitmvi.orbit.test
 
-import kotlin.random.Random
-import kotlin.test.Test
-import kotlin.test.assertEquals
 import kotlinx.atomicfu.atomic
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -32,18 +29,20 @@ import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.container
 import org.orbitmvi.orbit.syntax.simple.intent
+import org.orbitmvi.orbit.syntax.simple.reduce
+import kotlin.random.Random
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
 @OptIn(OrbitExperimental::class)
 @ExperimentalCoroutinesApi
-internal class GeneralTest {
+internal class InitTest {
     private val initialState = State(Random.nextInt())
 
     @Test
     fun `created is not invoked by default`() = runTest {
         val mockDependency = FakeDependency()
-        val testSubject = createMiddleware(mockDependency)
-
-        testSubject.test(initialState) {
+        createMiddleware(mockDependency).test(this, initialState) {
             expectInitialState()
         }
 
@@ -54,22 +53,7 @@ internal class GeneralTest {
     fun `created is invoked upon request`() = runTest {
 
         val mockDependency = FakeDependency()
-        val testSubject = createMiddleware(mockDependency).testInScope(this, initialState = initialState)
-
-        testSubject.expectInitialState()
-        testSubject.runOnCreate()
-        testSubject.cancel()
-
-        assertEquals(true, mockDependency.createCalled.value)
-    }
-
-    @Test
-    fun `created is invoked upon request 2`() = runTest {
-
-        val mockDependency = FakeDependency()
-        val testSubject = createMiddleware(mockDependency)
-
-        testSubject.test(initialState = initialState) {
+        createMiddleware(mockDependency).test(this, initialState = initialState) {
             expectInitialState()
             runOnCreate()
         }
@@ -78,69 +62,11 @@ internal class GeneralTest {
     }
 
     @Test
-    fun `created is not invoked by default in live test`() = runTest {
-
-        val mockDependency = FakeDependency()
-        createMiddleware(mockDependency).liveTest(initialState = initialState) {
-            expectInitialState()
-            assertEquals(false, mockDependency.createCalled.value)
-        }
-    }
-
-    @Test
-    fun `created is invoked upon request in live test`() = runTest {
-
-        val mockDependency = FakeDependency()
-        val testSubject = createMiddleware(mockDependency).liveTestInScope(this, initialState = initialState)
-
-        testSubject.runOnCreate()
-
-        testSubject.expectInitialState()
-        testSubject.cancel()
-
-        assertEquals(true, mockDependency.createCalled.value)
-    }
-
-    @Test
-    fun `first intent is not isolated by default`() = runTest {
-
-        val mockDependency = FakeDependency()
-        val testSubject = createMiddleware(mockDependency)
-        val testContainerHost = testSubject.testInScope(this, initialState = initialState)
-
-        testContainerHost.expectInitialState()
-        testContainerHost.invokeIntent { something() }
-        testContainerHost.cancel()
-
-        assertEquals(true, (testSubject.dependency as FakeDependency).something1Called.value)
-        assertEquals(true, testSubject.dependency.something2Called.value)
-    }
-
-    @Test
-    fun `first intent can be isolated`() = runTest {
-
-        val mockDependency = FakeDependency()
-        val testSubject = createMiddleware(mockDependency)
-        val testContainerHost = testSubject.testInScope(this, initialState = initialState, buildSettings = { isolateFlow = true })
-
-        testContainerHost.invokeIntent { something() }
-        testContainerHost.expectInitialState()
-
-        assertEquals(true, (testSubject.dependency as FakeDependency).something1Called.value)
-        assertEquals(false, testSubject.dependency.something2Called.value)
-        testContainerHost.cancel()
-    }
-
-    @Test
     fun `initial state can be omitted from test`() = runTest {
 
-        val testSubject = createMiddleware()
-        val testContainerHost = testSubject.testInScope(this)
-
-        val state = testContainerHost.awaitState()
-        testContainerHost.cancel()
-
-        assertEquals(initialState, state)
+        createMiddleware().test(this) {
+            assertEquals(initialState, awaitState())
+        }
     }
 
     private fun TestScope.createMiddleware(dependency: BogusDependency = FakeDependency()): GeneralTestMiddleware {
@@ -165,6 +91,10 @@ internal class GeneralTest {
 
         fun somethingElse() = intent {
             dependency.something2()
+        }
+
+        fun newState(count: Int) = intent {
+            reduce { state.copy(count = count) }
         }
     }
 

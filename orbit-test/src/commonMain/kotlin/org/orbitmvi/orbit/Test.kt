@@ -48,7 +48,8 @@ public fun <STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHost<STATE
 ): SuspendingTestContainerHost<STATE, SIDE_EFFECT, CONTAINER_HOST> {
     return container.findTestContainer().test(
         initialState = initialState,
-        strategy = TestingStrategy.Suspending(settings.toRealSettings())
+        strategy = TestingStrategy.Suspending(settings.toRealSettings()),
+        testScope = null
     ).let {
         SuspendingTestContainerHost(this, initialState, isolateFlow)
     }
@@ -77,7 +78,8 @@ public fun <STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHost<STATE
     val settingsBuilder = TestSettingsBuilder(container.settings).apply(buildSettings)
     return container.findTestContainer().test(
         initialState = initialState,
-        strategy = TestingStrategy.Suspending(settingsBuilder.build())
+        strategy = TestingStrategy.Suspending(settingsBuilder.build()),
+        testScope = null
     ).let {
         SuspendingTestContainerHost(this, initialState, isolateFlow)
     }
@@ -103,7 +105,8 @@ public fun <STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHost<STATE
     val settingsBuilder = TestSettingsBuilder(container.settings).apply(buildSettings)
     return container.findTestContainer().test(
         initialState = initialState,
-        strategy = TestingStrategy.Suspending(settingsBuilder.build())
+        strategy = TestingStrategy.Suspending(settingsBuilder.build()),
+        testScope = null
     ).let {
         SuspendingTestContainerHost(this, initialState, settingsBuilder.isolateFlow)
     }
@@ -123,7 +126,8 @@ public fun <STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHost<STATE
 ): RegularTestContainerHost<STATE, SIDE_EFFECT, CONTAINER_HOST> {
     return container.findTestContainer().test(
         initialState = initialState,
-        strategy = TestingStrategy.Live(LiveTestSettingsBuilder(container.settings).apply(buildSettings).build())
+        strategy = TestingStrategy.Live(LiveTestSettingsBuilder(container.settings).apply(buildSettings).build()),
+        testScope = null
     )
         .let {
             RegularTestContainerHost(this, initialState)
@@ -144,7 +148,8 @@ public fun <STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHost<STATE
 ): RegularTestContainerHost<STATE, SIDE_EFFECT, CONTAINER_HOST> {
     return container.findTestContainer().test(
         initialState = initialState,
-        strategy = TestingStrategy.Live(settings.toRealSettings())
+        strategy = TestingStrategy.Live(settings.toRealSettings()),
+        testScope = null
     )
         .let {
             RegularTestContainerHost(this, initialState)

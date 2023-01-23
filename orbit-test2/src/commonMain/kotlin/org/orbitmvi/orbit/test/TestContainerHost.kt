@@ -6,7 +6,7 @@ import org.orbitmvi.orbit.ContainerHost
 import kotlin.test.assertEquals
 import kotlin.test.fail
 
-public abstract class BaseTestContainerHost<STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHost<STATE, SIDE_EFFECT>>(
+public class TestContainerHost<STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHost<STATE, SIDE_EFFECT>>(
     private val actual: CONTAINER_HOST,
     initialState: STATE?,
     private val emissions: ReceiveTurbine<Item<STATE, SIDE_EFFECT>>
@@ -27,18 +27,18 @@ public abstract class BaseTestContainerHost<STATE : Any, SIDE_EFFECT : Any, CONT
      * Invoke `onCreate` property for the [ContainerHost] backed by [LazyCreateContainerDecorator],
      * e.g.: created by [CoroutineScope.container]
      */
-    protected fun runOnCreateInternal() {
-        if (!onCreateAllowed.compareAndSet(expect = true, update = false)) {
-            error("runOnCreate should only be invoked once and before any testIntent call")
+    public fun runOnCreate() {
+        if (onCreateAllowed.compareAndSet(expect = true, update = false)) {
+            actual.container.findOnCreate().invoke(resolvedInitialState)
+        } else {
+            error("runOnCreate should only be invoked once and before any invokeIntent call")
         }
-
-        actual.container.findOnCreate().invoke(resolvedInitialState)
     }
 
     /**
      * Invoke an intent on the [ContainerHost] under test.
      */
-    public fun invokeIntentInternal(action: CONTAINER_HOST.() -> Unit) {
+    public fun invokeIntent(action: CONTAINER_HOST.() -> Unit) {
         onCreateAllowed.lazySet(false)
         actual.action()
     }
@@ -66,20 +66,12 @@ public abstract class BaseTestContainerHost<STATE : Any, SIDE_EFFECT : Any, CONT
         return (item as? Item.SideEffectItem)?.value ?: fail("Expected Side Effect but got $item")
     }
 
-    override suspend fun cancel() {
-        emissions.cancel()
-    }
-
-    override suspend fun cancelAndIgnoreRemainingEvents() {
+    override suspend fun cancelAndIgnoreRemainingItems() {
         emissions.cancelAndIgnoreRemainingEvents()
     }
 
     override suspend fun expectInitialState() {
         assertEquals(resolvedInitialState, awaitState())
-    }
-
-    override fun expectMostRecentItem(): Item<STATE, SIDE_EFFECT> {
-        return emissions.expectMostRecentItem()
     }
 
     override suspend fun skipItems(count: Int) {
