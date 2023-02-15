@@ -37,6 +37,7 @@ kotlin {
                 implementation(kotlin("test-common"))
                 implementation(ProjectDependencies.kotlinCoroutines)
                 implementation(ProjectDependencies.kotlinCoroutinesTest)
+                implementation(ProjectDependencies.turbine)
 
                 api(project(":orbit-core"))
             }

@@ -23,6 +23,8 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.internal.LazyCreateContainerDecorator
+import org.orbitmvi.orbit.test.findOnCreate
+import org.orbitmvi.orbit.test.findTestContainer
 import kotlin.coroutines.EmptyCoroutineContext
 import kotlin.test.assertEquals
 
@@ -175,10 +177,4 @@ public class RegularTestContainerHost<STATE : Any, SIDE_EFFECT : Any, CONTAINER_
             }
         }
     }
-}
-
-private fun <STATE : Any, SIDE_EFFECT : Any> Container<STATE, SIDE_EFFECT>.findOnCreate(): (STATE) -> Unit {
-    return (this as? LazyCreateContainerDecorator<STATE, SIDE_EFFECT>)?.onCreate
-        ?: (this as? ContainerDecorator<STATE, SIDE_EFFECT>)?.actual?.findOnCreate()
-        ?: {}
 }

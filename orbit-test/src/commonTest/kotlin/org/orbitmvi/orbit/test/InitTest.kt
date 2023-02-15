@@ -28,8 +28,6 @@ import kotlinx.coroutines.test.runTest
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.container
-import org.orbitmvi.orbit.syntax.simple.intent
-import org.orbitmvi.orbit.syntax.simple.reduce
 import kotlin.random.Random
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -83,44 +81,19 @@ internal class InitTest {
             dependency.create()
             println("created!")
         }
-
-        fun something() = intent {
-            dependency.something1()
-            somethingElse()
-        }
-
-        fun somethingElse() = intent {
-            dependency.something2()
-        }
-
-        fun newState(count: Int) = intent {
-            reduce { state.copy(count = count) }
-        }
     }
 
     private data class State(val count: Int = Random.nextInt())
 
     private interface BogusDependency {
         fun create()
-        fun something1()
-        fun something2()
     }
 
     private class FakeDependency : BogusDependency {
         val createCalled = atomic(false)
-        val something1Called = atomic(false)
-        val something2Called = atomic(false)
 
         override fun create() {
             createCalled.compareAndSet(expect = false, update = true)
-        }
-
-        override fun something1() {
-            something1Called.compareAndSet(expect = false, update = true)
-        }
-
-        override fun something2() {
-            something2Called.compareAndSet(expect = false, update = true)
         }
     }
 }

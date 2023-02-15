@@ -27,28 +27,37 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestScope
+import kotlinx.coroutines.test.runTest
+import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.RealSettings
 import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.internal.TestingStrategy
 
 /**
- *  Puts your [ContainerHost] into live test mode. This mode uses a real Orbit container.
+ *  Puts your [ContainerHost] into test mode. This mode uses a real Orbit container, but the container's
+ *  [CoroutineDispatcher] is set to the [TestScope]'s background dispatcher.
  *
+ *  Typically this is the scope defined by kotlin's [runTest], but you are free to provide your own [TestScope].
+ *  This is useful if you wish to e.g. control virtual time to avoid delay skipping.
+ *
+ *  During a test, all of the emitted states and side effects must be consumed - otherwise the test fails. See [OrbitTestContext].
+ *
+ * @param testScope The scope which the [Container] will run in.
  * @param initialState The state to initialize the test container with. Omit this parameter to use the real initial state of the container.
- * @param settings Replaces the [Container.Settings] for this test
- * @return A live test wrapper around [ContainerHost].
+ * @param settings Use this to set overrides for some of the container's [RealSettings] for this test.
+ * @param validate Perform your test within this block. See [OrbitTestContext].
  */
 @OptIn(ExperimentalStdlibApi::class, ExperimentalCoroutinesApi::class)
 @OrbitExperimental
 public suspend fun <STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHost<STATE, SIDE_EFFECT>> CONTAINER_HOST.test(
     testScope: TestScope,
     initialState: STATE? = null,
-    settings: LiveTestSettings = LiveTestSettings(),
-    validate: suspend TestContainerHost<STATE, SIDE_EFFECT, CONTAINER_HOST>.() -> Unit
+    settings: TestSettings = TestSettings(),
+    validate: suspend OrbitTestContext<STATE, SIDE_EFFECT, CONTAINER_HOST>.() -> Unit
 ) {
     val containerHost = this
-    val testDispatcher = testScope.backgroundScope.coroutineContext[CoroutineDispatcher.Key]
+    val testDispatcher = settings.dispatcherOverride ?: testScope.backgroundScope.coroutineContext[CoroutineDispatcher.Key]
 
     container.findTestContainer().test(
         initialState = initialState,
@@ -56,7 +65,7 @@ public suspend fun <STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHo
         testScope = testScope.backgroundScope
     )
     mergedFlow().test {
-        TestContainerHost(
+        RealOrbitTestContext(
             containerHost,
             initialState,
             this
@@ -67,7 +76,7 @@ public suspend fun <STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHo
 }
 
 @OptIn(ExperimentalCoroutinesApi::class)
-private fun LiveTestSettings.toRealSettings(testDispatcher: CoroutineDispatcher?): RealSettings {
+private fun TestSettings.toRealSettings(testDispatcher: CoroutineDispatcher?): RealSettings {
     val dispatcher = testDispatcher ?: StandardTestDispatcher()
 
     return RealSettings(

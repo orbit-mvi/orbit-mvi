@@ -1,22 +1,23 @@
 package org.orbitmvi.orbit.test
 
-public interface OrbitTestContext<STATE : Any, SIDE_EFFECT : Any> {
+import org.orbitmvi.orbit.ContainerHost
 
-    public val previousState: STATE
+public interface OrbitTestContext<STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHost<STATE, SIDE_EFFECT>> {
 
     /**
-     * Cancel this [OrbitTestContext] and ignore any events which have already been received.
-     *
-     * If it is backed by an underlying coroutine (e.g. the coroutine run
-     * by [test]), that coroutine will also be cancelled. If called within a [test] block, the [test] block
-     * will exit.
+     * Invoke `onCreate` lambda for the [ContainerHost].
      */
-    public suspend fun cancelAndIgnoreRemainingItems()
+    public fun runOnCreate()
+
+    /**
+     * Invoke an intent on the [ContainerHost] under test.
+     */
+    public fun invokeIntent(action: CONTAINER_HOST.() -> Unit)
 
     /**
      * Sanity check assertion. Checks if the initial state is emitted and matches
-     * the initial state defined for the production container or the one specified
-     * in the test.
+     * the initial state defined for the production container (or the one specified
+     * in the test).
      *
      * @throws AssertionError if initial state does not match.
      */
@@ -49,4 +50,9 @@ public interface OrbitTestContext<STATE : Any, SIDE_EFFECT : Any> {
      * This function will suspend if no items have been received.
      */
     public suspend fun skipItems(count: Int)
+
+    /**
+     * Finish this test and ignore any events which have already been received.
+     */
+    public suspend fun cancelAndIgnoreRemainingItems()
 }

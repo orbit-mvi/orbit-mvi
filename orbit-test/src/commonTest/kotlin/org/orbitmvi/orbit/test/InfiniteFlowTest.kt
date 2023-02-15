@@ -46,11 +46,11 @@ internal class InfiniteFlowTest {
             expectInitialState()
 
             // Assert the first three states
-            scope.advanceTimeBy(30001)
+            scope.advanceTimeBy(30_001)
             assertEquals(listOf(42, 43), awaitState())
-            scope.advanceTimeBy(30001)
+            scope.advanceTimeBy(30_001)
             assertEquals(listOf(42, 43, 44), awaitState())
-            scope.advanceTimeBy(30001)
+            scope.advanceTimeBy(30_001)
             assertEquals(listOf(42, 43, 44, 45), awaitState())
         }
     }
@@ -60,7 +60,7 @@ internal class InfiniteFlowTest {
 
         fun incrementForever() = intent {
             while (true) {
-                delay(30000)
+                delay(30_000)
                 reduce { state + (state.last() + 1) }
             }
         }

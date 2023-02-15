@@ -68,8 +68,8 @@ class StateTest {
 
         StateTestMiddleware(this).test(this) {
             expectInitialState()
-            invokeIntent { newState(action) }
-            invokeIntent { newState(action2) }
+            invokeIntent { newCount(action) }
+            invokeIntent { newCount(action2) }
             assertEquals(State(count = action), awaitState())
             assertEquals(State(count = action2), awaitState())
         }
@@ -84,9 +84,9 @@ class StateTest {
         assertFailsWith<AssertionError> {
             StateTestMiddleware(this).test(this) {
                 expectInitialState()
-                invokeIntent { newState(action) }
-                invokeIntent { newState(action2) }
-                invokeIntent { newState(action3) }
+                invokeIntent { newCount(action) }
+                invokeIntent { newCount(action2) }
+                invokeIntent { newCount(action3) }
                 assertEquals(State(count = action), awaitState())
                 assertEquals(State(count = action2), awaitState())
             }
@@ -104,8 +104,8 @@ class StateTest {
         assertFailsWith<AssertionError> {
             StateTestMiddleware(this).test(this) {
                 expectInitialState()
-                invokeIntent { newState(action) }
-                invokeIntent { newState(action2) }
+                invokeIntent { newCount(action) }
+                invokeIntent { newCount(action2) }
                 assertEquals(State(count = action), awaitState())
                 assertEquals(State(count = action2), awaitState())
                 assertEquals(State(count = action3), awaitState())
@@ -124,8 +124,8 @@ class StateTest {
         assertFailsWith<AssertionError> {
             StateTestMiddleware(this).test(this) {
                 expectInitialState()
-                invokeIntent { newState(action) }
-                invokeIntent { newState(action2) }
+                invokeIntent { newCount(action) }
+                invokeIntent { newCount(action2) }
                 assertEquals(State(count = action2), awaitState())
                 assertEquals(State(count = action3), awaitState())
             }
@@ -143,8 +143,8 @@ class StateTest {
         assertFailsWith<AssertionError> {
             StateTestMiddleware(this).test(this) {
                 expectInitialState()
-                invokeIntent { newState(action) }
-                invokeIntent { newState(action2) }
+                invokeIntent { newCount(action) }
+                invokeIntent { newCount(action2) }
                 assertEquals(State(count = action), awaitState())
                 assertEquals(State(count = action3), awaitState())
             }
@@ -162,9 +162,9 @@ class StateTest {
         assertFailsWith<AssertionError> {
             StateTestMiddleware(this).test(this) {
                 expectInitialState()
-                invokeIntent { newState(action) }
-                invokeIntent { newState(action2) }
-                invokeIntent { newState(action3) }
+                invokeIntent { newCount(action) }
+                invokeIntent { newCount(action2) }
+                invokeIntent { newCount(action3) }
                 assertEquals(State(count = action), awaitState())
                 assertEquals(State(count = action3), awaitState())
                 assertEquals(State(count = action2), awaitState())
@@ -181,7 +181,7 @@ class StateTest {
         assertFailsWith<AssertionError> {
             StateTestMiddleware(this).test(this) {
                 invokeIntent { newSideEffect(sideEffect) }
-                invokeIntent { newState(sideEffect) }
+                invokeIntent { newCount(sideEffect) }
 
                 expectInitialState()
                 awaitState()
@@ -196,9 +196,15 @@ class StateTest {
         ContainerHost<State, Int> {
         override val container = scope.container<State, Int>(initialState)
 
-        fun newState(action: Int): Unit = intent {
+        fun newCount(action: Int): Unit = intent {
             reduce {
                 State(count = action)
+            }
+        }
+
+        fun newList(action: Int): Unit = intent {
+            reduce {
+                state.copy(list = state.list + action)
             }
         }
 
@@ -207,5 +213,8 @@ class StateTest {
         }
     }
 
-    private data class State(val count: Int = Random.nextInt())
+    private data class State(
+        val count: Int = Random.nextInt(),
+        val list: List<Int> = emptyList()
+    )
 }
