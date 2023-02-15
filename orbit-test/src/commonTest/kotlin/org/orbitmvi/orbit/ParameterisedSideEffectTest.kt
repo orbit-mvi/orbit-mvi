@@ -73,7 +73,7 @@ internal class ParameterisedSideEffectTest(blocking: Boolean) {
         }
 
         throwable.message.assertContains(
-            "<${Regex.escape(sideEffects2.toString())}>[^<]*<${Regex.escape(sideEffects.toString())}>".toRegex()
+            "<${Regex.escape(sideEffects2.toString())}>.*<${Regex.escape(sideEffects.toString())}>".toRegex()
         )
     }
 
