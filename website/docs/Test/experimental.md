@@ -10,7 +10,7 @@ framework is still in the experimental phase and we are looking for feedback.
 
 The new framework is based on the (itself in
 alpha) [Turbine](https://github.com/cashapp/turbine)
-library. Turbine is a library for testing coroutines and flows. It also requires
+library. Turbine is a library for testing coroutines and flows.
 
 Orbit's experimental framework offers a subset of the Turbine APIs and
 ensures predictable coroutine scoping and context through use of the new
@@ -23,12 +23,14 @@ ensures predictable coroutine scoping and context through use of the new
   it within a real project and will be making changes based on community
   feedback.
 - The API is still subject to change. Notably we may be missing some convenience
-  functions in the [OrbitTestContext](pathname:///dokka/orbit-test/org.orbitmvi.orbit.test/-orbit-test-context/)
-- The framework will remain experimental until [Turbine](https://github.com/cashapp/turbine)
+  functions in
+  the [OrbitTestContext](pathname:///dokka/orbit-test/org.orbitmvi.orbit.test/-orbit-test-context/)
+- The framework will remain experimental
+  until [Turbine](https://github.com/cashapp/turbine)
   is stable.
 
 ## Changes from the current testing framework
-    
+
 Our design goal was to have a simpler API and no more hidden magic in tests.
 
 - The new testing framework is available under the `org.orbitmvi.orbit.test`
@@ -39,7 +41,7 @@ Our design goal was to have a simpler API and no more hidden magic in tests.
   library you like.
 - Gone are the two testing modes - suspending and live. The new framework
   always runs a real Orbit container and uses the `TestScope`'s background
-  dispatcher. We no longer see a need to have both modes, and it often led to
+  dispatcher. We no longer see a need to have both modes, as it often led to
   confusion and bad practices.
 - The framework is a light wrapper
   around [Turbine](https://github.com/cashapp/turbine),
@@ -51,8 +53,8 @@ Our design goal was to have a simpler API and no more hidden magic in tests.
 
 ## Testing process
 
-1. Put
-   the [ContainerHost](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-container-host/)
+1. Put the 
+   [ContainerHost](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-container-host/)
    in your chosen test mode using `test()`. You may optionally
    provide them with the initial state to seed the container with. This helps
    avoid having to call several intents just to get the container in the right
@@ -107,16 +109,14 @@ It is strongly suggested you avoid calling `runOnCreate()` if you are not
 testing the intents called within. For other cases, it is recommended to
 set a correct initial state instead.
 
-Note: `runOnCreate` can only be invoked once and before any `testIntent` call:
+Note: `runOnCreate` can only be invoked once and before `invokeIntent`:
 
 ```kotlin
 @Test
-fun exampleTest() = runTest {
-        ExampleViewModel().test(this) {
-            runOnCreate() // may be invoked only once and before `testIntent`
-            expectInitialState()
-            invokeIntent { countToFour() }
-        }
+fun exampleTest() = ExampleViewModel().test {
+        runOnCreate() // may be invoked only once and before `invokeIntent`
+        expectInitialState()
+        invokeIntent { countToFour() }
     }
 ```
 
@@ -127,16 +127,14 @@ explicitly asserted first, as a sanity check.
 
 ```kotlin
 @Test
-fun exampleTest() = runTest {
-        ExampleViewModel().test(this) {
-            expectInitialState()
-            invokeIntent { countToFour() }
+fun exampleTest() = ExampleViewModel().test {
+        expectInitialState()
+        invokeIntent { countToFour() }
 
-            assertEquals(State(count = 1), awaitState())
-            assertEquals(State(count = 2), awaitState())
-            assertEquals(State(count = 3), awaitState())
-            assertEquals(State(count = 4), awaitState())
-        }
+        assertEquals(State(count = 1), awaitState())
+        assertEquals(State(count = 2), awaitState())
+        assertEquals(State(count = 3), awaitState())
+        assertEquals(State(count = 4), awaitState())
     }
 ```
 
@@ -148,16 +146,14 @@ ensure no unwanted extra states or side effects are emitted.
 
 ```kotlin
 @Test
-fun exampleTest() = runTest {
-        ExampleViewModel().test(this) {
-            expectInitialState()
-            invokeIntent { countToFour() }
+fun exampleTest() = ExampleViewModel().test {
+        expectInitialState()
+        invokeIntent { countToFour() }
 
-            assertEquals(Toast(1), awaitSideEffect())
-            assertEquals(Toast(2), awaitSideEffect())
-            assertEquals(Toast(3), awaitSideEffect())
-            assertEquals(Toast(4), awaitSideEffect())
-        }
+        assertEquals(Toast(1), awaitSideEffect())
+        assertEquals(Toast(2), awaitSideEffect())
+        assertEquals(Toast(3), awaitSideEffect())
+        assertEquals(Toast(4), awaitSideEffect())
     }
 ```
 
@@ -167,21 +163,19 @@ Here's what it looks like once we put it together.
 
 ```kotlin
 @Test
-fun exampleTest() = runTest {
-        ExampleViewModel().test(this) {
-            expectInitialState()
-            runOnCreate()
-            invokeIntent { countToFour() }
+fun exampleTest() = ExampleViewModel().test {
+        expectInitialState()
+        runOnCreate()
+        invokeIntent { countToFour() }
 
-            assertEquals(State(count = 1), awaitState())
-            assertEquals(Toast(1), awaitSideEffect())
-            assertEquals(State(count = 2), awaitState())
-            assertEquals(Toast(2), awaitSideEffect())
-            assertEquals(State(count = 3), awaitState())
-            assertEquals(Toast(3), awaitSideEffect())
-            assertEquals(State(count = 4), awaitState())
-            assertEquals(Toast(4), awaitSideEffect())
-        }
+        assertEquals(State(count = 1), awaitState())
+        assertEquals(Toast(1), awaitSideEffect())
+        assertEquals(State(count = 2), awaitState())
+        assertEquals(Toast(2), awaitSideEffect())
+        assertEquals(State(count = 3), awaitState())
+        assertEquals(Toast(3), awaitSideEffect())
+        assertEquals(State(count = 4), awaitState())
+        assertEquals(Toast(4), awaitSideEffect())
     }
 ```
 
@@ -192,14 +186,12 @@ our [ContainerHost](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-container-h
 to an infinite (hot) flow of data like so:
 
 ```kotlin
-val container = container<SomeState, Unit> {
-    listenToLocationUpdates()
-}
-
-private fun listenToLocationUpdates() = intent {
-    runOnSubscription {
-        locationService.locationUpdates.collect {
-            reduce { state.copy(lng = it.lng, lat = it.lat) }
+val container = scope.container<SomeState, Unit> {
+    intent {
+        runOnSubscription {
+            locationService.locationUpdates.collect {
+                reduce { state.copy(lng = it.lng, lat = it.lat) }
+            }
         }
     }
 }
@@ -215,31 +207,31 @@ different to normal testing.
 
 ```kotlin
 @Test
-fun exampleTest() = runTest {
+fun exampleTest() {
     // Fake returning a cold, finite flow.
-    val fakeService = FakeService()
-    ExampleViewModel(fakeService).test(this) {
+    val fakeLocationService = FakeLocationService()
+
+    ExampleViewModel(fakeLocationService).test {
         expectInitialState()
-        runOnCreate()    
+        runOnCreate()
+
+        assertEquals(State(lng = 1, lat = 1), awaitState())
+        assertEquals(State(lng = 2, lat = 2), awaitState())
+        assertEquals(State(lng = 3, lat = 3), awaitState())
+
+        // If the flow is infinite, we must call this to ignore the unconsumed items
+        // No need to call this for a finite flow
+        // cancelAndIgnoreRemainingItems()
     }
-
-    testSubject.runOnCreate()
-
-    assertEquals(State(lng = 1, lat = 1), awaitState())
-    assertEquals(State(lng = 2, lat = 2), awaitState())
-    assertEquals(State(lng = 3, lat = 3), awaitState())
-
-    // If the flow is infinite, we must call this to ignore the unconsumed items
-    // No need to call this for a finite flow
-    // cancelAndIgnoreRemainingItems()
 }
 ```
 
 ## Control over virtual time
 
-By default, and by virtue of running within the `runTest` block, the tests will
-skip any delays. When this is not desirable and we want granular control over
-virtual time, we need to create a separate `TestScope`.
+By default, and by virtue of running within the `runTest` block internally,
+the tests will skip any delays. When this is not desirable and we want granular
+control over virtual time, we need to create a separate `TestScope` and pass it
+to the test function.
 
 Consider the following example:
 
@@ -259,55 +251,49 @@ class InfiniteFlowMiddleware : ContainerHost<List<Int>, Nothing> {
 ### With delay skipping
 
 Testing with delay skipping is the default behaviour. This is the same as any
-coroutine being tested in `runTest`. 
+coroutine being tested in `runTest`.
 
 ```kotlin
 @Test
-fun delaySkipping() = runTest {
-    InfiniteFlowMiddleware().test(this) {
-
-        invokeIntent { incrementForever() }
-
+fun delaySkipping() = InfiniteFlowMiddleware().test {
         expectInitialState()
+        invokeIntent { incrementForever() }
 
         // Assert the first three states
         assertEquals(listOf(42, 43), awaitState())
         assertEquals(listOf(42, 43, 44), awaitState())
         assertEquals(listOf(42, 43, 44, 45), awaitState())
-        
+
         // If the flow is infinite, we must call this to ignore the unconsumed items
         // No need to call this for a finite flow
         cancelAndIgnoreRemainingItems()
     }
-}
 ```
 
 ### Without delay skipping
 
-If we wish to control the virtual time, our container cannot run in the scope of
-`runTest`. We need to create a separate `TestScope` and pass it to the container.
+If we wish to control the virtual time, we must create a separate `TestScope`
+and pass it to the container.
 
 ```kotlin
 @Test
 fun noDelaySkipping() = runTest {
-    val scope = TestScope()
+        val scope = TestScope()
 
-    InfiniteFlowMiddleware().test(scope) {
+        InfiniteFlowMiddleware().test(scope) {
+            expectInitialState()
+            invokeIntent { incrementForever() }
 
-        invokeIntent { incrementForever() }
+            // Assert the first three states
+            scope.advanceTimeBy(30_001)
+            assertEquals(listOf(42, 43), awaitState())
+            scope.advanceTimeBy(30_001)
+            assertEquals(listOf(42, 43, 44), awaitState())
+            scope.advanceTimeBy(30_001)
+            assertEquals(listOf(42, 43, 44, 45), awaitState())
 
-        expectInitialState()
-
-        // Assert the first three states
-        scope.advanceTimeBy(30_001)
-        assertEquals(listOf(42, 43), awaitState())
-        scope.advanceTimeBy(30_001)
-        assertEquals(listOf(42, 43, 44), awaitState())
-        scope.advanceTimeBy(30_001)
-        assertEquals(listOf(42, 43, 44, 45), awaitState())
-        
-        // No need to call `cancelAndIgnoreRemainingItems()` since
-        // We control virtual time
+            // No need to call `cancelAndIgnoreRemainingItems()` since
+            // We control virtual time
+        }
     }
-}
 ```

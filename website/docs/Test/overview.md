@@ -12,8 +12,9 @@ This module provides a simple unit testing framework for your Orbit
 testImplementation("org.orbit-mvi:orbit-test:<latest-version>")
 ```
 
-There is also a new experimental version available. It is based in the same
-module with the files all located under the `org.orbitmvi.orbit.test` package.
+There is also a new [experimental version](experimental.md) available. It is 
+based in the same module with the files all located under the 
+`org.orbitmvi.orbit.test` package.
 
 ## Testing goals
 
