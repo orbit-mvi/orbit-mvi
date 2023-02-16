@@ -53,7 +53,7 @@ Our design goal was to have a simpler API and no more hidden magic in tests.
 
 ## Testing process
 
-1. Put the 
+1. Put the
    [ContainerHost](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-container-host/)
    in your chosen test mode using `test()`. You may optionally
    provide them with the initial state to seed the container with. This helps
@@ -113,10 +113,12 @@ Note: `runOnCreate` can only be invoked once and before `invokeIntent`:
 
 ```kotlin
 @Test
-fun exampleTest() = ExampleViewModel().test {
-        runOnCreate() // may be invoked only once and before `invokeIntent`
-        expectInitialState()
-        invokeIntent { countToFour() }
+fun exampleTest() = runTest {
+        ExampleViewModel().test(this) {
+            runOnCreate() // may be invoked only once and before `invokeIntent`
+            expectInitialState()
+            invokeIntent { countToFour() }
+        }
     }
 ```
 
@@ -127,14 +129,16 @@ explicitly asserted first, as a sanity check.
 
 ```kotlin
 @Test
-fun exampleTest() = ExampleViewModel().test {
-        expectInitialState()
-        invokeIntent { countToFour() }
+fun exampleTest() = runTest {
+        ExampleViewModel().test(this) {
+            expectInitialState()
+            invokeIntent { countToFour() }
 
-        assertEquals(State(count = 1), awaitState())
-        assertEquals(State(count = 2), awaitState())
-        assertEquals(State(count = 3), awaitState())
-        assertEquals(State(count = 4), awaitState())
+            assertEquals(State(count = 1), awaitState())
+            assertEquals(State(count = 2), awaitState())
+            assertEquals(State(count = 3), awaitState())
+            assertEquals(State(count = 4), awaitState())
+        }
     }
 ```
 
@@ -146,14 +150,16 @@ ensure no unwanted extra states or side effects are emitted.
 
 ```kotlin
 @Test
-fun exampleTest() = ExampleViewModel().test {
-        expectInitialState()
-        invokeIntent { countToFour() }
+fun exampleTest() = runTest {
+        ExampleViewModel().test(this) {
+            expectInitialState()
+            invokeIntent { countToFour() }
 
-        assertEquals(Toast(1), awaitSideEffect())
-        assertEquals(Toast(2), awaitSideEffect())
-        assertEquals(Toast(3), awaitSideEffect())
-        assertEquals(Toast(4), awaitSideEffect())
+            assertEquals(Toast(1), awaitSideEffect())
+            assertEquals(Toast(2), awaitSideEffect())
+            assertEquals(Toast(3), awaitSideEffect())
+            assertEquals(Toast(4), awaitSideEffect())
+        }
     }
 ```
 
@@ -163,19 +169,21 @@ Here's what it looks like once we put it together.
 
 ```kotlin
 @Test
-fun exampleTest() = ExampleViewModel().test {
-        expectInitialState()
-        runOnCreate()
-        invokeIntent { countToFour() }
+fun exampleTest() = runTest {
+        ExampleViewModel().test(this) {
+            expectInitialState()
+            runOnCreate()
+            invokeIntent { countToFour() }
 
-        assertEquals(State(count = 1), awaitState())
-        assertEquals(Toast(1), awaitSideEffect())
-        assertEquals(State(count = 2), awaitState())
-        assertEquals(Toast(2), awaitSideEffect())
-        assertEquals(State(count = 3), awaitState())
-        assertEquals(Toast(3), awaitSideEffect())
-        assertEquals(State(count = 4), awaitState())
-        assertEquals(Toast(4), awaitSideEffect())
+            assertEquals(State(count = 1), awaitState())
+            assertEquals(Toast(1), awaitSideEffect())
+            assertEquals(State(count = 2), awaitState())
+            assertEquals(Toast(2), awaitSideEffect())
+            assertEquals(State(count = 3), awaitState())
+            assertEquals(Toast(3), awaitSideEffect())
+            assertEquals(State(count = 4), awaitState())
+            assertEquals(Toast(4), awaitSideEffect())
+        }
     }
 ```
 
@@ -207,23 +215,23 @@ different to normal testing.
 
 ```kotlin
 @Test
-fun exampleTest() {
-    // Fake returning a cold, finite flow.
-    val fakeLocationService = FakeLocationService()
+fun exampleTest() = runTest {
+        // Fake returning a cold, finite flow.
+        val fakeLocationService = FakeLocationService()
 
-    ExampleViewModel(fakeLocationService).test {
-        expectInitialState()
-        runOnCreate()
+        ExampleViewModel(fakeLocationService).test(this) {
+            expectInitialState()
+            runOnCreate()
 
-        assertEquals(State(lng = 1, lat = 1), awaitState())
-        assertEquals(State(lng = 2, lat = 2), awaitState())
-        assertEquals(State(lng = 3, lat = 3), awaitState())
+            assertEquals(State(lng = 1, lat = 1), awaitState())
+            assertEquals(State(lng = 2, lat = 2), awaitState())
+            assertEquals(State(lng = 3, lat = 3), awaitState())
 
-        // If the flow is infinite, we must call this to ignore the unconsumed items
-        // No need to call this for a finite flow
-        // cancelAndIgnoreRemainingItems()
+            // If the flow is infinite, we must call this to ignore the unconsumed items
+            // No need to call this for a finite flow
+            // cancelAndIgnoreRemainingItems()
+        }
     }
-}
 ```
 
 ## Control over virtual time
@@ -255,18 +263,20 @@ coroutine being tested in `runTest`.
 
 ```kotlin
 @Test
-fun delaySkipping() = InfiniteFlowMiddleware().test {
-        expectInitialState()
-        invokeIntent { incrementForever() }
+fun delaySkipping() = runTest {
+        InfiniteFlowMiddleware().test(this) {
+            expectInitialState()
+            invokeIntent { incrementForever() }
 
-        // Assert the first three states
-        assertEquals(listOf(42, 43), awaitState())
-        assertEquals(listOf(42, 43, 44), awaitState())
-        assertEquals(listOf(42, 43, 44, 45), awaitState())
+            // Assert the first three states
+            assertEquals(listOf(42, 43), awaitState())
+            assertEquals(listOf(42, 43, 44), awaitState())
+            assertEquals(listOf(42, 43, 44, 45), awaitState())
 
-        // If the flow is infinite, we must call this to ignore the unconsumed items
-        // No need to call this for a finite flow
-        cancelAndIgnoreRemainingItems()
+            // If the flow is infinite, we must call this to ignore the unconsumed items
+            // No need to call this for a finite flow
+            cancelAndIgnoreRemainingItems()
+        }
     }
 ```
 

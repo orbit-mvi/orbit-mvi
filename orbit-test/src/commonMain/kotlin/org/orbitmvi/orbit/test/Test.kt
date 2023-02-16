@@ -37,32 +37,6 @@ import org.orbitmvi.orbit.internal.TestingStrategy
  *  Run tests on your [ContainerHost]. This mode uses a real Orbit container, but the container's [CoroutineDispatcher] is set to the
  *  [TestScope]'s background dispatcher.
  *
- *  This is a convenience function which uses [runTest] from [kotlinx.coroutines.test] internally to ensure predictable testing behaviour.
- *  Do not use this function if you are already within a [runTest] block. If that's the case, use the overload and pass in the [TestScope]
- *  yourself.
- *
- *  During a test, all of the emitted states and side effects must be consumed - otherwise the test fails. See [OrbitTestContext].
- *
- * @param initialState The state to initialize the test container with. Omit this parameter to use the real initial state of the container.
- * @param settings Use this to set overrides for some of the container's [RealSettings] for this test.
- * @param validate Perform your test within this block. See [OrbitTestContext].
- */
-@OptIn(ExperimentalCoroutinesApi::class)
-@OrbitExperimental
-public fun <STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHost<STATE, SIDE_EFFECT>> CONTAINER_HOST.test(
-    initialState: STATE? = null,
-    settings: TestSettings = TestSettings(),
-    validate: suspend OrbitTestContext<STATE, SIDE_EFFECT, CONTAINER_HOST>.() -> Unit
-) {
-    runTest {
-        executeWithScope(this, initialState, settings, validate)
-    }
-}
-
-/**
- *  Run tests on your [ContainerHost]. This mode uses a real Orbit container, but the container's [CoroutineDispatcher] is set to the
- *  [TestScope]'s background dispatcher.
- *
  *  Typically this is the scope defined by kotlin's [runTest], but you are free to provide your own [TestScope].
  *  This is useful if you wish to e.g. control virtual time to avoid delay skipping.
  *

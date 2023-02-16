@@ -36,16 +36,18 @@ import kotlin.test.assertEquals
 internal class InfiniteFlowTest {
 
     @Test
-    fun `infinite flow can be tested with delay skipping`() = InfiniteFlowMiddleware().test {
-        invokeIntent { incrementForever() }
+    fun `infinite flow can be tested with delay skipping`() = runTest {
+        InfiniteFlowMiddleware().test(this) {
+            invokeIntent { incrementForever() }
 
-        expectInitialState()
+            expectInitialState()
 
-        // Assert the first three states
-        assertEquals(listOf(42, 43), awaitState())
-        assertEquals(listOf(42, 43, 44), awaitState())
-        assertEquals(listOf(42, 43, 44, 45), awaitState())
-        cancelAndIgnoreRemainingItems()
+            // Assert the first three states
+            assertEquals(listOf(42, 43), awaitState())
+            assertEquals(listOf(42, 43, 44), awaitState())
+            assertEquals(listOf(42, 43, 44, 45), awaitState())
+            cancelAndIgnoreRemainingItems()
+        }
     }
 
     @Test
