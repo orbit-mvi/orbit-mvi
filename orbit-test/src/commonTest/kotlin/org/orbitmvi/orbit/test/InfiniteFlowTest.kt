@@ -38,9 +38,9 @@ internal class InfiniteFlowTest {
     @Test
     fun `infinite flow can be tested with delay skipping`() = runTest {
         InfiniteFlowMiddleware().test(this) {
-            invokeIntent { incrementForever() }
-
             expectInitialState()
+
+            invokeIntent { incrementForever() }
 
             // Assert the first three states
             assertEquals(listOf(42, 43), awaitState())
@@ -55,10 +55,9 @@ internal class InfiniteFlowTest {
         val scope = TestScope()
 
         InfiniteFlowMiddleware().test(scope) {
+            expectInitialState()
 
             invokeIntent { incrementForever() }
-
-            expectInitialState()
 
             // Assert the first three states
             scope.advanceTimeBy(30_001)
