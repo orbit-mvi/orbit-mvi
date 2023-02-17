@@ -23,8 +23,8 @@
 package org.orbitmvi.orbit
 
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
-import org.orbitmvi.orbit.internal.TestContainerDecorator
 import org.orbitmvi.orbit.internal.TestingStrategy
+import org.orbitmvi.orbit.test.findTestContainer
 
 /**
  *  Puts your [ContainerHost] into suspending test mode. Intents are intercepted and executed as
@@ -48,7 +48,8 @@ public fun <STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHost<STATE
 ): SuspendingTestContainerHost<STATE, SIDE_EFFECT, CONTAINER_HOST> {
     return container.findTestContainer().test(
         initialState = initialState,
-        strategy = TestingStrategy.Suspending(settings.toRealSettings())
+        strategy = TestingStrategy.Suspending(settings.toRealSettings()),
+        testScope = null
     ).let {
         SuspendingTestContainerHost(this, initialState, isolateFlow)
     }
@@ -77,7 +78,8 @@ public fun <STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHost<STATE
     val settingsBuilder = TestSettingsBuilder(container.settings).apply(buildSettings)
     return container.findTestContainer().test(
         initialState = initialState,
-        strategy = TestingStrategy.Suspending(settingsBuilder.build())
+        strategy = TestingStrategy.Suspending(settingsBuilder.build()),
+        testScope = null
     ).let {
         SuspendingTestContainerHost(this, initialState, isolateFlow)
     }
@@ -103,7 +105,8 @@ public fun <STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHost<STATE
     val settingsBuilder = TestSettingsBuilder(container.settings).apply(buildSettings)
     return container.findTestContainer().test(
         initialState = initialState,
-        strategy = TestingStrategy.Suspending(settingsBuilder.build())
+        strategy = TestingStrategy.Suspending(settingsBuilder.build()),
+        testScope = null
     ).let {
         SuspendingTestContainerHost(this, initialState, settingsBuilder.isolateFlow)
     }
@@ -123,7 +126,8 @@ public fun <STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHost<STATE
 ): RegularTestContainerHost<STATE, SIDE_EFFECT, CONTAINER_HOST> {
     return container.findTestContainer().test(
         initialState = initialState,
-        strategy = TestingStrategy.Live(LiveTestSettingsBuilder(container.settings).apply(buildSettings).build())
+        strategy = TestingStrategy.Live(LiveTestSettingsBuilder(container.settings).apply(buildSettings).build()),
+        testScope = null
     )
         .let {
             RegularTestContainerHost(this, initialState)
@@ -144,15 +148,10 @@ public fun <STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHost<STATE
 ): RegularTestContainerHost<STATE, SIDE_EFFECT, CONTAINER_HOST> {
     return container.findTestContainer().test(
         initialState = initialState,
-        strategy = TestingStrategy.Live(settings.toRealSettings())
+        strategy = TestingStrategy.Live(settings.toRealSettings()),
+        testScope = null
     )
         .let {
             RegularTestContainerHost(this, initialState)
         }
-}
-
-internal fun <STATE : Any, SIDE_EFFECT : Any> Container<STATE, SIDE_EFFECT>.findTestContainer(): TestContainerDecorator<STATE, SIDE_EFFECT> {
-    return (this as? TestContainerDecorator<STATE, SIDE_EFFECT>)
-        ?: (this as? ContainerDecorator<STATE, SIDE_EFFECT>)?.actual?.findTestContainer()
-        ?: error("No TestContainerDecorator found!")
 }

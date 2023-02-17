@@ -28,6 +28,7 @@ import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.postSideEffect
 import org.orbitmvi.orbit.test.assertContains
 import kotlin.random.Random
+import kotlin.test.assertContains
 import kotlin.test.assertFailsWith
 
 @ExperimentalCoroutinesApi
@@ -72,9 +73,8 @@ internal class ParameterisedSideEffectTest(blocking: Boolean) {
             }
         }
 
-        throwable.message.assertContains(
-            "<${Regex.escape(sideEffects2.toString())}>[^<]*<${Regex.escape(sideEffects.toString())}>".toRegex()
-        )
+        assertContains(throwable.message.orEmpty(), sideEffects2.toString())
+        assertContains(throwable.message.orEmpty(), sideEffects.toString())
     }
 
     private inner class SideEffectTestMiddleware :

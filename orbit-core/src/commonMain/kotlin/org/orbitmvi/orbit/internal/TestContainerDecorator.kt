@@ -58,11 +58,12 @@ public class TestContainerDecorator<STATE : Any, SIDE_EFFECT : Any>(
 
     public fun test(
         initialState: STATE? = null,
-        strategy: TestingStrategy
+        strategy: TestingStrategy,
+        testScope: CoroutineScope?
     ) {
         val testDelegate = RealContainer<STATE, SIDE_EFFECT>(
             initialState = initialState ?: originalInitialState,
-            parentScope = parentScope,
+            parentScope = testScope ?: parentScope,
             settings = strategy.settings,
             subscribedCounterOverride = AlwaysSubscribedCounter
         ).let {

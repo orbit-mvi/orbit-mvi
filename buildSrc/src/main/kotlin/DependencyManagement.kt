@@ -26,16 +26,16 @@ object Versions {
     const val markdownLintPlugin = "0.6.0"
     const val detektPlugin = "1.21.0"
     const val safeargs = "2.5.1"
-    const val atomicfu = "0.18.3"
+    const val atomicfu = "0.18.5"
     const val dokka = "1.6.10"
 
-    const val kotlin = "1.7.10"
-    const val coroutines = "1.6.0-native-mt"
+    const val kotlin = "1.7.20"
+    const val coroutines = "1.6.4"
 
     const val androidxLifecycles = "2.5.1"
     const val androidxEspresso = "3.4.0"
     const val androidxCompose = "1.2.1"
-    const val androidxComposeCompiler = "1.3.1"
+    const val androidxComposeCompiler = "1.3.2"
     const val androidxCoreTesting = "2.1.0"
 
     const val desugar = "1.1.5"
@@ -44,6 +44,7 @@ object Versions {
     const val jacoco = "0.8.8"
     const val junit4 = "4.13.2"
     const val robolectric = "4.8.2"
+    const val turbine = "0.12.1"
 }
 
 object ProjectDependencies {
@@ -64,6 +65,7 @@ object ProjectDependencies {
     const val androidxComposeUiTestJunit4 = "androidx.compose.ui:ui-test-junit4:${Versions.androidxCompose}"
     const val androidxComposeUiTestManifest = "androidx.compose.ui:ui-test-manifest:${Versions.androidxCompose}"
     const val androidxCoreTesting = "androidx.arch.core:core-testing:${Versions.androidxCoreTesting}"
+    const val turbine = "app.cash.turbine:turbine:${Versions.turbine}"
 
     // Tools
     const val detektFormatting = "io.gitlab.arturbosch.detekt:detekt-formatting:${Versions.detektPlugin}"

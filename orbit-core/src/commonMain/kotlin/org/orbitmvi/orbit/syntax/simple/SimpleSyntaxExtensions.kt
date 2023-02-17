@@ -39,10 +39,8 @@ import org.orbitmvi.orbit.internal.runBlocking
  */
 @OrbitDsl
 public suspend fun <S : Any, SE : Any> SimpleSyntax<S, SE>.reduce(reducer: SimpleContext<S>.() -> S) {
-    containerContext.apply {
-        reduce { reducerState ->
-            SimpleContext(reducerState).reducer()
-        }
+    containerContext.reduce { reducerState ->
+        SimpleContext(reducerState).reducer()
     }
 }
 

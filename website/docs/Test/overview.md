@@ -12,6 +12,10 @@ This module provides a simple unit testing framework for your Orbit
 testImplementation("org.orbit-mvi:orbit-test:<latest-version>")
 ```
 
+There is also a new [experimental version](experimental.md) available. It is 
+based in the same module with the files all located under the 
+`org.orbitmvi.orbit.test` package.
+
 ## Testing goals
 
 Experience with [Orbit 1](https://github.com/babylonhealth/orbit-mvi/blob/main/history.md) has taught us what works and what doesn't. This helped
@@ -77,7 +81,7 @@ write the tests.
 Here's the testing process for both test modes:
 
 1. Put the [ContainerHost](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-container-host/)
-   in your chosen test mode using `test()` or `liveTest()` You may optionally
+   in your chosen test mode using `test()` or `liveTest()`. You may optionally
    provide them with the initial state to seed the container with. This helps
    avoid having to call several intents just to get the container in the right
    state for the test.

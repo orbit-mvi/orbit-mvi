@@ -67,12 +67,8 @@ public class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
     internal val pluginContext: ContainerContext<STATE, SIDE_EFFECT> = ContainerContext(
         settings = settings,
         postSideEffect = { sideEffectChannel.send(it) },
-        getState = {
-            internalStateFlow.value
-        },
-        reduce = { reducer ->
-            internalStateFlow.update(reducer)
-        },
+        getState = { internalStateFlow.value },
+        reduce = { reducer -> internalStateFlow.update(reducer) },
         subscribedCounter
     )
 
