@@ -17,10 +17,10 @@
 package org.orbitmvi.orbit.test
 
 import app.cash.turbine.ReceiveTurbine
-import kotlin.test.assertEquals
-import kotlin.test.fail
 import kotlinx.atomicfu.atomic
 import org.orbitmvi.orbit.ContainerHost
+import kotlin.test.assertEquals
+import kotlin.test.fail
 
 public class RealOrbitTestContext<STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHost<STATE, SIDE_EFFECT>>(
     private val actual: CONTAINER_HOST,
