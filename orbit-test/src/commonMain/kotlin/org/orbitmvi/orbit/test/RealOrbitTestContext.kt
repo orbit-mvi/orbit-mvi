@@ -17,10 +17,10 @@
 package org.orbitmvi.orbit.test
 
 import app.cash.turbine.ReceiveTurbine
-import kotlinx.atomicfu.atomic
-import org.orbitmvi.orbit.ContainerHost
 import kotlin.test.assertEquals
 import kotlin.test.fail
+import kotlinx.atomicfu.atomic
+import org.orbitmvi.orbit.ContainerHost
 
 public class RealOrbitTestContext<STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHost<STATE, SIDE_EFFECT>>(
     private val actual: CONTAINER_HOST,
@@ -30,9 +30,9 @@ public class RealOrbitTestContext<STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST
 
     private val onCreateAllowed = atomic(true)
 
-    private var upcomingState: STATE? = null
-
     private val resolvedInitialState: STATE by lazy { initialState ?: actual.container.findTestContainer().originalInitialState }
+
+    private var currentConsumedState: STATE = resolvedInitialState
 
     override fun runOnCreate() {
         if (onCreateAllowed.compareAndSet(expect = true, update = false)) {
@@ -54,7 +54,7 @@ public class RealOrbitTestContext<STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST
     public override suspend fun awaitState(): STATE {
         val item = awaitItem()
 
-        return (item as? Item.StateItem)?.value.also { upcomingState = it } ?: fail("Expected State but got $item")
+        return (item as? Item.StateItem)?.value?.also { currentConsumedState = it } ?: fail("Expected State but got $item")
     }
 
     public override suspend fun awaitSideEffect(): SIDE_EFFECT {
@@ -69,6 +69,14 @@ public class RealOrbitTestContext<STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST
 
     override suspend fun expectInitialState() {
         assertEquals(resolvedInitialState, awaitState())
+    }
+
+    override suspend fun expectSideEffect(expected: SIDE_EFFECT) {
+        assertEquals(expected, awaitSideEffect())
+    }
+
+    override suspend fun expectState(expectedChange: STATE.() -> STATE) {
+        assertEquals(expectedChange(currentConsumedState), awaitState())
     }
 
     override suspend fun skipItems(count: Int) {

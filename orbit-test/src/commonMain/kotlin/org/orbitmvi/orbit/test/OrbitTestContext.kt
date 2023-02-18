@@ -40,6 +40,25 @@ public interface OrbitTestContext<STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST
     public suspend fun expectInitialState()
 
     /**
+     * Awaits for a state and checks if it matches the expected state change from the
+     * previous state.
+     *
+     * @param expectedChange The expected change from the previous state.
+     *
+     * @throws AssertionError if state does not match the expected change.
+     */
+    public suspend fun expectState(expectedChange: STATE.() -> STATE)
+
+    /**
+     * Awaits for a side effect and checks if it matches the expected side effect
+     *
+     * @param expected The expected side effect
+     *
+     * @throws AssertionError if state does not match the expected change.
+     */
+    public suspend fun expectSideEffect(expected: SIDE_EFFECT)
+
+    /**
      * Return the next item received.
      * This function will suspend if no items have been received.
      */

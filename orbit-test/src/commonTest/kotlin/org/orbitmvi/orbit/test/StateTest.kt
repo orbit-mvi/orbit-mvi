@@ -16,6 +16,11 @@
 
 package org.orbitmvi.orbit.test
 
+import kotlin.random.Random
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
+import kotlin.test.assertTrue
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
@@ -25,11 +30,6 @@ import org.orbitmvi.orbit.container
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.postSideEffect
 import org.orbitmvi.orbit.syntax.simple.reduce
-import kotlin.random.Random
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
-import kotlin.test.assertTrue
 
 @OptIn(OrbitExperimental::class)
 @ExperimentalCoroutinesApi
@@ -185,6 +185,42 @@ class StateTest {
             }
         }.also {
             assertTrue { it.message?.startsWith("Expected State but got SideEffectItem") == true }
+        }
+    }
+
+    @Test
+    fun `can assert state changes only`() = runTest {
+        val action = Random.nextInt()
+        val action2 = Random.nextInt()
+        val action3 = Random.nextInt()
+
+        StateTestMiddleware(this).test(this) {
+            expectInitialState()
+            invokeIntent { newList(action) }
+            invokeIntent { newList(action2) }
+            invokeIntent { newList(action3) }
+            expectState { copy(list = listOf(action)) }
+            expectState { copy(list = listOf(action, action2)) }
+            expectState { copy(list = listOf(action, action2, action3)) }
+        }
+    }
+
+    @Test
+    fun `can assert state changes only - failure`() = runTest {
+        val action = Random.nextInt()
+        val action2 = Random.nextInt()
+        val action3 = Random.nextInt()
+
+        assertFailsWith<AssertionError> {
+            StateTestMiddleware(this).test(this) {
+                expectInitialState()
+                invokeIntent { newList(action) }
+                invokeIntent { newList(action2) }
+                invokeIntent { newList(action3) }
+                expectState { copy(list = listOf(action)) }
+                expectState { copy(list = listOf(action, action2, action3)) }
+                expectState { copy(list = listOf(action, action2)) }
+            }
         }
     }
 
