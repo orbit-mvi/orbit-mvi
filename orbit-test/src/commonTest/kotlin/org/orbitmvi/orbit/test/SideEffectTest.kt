@@ -58,6 +58,21 @@ class SideEffectTest {
     }
 
     @Test
+    fun `succeeds if posted side effects match expected side effects - shorthand syntax`() = runTest {
+        val sideEffects = List(Random.nextInt(1, 5)) { Random.nextInt() }
+
+        SideEffectTestMiddleware(this).test(this) {
+            sideEffects.forEach { invokeIntent { something(it) } }
+
+            expectInitialState()
+
+            sideEffects.forEach {
+                expectSideEffect(it)
+            }
+        }
+    }
+
+    @Test
     fun `fails if posted side effects do not match expected side effects`() = runTest {
         val sideEffects = List(Random.nextInt(1, 5)) { Random.nextInt() }
         val sideEffects2 = List(Random.nextInt(1, 5)) { Random.nextInt() }

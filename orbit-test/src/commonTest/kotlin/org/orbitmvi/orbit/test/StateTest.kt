@@ -188,6 +188,78 @@ class StateTest {
         }
     }
 
+    @Test
+    fun `can assert state changes only`() = runTest {
+        val action = Random.nextInt()
+        val action2 = Random.nextInt()
+        val action3 = Random.nextInt()
+
+        StateTestMiddleware(this).test(this) {
+            expectInitialState()
+            invokeIntent { newList(action) }
+            invokeIntent { newList(action2) }
+            invokeIntent { newList(action3) }
+            expectState { copy(list = listOf(action)) }
+            expectState { copy(list = listOf(action, action2)) }
+            expectState { copy(list = listOf(action, action2, action3)) }
+        }
+    }
+
+    @Test
+    fun `can assert state changes only - shorthand`() = runTest {
+        val action = Random.nextInt()
+        val action2 = Random.nextInt()
+        val action3 = Random.nextInt()
+
+        StateTestMiddleware(this).test(this) {
+            expectInitialState()
+            invokeIntent { newList(action) }
+            invokeIntent { newList(action2) }
+            invokeIntent { newList(action3) }
+            expectState(State(count = initialState.count, list = listOf(action)))
+            expectState(State(count = initialState.count, list = listOf(action, action2)))
+            expectState(State(count = initialState.count, list = listOf(action, action2, action3)))
+        }
+    }
+
+    @Test
+    fun `can assert state changes only - failure`() = runTest {
+        val action = Random.nextInt()
+        val action2 = Random.nextInt()
+        val action3 = Random.nextInt()
+
+        assertFailsWith<AssertionError> {
+            StateTestMiddleware(this).test(this) {
+                expectInitialState()
+                invokeIntent { newList(action) }
+                invokeIntent { newList(action2) }
+                invokeIntent { newList(action3) }
+                expectState { copy(list = listOf(action)) }
+                expectState { copy(list = listOf(action, action2, action3)) }
+                expectState { copy(list = listOf(action, action2)) }
+            }
+        }
+    }
+
+    @Test
+    fun `can assert state changes only - shorthand failure`() = runTest {
+        val action = Random.nextInt()
+        val action2 = Random.nextInt()
+        val action3 = Random.nextInt()
+
+        assertFailsWith<AssertionError> {
+            StateTestMiddleware(this).test(this) {
+                expectInitialState()
+                invokeIntent { newList(action) }
+                invokeIntent { newList(action2) }
+                invokeIntent { newList(action3) }
+                expectState(State(count = initialState.count, list = listOf(action)))
+                expectState(State(count = initialState.count, list = listOf(action, action2, action3)))
+                expectState(State(count = initialState.count, list = listOf(action, action2)))
+            }
+        }
+    }
+
     private inner class StateTestMiddleware(scope: CoroutineScope) :
         ContainerHost<State, Int> {
         override val container = scope.container<State, Int>(initialState)
