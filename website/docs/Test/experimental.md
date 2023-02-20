@@ -270,9 +270,9 @@ fun delaySkipping() = runTest {
             invokeIntent { incrementForever() }
 
             // Assert the first three states
-            expectState { listOf(42, 43) }
-            expectState { listOf(42, 43, 44) }
-            expectState { listOf(42, 43, 44, 45) }
+            expectState(listOf(42, 43))
+            expectState(listOf(42, 43, 44))
+            expectState(listOf(42, 43, 44, 45))
 
             // If the flow is infinite, we must call this to ignore the unconsumed items
             // No need to call this for a finite flow
@@ -297,11 +297,11 @@ fun noDelaySkipping() = runTest {
 
             // Assert the first three states
             scope.advanceTimeBy(30_001)
-            expectState { listOf(42, 43) }
+            expectState(listOf(42, 43))
             scope.advanceTimeBy(30_001)
-            expectState { listOf(42, 43, 44) }
+            expectState(listOf(42, 43, 44))
             scope.advanceTimeBy(30_001)
-            expectState { listOf(42, 43, 44, 45) }
+            expectState(listOf(42, 43, 44, 45))
 
             // No need to call `cancelAndIgnoreRemainingItems()` since
             // We control virtual time

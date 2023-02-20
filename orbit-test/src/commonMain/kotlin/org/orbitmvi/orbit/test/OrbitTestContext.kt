@@ -50,6 +50,15 @@ public interface OrbitTestContext<STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST
     public suspend fun expectState(expectedChange: STATE.() -> STATE)
 
     /**
+     * Awaits for a state and checks if it matches the expected state.
+     *
+     * @param expected The expected state.
+     *
+     * @throws AssertionError if state does not match the expected state.
+     */
+    public suspend fun expectState(expected: STATE)
+
+    /**
      * Awaits for a side effect and checks if it matches the expected side effect
      *
      * @param expected The expected side effect

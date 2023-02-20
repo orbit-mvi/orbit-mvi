@@ -71,6 +71,10 @@ public class RealOrbitTestContext<STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST
         assertEquals(resolvedInitialState, awaitState())
     }
 
+    override suspend fun expectState(expected: STATE) {
+        assertEquals(expected, awaitState())
+    }
+
     override suspend fun expectSideEffect(expected: SIDE_EFFECT) {
         assertEquals(expected, awaitSideEffect())
     }
