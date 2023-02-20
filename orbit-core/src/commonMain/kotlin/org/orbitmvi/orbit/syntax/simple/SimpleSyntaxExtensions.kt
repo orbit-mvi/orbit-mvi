@@ -84,6 +84,7 @@ public fun <STATE : Any, SIDE_EFFECT : Any> ContainerHost<STATE, SIDE_EFFECT>.in
  * @param transformer lambda representing the transformer
  */
 @OrbitDsl
+@OrbitExperimental
 public fun <STATE : Any, SIDE_EFFECT : Any> ContainerHost<STATE, SIDE_EFFECT>.blockingIntent(
     registerIdling: Boolean = true,
     transformer: suspend SimpleSyntax<STATE, SIDE_EFFECT>.() -> Unit
