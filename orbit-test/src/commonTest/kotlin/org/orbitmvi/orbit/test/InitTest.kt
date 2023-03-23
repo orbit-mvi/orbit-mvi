@@ -45,7 +45,6 @@ internal class InitTest {
 
     @Test
     fun `created is invoked upon request`() = runTest {
-
         val mockDependency = FakeDependency()
         createMiddleware(mockDependency).test(this, initialState = initialState) {
             expectInitialState()
@@ -57,7 +56,6 @@ internal class InitTest {
 
     @Test
     fun `initial state can be omitted from test`() = runTest {
-
         createMiddleware().test(this) {
             assertEquals(initialState, awaitState())
         }

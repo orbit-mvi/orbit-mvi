@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-2022 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 2021-2023 Mikołaj Leszczyński & Appmattus Limited
  * Copyright 2020 Babylon Partners Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -44,7 +44,6 @@ internal class GeneralTest {
 
     @Test
     fun `created is not invoked by default`() {
-
         val mockDependency = FakeDependency()
         val testSubject = GeneralTestMiddleware(mockDependency)
 
@@ -55,7 +54,6 @@ internal class GeneralTest {
 
     @Test
     fun `created is invoked upon request`() = runBlocking {
-
         val mockDependency = FakeDependency()
         val testSubject = GeneralTestMiddleware(mockDependency)
 
@@ -66,7 +64,6 @@ internal class GeneralTest {
 
     @Test
     fun `created is not invoked by default in live test`() {
-
         val mockDependency = FakeDependency()
         val testSubject = GeneralTestMiddleware(mockDependency)
 
@@ -77,7 +74,6 @@ internal class GeneralTest {
 
     @Test
     fun `created is invoked upon request in live test`() {
-
         val mockDependency = FakeDependency()
         val testSubject = GeneralTestMiddleware(mockDependency)
 
@@ -88,7 +84,6 @@ internal class GeneralTest {
 
     @Test
     fun `first intent is isolated by default`() = runBlocking {
-
         val testSubject = GeneralTestMiddleware()
         val testContainerHost = testSubject.test(initialState)
 
@@ -100,7 +95,6 @@ internal class GeneralTest {
 
     @Test
     fun `initial state can be omitted from test`() = runBlocking {
-
         val testSubject = GeneralTestMiddleware()
         val testContainerHost = testSubject.test()
 

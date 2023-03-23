@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 2021-2023 Mikołaj Leszczyński & Appmattus Limited
  * Copyright 2020 Babylon Partners Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -66,7 +66,6 @@ internal class OrbitAssertionsTest {
 
     @Test
     fun `PASS - Several states in order = matching assertions`() {
-
         // Given State list with several states
         val stateList: List<TestState> = listOf(
             TestState("foobar", 1),
@@ -87,7 +86,6 @@ internal class OrbitAssertionsTest {
 
     @Test
     fun `PASS - states with already satisfied assertion`() {
-
         // Given State list with several states
         val stateList: List<TestState> = listOf(
             TestState("foobar", 2),
@@ -109,7 +107,6 @@ internal class OrbitAssertionsTest {
 
     @Test
     fun `PASS - states with already satisfied assertions the end`() {
-
         // Given State list with several states
         val stateList: List<TestState> = listOf()
 
@@ -126,7 +123,6 @@ internal class OrbitAssertionsTest {
 
     @Test
     fun `FAIL - More states emitted than expected`() {
-
         // Given State list with several states
         val stateList: List<TestState> = listOf(
             TestState("foobar", 1),
@@ -182,7 +178,6 @@ internal class OrbitAssertionsTest {
 
     @Test
     fun `FAIL - Permuted states out of order vs assertions`() {
-
         listOf(
             TestState("foobar", 1),
             TestState("foobarbaz", 1),
@@ -209,7 +204,6 @@ internal class OrbitAssertionsTest {
 
     @Test
     fun `FAIL - Permuted assertions out of order vs states`() {
-
         listOf<TestState.() -> TestState>(
             { copy(label = label + "bar") },
             { copy(label = label + "baz") },
@@ -218,7 +212,6 @@ internal class OrbitAssertionsTest {
             .permutations()
             .drop(1) // filter away the successful case
             .forEach {
-
                 // Given State list with several states
                 val stateList: List<TestState> = listOf(
                     TestState("foobar", 1),
