@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 2021-2023 Mikołaj Leszczyński & Appmattus Limited
  * Copyright 2020 Babylon Partners Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,25 +28,25 @@ plugins {
 
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
-    implementation(ProjectDependencies.kotlinCoroutines)
+    implementation(libs.kotlinCoroutines)
 
     api(project(":orbit-core"))
 
-    implementation(ProjectDependencies.androidxLifecycleSavedState)
-    implementation(ProjectDependencies.androidxLifecycleViewmodelKtx)
-    implementation(ProjectDependencies.androidxLifecycleRuntimeKtx)
-    implementation(ProjectDependencies.androidxEspressoIdlingResource)
+    implementation(libs.androidxLifecycleSavedState)
+    implementation(libs.androidxLifecycleViewmodelKtx)
+    implementation(libs.androidxLifecycleRuntimeKtx)
+    implementation(libs.androidxEspressoIdlingResource)
 
     // Testing
     testImplementation(project(":orbit-test"))
     testImplementation(project(":test-common"))
-    testImplementation(ProjectDependencies.androidxEspressoCore)
-    testImplementation(ProjectDependencies.robolectric)
+    testImplementation(libs.androidxEspressoCore)
+    testImplementation(libs.robolectric)
 
-    testImplementation(ProjectDependencies.kotlinTest)
-    testImplementation(ProjectDependencies.kotlinCoroutinesTest)
+    testImplementation(libs.kotlinTest)
+    testImplementation(libs.kotlinCoroutinesTest)
 
-    testImplementation(ProjectDependencies.androidxCoreTesting)
+    testImplementation(libs.androidxCoreTesting)
 }
 
 android {

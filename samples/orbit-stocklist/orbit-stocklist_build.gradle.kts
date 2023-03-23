@@ -92,5 +92,5 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.5.1")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.5.1")
 
-    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:${Versions.desugar}")
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:${libs.versions.desugar.get()}")
 }

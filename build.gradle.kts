@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 2021-2023 Mikołaj Leszczyński & Appmattus Limited
  * Copyright 2020 Babylon Partners Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -38,14 +38,14 @@ buildscript {
         classpath(PluginDependencies.android)
         classpath(PluginDependencies.kotlin)
         classpath(PluginDependencies.safeargs)
-        classpath(PluginDependencies.atomicfu)
+        classpath(libs.plugin.atomicfu)
     }
 }
 
 plugins {
     kotlin("plugin.serialization") version Versions.kotlin
     id("com.github.ben-manes.versions") version Versions.gradleVersionsPlugin
-    id("com.appmattus.markdown") version Versions.markdownLintPlugin
+    alias(libs.plugins.markdownlintGradlePlugin)
     id("com.vanniktech.maven.publish") version Versions.gradleMavenPublishPlugin apply false
     id("org.jetbrains.dokka") version Versions.dokka
 }
@@ -84,12 +84,12 @@ tasks.withType<DependencyUpdatesTask> {
 allprojects {
     configurations.all {
         resolutionStrategy {
-            force("org.jetbrains.kotlin:kotlin-stdlib:${Versions.kotlin}")
-            force("org.jetbrains.kotlin:kotlin-stdlib-jdk8:${Versions.kotlin}")
-            force("org.jetbrains.kotlin:kotlin-reflect:${Versions.kotlin}")
-            force("org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versions.coroutines}")
+            force("org.jetbrains.kotlin:kotlin-stdlib:${libs.versions.kotlin.get()}")
+            force("org.jetbrains.kotlin:kotlin-stdlib-jdk8:${libs.versions.kotlin.get()}")
+            force("org.jetbrains.kotlin:kotlin-reflect:${libs.versions.kotlin.get()}")
+            force("org.jetbrains.kotlinx:kotlinx-coroutines-core:${libs.versions.coroutines.get()}")
             // Force Junit version due to security issues with Junit 4.12
-            force(ProjectDependencies.junit4)
+            force(libs.junit4)
         }
     }
 }

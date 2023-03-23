@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-2022 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 2021-2023 Mikołaj Leszczyński & Appmattus Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,28 +33,28 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = Versions.androidxComposeCompiler
+        kotlinCompilerExtensionVersion = libs.versions.androidxComposeCompiler.get()
     }
 }
 
 dependencies {
     api(project(":orbit-core"))
 
-    implementation(ProjectDependencies.androidxComposeRuntime)
-    implementation(ProjectDependencies.androidxLifecycleRuntimeKtx)
-    implementation(ProjectDependencies.androidxComposeUi)
+    implementation(libs.androidxComposeRuntime)
+    implementation(libs.androidxLifecycleRuntimeKtx)
+    implementation(libs.androidxComposeUi)
 
     // Testing
     implementation(kotlin("test-junit"))
     testImplementation(project(":orbit-test"))
     testImplementation(project(":test-common"))
-    testImplementation(ProjectDependencies.androidxEspressoCore)
-    testImplementation(ProjectDependencies.robolectric)
+    testImplementation(libs.androidxEspressoCore)
+    testImplementation(libs.robolectric)
 
-    testImplementation(ProjectDependencies.kotlinTest)
-    testImplementation(ProjectDependencies.kotlinCoroutinesTest)
+    testImplementation(libs.kotlinTest)
+    testImplementation(libs.kotlinCoroutinesTest)
 
-    testImplementation(ProjectDependencies.androidxCoreTesting)
-    testImplementation(ProjectDependencies.androidxComposeUiTestJunit4)
-    testImplementation(ProjectDependencies.androidxComposeUiTestManifest)
+    testImplementation(libs.androidxCoreTesting)
+    testImplementation(libs.androidxComposeUiTestJunit4)
+    testImplementation(libs.androidxComposeUiTestManifest)
 }

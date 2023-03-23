@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 2022-2023 Mikołaj Leszczyński & Appmattus Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,7 +49,7 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = Versions.androidxComposeCompiler
+        kotlinCompilerExtensionVersion = libs.versions.androidxComposeCompiler.get()
     }
 }
 
@@ -57,9 +57,9 @@ dependencies {
     implementation(kotlin("stdlib-jdk8"))
     implementation(project(":orbit-compose"))
 
-    implementation(ProjectDependencies.androidxComposeRuntime)
-    implementation(ProjectDependencies.androidxLifecycleRuntimeKtx)
-    implementation(ProjectDependencies.androidxComposeUi)
+    implementation(libs.androidxComposeRuntime)
+    implementation(libs.androidxLifecycleRuntimeKtx)
+    implementation(libs.androidxComposeUi)
 
     implementation("androidx.compose.foundation:foundation:1.2.1")
     implementation("androidx.compose.material:material:1.2.1")

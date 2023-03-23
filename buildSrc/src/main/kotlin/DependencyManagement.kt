@@ -30,49 +30,6 @@ object Versions {
     const val dokka = "1.6.10"
 
     const val kotlin = "1.7.20"
-    const val coroutines = "1.6.4"
-
-    const val androidxLifecycles = "2.5.1"
-    const val androidxEspresso = "3.4.0"
-    const val androidxCompose = "1.2.1"
-    const val androidxComposeCompiler = "1.3.2"
-    const val androidxCoreTesting = "2.1.0"
-
-    const val desugar = "1.1.5"
-
-    // Testing
-    const val jacoco = "0.8.8"
-    const val junit4 = "4.13.2"
-    const val robolectric = "4.8.2"
-    const val turbine = "0.12.1"
-}
-
-object ProjectDependencies {
-    // Kotlin
-    const val kotlinCoroutines = "org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versions.coroutines}"
-    const val kotlinCoroutinesTest = "org.jetbrains.kotlinx:kotlinx-coroutines-test:${Versions.coroutines}"
-    const val kotlinTest = "org.jetbrains.kotlin:kotlin-test-junit:${Versions.kotlin}"
-
-    // AndroidX
-    const val androidxLifecycleSavedState = "androidx.lifecycle:lifecycle-viewmodel-savedstate:${Versions.androidxLifecycles}"
-    const val androidxLifecycleViewmodelKtx = "androidx.lifecycle:lifecycle-viewmodel-ktx:${Versions.androidxLifecycles}"
-    const val androidxLifecycleRuntimeKtx = "androidx.lifecycle:lifecycle-runtime-ktx:${Versions.androidxLifecycles}"
-    const val androidxEspressoIdlingResource = "androidx.test.espresso:espresso-idling-resource:${Versions.androidxEspresso}"
-    const val androidxEspressoCore = "androidx.test.espresso:espresso-core:${Versions.androidxEspresso}"
-    const val androidxComposeRuntime = "androidx.compose.runtime:runtime:${Versions.androidxCompose}"
-    const val androidxComposeUi = "androidx.compose.ui:ui:${Versions.androidxCompose}"
-    // Testing
-    const val androidxComposeUiTestJunit4 = "androidx.compose.ui:ui-test-junit4:${Versions.androidxCompose}"
-    const val androidxComposeUiTestManifest = "androidx.compose.ui:ui-test-manifest:${Versions.androidxCompose}"
-    const val androidxCoreTesting = "androidx.arch.core:core-testing:${Versions.androidxCoreTesting}"
-    const val turbine = "app.cash.turbine:turbine:${Versions.turbine}"
-
-    // Tools
-    const val detektFormatting = "io.gitlab.arturbosch.detekt:detekt-formatting:${Versions.detektPlugin}"
-
-    // Test prerequisites
-    const val junit4 = "junit:junit:${Versions.junit4}"
-    const val robolectric = "org.robolectric:robolectric:${Versions.robolectric}"
 }
 
 object PluginDependencies {
