@@ -43,7 +43,7 @@ buildscript {
 }
 
 plugins {
-    kotlin("plugin.serialization") version libs.versions.kotlin.get()
+    alias(libs.plugins.kotlin.pluginSerialization)
     alias(libs.plugins.gradleVersionsPlugin)
     alias(libs.plugins.markdownlintGradlePlugin)
     alias(libs.plugins.gradleMavenPublishPlugin) apply false

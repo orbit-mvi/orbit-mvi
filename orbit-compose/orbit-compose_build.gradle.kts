@@ -17,8 +17,8 @@
 plugins {
     id("com.android.library")
     kotlin("android")
-    id("com.vanniktech.maven.publish")
-    id("org.jetbrains.dokka")
+    id(libs.plugins.gradleMavenPublishPlugin.get().pluginId)
+    id(libs.plugins.dokkaPlugin.get().pluginId)
 }
 
 android {
