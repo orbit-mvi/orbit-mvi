@@ -23,8 +23,6 @@ import com.appmattus.markdown.rules.LineLengthRule
 import com.appmattus.markdown.rules.ProperNamesRule
 import com.appmattus.markdown.rules.ProperNamesRule.Companion.DefaultNames
 import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
-import com.vanniktech.maven.publish.MavenPublishBaseExtension
-import com.vanniktech.maven.publish.SonatypeHost.DEFAULT
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.net.URL
 
@@ -201,11 +199,6 @@ subprojects {
                 get("main").java.srcDir("src/main/kotlin")
                 get("test").java.srcDir("src/test/kotlin")
             }
-        }
-    }
-    plugins.withId("com.vanniktech.maven.publish.base") {
-        configure<MavenPublishBaseExtension> {
-            publishToMavenCentral(DEFAULT, System.getenv("SONATYPE_REPOSITORY_ID"))
         }
     }
 }
