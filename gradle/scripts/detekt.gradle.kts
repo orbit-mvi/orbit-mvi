@@ -30,7 +30,7 @@ buildscript {
         maven(url = "https://plugins.gradle.org/m2/")
     }
     dependencies {
-        classpath("io.gitlab.arturbosch.detekt:detekt-gradle-plugin:${libs.versions.detektPlugin.get()}")
+        classpath(libs.buildscript.detekt)
     }
 }
 

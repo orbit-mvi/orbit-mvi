@@ -71,21 +71,18 @@ detektFormatting = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", v
 junit4 = { module = "junit:junit", version.ref = "junit4" }
 robolectric = { module = "org.robolectric:robolectric", version.ref = "robolectric" }
 
-plugin_atomicfu = { module = "org.jetbrains.kotlinx:atomicfu-gradle-plugin", version.ref = "atomicfu" }
+# Plugins
+buildscript_android = { module = "com.android.tools.build:gradle", version.ref = "gradleAndroidPlugin" }
+buildscript_kotlin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
+buildscript_detekt = { module = "io.gitlab.arturbosch.detekt:detekt-gradle-plugin", version.ref = "detektPlugin" }
+buildscript_safeargs = { module = "androidx.navigation:navigation-safe-args-gradle-plugin", version.ref = "safeargs" }
+buildscript_atomicfu = { module = "org.jetbrains.kotlinx:atomicfu-gradle-plugin", version.ref = "atomicfu" }
 
 [plugins]
 
-#android = { id = "com.android.tools.build:gradle", version.ref = "gradleAndroidPlugin" }
-#kotlin = { id = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
-detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detektPlugin" }
-#safeargs = { id = "androidx.navigation:navigation-safe-args-gradle-plugin", version.ref = "safeargs" }
-#atomicfu = { id = "org.jetbrains.kotlinx:atomicfu-gradle-plugin", version.ref = "atomicfu" }
-
-
-#detektGradlePlugin = { id = "io.gitlab.arturbosch.detekt", version.ref = "detektGradlePlugin" }
-#dokkaPlugin = { id = "org.jetbrains.dokka", version.ref = "dokkaPlugin" }
+dokkaPlugin = { id = "org.jetbrains.dokka", version.ref = "dokka" }
 gradleMavenPublishPlugin = { id = "com.vanniktech.maven.publish", version.ref = "gradleMavenPublishPlugin" }
-#gradleVersionsPlugin = { id = "com.github.ben-manes.versions", version.ref = "gradleVersionsPlugin" }
+gradleVersionsPlugin = { id = "com.github.ben-manes.versions", version.ref = "gradleVersionsPlugin" }
 markdownlintGradlePlugin = { id = "com.appmattus.markdown", version.ref = "markdownLintPlugin" }
 #owaspDependencyCheckPlugin = { id = "org.owasp.dependencycheck", version.ref = "owaspDependencyCheckPlugin" }
 

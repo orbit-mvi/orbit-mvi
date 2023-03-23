@@ -22,8 +22,8 @@ import kotlinx.atomicfu.plugin.gradle.AtomicFUGradlePlugin
 
 plugins {
     kotlin("multiplatform")
-    id("com.vanniktech.maven.publish")
-    id("org.jetbrains.dokka")
+    id(libs.plugins.gradleMavenPublishPlugin.get().pluginId)
+    id(libs.plugins.dokkaPlugin.get().pluginId)
 }
 apply<AtomicFUGradlePlugin>()
 

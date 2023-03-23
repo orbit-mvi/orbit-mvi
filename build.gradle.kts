@@ -35,19 +35,19 @@ buildscript {
     }
 
     dependencies {
-        classpath(PluginDependencies.android)
-        classpath(PluginDependencies.kotlin)
-        classpath(PluginDependencies.safeargs)
-        classpath(libs.plugin.atomicfu)
+        classpath(libs.buildscript.android)
+        classpath(libs.buildscript.kotlin)
+        classpath(libs.buildscript.safeargs)
+        classpath(libs.buildscript.atomicfu)
     }
 }
 
 plugins {
-    kotlin("plugin.serialization") version Versions.kotlin
-    id("com.github.ben-manes.versions") version Versions.gradleVersionsPlugin
+    kotlin("plugin.serialization") version libs.versions.kotlin.get()
+    alias(libs.plugins.gradleVersionsPlugin)
     alias(libs.plugins.markdownlintGradlePlugin)
-    id("com.vanniktech.maven.publish") version Versions.gradleMavenPublishPlugin apply false
-    id("org.jetbrains.dokka") version Versions.dokka
+    alias(libs.plugins.gradleMavenPublishPlugin) apply false
+    alias(libs.plugins.dokkaPlugin)
 }
 
 apply(from = "gradle/scripts/detekt.gradle.kts")
