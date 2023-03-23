@@ -87,7 +87,7 @@ dependencies {
     implementation("com.github.lisawray.groupie:groupie:2.10.1")
     implementation("com.github.lisawray.groupie:groupie-kotlin-android-extensions:2.10.1")
     implementation("com.github.lisawray.groupie:groupie-viewbinding:2.10.1")
-    implementation("io.insert-koin:koin-android:3.1.5")
+    implementation("io.insert-koin:koin-android:3.3.3")
     implementation("androidx.lifecycle:lifecycle-common-java8:2.6.1")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.6.1")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.1")

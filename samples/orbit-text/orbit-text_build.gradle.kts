@@ -64,7 +64,7 @@ dependencies {
     implementation("androidx.compose.foundation:foundation:1.4.0")
     implementation("androidx.compose.material:material:1.4.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
-    implementation("io.insert-koin:koin-android:3.1.5")
+    implementation("io.insert-koin:koin-android:3.3.3")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.6.1")
     implementation("androidx.appcompat:appcompat:1.6.1")
 }

@@ -88,7 +88,7 @@ dependencies {
     implementation(kotlin("reflect"))
 
     // Dependency Injection
-    implementation("io.insert-koin:koin-android:3.1.5")
+    implementation("io.insert-koin:koin-android:3.3.3")
 
     // Testing
     testImplementation(project(":orbit-test"))
