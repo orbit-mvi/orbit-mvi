@@ -18,7 +18,7 @@
 
 gradleVersionsPlugin = "0.46.0"
 gradleAndroidPlugin = "7.4.2"
-gradleMavenPublishPlugin = "0.18.0"
+gradleMavenPublishPlugin = "0.24.0"
 markdownLintPlugin = "0.6.0"
 detektPlugin = "1.22.0"
 safeargs = "2.5.3"
