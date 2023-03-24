@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 2021-2023 Mikołaj Leszczyński & Appmattus Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -117,8 +117,11 @@ internal class ContainerExceptionHandlerTest {
         val scopeJob = SupervisorJob()
         val containerScope = CoroutineScope(scopeJob)
         val exceptionHandler =
-            if (withExceptionHandler) CoroutineExceptionHandler { _, _ -> /*don't care*/ }
-            else null
+            if (withExceptionHandler) {
+                CoroutineExceptionHandler { _, _ -> /*don't care*/ }
+            } else {
+                null
+            }
         val container = containerScope.container<Unit, Nothing>(
             initialState = Unit,
             settings = Container.Settings(

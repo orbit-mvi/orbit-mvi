@@ -1,0 +1,87 @@
+#
+# Copyright 2023 Mikołaj Leszczyński & Appmattus Limited
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+[versions]
+
+gradleVersionsPlugin = "0.46.0"
+gradleAndroidPlugin = "7.4.2"
+gradleMavenPublishPlugin = "0.24.0"
+markdownLintPlugin = "0.6.0"
+detektPlugin = "1.22.0"
+safeargs = "2.5.3"
+atomicfu = "0.20.0"
+dokka = "1.8.10"
+
+kotlin = "1.8.10"
+coroutines = "1.6.4"
+
+androidxLifecycles = "2.6.1"
+androidxEspresso = "3.5.1"
+androidxCompose = "1.4.0"
+androidxComposeCompiler = "1.4.4"
+androidxCoreTesting = "2.2.0"
+
+desugar = "2.0.2"
+
+# Testing
+jacoco = "0.8.8"
+junit4 = "4.13.2"
+robolectric = "4.9.2"
+turbine = "0.12.1"
+
+
+[libraries]
+
+# Kotlin
+kotlinCoroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
+kotlinCoroutinesTest = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
+kotlinTest = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
+
+# AndroidX
+androidxLifecycleSavedState = { module = "androidx.lifecycle:lifecycle-viewmodel-savedstate", version.ref = "androidxLifecycles" }
+androidxLifecycleViewmodelKtx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "androidxLifecycles" }
+androidxLifecycleRuntimeKtx = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "androidxLifecycles" }
+androidxEspressoIdlingResource = { module = "androidx.test.espresso:espresso-idling-resource", version.ref = "androidxEspresso" }
+androidxEspressoCore = { module = "androidx.test.espresso:espresso-core", version.ref = "androidxEspresso" }
+androidxComposeRuntime = { module = "androidx.compose.runtime:runtime", version.ref = "androidxCompose" }
+androidxComposeUi = { module = "androidx.compose.ui:ui", version.ref = "androidxCompose" }
+# Testing
+androidxComposeUiTestJunit4 = { module = "androidx.compose.ui:ui-test-junit4", version.ref = "androidxCompose" }
+androidxComposeUiTestManifest = { module = "androidx.compose.ui:ui-test-manifest", version.ref = "androidxCompose" }
+androidxCoreTesting = { module = "androidx.arch.core:core-testing", version.ref = "androidxCoreTesting" }
+turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
+
+# Tools
+detektFormatting = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detektPlugin" }
+
+# Test prerequisites
+junit4 = { module = "junit:junit", version.ref = "junit4" }
+robolectric = { module = "org.robolectric:robolectric", version.ref = "robolectric" }
+
+# Plugins
+buildscript_android = { module = "com.android.tools.build:gradle", version.ref = "gradleAndroidPlugin" }
+buildscript_kotlin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
+buildscript_detekt = { module = "io.gitlab.arturbosch.detekt:detekt-gradle-plugin", version.ref = "detektPlugin" }
+buildscript_safeargs = { module = "androidx.navigation:navigation-safe-args-gradle-plugin", version.ref = "safeargs" }
+buildscript_atomicfu = { module = "org.jetbrains.kotlinx:atomicfu-gradle-plugin", version.ref = "atomicfu" }
+
+[plugins]
+
+dokkaPlugin = { id = "org.jetbrains.dokka", version.ref = "dokka" }
+gradleMavenPublishPlugin = { id = "com.vanniktech.maven.publish", version.ref = "gradleMavenPublishPlugin" }
+gradleVersionsPlugin = { id = "com.github.ben-manes.versions", version.ref = "gradleVersionsPlugin" }
+markdownlintGradlePlugin = { id = "com.appmattus.markdown", version.ref = "markdownLintPlugin" }
+kotlin-pluginSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }

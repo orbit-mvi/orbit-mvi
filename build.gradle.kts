@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 2021-2023 Mikołaj Leszczyński & Appmattus Limited
  * Copyright 2020 Babylon Partners Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,8 +23,6 @@ import com.appmattus.markdown.rules.LineLengthRule
 import com.appmattus.markdown.rules.ProperNamesRule
 import com.appmattus.markdown.rules.ProperNamesRule.Companion.DefaultNames
 import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
-import com.vanniktech.maven.publish.MavenPublishBaseExtension
-import com.vanniktech.maven.publish.SonatypeHost.DEFAULT
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.net.URL
 
@@ -35,19 +33,19 @@ buildscript {
     }
 
     dependencies {
-        classpath(PluginDependencies.android)
-        classpath(PluginDependencies.kotlin)
-        classpath(PluginDependencies.safeargs)
-        classpath(PluginDependencies.atomicfu)
+        classpath(libs.buildscript.android)
+        classpath(libs.buildscript.kotlin)
+        classpath(libs.buildscript.safeargs)
+        classpath(libs.buildscript.atomicfu)
     }
 }
 
 plugins {
-    kotlin("plugin.serialization") version Versions.kotlin
-    id("com.github.ben-manes.versions") version Versions.gradleVersionsPlugin
-    id("com.appmattus.markdown") version Versions.markdownLintPlugin
-    id("com.vanniktech.maven.publish") version Versions.gradleMavenPublishPlugin apply false
-    id("org.jetbrains.dokka") version Versions.dokka
+    alias(libs.plugins.kotlin.pluginSerialization)
+    alias(libs.plugins.gradleVersionsPlugin)
+    alias(libs.plugins.markdownlintGradlePlugin)
+    alias(libs.plugins.gradleMavenPublishPlugin) apply false
+    alias(libs.plugins.dokkaPlugin)
 }
 
 apply(from = "gradle/scripts/detekt.gradle.kts")
@@ -84,12 +82,12 @@ tasks.withType<DependencyUpdatesTask> {
 allprojects {
     configurations.all {
         resolutionStrategy {
-            force("org.jetbrains.kotlin:kotlin-stdlib:${Versions.kotlin}")
-            force("org.jetbrains.kotlin:kotlin-stdlib-jdk8:${Versions.kotlin}")
-            force("org.jetbrains.kotlin:kotlin-reflect:${Versions.kotlin}")
-            force("org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versions.coroutines}")
+            force("org.jetbrains.kotlin:kotlin-stdlib:${libs.versions.kotlin.get()}")
+            force("org.jetbrains.kotlin:kotlin-stdlib-jdk8:${libs.versions.kotlin.get()}")
+            force("org.jetbrains.kotlin:kotlin-reflect:${libs.versions.kotlin.get()}")
+            force("org.jetbrains.kotlinx:kotlinx-coroutines-core:${libs.versions.coroutines.get()}")
             // Force Junit version due to security issues with Junit 4.12
-            force(ProjectDependencies.junit4)
+            force(libs.junit4)
         }
     }
 }
@@ -185,10 +183,10 @@ subprojects {
         apply(from = "$rootDir/gradle/scripts/jacoco-android.gradle.kts")
 
         configure<LibraryExtension> {
-            compileSdk = 32
+            compileSdk = 33
             defaultConfig {
                 minSdk = 21
-                targetSdk = 32
+                targetSdk = 33
             }
 
             buildTypes {
@@ -201,11 +199,6 @@ subprojects {
                 get("main").java.srcDir("src/main/kotlin")
                 get("test").java.srcDir("src/test/kotlin")
             }
-        }
-    }
-    plugins.withId("com.vanniktech.maven.publish.base") {
-        configure<MavenPublishBaseExtension> {
-            publishToMavenCentral(DEFAULT, System.getenv("SONATYPE_REPOSITORY_ID"))
         }
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 2021-2023 Mikołaj Leszczyński & Appmattus Limited
  * Copyright 2020 Babylon Partners Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -30,7 +30,7 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                implementation(ProjectDependencies.kotlinCoroutines)
+                implementation(libs.kotlinCoroutines)
                 implementation(kotlin("stdlib"))
                 implementation(kotlin("test-common"))
                 implementation(kotlin("test-annotations-common"))

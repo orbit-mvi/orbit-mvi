@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 2021-2023 Mikołaj Leszczyński & Appmattus Limited
  * Copyright 2020 Babylon Partners Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,8 +22,8 @@ import kotlinx.atomicfu.plugin.gradle.AtomicFUGradlePlugin
 
 plugins {
     kotlin("multiplatform")
-    id("com.vanniktech.maven.publish")
-    id("org.jetbrains.dokka")
+    id(libs.plugins.gradleMavenPublishPlugin.get().pluginId)
+    id(libs.plugins.dokkaPlugin.get().pluginId)
 }
 apply<AtomicFUGradlePlugin>()
 
@@ -35,9 +35,9 @@ kotlin {
         commonMain {
             dependencies {
                 implementation(kotlin("test-common"))
-                implementation(ProjectDependencies.kotlinCoroutines)
-                implementation(ProjectDependencies.kotlinCoroutinesTest)
-                implementation(ProjectDependencies.turbine)
+                implementation(libs.kotlinCoroutines)
+                implementation(libs.kotlinCoroutinesTest)
+                implementation(libs.turbine)
 
                 api(project(":orbit-core"))
             }
@@ -52,7 +52,7 @@ kotlin {
 
         val iosMain by getting {
             dependencies {
-                implementation(ProjectDependencies.kotlinCoroutines)
+                implementation(libs.kotlinCoroutines)
             }
         }
 
@@ -69,15 +69,15 @@ kotlin {
         val jvmMain by getting {
             dependencies {
                 implementation(kotlin("test-junit"))
-                implementation(ProjectDependencies.kotlinCoroutines)
-                implementation(ProjectDependencies.junit4)
+                implementation(libs.kotlinCoroutines)
+                implementation(libs.junit4)
             }
         }
 
         @Suppress("UnusedPrivateMember")
         val jvmTest by getting {
             dependencies {
-                implementation(ProjectDependencies.kotlinCoroutinesTest)
+                implementation(libs.kotlinCoroutinesTest)
             }
         }
     }
