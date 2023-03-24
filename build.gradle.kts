@@ -186,6 +186,7 @@ subprojects {
             compileSdk = 33
             defaultConfig {
                 minSdk = 21
+                targetSdk = 32
             }
 
             buildTypes {
