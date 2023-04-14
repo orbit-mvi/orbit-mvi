@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 2021-2023 Mikołaj Leszczyński & Appmattus Limited
  * Copyright 2020 Babylon Partners Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -39,7 +39,7 @@ import org.orbitmvi.orbit.internal.runBlocking
  */
 @OrbitDsl
 public suspend fun <S : Any, SE : Any> SimpleSyntax<S, SE>.reduce(reducer: SimpleContext<S>.() -> S) {
-    containerContext.reduce { reducerState ->
+    containerContext.reduce(intentName) { reducerState ->
         SimpleContext(reducerState).reducer()
     }
 }
@@ -53,7 +53,7 @@ public suspend fun <S : Any, SE : Any> SimpleSyntax<S, SE>.reduce(reducer: Simpl
  */
 @OrbitDsl
 public suspend fun <S : Any, SE : Any> SimpleSyntax<S, SE>.postSideEffect(sideEffect: SE) {
-    containerContext.postSideEffect(sideEffect)
+    containerContext.postSideEffect(intentName, sideEffect)
 }
 
 /**
@@ -65,12 +65,13 @@ public suspend fun <S : Any, SE : Any> SimpleSyntax<S, SE>.postSideEffect(sideEf
 @OrbitDsl
 public fun <STATE : Any, SIDE_EFFECT : Any> ContainerHost<STATE, SIDE_EFFECT>.intent(
     registerIdling: Boolean = true,
+    intentName: String? = null,
     transformer: suspend SimpleSyntax<STATE, SIDE_EFFECT>.() -> Unit
 ): Unit =
     runBlocking {
         container.orbit {
             withIdling(registerIdling) {
-                SimpleSyntax(this).transformer()
+                SimpleSyntax(this, intentName).transformer()
             }
         }
     }
@@ -87,12 +88,13 @@ public fun <STATE : Any, SIDE_EFFECT : Any> ContainerHost<STATE, SIDE_EFFECT>.in
 @OrbitExperimental
 public fun <STATE : Any, SIDE_EFFECT : Any> ContainerHost<STATE, SIDE_EFFECT>.blockingIntent(
     registerIdling: Boolean = true,
+    intentName: String? = null,
     transformer: suspend SimpleSyntax<STATE, SIDE_EFFECT>.() -> Unit
 ): Unit =
     runBlocking {
         container.inlineOrbit {
             withIdling(registerIdling) {
-                SimpleSyntax(this).transformer()
+                SimpleSyntax(this, intentName).transformer()
             }
         }
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 2021-2023 Mikołaj Leszczyński & Appmattus Limited
  * Copyright 2020 Babylon Partners Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -24,7 +24,7 @@ import org.orbitmvi.orbit.annotation.OrbitDsl
 import org.orbitmvi.orbit.syntax.ContainerContext
 
 @OrbitDsl
-public class SimpleSyntax<S : Any, SE : Any>(public val containerContext: ContainerContext<S, SE>) {
+public class SimpleSyntax<S : Any, SE : Any>(public val containerContext: ContainerContext<S, SE>, public val intentName: String? = null) {
 
     /**
      * The current state which can change throughout execution of the orbit block

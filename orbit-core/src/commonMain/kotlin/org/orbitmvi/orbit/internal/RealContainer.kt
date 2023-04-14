@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-2022 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 2021-2023 Mikołaj Leszczyński & Appmattus Limited
  * Copyright 2020 Babylon Partners Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,6 +20,7 @@
 
 package org.orbitmvi.orbit.internal
 
+import kotlin.coroutines.EmptyCoroutineContext
 import kotlinx.atomicfu.atomic
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -30,8 +31,12 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.channels.produce
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
@@ -42,13 +47,13 @@ import org.orbitmvi.orbit.internal.repeatonsubscription.DelayingSubscribedCounte
 import org.orbitmvi.orbit.internal.repeatonsubscription.SubscribedCounter
 import org.orbitmvi.orbit.internal.repeatonsubscription.refCount
 import org.orbitmvi.orbit.syntax.ContainerContext
-import kotlin.coroutines.EmptyCoroutineContext
 
-public class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
+public class RealContainer<STATE : Any, SIDE_EFFECT : Any> constructor(
     initialState: STATE,
     parentScope: CoroutineScope,
     public override val settings: RealSettings,
-    subscribedCounterOverride: SubscribedCounter? = null
+    subscribedCounterOverride: SubscribedCounter? = null,
+    public override val containerHostName: String? = null
 ) : Container<STATE, SIDE_EFFECT> {
     private val scope = parentScope + settings.eventLoopDispatcher
     private val dispatchChannel = Channel<suspend ContainerContext<STATE, SIDE_EFFECT>.() -> Unit>(Channel.UNLIMITED)
@@ -56,19 +61,35 @@ public class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
 
     private val subscribedCounter = subscribedCounterOverride ?: DelayingSubscribedCounter(scope, settings.repeatOnSubscribedStopTimeout)
 
-    private val internalStateFlow = MutableStateFlow(initialState)
+    private inner class FlowMetadata<T>(val intentName: String?, val value: T)
 
-    override val stateFlow: StateFlow<STATE> = internalStateFlow.refCount(subscribedCounter)
+    private val internalStateFlow = MutableStateFlow(FlowMetadata("${containerHostName ?: "<not-populated>"}.<initial-state>", initialState))
 
-    private val sideEffectChannel = Channel<SIDE_EFFECT>(settings.sideEffectBufferSize)
+    override val stateFlow: StateFlow<STATE> =
+        internalStateFlow.logState().map { it.value }.stateIn(scope, SharingStarted.Eagerly, initialState).refCount(subscribedCounter)
 
-    override val sideEffectFlow: Flow<SIDE_EFFECT> = sideEffectChannel.receiveAsFlow().refCount(subscribedCounter)
+    private val sideEffectChannel = Channel<FlowMetadata<SIDE_EFFECT>>(settings.sideEffectBufferSize)
+
+    override val sideEffectFlow: Flow<SIDE_EFFECT> =
+        sideEffectChannel.receiveAsFlow().logSideEffect().map { it.value }.refCount(subscribedCounter)
+
+    private fun StateFlow<FlowMetadata<STATE>>.logState(): Flow<FlowMetadata<STATE>> = onEach { metadata ->
+        settings.loggers.forEach { logger ->
+            logger.logState(containerHostName ?: "<not-populated>", metadata.intentName ?: "<not-populated>", metadata.value)
+        }
+    }
+
+    private fun Flow<FlowMetadata<SIDE_EFFECT>>.logSideEffect(): Flow<FlowMetadata<SIDE_EFFECT>> = onEach { metadata ->
+        settings.loggers.forEach { logger ->
+            logger.logSideEffect(containerHostName ?: "<not-populated>", metadata.intentName ?: "<not-populated>", metadata.value)
+        }
+    }
 
     internal val pluginContext: ContainerContext<STATE, SIDE_EFFECT> = ContainerContext(
         settings = settings,
-        postSideEffect = { sideEffectChannel.send(it) },
-        getState = { internalStateFlow.value },
-        reduce = { reducer -> internalStateFlow.update(reducer) },
+        postSideEffect = { intentName, sideEffect -> sideEffectChannel.send(FlowMetadata(intentName, sideEffect)) },
+        getState = { internalStateFlow.value.value },
+        reduce = { intentName, reducer -> internalStateFlow.update { FlowMetadata(intentName, reducer(it.value)) } },
         subscribedCounter
     )
 

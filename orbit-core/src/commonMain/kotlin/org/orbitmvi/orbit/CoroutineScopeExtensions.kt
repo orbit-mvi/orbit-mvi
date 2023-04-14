@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-2022 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 2021-2023 Mikołaj Leszczyński & Appmattus Limited
  * Copyright 2020 Babylon Partners Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -80,6 +80,7 @@ public fun <STATE : Any, SIDE_EFFECT : Any> CoroutineScope.container(
 public fun <STATE : Any, SIDE_EFFECT : Any> CoroutineScope.container(
     initialState: STATE,
     buildSettings: SettingsBuilder.() -> Unit = {},
+    containerHostName: String? = null,
     onCreate: ((state: STATE) -> Unit)? = null
 ): Container<STATE, SIDE_EFFECT> =
     if (onCreate == null) {
@@ -89,7 +90,8 @@ public fun <STATE : Any, SIDE_EFFECT : Any> CoroutineScope.container(
             RealContainer(
                 initialState = initialState,
                 settings = SettingsBuilder().apply { buildSettings() }.settings,
-                parentScope = this
+                parentScope = this,
+                containerHostName = containerHostName
             )
         )
     } else {
@@ -100,7 +102,8 @@ public fun <STATE : Any, SIDE_EFFECT : Any> CoroutineScope.container(
                 RealContainer(
                     initialState = initialState,
                     settings = SettingsBuilder().apply { buildSettings() }.settings,
-                    parentScope = this
+                    parentScope = this,
+                    containerHostName = containerHostName
                 ),
                 onCreate
             )

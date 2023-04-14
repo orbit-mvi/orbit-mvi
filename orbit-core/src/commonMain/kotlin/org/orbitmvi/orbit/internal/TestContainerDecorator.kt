@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-2022 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 2021-2023 Mikołaj Leszczyński & Appmattus Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,6 +47,9 @@ public class TestContainerDecorator<STATE : Any, SIDE_EFFECT : Any>(
     override val sideEffectFlow: Flow<SIDE_EFFECT>
         get() = delegate.value.sideEffectFlow
 
+    override val containerHostName: String?
+        get() = delegate.value.containerHostName
+
     override suspend fun orbit(orbitIntent: suspend ContainerContext<STATE, SIDE_EFFECT>.() -> Unit) {
         delegate.value.orbit(orbitIntent)
     }
@@ -65,7 +68,8 @@ public class TestContainerDecorator<STATE : Any, SIDE_EFFECT : Any>(
             initialState = initialState ?: originalInitialState,
             parentScope = testScope ?: parentScope,
             settings = strategy.settings,
-            subscribedCounterOverride = AlwaysSubscribedCounter
+            subscribedCounterOverride = AlwaysSubscribedCounter,
+            containerHostName = containerHostName
         ).let {
             if (strategy is TestingStrategy.Suspending) {
                 InterceptingContainerDecorator(it)

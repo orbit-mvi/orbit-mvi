@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 2021-2023 Mikołaj Leszczyński & Appmattus Limited
  * Copyright 2020 Babylon Partners Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -57,7 +57,7 @@ internal class ContainerThreadingTest {
                 delay(Long.MAX_VALUE)
             }
             container.orbit {
-                reduce { newState }
+                reduce(null) { newState }
             }
         }
 
@@ -138,7 +138,7 @@ internal class ContainerThreadingTest {
         if (delay) {
             delay(Random.nextLong(20))
         }
-        reduce {
+        reduce(null) {
             it.copy(ids = state.ids + 1)
         }
     }
@@ -147,7 +147,7 @@ internal class ContainerThreadingTest {
         if (delay) {
             delay(Random.nextLong(20))
         }
-        reduce {
+        reduce(null) {
             it.copy(ids = state.ids + 2)
         }
     }
@@ -156,7 +156,7 @@ internal class ContainerThreadingTest {
         if (delay) {
             delay(Random.nextLong(20))
         }
-        reduce {
+        reduce(null) {
             it.copy(ids = state.ids + 3)
         }
     }

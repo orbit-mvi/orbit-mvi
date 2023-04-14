@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 2021-2023 Mikołaj Leszczyński & Appmattus Limited
  * Copyright 2020 Babylon Partners Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -44,6 +44,8 @@ public interface ContainerDecorator<STATE : Any, SIDE_EFFECT : Any> : Container<
         get() = actual.stateFlow
     override val sideEffectFlow: Flow<SIDE_EFFECT>
         get() = actual.sideEffectFlow
+    override val containerHostName: String?
+        get() = actual.containerHostName
 
     override suspend fun orbit(orbitIntent: suspend ContainerContext<STATE, SIDE_EFFECT>.() -> Unit) {
         actual.orbit(orbitIntent)
