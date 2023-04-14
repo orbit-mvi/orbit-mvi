@@ -35,8 +35,8 @@ class NamedContainerHost : ContainerHost<State, Int>, TestContainerHost {
     override fun triggerReadyState(parameter: Int) = intent(intentName = "ReadyState($parameter)") {
         reduce {
             State.Ready(
-                triggerLoadingState = { intent(intentName = "LoadingState") { reduce { State.Loading } } },
-                triggerSideEffect = { intent(intentName = "SideEffect") { postSideEffect(parameter) } }
+                triggerLoadingState = { intent(intentName = "LoadingState($parameter)") { reduce { State.Loading } } },
+                triggerSideEffect = { intent(intentName = "SideEffect($parameter)") { postSideEffect(parameter) } }
             )
         }
     }

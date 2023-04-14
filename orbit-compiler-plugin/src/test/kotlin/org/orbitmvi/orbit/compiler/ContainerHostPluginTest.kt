@@ -199,7 +199,7 @@ class ContainerHostPluginTest {
                 awaitSideEffect()
                 logEntries.last().assertSideEffect(
                     expectedContainerHostName = "CustomContainerHostName",
-                    expectedIntentName = "SideEffect",
+                    expectedIntentName = "SideEffect(6)",
                     expectedSideEffect = 6
                 )
 
@@ -207,7 +207,7 @@ class ContainerHostPluginTest {
                 awaitState()
                 logEntries.last().assertState<State.Loading>(
                     expectedContainerHostName = "CustomContainerHostName",
-                    expectedIntentName = "LoadingState()"
+                    expectedIntentName = "LoadingState(6)"
                 )
             }
         }

@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.putArgument
 import org.jetbrains.kotlin.ir.util.allParameters
+import org.jetbrains.kotlin.ir.util.getArgumentsWithIr
 import org.jetbrains.kotlin.ir.util.kotlinFqName
 
 private const val INTENT_CALL_MAPPING = "Orbit-Compiler-Intent-Call-Mapping"
@@ -63,24 +64,29 @@ internal fun IrUtils.processIntentNamePass2(irFunction: IrFunction) {
                 val intentNameValueParameter =
                     irCall.symbol.owner.allParameters.first { it.name.asString() == "intentName" }
 
-                val str = buildIrStringConcatenation {
-                    append(intentFunctionName)
-                    append("(")
+                val arguments = irCall.getArgumentsWithIr()
+                val hasIntentNameOverride = arguments.any { it.first == intentNameValueParameter }
 
-                    irFunction.valueParameters.forEachIndexed { index, parameter ->
-                        append(parameter.name.asString())
-                        append(" = ")
-                        append(parameter)
+                if (!hasIntentNameOverride) {
+                    val str = buildIrStringConcatenation {
+                        append(intentFunctionName)
+                        append("(")
 
-                        if (index != irFunction.valueParameters.size - 1) {
-                            append(", ")
+                        irFunction.valueParameters.forEachIndexed { index, parameter ->
+                            append(parameter.name.asString())
+                            append(" = ")
+                            append(parameter)
+
+                            if (index != irFunction.valueParameters.size - 1) {
+                                append(", ")
+                            }
                         }
+
+                        append(")")
                     }
 
-                    append(")")
+                    irCall.putArgument(intentNameValueParameter, str)
                 }
-
-                irCall.putArgument(intentNameValueParameter, str)
             }
         }
     }
