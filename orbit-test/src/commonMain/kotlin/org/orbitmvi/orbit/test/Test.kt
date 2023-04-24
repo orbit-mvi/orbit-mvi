@@ -17,6 +17,7 @@
 package org.orbitmvi.orbit.test
 
 import app.cash.turbine.test
+import kotlin.time.Duration
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.map
@@ -44,21 +45,12 @@ import org.orbitmvi.orbit.internal.TestingStrategy
  * @param settings Use this to set overrides for some of the container's [RealSettings] for this test.
  * @param validate Perform your test within this block. See [OrbitTestContext].
  */
-@OptIn(ExperimentalCoroutinesApi::class)
+@OptIn(ExperimentalCoroutinesApi::class, ExperimentalStdlibApi::class)
 @OrbitExperimental
 public suspend fun <STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHost<STATE, SIDE_EFFECT>> CONTAINER_HOST.test(
     testScope: TestScope,
     initialState: STATE? = null,
-    settings: TestSettings = TestSettings(),
-    validate: suspend OrbitTestContext<STATE, SIDE_EFFECT, CONTAINER_HOST>.() -> Unit
-) {
-    executeWithScope(testScope, initialState, settings, validate)
-}
-
-@OptIn(ExperimentalStdlibApi::class, ExperimentalCoroutinesApi::class)
-private suspend fun <STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHost<STATE, SIDE_EFFECT>> CONTAINER_HOST.executeWithScope(
-    testScope: TestScope,
-    initialState: STATE? = null,
+    timeout: Duration? = null,
     settings: TestSettings = TestSettings(),
     validate: suspend OrbitTestContext<STATE, SIDE_EFFECT, CONTAINER_HOST>.() -> Unit
 ) {
@@ -70,7 +62,7 @@ private suspend fun <STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerH
         strategy = TestingStrategy.Live(settings.toRealSettings(testDispatcher)),
         testScope = testScope.backgroundScope
     )
-    mergedFlow().test {
+    mergedFlow().test(timeout = timeout) {
         RealOrbitTestContext(
             containerHost,
             initialState,
