@@ -45,7 +45,7 @@ dependencies {
     implementation(libs.androidxComposeUi)
 
     // Testing
-    implementation(kotlin("test-junit"))
+    testImplementation(kotlin("test-junit"))
     testImplementation(project(":orbit-test"))
     testImplementation(project(":test-common"))
     testImplementation(libs.androidxEspressoCore)
