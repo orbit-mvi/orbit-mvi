@@ -20,6 +20,7 @@ import arrow.meta.CliPlugin
 import arrow.meta.Meta
 import arrow.meta.invoke
 import arrow.meta.phases.CompilerContext
+import org.orbitmvi.orbit.compiler.ir.processContainerHostName
 import org.orbitmvi.orbit.compiler.ir.processIntentNamePass1
 import org.orbitmvi.orbit.compiler.ir.processIntentNamePass2
 

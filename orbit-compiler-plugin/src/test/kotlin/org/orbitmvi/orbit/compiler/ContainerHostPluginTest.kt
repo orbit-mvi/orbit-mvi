@@ -24,8 +24,8 @@ import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.orbitmvi.orbit.DebugLogger
-import org.orbitmvi.orbit.Logger
+import org.orbitmvi.orbit.logger.DebugLogger
+import org.orbitmvi.orbit.logger.Logger
 import org.orbitmvi.orbit.OrbitSettings
 import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.compiler.compile.compile

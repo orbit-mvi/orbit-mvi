@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.orbitmvi.orbit.compiler
+package org.orbitmvi.orbit.compiler.ir
 
 import arrow.meta.phases.codegen.ir.IrUtils
 import org.jetbrains.kotlin.ir.declarations.IrProperty
@@ -23,9 +23,6 @@ import org.jetbrains.kotlin.ir.expressions.putArgument
 import org.jetbrains.kotlin.ir.util.getArgumentsWithIr
 import org.jetbrains.kotlin.ir.util.kotlinFqName
 import org.jetbrains.kotlin.ir.util.parentClassOrNull
-import org.orbitmvi.orbit.compiler.ir.irString
-import org.orbitmvi.orbit.compiler.ir.returnTypeFqName
-import org.orbitmvi.orbit.compiler.ir.transformIrCall
 
 /**
  * processContainerHostName takes an [IrProperty] that represents the container property of a `ContainerHost` and

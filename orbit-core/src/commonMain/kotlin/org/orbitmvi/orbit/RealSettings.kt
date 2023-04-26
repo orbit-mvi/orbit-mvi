@@ -19,6 +19,7 @@ package org.orbitmvi.orbit
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineExceptionHandler
 import org.orbitmvi.orbit.idling.IdlingResource
+import org.orbitmvi.orbit.logger.Logger
 
 public data class RealSettings constructor(
     public val sideEffectBufferSize: Int = OrbitSettings.sideEffectBufferSize,

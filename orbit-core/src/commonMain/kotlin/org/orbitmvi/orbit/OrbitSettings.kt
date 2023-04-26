@@ -22,6 +22,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import org.orbitmvi.orbit.idling.IdlingResource
 import org.orbitmvi.orbit.idling.NoopIdlingResource
+import org.orbitmvi.orbit.logger.Logger
 
 /**
  * Global Settings for Orbit Multiplatform
