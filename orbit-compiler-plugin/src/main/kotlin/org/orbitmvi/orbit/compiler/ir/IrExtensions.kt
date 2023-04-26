@@ -31,4 +31,3 @@ internal fun IrUtils.irGet(value: IrValueParameter) = IrGetValueImpl(SYNTHETIC_O
 
 internal val IrProperty.returnTypeFqName: FqName?
     get() = this.getter?.returnType?.classFqName
-

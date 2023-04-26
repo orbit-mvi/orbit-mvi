@@ -31,6 +31,7 @@ import java.util.logging.Logger
  */
 class ClasspathTypeLoader(private val loader: ClassLoader) : ITypeLoader {
 
+    @Suppress("ReturnCount")
     override fun tryLoadType(internalName: String, buffer: Buffer): Boolean {
         if (LOG.isLoggable(Level.FINE)) {
             LOG.fine("Attempting to load type: $internalName...")

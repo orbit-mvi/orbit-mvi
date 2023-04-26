@@ -18,16 +18,18 @@ package org.orbitmvi.orbit.compiler.compile
 
 import com.tschuchort.compiletesting.KotlinCompilation
 import com.tschuchort.compiletesting.SourceFile
-import kotlin.test.assertEquals
 import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
 import org.orbitmvi.orbit.compiler.ContainerHostPluginTest
 import org.orbitmvi.orbit.compiler.decompile.decompile
+import kotlin.test.assertEquals
 
 val intentNameRegex = "intent\\\$default\\([^,]+,\\s*[^,]+,\\s*([^,]+),".toRegex()
 val containerHostNameRegex = "container\\\$default\\([^,]+,\\s*[^,]+,\\s*[^,]+,\\s*([^,]+),".toRegex()
 
 @OptIn(ExperimentalCompilerApi::class)
-inline fun <reified T> String.compile(@Suppress("DEPRECATION") plugin: org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar? = null): ContainerHostPluginTest.CompilationResult<T> {
+inline fun <reified T> String.compile(
+    @Suppress("DEPRECATION") plugin: org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar? = null
+): ContainerHostPluginTest.CompilationResult<T> {
     val kotlinSource = SourceFile.kotlin(
         name = "$this.kt",
         contents = ContainerHostPluginTest::class.java.getResourceAsStream("/$this.kt")!!.bufferedReader().readText()

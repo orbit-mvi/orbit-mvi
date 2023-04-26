@@ -16,21 +16,21 @@
 
 package org.orbitmvi.orbit.compiler
 
-import kotlin.test.assertEquals
-import kotlin.test.assertIs
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.orbitmvi.orbit.logger.DebugLogger
-import org.orbitmvi.orbit.logger.Logger
 import org.orbitmvi.orbit.OrbitSettings
 import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.compiler.compile.compile
+import org.orbitmvi.orbit.logger.DebugLogger
+import org.orbitmvi.orbit.logger.Logger
 import org.orbitmvi.orbit.test.TestSettings
 import org.orbitmvi.orbit.test.test
+import kotlin.test.assertEquals
+import kotlin.test.assertIs
 
 @OptIn(ExperimentalCompilerApi::class, OrbitExperimental::class, ExperimentalCoroutinesApi::class)
 class ContainerHostPluginTest {
@@ -82,7 +82,8 @@ class ContainerHostPluginTest {
                 "\"org.orbitmvi.StandardContainerHost.triggerReadyState.$1.$1.$1()\"",
                 // triggerReadyState -> intent -> reduce -> triggerSideEffect
                 "\"org.orbitmvi.StandardContainerHost.triggerReadyState.$1.$1.$2()\""
-            ), result.intentNames
+            ),
+            result.intentNames
         )
     }
 
@@ -98,7 +99,8 @@ class ContainerHostPluginTest {
                 // triggerReadyState -> intent -> reduce -> triggerLoadingState
                 // triggerReadyState -> intent -> reduce -> triggerSideEffect
                 "null"
-            ), result.intentNames
+            ),
+            result.intentNames
         )
     }
 
@@ -227,7 +229,8 @@ class ContainerHostPluginTest {
                 "\"org.orbitmvi.AnonymousInnerClassContainerHost.triggerReadyState.$1.$1.$1()\"",
                 // triggerReadyState -> intent -> reduce -> triggerSideEffect
                 "\"org.orbitmvi.AnonymousInnerClassContainerHost.triggerReadyState.$1.$1.$2()\""
-            ), result.intentNames
+            ),
+            result.intentNames
         )
     }
 
@@ -283,7 +286,8 @@ class ContainerHostPluginTest {
                 "\"org.orbitmvi.InnerClassContainerHost.triggerReadyState.$1.$1.$1()\"",
                 // triggerReadyState -> intent -> reduce -> triggerSideEffect
                 "\"org.orbitmvi.InnerClassContainerHost.triggerReadyState.$1.$1.$2()\""
-            ), result.intentNames
+            ),
+            result.intentNames
         )
     }
 

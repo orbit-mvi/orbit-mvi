@@ -16,9 +16,6 @@
 
 package org.orbitmvi.orbit.syntax.simple
 
-import kotlin.test.AfterTest
-import kotlin.test.Test
-import kotlin.test.assertEquals
 import kotlinx.atomicfu.atomic
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
@@ -30,6 +27,9 @@ import org.orbitmvi.orbit.RealSettings
 import org.orbitmvi.orbit.internal.repeatonsubscription.Subscription
 import org.orbitmvi.orbit.internal.repeatonsubscription.TestSubscribedCounter
 import org.orbitmvi.orbit.syntax.ContainerContext
+import kotlin.test.AfterTest
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
 internal class SimpleDslRepeatOnSubscriptionTest {
 

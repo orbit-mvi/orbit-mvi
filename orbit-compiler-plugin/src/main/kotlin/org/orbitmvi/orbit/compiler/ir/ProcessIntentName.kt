@@ -94,16 +94,16 @@ internal fun IrUtils.processIntentNamePass2(irFunction: IrFunction) {
 
 private fun intentFunctionName(irFunction: IrFunction): String {
     val hierarchy = listOf(irFunction) + irFunction.parents
-    val hier = hierarchy.mapIndexed { index, it ->
-        var name = if (index == hierarchy.size - 1) it.kotlinFqName.asString() else it.kotlinFqName.shortName().asString()
-        if (it is IrFunction) {
-            if (it.name.asString() == "<anonymous>") {
+    val hier = hierarchy.mapIndexed { index, parent ->
+        var name = if (index == hierarchy.size - 1) parent.kotlinFqName.asString() else parent.kotlinFqName.shortName().asString()
+        if (parent is IrFunction) {
+            if (parent.name.asString() == "<anonymous>") {
                 var functionIndex = 0
-                it.parent.transformIrFunction { declaration ->
+                parent.parent.transformIrFunction { declaration ->
                     // only count functions that are a direct descendant
-                    if (declaration.parent == it.parent) functionIndex++
+                    if (declaration.parent == parent.parent) functionIndex++
 
-                    if (declaration == it) {
+                    if (declaration == parent) {
                         name = "\$$functionIndex"
                     }
                 }
@@ -113,7 +113,6 @@ private fun intentFunctionName(irFunction: IrFunction): String {
         name
     }
 
-    // this is the name
-    val intentFunctionName = hier.reversed().filterNot { it.isBlank() }.joinToString(".")
-    return intentFunctionName
+    // intentFunctionName
+    return hier.reversed().filterNot { it.isBlank() }.joinToString(".")
 }

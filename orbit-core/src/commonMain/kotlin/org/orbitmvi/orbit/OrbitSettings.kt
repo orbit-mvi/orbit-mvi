@@ -29,10 +29,17 @@ import org.orbitmvi.orbit.logger.Logger
  */
 public object OrbitSettings {
     public var sideEffectBufferSize: Int = Channel.BUFFERED
+
     public var idlingRegistry: IdlingResource = NoopIdlingResource()
+
     public var eventLoopDispatcher: CoroutineDispatcher = Dispatchers.Default
+
     public var intentLaunchingDispatcher: CoroutineDispatcher = Dispatchers.Unconfined
+
     public var exceptionHandler: CoroutineExceptionHandler? = null
+
+    @Suppress("MagicNumber")
     public var repeatOnSubscribedStopTimeout: Long = 100L
+
     public var loggers: List<Logger> = emptyList()
 }
