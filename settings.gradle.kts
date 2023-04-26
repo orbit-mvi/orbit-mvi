@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 2021-2023 Mikołaj Leszczyński & Appmattus Limited
  * Copyright 2020 Babylon Partners Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,6 +23,7 @@ include(
     "orbit-test",
     "orbit-viewmodel",
     "orbit-compose",
+    "orbit-compiler-plugin",
     "samples:orbit-calculator",
     "samples:orbit-posts",
     "samples:orbit-stocklist",

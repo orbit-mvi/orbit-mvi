@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 2021-2023 Mikołaj Leszczyński & Appmattus Limited
  * Copyright 2020 Babylon Partners Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -96,9 +96,10 @@ fun <STATE : Parcelable, SIDE_EFFECT : Any> ViewModel.container(
 fun <STATE : Any, SIDE_EFFECT : Any> ViewModel.container(
     initialState: STATE,
     buildSettings: SettingsBuilder.() -> Unit = {},
+    containerHostName: String? = null,
     onCreate: ((state: STATE) -> Unit)? = null
 ): Container<STATE, SIDE_EFFECT> {
-    return viewModelScope.container(initialState, buildSettings, onCreate)
+    return viewModelScope.container(initialState, buildSettings, containerHostName, onCreate)
 }
 
 /**
@@ -121,13 +122,14 @@ fun <STATE : Parcelable, SIDE_EFFECT : Any> ViewModel.container(
     initialState: STATE,
     savedStateHandle: SavedStateHandle,
     buildSettings: SettingsBuilder.() -> Unit = {},
+    containerHostName: String? = null,
     onCreate: ((state: STATE) -> Unit)? = null
 ): Container<STATE, SIDE_EFFECT> {
     val savedState: STATE? = savedStateHandle[SAVED_STATE_KEY]
     val state = savedState ?: initialState
 
     val realContainer: Container<STATE, SIDE_EFFECT> =
-        viewModelScope.container(state, buildSettings, onCreate)
+        viewModelScope.container(state, buildSettings, containerHostName, onCreate)
 
     return SavedStateContainerDecorator(
         realContainer,

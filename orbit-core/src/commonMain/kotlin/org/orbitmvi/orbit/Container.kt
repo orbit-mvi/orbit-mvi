@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 2021-2023 Mikołaj Leszczyński & Appmattus Limited
  * Copyright 2020 Babylon Partners Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -63,6 +63,11 @@ public interface Container<STATE : Any, SIDE_EFFECT : Any> {
      * resulting `BroadcastChannel`.
      */
     public val sideEffectFlow: Flow<SIDE_EFFECT>
+
+    /**
+     * The name of the [ContainerHost] used when logging state and side effect changes
+     */
+    public val containerHostName: String?
 
     /**
      * Executes an orbit intent. The intents are built in the [ContainerHost] using your chosen syntax.

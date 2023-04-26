@@ -66,7 +66,7 @@ internal class ContainerExceptionHandlerTest {
             throw IllegalStateException()
         }
         container.orbit {
-            reduce { newState }
+            reduce(null) { newState }
         }
 
         testObserver.awaitCount(2, 1000L)
@@ -90,10 +90,10 @@ internal class ContainerExceptionHandlerTest {
 
         runBlocking {
             container.orbit {
-                reduce { throw IllegalStateException() }
+                reduce(null) { throw IllegalStateException() }
             }
             container.orbit {
-                reduce { newState }
+                reduce(null) { newState }
             }
         }
 
