@@ -26,6 +26,8 @@ plugins {
 }
 
 android {
+    namespace = "org.orbitmvi.orbit.sample.posts"
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
@@ -80,22 +82,22 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.1")
 
     // Networking
-    implementation("com.squareup.okhttp3:okhttp:4.10.0")
+    implementation("com.squareup.okhttp3:okhttp:4.11.0")
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-jackson:2.9.0")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.14.2")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.15.0")
     // reflect set to override version from jackson
     implementation(kotlin("reflect"))
 
     // Dependency Injection
-    implementation("io.insert-koin:koin-android:3.3.3")
+    implementation("io.insert-koin:koin-android:3.4.0")
 
     // Testing
     testImplementation(project(":orbit-test"))
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.9.2")
-    testImplementation("org.junit.platform:junit-platform-console:1.9.2")
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.2")
-    testImplementation("org.junit.jupiter:junit-jupiter-params:5.9.2")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.9.3")
+    testImplementation("org.junit.platform:junit-platform-console:1.9.3")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.3")
+    testImplementation("org.junit.jupiter:junit-jupiter-params:5.9.3")
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.mockito.kotlin:mockito-kotlin:4.1.0")
     testImplementation("org.mockito:mockito-inline:5.2.0")
