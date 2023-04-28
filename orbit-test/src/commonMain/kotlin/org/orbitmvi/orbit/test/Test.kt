@@ -17,7 +17,9 @@
 package org.orbitmvi.orbit.test
 
 import app.cash.turbine.test
+import app.cash.turbine.withTurbineTimeout
 import kotlin.time.Duration
+import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.map
@@ -69,6 +71,9 @@ public suspend fun <STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHo
             this
         ).apply {
             validate(this)
+//            withAppropriateTimeout(timeout ?: 1.seconds) {
+//                container.findTestContainer().joinIntents()
+//            }
         }
     }
 }

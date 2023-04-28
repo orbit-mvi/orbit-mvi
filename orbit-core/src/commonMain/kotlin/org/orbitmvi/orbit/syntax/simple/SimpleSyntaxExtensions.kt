@@ -21,6 +21,7 @@
 package org.orbitmvi.orbit.syntax.simple
 
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.mapLatest
@@ -66,7 +67,7 @@ public suspend fun <S : Any, SE : Any> SimpleSyntax<S, SE>.postSideEffect(sideEf
 public fun <STATE : Any, SIDE_EFFECT : Any> ContainerHost<STATE, SIDE_EFFECT>.intent(
     registerIdling: Boolean = true,
     transformer: suspend SimpleSyntax<STATE, SIDE_EFFECT>.() -> Unit
-): Unit =
+): Job =
     runBlocking {
         container.orbit {
             withIdling(registerIdling) {

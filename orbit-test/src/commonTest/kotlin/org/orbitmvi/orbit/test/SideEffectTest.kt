@@ -30,6 +30,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertTrue
+import kotlinx.coroutines.test.TestScope
 
 @OptIn(OrbitExperimental::class)
 @ExperimentalCoroutinesApi
@@ -117,11 +118,11 @@ class SideEffectTest {
     private inner class SideEffectTestMiddleware(scope: CoroutineScope) : ContainerHost<State, Int> {
         override val container = scope.container<State, Int>(initialState)
 
-        fun newState(count: Int): Unit = intent {
+        fun newState(count: Int) = intent {
             reduce { state.copy(count = count) }
         }
 
-        fun something(action: Int): Unit = intent {
+        fun something(action: Int) = intent {
             postSideEffect(action)
             somethingElse(action.toString())
         }

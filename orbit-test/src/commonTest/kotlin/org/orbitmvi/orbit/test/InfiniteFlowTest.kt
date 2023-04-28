@@ -16,9 +16,13 @@
 
 package org.orbitmvi.orbit.test
 
+import kotlin.coroutines.coroutineContext
+import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.runTest
@@ -28,8 +32,6 @@ import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.container
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.reduce
-import kotlin.test.Test
-import kotlin.test.assertEquals
 
 @ExperimentalCoroutinesApi
 @OptIn(OrbitExperimental::class)
@@ -46,6 +48,7 @@ internal class InfiniteFlowTest {
             assertEquals(listOf(42, 43), awaitState())
             assertEquals(listOf(42, 43, 44), awaitState())
             assertEquals(listOf(42, 43, 44, 45), awaitState())
+
             cancelAndIgnoreRemainingItems()
         }
     }
@@ -57,15 +60,17 @@ internal class InfiniteFlowTest {
         InfiniteFlowMiddleware().test(scope) {
             expectInitialState()
 
-            invokeIntent { incrementForever() }
+            val job = invokeIntent { incrementForever() }
 
             // Assert the first three states
-            scope.advanceTimeBy(30_001)
+            scope.advanceTimeBy(3001)
             assertEquals(listOf(42, 43), awaitState())
-            scope.advanceTimeBy(30_001)
+            scope.advanceTimeBy(3001)
             assertEquals(listOf(42, 43, 44), awaitState())
-            scope.advanceTimeBy(30_001)
+            scope.advanceTimeBy(3001)
             assertEquals(listOf(42, 43, 44, 45), awaitState())
+
+            job.cancel()
         }
     }
 
@@ -73,8 +78,8 @@ internal class InfiniteFlowTest {
         override val container: Container<List<Int>, Nothing> = MainScope().container(listOf(42))
 
         fun incrementForever() = intent {
-            while (true) {
-                delay(30_000)
+            while (coroutineContext.isActive) {
+                delay(3000)
                 reduce { state + (state.last() + 1) }
             }
         }

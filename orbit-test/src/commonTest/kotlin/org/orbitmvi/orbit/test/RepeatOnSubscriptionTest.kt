@@ -28,6 +28,7 @@ import org.orbitmvi.orbit.syntax.simple.repeatOnSubscription
 import kotlin.random.Random
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlinx.coroutines.test.TestScope
 
 @OptIn(OrbitExperimental::class)
 @ExperimentalCoroutinesApi

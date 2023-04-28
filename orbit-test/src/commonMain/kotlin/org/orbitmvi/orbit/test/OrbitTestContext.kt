@@ -16,6 +16,7 @@
 
 package org.orbitmvi.orbit.test
 
+import kotlinx.coroutines.Job
 import org.orbitmvi.orbit.ContainerHost
 
 public interface OrbitTestContext<STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHost<STATE, SIDE_EFFECT>> {
@@ -28,7 +29,7 @@ public interface OrbitTestContext<STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST
     /**
      * Invoke an intent on the [ContainerHost] under test.
      */
-    public fun invokeIntent(action: CONTAINER_HOST.() -> Unit)
+    public fun invokeIntent(action: CONTAINER_HOST.() -> Job): Job
 
     /**
      * Sanity check assertion. Checks if the initial state is emitted and matches

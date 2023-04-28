@@ -21,6 +21,8 @@ import kotlinx.atomicfu.atomic
 import org.orbitmvi.orbit.ContainerHost
 import kotlin.test.assertEquals
 import kotlin.test.fail
+import kotlinx.coroutines.Job
+import org.orbitmvi.orbit.annotation.OrbitExperimental
 
 public class RealOrbitTestContext<STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHost<STATE, SIDE_EFFECT>>(
     private val actual: CONTAINER_HOST,
@@ -42,9 +44,9 @@ public class RealOrbitTestContext<STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST
         }
     }
 
-    override fun invokeIntent(action: CONTAINER_HOST.() -> Unit) {
+    override fun invokeIntent(action: CONTAINER_HOST.() -> Job): Job {
         onCreateAllowed.lazySet(false)
-        actual.action()
+        return actual.action()
     }
 
     override suspend fun awaitItem(): Item<STATE, SIDE_EFFECT> {
@@ -63,8 +65,10 @@ public class RealOrbitTestContext<STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST
         return (item as? Item.SideEffectItem)?.value ?: fail("Expected Side Effect but got $item")
     }
 
+    @OptIn(OrbitExperimental::class)
     override suspend fun cancelAndIgnoreRemainingItems() {
         emissions.cancelAndIgnoreRemainingEvents()
+        actual.container.cancel()
     }
 
     override suspend fun expectInitialState() {

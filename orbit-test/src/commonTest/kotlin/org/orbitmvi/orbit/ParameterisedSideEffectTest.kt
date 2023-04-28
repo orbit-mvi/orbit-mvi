@@ -81,7 +81,7 @@ internal class ParameterisedSideEffectTest(blocking: Boolean) {
         ContainerHost<State, Int> {
         override val container = scope.container<State, Int>(initialState)
 
-        fun something(action: Int): Unit = intent {
+        fun something(action: Int) = intent {
             postSideEffect(action)
             somethingElse(action.toString())
         }

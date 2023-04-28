@@ -23,6 +23,7 @@ package org.orbitmvi.orbit
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
@@ -69,7 +70,7 @@ public interface Container<STATE : Any, SIDE_EFFECT : Any> {
      *
      * @param orbitIntent lambda returning the suspend function representing the intent
      */
-    public suspend fun orbit(orbitIntent: suspend ContainerContext<STATE, SIDE_EFFECT>.() -> Unit)
+    public suspend fun orbit(orbitIntent: suspend ContainerContext<STATE, SIDE_EFFECT>.() -> Unit): Job
 
     /**
      * Executes an orbit intent inline, circumventing orbit's dispatching. The intents are built in the [ContainerHost] using your chosen syntax.
@@ -78,6 +79,18 @@ public interface Container<STATE : Any, SIDE_EFFECT : Any> {
      */
     @OrbitExperimental
     public suspend fun inlineOrbit(orbitIntent: suspend ContainerContext<STATE, SIDE_EFFECT>.() -> Unit)
+
+    /**
+     * Cancels the container scope and all intents in progress.
+     */
+    @OrbitExperimental
+    public fun cancel()
+
+    /**
+     * Joins all in progress intents in the container. This suspends until all intents have completed.
+     */
+    @OrbitExperimental
+    public suspend fun joinIntents()
 
     /**
      * Represents additional settings to create the container with.

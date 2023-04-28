@@ -288,7 +288,7 @@ internal class ParameterisedStateTest(blocking: Boolean) {
         ContainerHost<State, Nothing> {
         override val container = scope.container<State, Nothing>(initialState)
 
-        fun something(action: Int): Unit = intent {
+        fun something(action: Int) = intent {
             reduce {
                 State(count = action)
             }

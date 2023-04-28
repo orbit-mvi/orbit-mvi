@@ -30,6 +30,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertTrue
+import kotlinx.coroutines.test.TestScope
 
 @OptIn(OrbitExperimental::class)
 @ExperimentalCoroutinesApi
@@ -107,7 +108,7 @@ class StateTest {
                 assertEquals(State(count = action3), awaitState())
             }
         }.also {
-            assertEquals("No value produced in 1s", it.message)
+            assertEquals("No value produced in 3s", it.message)
         }
     }
 
@@ -264,19 +265,19 @@ class StateTest {
         ContainerHost<State, Int> {
         override val container = scope.container<State, Int>(initialState)
 
-        fun newCount(action: Int): Unit = intent {
+        fun newCount(action: Int) = intent {
             reduce {
                 State(count = action)
             }
         }
 
-        fun newList(action: Int): Unit = intent {
+        fun newList(action: Int) = intent {
             reduce {
                 state.copy(list = state.list + action)
             }
         }
 
-        fun newSideEffect(action: Int): Unit = intent {
+        fun newSideEffect(action: Int) = intent {
             postSideEffect(action)
         }
     }

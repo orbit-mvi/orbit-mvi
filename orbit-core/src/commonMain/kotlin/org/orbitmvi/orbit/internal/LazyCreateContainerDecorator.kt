@@ -21,6 +21,7 @@
 package org.orbitmvi.orbit.internal
 
 import kotlinx.atomicfu.atomic
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.emitAll
@@ -49,8 +50,8 @@ public class LazyCreateContainerDecorator<STATE : Any, SIDE_EFFECT : Any>(
         }
     }
 
-    override suspend fun orbit(orbitIntent: suspend ContainerContext<STATE, SIDE_EFFECT>.() -> Unit) {
-        runOnCreate().also { actual.orbit(orbitIntent) }
+    override suspend fun orbit(orbitIntent: suspend ContainerContext<STATE, SIDE_EFFECT>.() -> Unit): Job {
+        runOnCreate().also { return actual.orbit(orbitIntent) }
     }
 
     @OptIn(OrbitExperimental::class)

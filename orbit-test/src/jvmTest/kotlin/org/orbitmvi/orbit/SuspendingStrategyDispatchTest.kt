@@ -74,7 +74,7 @@ internal class SuspendingStrategyDispatchTest {
             }
         }
 
-        fun somethingInBackground(action: Int): Unit = intent {
+        fun somethingInBackground(action: Int) = intent {
             delay(5000)
             reduce {
                 State(count = action)

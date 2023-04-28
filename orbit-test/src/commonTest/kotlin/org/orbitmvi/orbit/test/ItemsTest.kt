@@ -16,6 +16,9 @@
 
 package org.orbitmvi.orbit.test
 
+import kotlin.random.Random
+import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
@@ -25,9 +28,6 @@ import org.orbitmvi.orbit.container
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.postSideEffect
 import org.orbitmvi.orbit.syntax.simple.reduce
-import kotlin.random.Random
-import kotlin.test.Test
-import kotlin.test.assertEquals
 
 @OptIn(OrbitExperimental::class)
 @ExperimentalCoroutinesApi
@@ -79,13 +79,13 @@ class ItemsTest {
         ContainerHost<State, Int> {
         override val container = scope.container<State, Int>(initialState)
 
-        fun newState(action: Int): Unit = intent {
+        fun newState(action: Int) = intent {
             reduce {
                 State(count = action)
             }
         }
 
-        fun newSideEffect(action: Int): Unit = intent {
+        fun newSideEffect(action: Int) = intent {
             postSideEffect(action)
         }
     }
