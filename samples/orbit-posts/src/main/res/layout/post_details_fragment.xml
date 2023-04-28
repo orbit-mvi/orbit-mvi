@@ -43,7 +43,6 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:ignore="UnusedAttribute"
-                tools:targetApi="lollipop"
                 tools:text="@sample/posts.json/data/post_title" />
 
             <TextView
