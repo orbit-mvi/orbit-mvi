@@ -38,7 +38,7 @@ import org.orbitmvi.orbit.sample.posts.R
 class ShadowScrollBehavior(context: Context, attrs: AttributeSet) : AppBarLayout.ScrollingViewBehavior(context, attrs) {
 
     @SuppressLint("PrivateResource")
-    private val maxElevation = context.resources.getDimensionPixelSize(R.dimen.design_appbar_elevation).toFloat()
+    private val maxElevation = context.resources.getDimensionPixelSize(R.dimen.appbar_elevation).toFloat()
 
     override fun onDependentViewChanged(parent: CoordinatorLayout, child: View, dependency: View):
         Boolean {
