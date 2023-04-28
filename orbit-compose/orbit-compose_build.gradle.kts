@@ -22,6 +22,8 @@ plugins {
 }
 
 android {
+    namespace = "org.orbitmvi.orbit.compose"
+
     testOptions {
         unitTests {
             isIncludeAndroidResources = true
