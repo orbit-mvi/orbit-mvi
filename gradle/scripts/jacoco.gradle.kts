@@ -1,4 +1,5 @@
 /*
+ * Copyright 2023 Mikołaj Leszczyński & Appmattus Limited
  * Copyright 2020 Babylon Partners Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,18 +13,25 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
+ * File modified by Mikołaj Leszczyński & Appmattus Limited
+ * See: https://github.com/orbit-mvi/orbit-mvi/compare/c5b8b3f2b83b5972ba2ad98f73f75086a89653d3...main
  */
 
 apply<JacocoPlugin>()
 
 val jacocoTask = tasks.withType<JacocoReport> {
     reports {
-        html.isEnabled = true
-        xml.isEnabled = true
-        csv.isEnabled = false
+        html.required.set(true)
+        xml.required.set(true)
+        csv.required.set(false)
     }
 }
 
 tasks.withType<Test> {
     finalizedBy(jacocoTask)
+}
+
+configure<JacocoPluginExtension> {
+    toolVersion = "0.8.9"
 }

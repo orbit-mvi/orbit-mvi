@@ -107,7 +107,7 @@ class StateTest {
                 assertEquals(State(count = action3), awaitState())
             }
         }.also {
-            assertEquals("No value produced in 1s", it.message)
+            assertTrue(it.message?.matches("No value produced in [0-9]+s".toRegex()) == true)
         }
     }
 

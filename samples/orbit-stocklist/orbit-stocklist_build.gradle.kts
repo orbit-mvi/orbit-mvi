@@ -26,6 +26,7 @@ plugins {
 }
 
 android {
+    namespace = "org.orbitmvi.orbit.sample.stocklist"
     compileSdk = 33
     defaultConfig {
         minSdk = 23
@@ -52,12 +53,14 @@ android {
 
     testOptions.unitTests.isIncludeAndroidResources = true
 
-    packagingOptions {
-        pickFirst("build.number")
-        pickFirst("version.number")
-        pickFirst("compatibility_version.number")
-        exclude("META-INF/INDEX.LIST")
-        exclude("META-INF/io.netty.versions.properties")
+    packaging {
+        resources {
+            pickFirsts += "build.number"
+            pickFirsts += "version.number"
+            pickFirsts += "compatibility_version.number"
+            excludes += "META-INF/INDEX.LIST"
+            excludes += "META-INF/io.netty.versions.properties"
+        }
     }
 }
 
@@ -87,7 +90,7 @@ dependencies {
     implementation("com.github.lisawray.groupie:groupie:2.10.1")
     implementation("com.github.lisawray.groupie:groupie-kotlin-android-extensions:2.10.1")
     implementation("com.github.lisawray.groupie:groupie-viewbinding:2.10.1")
-    implementation("io.insert-koin:koin-android:3.3.3")
+    implementation("io.insert-koin:koin-android:3.4.0")
     implementation("androidx.lifecycle:lifecycle-common-java8:2.6.1")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.6.1")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.1")
