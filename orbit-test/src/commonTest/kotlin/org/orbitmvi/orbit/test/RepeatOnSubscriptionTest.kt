@@ -16,8 +16,11 @@
 
 package org.orbitmvi.orbit.test
 
-import kotlinx.coroutines.CoroutineScope
+import kotlin.random.Random
+import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.annotation.OrbitExperimental
@@ -25,10 +28,6 @@ import org.orbitmvi.orbit.container
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.reduce
 import org.orbitmvi.orbit.syntax.simple.repeatOnSubscription
-import kotlin.random.Random
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlinx.coroutines.test.TestScope
 
 @OptIn(OrbitExperimental::class)
 @ExperimentalCoroutinesApi
@@ -46,8 +45,8 @@ class RepeatOnSubscriptionTest {
         }
     }
 
-    private inner class TestMiddleware(scope: CoroutineScope) : ContainerHost<State, Nothing> {
-        override val container = scope.container<State, Nothing>(initialState)
+    private inner class TestMiddleware(scope: TestScope) : ContainerHost<State, Nothing> {
+        override val container = scope.backgroundScope.container<State, Nothing>(initialState)
 
         fun callOnSubscription(externalCall: suspend () -> Int) = intent {
             repeatOnSubscription {

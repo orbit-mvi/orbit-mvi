@@ -16,31 +16,23 @@
 
 package org.orbitmvi.orbit
 
-import kotlinx.coroutines.CoroutineScope
+import kotlin.random.Random
+import kotlin.test.Test
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.cancel
+import kotlinx.coroutines.test.TestScope
+import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.withTimeout
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.reduce
 import org.orbitmvi.orbit.syntax.simple.repeatOnSubscription
-import kotlin.random.Random
-import kotlin.test.AfterTest
-import kotlin.test.Test
 
 @ExperimentalCoroutinesApi
 internal class RepeatOnSubscriptionTest {
     private val initialState = State()
-    private val scope by lazy { CoroutineScope(Job()) }
-
-    @AfterTest
-    fun afterTest() {
-        scope.cancel()
-    }
 
     @Test
-    fun `test does not hang when using repeatOnSubscription`() = runBlocking {
-        val testSubject = TestMiddleware().test(initialState = initialState)
+    fun `test does not hang when using repeatOnSubscription`() = runTest {
+        val testSubject = TestMiddleware(this).test(initialState = initialState)
 
         withTimeout(1000L) {
             testSubject.testIntent {
@@ -55,8 +47,8 @@ internal class RepeatOnSubscriptionTest {
         }
     }
 
-    private inner class TestMiddleware : ContainerHost<State, Nothing> {
-        override val container = scope.container<State, Nothing>(initialState)
+    private inner class TestMiddleware(testScope: TestScope) : ContainerHost<State, Nothing> {
+        override val container = testScope.backgroundScope.container<State, Nothing>(initialState)
 
         fun callOnSubscription(externalCall: suspend () -> Int) = intent {
             repeatOnSubscription {

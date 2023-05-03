@@ -39,7 +39,7 @@ internal class InfiniteFlowTest {
 
     @Test
     fun `infinite flow can be tested with delay skipping`() = runTest {
-        InfiniteFlowMiddleware().test(this) {
+        InfiniteFlowMiddleware(this).test(this) {
             expectInitialState()
 
             invokeIntent { incrementForever() }
@@ -57,7 +57,7 @@ internal class InfiniteFlowTest {
     fun `infinite flow can be tested without delay skipping`() = runTest {
         val scope = TestScope()
 
-        InfiniteFlowMiddleware().test(scope) {
+        InfiniteFlowMiddleware(this).test(scope) {
             expectInitialState()
 
             val job = invokeIntent { incrementForever() }
@@ -74,8 +74,8 @@ internal class InfiniteFlowTest {
         }
     }
 
-    private inner class InfiniteFlowMiddleware : ContainerHost<List<Int>, Nothing> {
-        override val container: Container<List<Int>, Nothing> = MainScope().container(listOf(42))
+    private inner class InfiniteFlowMiddleware(testScope: TestScope) : ContainerHost<List<Int>, Nothing> {
+        override val container: Container<List<Int>, Nothing> = testScope.backgroundScope.container(listOf(42))
 
         fun incrementForever() = intent {
             while (coroutineContext.isActive) {

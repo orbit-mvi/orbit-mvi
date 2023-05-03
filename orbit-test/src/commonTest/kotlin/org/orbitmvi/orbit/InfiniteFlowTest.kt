@@ -1,16 +1,15 @@
 package org.orbitmvi.orbit
 
+import kotlin.test.AfterTest
+import kotlin.test.Test
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
-import kotlinx.coroutines.test.runTest
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.reduce
-import kotlin.test.AfterTest
-import kotlin.test.Test
 
 @ExperimentalCoroutinesApi
 internal class InfiniteFlowTest {
@@ -23,7 +22,7 @@ internal class InfiniteFlowTest {
     }
 
     @Test
-    fun `infinite flow can be tested`() = runTest {
+    fun `infinite flow can be tested`() {
         val dispatcher = UnconfinedTestDispatcher()
         val middleware = InfiniteFlowMiddleware().liveTest {
             this.dispatcher = dispatcher
@@ -44,7 +43,7 @@ internal class InfiniteFlowTest {
         }
     }
 
-    private inner class InfiniteFlowMiddleware : ContainerHost<List<Int>, Nothing> {
+    private inner class InfiniteFlowMiddleware() : ContainerHost<List<Int>, Nothing> {
         override val container: Container<List<Int>, Nothing> = scope.container(listOf(42))
 
         fun incrementForever() = intent {

@@ -17,9 +17,6 @@
 package org.orbitmvi.orbit.test
 
 //import kotlinx.coroutines.CoroutineScope
-import kotlin.random.Random
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.runTest
 //import org.orbitmvi.orbit.ContainerHost
 //import org.orbitmvi.orbit.annotation.OrbitExperimental
 //import org.orbitmvi.orbit.container
@@ -27,10 +24,12 @@ import kotlinx.coroutines.test.runTest
 //import org.orbitmvi.orbit.syntax.simple.postSideEffect
 //import org.orbitmvi.orbit.syntax.simple.reduce
 //import kotlin.random.Random
+import kotlin.random.Random
 import kotlin.test.Test
 import kotlin.test.assertFails
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runTest
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.container
@@ -50,20 +49,18 @@ class ExceptionTest {
 
     @OptIn(OrbitExperimental::class)
     @Test
-    fun `succeeds if initial state matches expected state`() = runTest {
+    fun `exceptions thrown during test can be asserted on`() {
+        assertFails {
+            runTest {
+                ExceptionTestMiddleware(this).test(this) {
+                    expectInitialState()
 
-//        assertFails {
-            ExceptionTestMiddleware(this).test(this) {
-                expectInitialState()
+                    val job = invokeIntent { boom() }
 
-                val job = invokeIntent { boom() }
-
-                job.join()
+                    job.join()
+                }
             }
-//        }
-
-//
-//        ExceptionTestMiddleware(this).boom()
+        }
     }
 
     private inner class ExceptionTestMiddleware(scope: CoroutineScope) : ContainerHost<State, Int> {
@@ -79,3 +76,4 @@ class ExceptionTest {
         val list: List<Int> = emptyList()
     )
 }
+

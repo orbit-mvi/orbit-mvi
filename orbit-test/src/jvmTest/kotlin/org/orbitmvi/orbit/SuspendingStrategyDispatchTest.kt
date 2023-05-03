@@ -17,30 +17,20 @@
 
 package org.orbitmvi.orbit
 
-import kotlinx.coroutines.CoroutineScope
+import kotlin.random.Random
+import kotlin.system.measureTimeMillis
+import kotlin.test.Test
+import kotlin.test.assertTrue
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.reduce
-import kotlin.random.Random
-import kotlin.system.measureTimeMillis
-import kotlin.test.AfterTest
-import kotlin.test.Test
-import kotlin.test.assertTrue
 
 @ExperimentalCoroutinesApi
 internal class SuspendingStrategyDispatchTest {
     private val initialState = State()
-
-    private val scope = CoroutineScope(Job())
-
-    @AfterTest
-    fun afterTest() {
-        scope.cancel()
-    }
 
     @Test
     fun `suspending test maintains test dispatcher through runTest`() = runTest {
@@ -48,7 +38,7 @@ internal class SuspendingStrategyDispatchTest {
             val initAction = Random.nextInt()
             val action = Random.nextInt()
 
-            val testSubject = StateTestMiddleware(initAction).test(initialState)
+            val testSubject = StateTestMiddleware(this, initAction).test(initialState)
 
             testSubject.runOnCreate()
             testSubject.testIntent { somethingInBackground(action) }
@@ -63,9 +53,9 @@ internal class SuspendingStrategyDispatchTest {
         assertTrue { executionTime < 1000 }
     }
 
-    private inner class StateTestMiddleware(initAction: Int) :
+    private inner class StateTestMiddleware(scope: TestScope, initAction: Int) :
         ContainerHost<State, Nothing> {
-        override val container = scope.container<State, Nothing>(initialState) {
+        override val container = scope.backgroundScope.container<State, Nothing>(initialState) {
             intent {
                 delay(5000)
                 reduce {

@@ -16,8 +16,13 @@
 
 package org.orbitmvi.orbit.test
 
-import kotlinx.coroutines.CoroutineScope
+import kotlin.random.Random
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
+import kotlin.test.assertTrue
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.annotation.OrbitExperimental
@@ -25,12 +30,6 @@ import org.orbitmvi.orbit.container
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.postSideEffect
 import org.orbitmvi.orbit.syntax.simple.reduce
-import kotlin.random.Random
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
-import kotlin.test.assertTrue
-import kotlinx.coroutines.test.TestScope
 
 @OptIn(OrbitExperimental::class)
 @ExperimentalCoroutinesApi
@@ -261,9 +260,9 @@ class StateTest {
         }
     }
 
-    private inner class StateTestMiddleware(scope: CoroutineScope) :
+    private inner class StateTestMiddleware(scope: TestScope) :
         ContainerHost<State, Int> {
-        override val container = scope.container<State, Int>(initialState)
+        override val container = scope.backgroundScope.container<State, Int>(initialState)
 
         fun newCount(action: Int) = intent {
             reduce {

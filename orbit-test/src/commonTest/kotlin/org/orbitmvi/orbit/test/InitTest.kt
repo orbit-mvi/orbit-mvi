@@ -62,7 +62,7 @@ internal class InitTest {
     }
 
     private fun TestScope.createMiddleware(dependency: BogusDependency = FakeDependency()): GeneralTestMiddleware {
-        return GeneralTestMiddleware(this, dependency)
+        return GeneralTestMiddleware(this.backgroundScope, dependency)
     }
 
     private inner class GeneralTestMiddleware(coroutineScope: CoroutineScope, val dependency: BogusDependency) :
