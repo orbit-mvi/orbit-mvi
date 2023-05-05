@@ -20,16 +20,17 @@
 
 package org.orbitmvi.orbit
 
-import kotlin.random.Random
-import kotlin.test.Test
-import kotlin.test.assertContentEquals
-import kotlin.test.assertEquals
 import kotlinx.atomicfu.atomic
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
 import org.orbitmvi.orbit.syntax.simple.intent
+import kotlin.random.Random
+import kotlin.test.Test
+import kotlin.test.assertContentEquals
+import kotlin.test.assertEquals
 
+@Suppress("DEPRECATION")
 @ExperimentalCoroutinesApi
 internal class GeneralTest {
     private val initialState = State(Random.nextInt())

@@ -21,7 +21,6 @@
 package org.orbitmvi.orbit
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlin.test.AfterTest
 import kotlin.test.Test
 
 @ExperimentalCoroutinesApi

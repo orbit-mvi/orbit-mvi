@@ -16,32 +16,17 @@
 
 package org.orbitmvi.orbit.test
 
-//import kotlinx.coroutines.CoroutineScope
-//import org.orbitmvi.orbit.ContainerHost
-//import org.orbitmvi.orbit.annotation.OrbitExperimental
-//import org.orbitmvi.orbit.container
-//import org.orbitmvi.orbit.syntax.simple.intent
-//import org.orbitmvi.orbit.syntax.simple.postSideEffect
-//import org.orbitmvi.orbit.syntax.simple.reduce
-//import kotlin.random.Random
-import kotlin.random.Random
-import kotlin.test.Test
-import kotlin.test.assertFails
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.container
 import org.orbitmvi.orbit.syntax.simple.intent
+import kotlin.random.Random
+import kotlin.test.Test
+import kotlin.test.assertFails
 
-//import kotlin.test.assertEquals
-//import kotlin.test.assertFailsWith
-//import kotlin.test.assertTrue
-//import kotlinx.coroutines.CoroutineExceptionHandler
-//import kotlinx.coroutines.delay
-//
-//@OptIn(OrbitExperimental::class)
 @ExperimentalCoroutinesApi
 class ExceptionTest {
 
@@ -63,8 +48,8 @@ class ExceptionTest {
         }
     }
 
-    private inner class ExceptionTestMiddleware(scope: CoroutineScope) : ContainerHost<State, Int> {
-        override val container = scope.container<State, Int>(initialState)
+    private inner class ExceptionTestMiddleware(scope: TestScope) : ContainerHost<State, Int> {
+        override val container = scope.backgroundScope.container<State, Int>(initialState)
 
         fun boom() = intent {
             throw IllegalStateException("Boom!")
@@ -76,4 +61,3 @@ class ExceptionTest {
         val list: List<Int> = emptyList()
     )
 }
-

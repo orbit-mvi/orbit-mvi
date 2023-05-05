@@ -17,9 +17,6 @@
 package org.orbitmvi.orbit.test
 
 import app.cash.turbine.test
-import app.cash.turbine.withTurbineTimeout
-import kotlin.time.Duration
-import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.map
@@ -30,8 +27,9 @@ import kotlinx.coroutines.test.runTest
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.RealSettings
-import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.internal.TestingStrategy
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.seconds
 
 /**
  *  Run tests on your [ContainerHost]. This mode uses a real Orbit container, but the container's [CoroutineDispatcher] is set to the
@@ -48,7 +46,6 @@ import org.orbitmvi.orbit.internal.TestingStrategy
  * @param validate Perform your test within this block. See [OrbitTestContext].
  */
 @OptIn(ExperimentalCoroutinesApi::class, ExperimentalStdlibApi::class)
-@OrbitExperimental
 public suspend fun <STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHost<STATE, SIDE_EFFECT>> CONTAINER_HOST.test(
     testScope: TestScope,
     initialState: STATE? = null,
@@ -71,9 +68,9 @@ public suspend fun <STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHo
             this
         ).apply {
             validate(this)
-//            withAppropriateTimeout(timeout ?: 1.seconds) {
-//                container.findTestContainer().joinIntents()
-//            }
+            withAppropriateTimeout(timeout ?: 1.seconds) {
+                container.findTestContainer().joinIntents()
+            }
         }
     }
 }

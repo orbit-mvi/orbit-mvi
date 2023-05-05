@@ -98,6 +98,7 @@ public interface OrbitTestContext<STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST
 
     /**
      * Finish this test and ignore any events which have already been received.
+     * This also cancels any in-progress intents.
      */
     public suspend fun cancelAndIgnoreRemainingItems()
 }

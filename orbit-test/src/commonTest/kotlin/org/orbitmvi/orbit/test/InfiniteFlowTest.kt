@@ -16,11 +16,7 @@
 
 package org.orbitmvi.orbit.test
 
-import kotlin.coroutines.coroutineContext
-import kotlin.test.Test
-import kotlin.test.assertEquals
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.test.TestScope
@@ -32,6 +28,9 @@ import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.container
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.reduce
+import kotlin.coroutines.coroutineContext
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
 @ExperimentalCoroutinesApi
 @OptIn(OrbitExperimental::class)
@@ -71,8 +70,11 @@ internal class InfiniteFlowTest {
             assertEquals(listOf(42, 43, 44, 45), awaitState())
 
             job.cancel()
+            scope.advanceTimeBy(1)
         }
     }
+
+//    org.orbitmvi.orbit.SuspendingStrategyDispatchTest[jvm] > suspending test maintains test dispatcher through runTest[jvm] PASSED
 
     private inner class InfiniteFlowMiddleware(testScope: TestScope) : ContainerHost<List<Int>, Nothing> {
         override val container: Container<List<Int>, Nothing> = testScope.backgroundScope.container(listOf(42))

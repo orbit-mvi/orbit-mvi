@@ -16,9 +16,6 @@
 
 package org.orbitmvi.orbit.test
 
-import kotlin.random.Random
-import kotlin.test.Test
-import kotlin.test.assertEquals
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
@@ -28,6 +25,9 @@ import org.orbitmvi.orbit.container
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.reduce
 import org.orbitmvi.orbit.syntax.simple.repeatOnSubscription
+import kotlin.random.Random
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
 @OptIn(OrbitExperimental::class)
 @ExperimentalCoroutinesApi

@@ -35,7 +35,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.job
 import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
@@ -54,7 +53,7 @@ public class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
     subscribedCounterOverride: SubscribedCounter? = null
 ) : Container<STATE, SIDE_EFFECT> {
     private val scope = parentScope + settings.eventLoopDispatcher
-    private val intentScope = scope + settings.intentLaunchingDispatcher
+    private val intentJob = Job(scope.coroutineContext[Job])
 
     private val dispatchChannel = Channel<Pair<CompletableJob, suspend ContainerContext<STATE, SIDE_EFFECT>.() -> Unit>>(Channel.UNLIMITED)
     private val initialised = atomic(false)
@@ -71,14 +70,15 @@ public class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
 
     @OrbitExperimental
     override suspend fun joinIntents() {
-        print(intentScope.coroutineContext.job)
-        intentScope.coroutineContext.job.children.toList().joinAll()
-//        intentJob.job.children.toList().joinAll()
+        println(intentJob)
+        println(intentJob.children.toList())
+        intentJob.children.toList().joinAll()
     }
 
     @OrbitExperimental
     override fun cancel() {
         scope.cancel()
+        intentJob.cancel()
     }
 
     internal val pluginContext: ContainerContext<STATE, SIDE_EFFECT> = ContainerContext(
@@ -92,7 +92,7 @@ public class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
     override suspend fun orbit(orbitIntent: suspend ContainerContext<STATE, SIDE_EFFECT>.() -> Unit): Job {
         initialiseIfNeeded()
 
-        val job = Job(intentScope.coroutineContext.job)
+        val job = Job(intentJob)
         dispatchChannel.send(job to orbitIntent)
         return job
     }
@@ -114,8 +114,9 @@ public class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
 
             scope.launch {
                 for ((job, intent) in dispatchChannel) {
-                    val exceptionHandlerContext = settings.exceptionHandler?.plus(SupervisorJob(job)) ?: job
-                    intentScope.launch(exceptionHandlerContext) {
+                    val exceptionHandlerContext =
+                        (settings.exceptionHandler?.plus(SupervisorJob(job)) ?: job) + settings.intentLaunchingDispatcher
+                    launch(exceptionHandlerContext) {
                         pluginContext.intent()
                     }.invokeOnCompletion { job.complete() }
                 }

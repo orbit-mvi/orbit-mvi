@@ -40,7 +40,7 @@ import org.orbitmvi.orbit.test.findTestContainer
  * @param settings Replaces the [Container.Settings] for this test
  * @return A suspending test wrapper around [ContainerHost].
  */
-@Deprecated(message = "Use overload with settings builder instead. This will be removed in the future.")
+@Deprecated(message = "Use org.orbitmvi.orbit.test.test instead. This will be removed in the future.")
 public fun <STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHost<STATE, SIDE_EFFECT>> CONTAINER_HOST.test(
     initialState: STATE? = null,
     isolateFlow: Boolean = true,
@@ -69,7 +69,7 @@ public fun <STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHost<STATE
  * @param buildSettings Builds the [RealSettings] for this test
  * @return A suspending test wrapper around [ContainerHost].
  */
-@Deprecated(message = "Use overload with settings builder instead. This will be removed in the future.")
+@Deprecated(message = "Use org.orbitmvi.orbit.test.test instead. This will be removed in the future.")
 public fun <STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHost<STATE, SIDE_EFFECT>> CONTAINER_HOST.test(
     initialState: STATE? = null,
     isolateFlow: Boolean = true,
@@ -98,6 +98,7 @@ public fun <STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHost<STATE
  * @param buildSettings Builds the [RealSettings] for this test
  * @return A suspending test wrapper around [ContainerHost].
  */
+@Deprecated(message = "Use org.orbitmvi.orbit.test.test instead. This will be removed in the future.")
 public fun <STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHost<STATE, SIDE_EFFECT>> CONTAINER_HOST.test(
     initialState: STATE? = null,
     buildSettings: TestSettingsBuilder.() -> Unit = {},
@@ -120,6 +121,7 @@ public fun <STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHost<STATE
  * @param buildSettings Builds the [RealSettings] for this test
  * @return A live test wrapper around [ContainerHost].
  */
+@Deprecated(message = "Use org.orbitmvi.orbit.test.test instead. This will be removed in the future.")
 public fun <STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHost<STATE, SIDE_EFFECT>> CONTAINER_HOST.liveTest(
     initialState: STATE? = null,
     buildSettings: LiveTestSettingsBuilder.() -> Unit = {},
@@ -141,7 +143,7 @@ public fun <STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHost<STATE
  * @param settings Replaces the [Container.Settings] for this test
  * @return A live test wrapper around [ContainerHost].
  */
-@Deprecated(message = "Use overload with settings builder instead. This will be removed in the future.")
+@Deprecated(message = "Use org.orbitmvi.orbit.test.test instead. This will be removed in the future.")
 public fun <STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHost<STATE, SIDE_EFFECT>> CONTAINER_HOST.liveTest(
     initialState: STATE? = null,
     settings: Container.Settings

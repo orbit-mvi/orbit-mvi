@@ -17,17 +17,18 @@
 
 package org.orbitmvi.orbit
 
-import kotlin.random.Random
-import kotlin.system.measureTimeMillis
-import kotlin.test.Test
-import kotlin.test.assertTrue
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.reduce
+import kotlin.random.Random
+import kotlin.system.measureTimeMillis
+import kotlin.test.Test
+import kotlin.test.assertTrue
 
+@Suppress("DEPRECATION")
 @ExperimentalCoroutinesApi
 internal class SuspendingStrategyDispatchTest {
     private val initialState = State()

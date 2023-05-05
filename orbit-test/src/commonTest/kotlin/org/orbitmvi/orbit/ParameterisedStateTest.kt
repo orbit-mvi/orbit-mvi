@@ -20,15 +20,16 @@
 
 package org.orbitmvi.orbit
 
-import kotlin.random.Random
-import kotlin.test.assertFailsWith
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.reduce
 import org.orbitmvi.orbit.test.assertContains
+import kotlin.random.Random
+import kotlin.test.assertFailsWith
 
+@Suppress("DEPRECATION")
 @ExperimentalCoroutinesApi
 internal class ParameterisedStateTest(private val blocking: Boolean) {
     companion object {
@@ -105,7 +106,7 @@ internal class ParameterisedStateTest(private val blocking: Boolean) {
 
         throwable.message.assertContains(
             "Expected 1 states but more were emitted:\n" +
-                    "[State(count=$action2)]"
+                "[State(count=$action2)]"
         )
     }
 
@@ -132,7 +133,7 @@ internal class ParameterisedStateTest(private val blocking: Boolean) {
 
         throwable.message.assertContains(
             "Failed assertions at indices 2..2, expected states but never received:\n" +
-                    "[State(count=$action3)]"
+                "[State(count=$action3)]"
         )
     }
 
@@ -161,7 +162,7 @@ internal class ParameterisedStateTest(private val blocking: Boolean) {
 
         throwable.message.assertContains(
             "Failed assertions at indices 2..3, expected states but never received:\n" +
-                    "[State(count=$action3), State(count=$action4)]"
+                "[State(count=$action3), State(count=$action4)]"
         )
     }
 
@@ -283,9 +284,9 @@ internal class ParameterisedStateTest(private val blocking: Boolean) {
 
         throwable.message.assertContains(
             "Expected 2 states but more were emitted:\n" +
-                    "[State(count=$action2)]\n\n" +
-                    "Caution: 1 assertions were dropped as they encountered a current state " +
-                    "which already satisfied them."
+                "[State(count=$action2)]\n\n" +
+                "Caution: 1 assertions were dropped as they encountered a current state " +
+                "which already satisfied them."
         )
     }
 

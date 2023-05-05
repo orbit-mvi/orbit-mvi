@@ -1,7 +1,5 @@
 package org.orbitmvi.orbit.test
 
-import kotlin.coroutines.coroutineContext
-import kotlin.time.Duration
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
@@ -16,6 +14,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.selects.select
 import kotlinx.coroutines.test.TestCoroutineScheduler
 import kotlinx.coroutines.withTimeout
+import kotlin.coroutines.coroutineContext
+import kotlin.time.Duration
 
 @OptIn(ExperimentalCoroutinesApi::class)
 internal suspend fun <T> withAppropriateTimeout(

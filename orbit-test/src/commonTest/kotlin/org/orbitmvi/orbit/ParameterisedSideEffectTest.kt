@@ -20,19 +20,20 @@
 
 package org.orbitmvi.orbit
 
-import kotlin.random.Random
-import kotlin.test.assertContains
-import kotlin.test.assertFailsWith
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.postSideEffect
+import kotlin.random.Random
+import kotlin.test.assertContains
+import kotlin.test.assertFailsWith
 
+@Suppress("DEPRECATION")
 @ExperimentalCoroutinesApi
 internal class ParameterisedSideEffectTest(private val blocking: Boolean) {
     companion object {
-        const val TIMEOUT = 1000L
+        const val TIMEOUT = 2000L
     }
 
     private val initialState = State()

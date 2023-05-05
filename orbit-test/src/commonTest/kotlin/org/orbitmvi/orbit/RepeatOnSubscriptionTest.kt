@@ -16,8 +16,6 @@
 
 package org.orbitmvi.orbit
 
-import kotlin.random.Random
-import kotlin.test.Test
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
@@ -25,7 +23,10 @@ import kotlinx.coroutines.withTimeout
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.reduce
 import org.orbitmvi.orbit.syntax.simple.repeatOnSubscription
+import kotlin.random.Random
+import kotlin.test.Test
 
+@Suppress("DEPRECATION")
 @ExperimentalCoroutinesApi
 internal class RepeatOnSubscriptionTest {
     private val initialState = State()
