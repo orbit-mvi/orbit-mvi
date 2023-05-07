@@ -30,10 +30,11 @@ import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerDecorator
 import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.syntax.ContainerContext
+import org.orbitmvi.orbit.syntax.simple.intent
 
 public class LazyCreateContainerDecorator<STATE : Any, SIDE_EFFECT : Any>(
     override val actual: Container<STATE, SIDE_EFFECT>,
-    public val onCreate: (state: STATE) -> Unit
+    public val onCreate: suspend ContainerContext<STATE, SIDE_EFFECT>.() -> Unit
 ) : ContainerDecorator<STATE, SIDE_EFFECT> {
     private val created = atomic(false)
 
@@ -46,7 +47,7 @@ public class LazyCreateContainerDecorator<STATE : Any, SIDE_EFFECT : Any>(
 
     private fun runOnCreate() {
         if (created.compareAndSet(expect = false, update = true)) {
-            onCreate(actual.stateFlow.value)
+            actual.intent(registerIdling = false, transformer = onCreate)
         }
     }
 

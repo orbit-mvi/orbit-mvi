@@ -92,8 +92,48 @@ class IntentJobsTest {
         }
     }
 
+    @Test
+    fun `onCreate may be joined`() = runTest {
+        val scope = TestScope()
+        IntentJobsMiddleware(this).test(scope) {
+            expectInitialState()
+
+            val job = runOnCreate()
+
+            scope.testScheduler.advanceTimeBy(300)
+
+            launch {
+                job.join()
+            }
+            assertTrue { job.isActive }
+            scope.testScheduler.advanceTimeBy(1)
+            assertTrue { job.isCompleted }
+            expectState { this + 2 }
+        }
+    }
+
+    @Test
+    fun `onCreate may be cancelled`() = runTest {
+        val scope = TestScope()
+        IntentJobsMiddleware(this).test(scope) {
+            expectInitialState()
+
+            val job = runOnCreate()
+
+            scope.testScheduler.advanceTimeBy(200)
+
+            job.cancel()
+            assertTrue { job.isCancelled }
+            scope.testScheduler.advanceTimeBy(1)
+            assertTrue { job.isCompleted }
+        }
+    }
+
     private inner class IntentJobsMiddleware(scope: TestScope) : ContainerHost<Int, Int> {
-        override val container = scope.backgroundScope.container<Int, Int>(initialState)
+        override val container = scope.backgroundScope.container<Int, Int>(initialState) {
+            delay(300)
+            reduce { state + 2 }
+        }
 
         fun infiniteIntent() = intent {
             while (coroutineContext.isActive) {

@@ -22,6 +22,7 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
+import org.orbitmvi.orbit.annotation.OrbitInternal
 import org.orbitmvi.orbit.internal.LazyCreateContainerDecorator
 import org.orbitmvi.orbit.test.findOnCreate
 import org.orbitmvi.orbit.test.findTestContainer
@@ -87,11 +88,14 @@ public class SuspendingTestContainerHost<STATE : Any, SIDE_EFFECT : Any, CONTAIN
      * Invoke `onCreate` property for the [ContainerHost] backed by [LazyCreateContainerDecorator],
      * e.g.: created by [CoroutineScope.container]
      */
+    @OptIn(OrbitInternal::class)
     public suspend fun runOnCreate(): SuspendingTestContainerHost<STATE, SIDE_EFFECT, CONTAINER_HOST> {
         if (!onCreateAllowed.compareAndSet(expect = true, update = false)) {
             error("runOnCreate should only be invoked once and before any testIntent call")
         }
-        actual.container.findOnCreate().invoke(initialState ?: actual.container.findTestContainer().originalInitialState)
+        val onCreate = actual.container.findOnCreate()
+
+        actual.container.orbit(onCreate)
         actual.suspendingIntent(shouldIsolateFlow = false) {}
         return this
     }
@@ -144,12 +148,17 @@ public class RegularTestContainerHost<STATE : Any, SIDE_EFFECT : Any, CONTAINER_
      * Invoke `onCreate` property for the [ContainerHost] backed by [LazyCreateContainerDecorator],
      * e.g.: created by [CoroutineScope.container]
      */
+    @OptIn(OrbitInternal::class)
     public fun runOnCreate(): RegularTestContainerHost<STATE, SIDE_EFFECT, CONTAINER_HOST> {
         if (!onCreateAllowed.compareAndSet(expect = true, update = false)) {
             error("runOnCreate should only be invoked once and before any testIntent call")
         }
 
-        actual.container.findOnCreate().invoke(initialState ?: actual.container.findTestContainer().originalInitialState)
+        val onCreate = actual.container.findOnCreate()
+
+        runBlocking {
+            actual.container.orbit(onCreate)
+        }
         return this
     }
 

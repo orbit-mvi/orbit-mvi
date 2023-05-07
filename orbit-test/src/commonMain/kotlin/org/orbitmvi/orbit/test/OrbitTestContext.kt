@@ -24,7 +24,7 @@ public interface OrbitTestContext<STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST
     /**
      * Invoke `onCreate` lambda for the [ContainerHost].
      */
-    public fun runOnCreate()
+    public fun runOnCreate(): Job
 
     /**
      * Invoke an intent on the [ContainerHost] under test.

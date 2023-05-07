@@ -32,6 +32,7 @@ import org.orbitmvi.orbit.annotation.OrbitDsl
 import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.idling.withIdling
 import org.orbitmvi.orbit.internal.runBlocking
+import org.orbitmvi.orbit.syntax.ContainerContext
 
 /**
  * Reducers reduce the current state and incoming events to produce a new state.
@@ -64,17 +65,29 @@ public suspend fun <S : Any, SE : Any> SimpleSyntax<S, SE>.postSideEffect(sideEf
  * @param transformer lambda representing the transformer
  */
 @OrbitDsl
-public fun <STATE : Any, SIDE_EFFECT : Any> ContainerHost<STATE, SIDE_EFFECT>.intent(
+internal fun <STATE : Any, SIDE_EFFECT : Any> Container<STATE, SIDE_EFFECT>.intent(
     registerIdling: Boolean = true,
-    transformer: suspend SimpleSyntax<STATE, SIDE_EFFECT>.() -> Unit
+    transformer: suspend ContainerContext<STATE, SIDE_EFFECT>.() -> Unit
 ): Job =
-    runBlocking {
-        container.orbit {
+    kotlinx.coroutines.runBlocking {
+        orbit {
             withIdling(registerIdling) {
-                SimpleSyntax(this).transformer()
+                transformer()
             }
         }
     }
+
+/**
+ * Build and execute an intent on [Container].
+ *
+ * @param registerIdling whether to register an idling resource when executing this intent. Defaults to true.
+ * @param transformer lambda representing the transformer
+ */
+@OrbitDsl
+public fun <STATE : Any, SIDE_EFFECT : Any> ContainerHost<STATE, SIDE_EFFECT>.intent(
+    registerIdling: Boolean = true,
+    transformer: suspend SimpleSyntax<STATE, SIDE_EFFECT>.() -> Unit
+): Job = container.intent(registerIdling) { SimpleSyntax(this).transformer() }
 
 /**
  * Build and execute an intent on [Container] in a blocking manner, without dispatching.

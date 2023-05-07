@@ -27,6 +27,7 @@ import org.orbitmvi.orbit.Container.Settings
 import org.orbitmvi.orbit.internal.LazyCreateContainerDecorator
 import org.orbitmvi.orbit.internal.RealContainer
 import org.orbitmvi.orbit.internal.TestContainerDecorator
+import org.orbitmvi.orbit.syntax.simple.SimpleSyntax
 
 /**
  * Helps create a concrete container in a standard way.
@@ -41,7 +42,7 @@ import org.orbitmvi.orbit.internal.TestContainerDecorator
 public fun <STATE : Any, SIDE_EFFECT : Any> CoroutineScope.container(
     initialState: STATE,
     settings: Settings,
-    onCreate: ((state: STATE) -> Unit)? = null
+    onCreate: (suspend SimpleSyntax<STATE, SIDE_EFFECT>.() -> Unit)? = null
 ): Container<STATE, SIDE_EFFECT> =
     if (onCreate == null) {
         TestContainerDecorator(
@@ -63,8 +64,7 @@ public fun <STATE : Any, SIDE_EFFECT : Any> CoroutineScope.container(
                     settings = settings.toRealSettings(),
                     parentScope = this
                 ),
-                onCreate
-            )
+            ) { SimpleSyntax(this).onCreate() }
         )
     }
 
@@ -80,7 +80,7 @@ public fun <STATE : Any, SIDE_EFFECT : Any> CoroutineScope.container(
 public fun <STATE : Any, SIDE_EFFECT : Any> CoroutineScope.container(
     initialState: STATE,
     buildSettings: SettingsBuilder.() -> Unit = {},
-    onCreate: ((state: STATE) -> Unit)? = null
+    onCreate: (suspend SimpleSyntax<STATE, SIDE_EFFECT>.() -> Unit)? = null
 ): Container<STATE, SIDE_EFFECT> =
     if (onCreate == null) {
         TestContainerDecorator(
@@ -101,8 +101,7 @@ public fun <STATE : Any, SIDE_EFFECT : Any> CoroutineScope.container(
                     initialState = initialState,
                     settings = SettingsBuilder().apply { buildSettings() }.settings,
                     parentScope = this
-                ),
-                onCreate
-            )
+                )
+            ) { SimpleSyntax(this).onCreate() }
         )
     }

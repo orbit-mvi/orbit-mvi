@@ -21,6 +21,8 @@ import kotlinx.atomicfu.atomic
 import kotlinx.coroutines.Job
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.annotation.OrbitExperimental
+import org.orbitmvi.orbit.annotation.OrbitInternal
+import org.orbitmvi.orbit.runBlocking
 import kotlin.test.assertEquals
 import kotlin.test.fail
 
@@ -36,9 +38,13 @@ public class RealOrbitTestContext<STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST
 
     private var currentConsumedState: STATE = resolvedInitialState
 
-    override fun runOnCreate() {
+    @OptIn(OrbitInternal::class)
+    override fun runOnCreate(): Job {
         if (onCreateAllowed.compareAndSet(expect = true, update = false)) {
-            actual.container.findOnCreate().invoke(resolvedInitialState)
+            val onCreate = actual.container.findOnCreate()
+            return runBlocking {
+                actual.container.orbit(onCreate)
+            }
         } else {
             error("runOnCreate should only be invoked once and before any invokeIntent call")
         }

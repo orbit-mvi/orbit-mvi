@@ -70,8 +70,6 @@ public class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
 
     @OrbitExperimental
     override suspend fun joinIntents() {
-        println(intentJob)
-        println(intentJob.children.toList())
         intentJob.children.toList().joinAll()
     }
 

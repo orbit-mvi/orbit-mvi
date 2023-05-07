@@ -25,6 +25,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
 import org.orbitmvi.orbit.syntax.simple.intent
+import org.orbitmvi.orbit.test.assertEventually
 import kotlin.random.Random
 import kotlin.test.Test
 import kotlin.test.assertContentEquals
@@ -72,7 +73,9 @@ internal class GeneralTest {
 
         testSubject.liveTest(initialState = initialState).runOnCreate()
 
-        assertEquals(true, mockDependency.createCalled.value)
+        assertEventually {
+            assertEquals(true, mockDependency.createCalled.value)
+        }
     }
 
     @Test
