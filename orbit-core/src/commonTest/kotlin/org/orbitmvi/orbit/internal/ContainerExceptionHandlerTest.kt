@@ -18,18 +18,19 @@
 
 package org.orbitmvi.orbit.internal
 
+import app.cash.turbine.test
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.cancelAndJoin
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.isActive
-import org.orbitmvi.orbit.Container
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.runTest
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.container
 import org.orbitmvi.orbit.syntax.simple.intent
@@ -41,6 +42,7 @@ import kotlin.test.AfterTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 @ExperimentalCoroutinesApi
@@ -54,53 +56,55 @@ internal class ContainerExceptionHandlerTest {
     }
 
     @Test
-    fun `by default any exception breaks the scope`() = runBlocking {
+    fun `by default any exception breaks the scope`() = runTest {
         val initState = Random.nextInt()
         val container = scope.container<Int, Nothing>(
             initialState = initState
         )
-        val testObserver = container.stateFlow.test()
-        val newState = Random.nextInt()
+        container.stateFlow.test {
+            val newState = Random.nextInt()
 
-        container.orbit {
-            throw IllegalStateException()
-        }
-        container.orbit {
-            reduce { newState }
-        }
+            val job = container.orbit {
+                throw IllegalStateException()
+            }
+            container.orbit {
+                reduce { newState }
+            }
 
-        testObserver.awaitCount(2, 1000L)
-        assertEquals(listOf(initState), testObserver.values)
-        assertEquals(false, scope.isActive)
+            assertEquals(initState, awaitItem())
+            job.join()
+            assertEquals(false, scope.isActive)
+        }
     }
 
     @Test
-    fun `with exception handler exceptions are caught`() {
+    fun `with exception handler exceptions are caught`() = runTest {
         val initState = Random.nextInt()
         val exceptions = mutableListOf<Throwable>()
         val exceptionHandler = CoroutineExceptionHandler { _, throwable -> exceptions += throwable }
         val container = scope.container<Int, Nothing>(
             initialState = initState,
-            settings = Container.Settings(
-                exceptionHandler = exceptionHandler,
-                intentDispatcher = Dispatchers.Unconfined
-            )
+            buildSettings = {
+                this.exceptionHandler = exceptionHandler
+            }
         )
-        val newState = Random.nextInt()
 
-        runBlocking {
+        container.stateFlow.test {
+            val newState = Random.nextInt()
+
             container.orbit {
                 reduce { throw IllegalStateException() }
             }
             container.orbit {
                 reduce { newState }
             }
-        }
 
-        assertEquals(newState, container.stateFlow.value)
-        assertEquals(true, scope.isActive)
-        assertEquals(1, exceptions.size)
-        assertTrue { exceptions.first() is IllegalStateException }
+            assertEquals(initState, awaitItem())
+            assertEquals(newState, awaitItem())
+            assertEquals(true, scope.isActive)
+            assertEquals(1, exceptions.size)
+            assertTrue { exceptions.first() is IllegalStateException }
+        }
     }
 
     @Test
@@ -124,28 +128,29 @@ internal class ContainerExceptionHandlerTest {
             }
         val container = containerScope.container<Unit, Nothing>(
             initialState = Unit,
-            settings = Container.Settings(
-                exceptionHandler = exceptionHandler,
-                intentDispatcher = Dispatchers.Unconfined
-            )
+            buildSettings = {
+                this.exceptionHandler = exceptionHandler
+            }
         )
-        runBlocking {
-            val exceptions = mutableListOf<Throwable>()
-            container.orbit {
+        val exceptions = mutableListOf<Throwable>()
+        runTest {
+            val job = container.orbit {
                 try {
-                    flow {
-                        while (true) {
-                            emit(Unit)
-                            delay(1000)
-                        }
-                    }.collect()
+                    delay(Long.MAX_VALUE)
                 } catch (e: CancellationException) {
                     exceptions.add(e)
                     throw e
                 }
             }
-            containerScope.cancel()
-            scopeJob.join()
+            coroutineScope {
+                launch {
+                    runCatching {
+                        job.join()
+                    }
+                }
+                scopeJob.cancelAndJoin()
+            }
+            assertFalse { containerScope.isActive }
             assertEquals(1, exceptions.size)
         }
     }
@@ -158,10 +163,9 @@ internal class ContainerExceptionHandlerTest {
         val containerHost = object : ContainerHost<Int, Nothing> {
             override val container = scope.container<Int, Nothing>(
                 initialState = initState,
-                settings = Container.Settings(
-                    exceptionHandler = exceptionHandler,
-                    intentDispatcher = Dispatchers.Unconfined
-                )
+                buildSettings = {
+                    this.exceptionHandler = exceptionHandler
+                }
             )
         }.test(initState) {
             isolateFlow = false
@@ -195,9 +199,9 @@ internal class ContainerExceptionHandlerTest {
         val containerHost = object : ContainerHost<Int, Nothing> {
             override val container = scope.container<Int, Nothing>(
                 initialState = initState,
-                settings = Container.Settings(
-                    intentDispatcher = Dispatchers.Unconfined
-                )
+                buildSettings = {
+                    this.exceptionHandler = exceptionHandler
+                }
             )
         }.test(initState) {
             isolateFlow = false

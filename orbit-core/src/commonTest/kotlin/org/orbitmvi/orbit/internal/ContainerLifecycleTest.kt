@@ -28,8 +28,8 @@ import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.container
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.postSideEffect
-import org.orbitmvi.orbit.test
 import org.orbitmvi.orbit.test.assertContainExactly
+import org.orbitmvi.orbit.testFlowObserver
 import kotlin.random.Random
 import kotlin.test.AfterTest
 import kotlin.test.Test
@@ -48,8 +48,8 @@ internal class ContainerLifecycleTest {
     fun `onCreate is called once after connecting to the container`() {
         val initialState = TestState()
         val middleware = Middleware(initialState)
-        val testStateObserver = middleware.container.stateFlow.test()
-        val testSideEffectObserver = middleware.container.sideEffectFlow.test()
+        val testStateObserver = middleware.container.stateFlow.testFlowObserver()
+        val testSideEffectObserver = middleware.container.sideEffectFlow.testFlowObserver()
 
         testStateObserver.awaitCount(1)
         testSideEffectObserver.awaitCount(1)

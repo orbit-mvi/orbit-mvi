@@ -38,13 +38,3 @@ public class SettingsBuilder {
             settings = settings.copy(repeatOnSubscribedStopTimeout = value)
         }
 }
-
-@Suppress("DEPRECATION")
-internal fun Container.Settings.toRealSettings() = RealSettings(
-    sideEffectBufferSize = sideEffectBufferSize,
-    idlingRegistry = idlingRegistry,
-    eventLoopDispatcher = intentDispatcher,
-    intentLaunchingDispatcher = intentDispatcher,
-    exceptionHandler = exceptionHandler,
-    repeatOnSubscribedStopTimeout = repeatOnSubscribedStopTimeout
-)

@@ -27,8 +27,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import org.orbitmvi.orbit.annotation.OrbitInternal
 
 /**
  * Allows you to record all observed values of a flow for easy testing.
@@ -99,4 +99,5 @@ public class TestFlowObserver<T>(flow: Flow<T>) {
 /**
  * Allows you to put a [Flow] into test mode.
  */
-public fun <T> Flow<T>.test(): TestFlowObserver<T> = TestFlowObserver(this)
+@OrbitInternal
+public fun <T> Flow<T>.testFlowObserver(): TestFlowObserver<T> = TestFlowObserver(this)

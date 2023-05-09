@@ -66,13 +66,13 @@ fun <STATE : Parcelable, SIDE_EFFECT : Any> ViewModel.container(
     initialState: STATE,
     savedStateHandle: SavedStateHandle,
     buildSettings: SettingsBuilder.() -> Unit = {},
-    onCreate: (suspend SimpleSyntax<STATE, SIDE_EFFECT>.(STATE) -> Unit)? = null
+    onCreate: (suspend SimpleSyntax<STATE, SIDE_EFFECT>.() -> Unit)? = null
 ): Container<STATE, SIDE_EFFECT> {
     val savedState: STATE? = savedStateHandle[SAVED_STATE_KEY]
     val state = savedState ?: initialState
 
     val realContainer: Container<STATE, SIDE_EFFECT> =
-        viewModelScope.container(state, buildSettings) { onCreate?.let { it(state) } }
+        viewModelScope.container(state, buildSettings, onCreate)
 
     return SavedStateContainerDecorator(
         realContainer,

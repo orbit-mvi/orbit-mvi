@@ -29,8 +29,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.container
-import org.orbitmvi.orbit.test
 import org.orbitmvi.orbit.test.runBlocking
+import org.orbitmvi.orbit.testFlowObserver
 import kotlin.random.Random
 import kotlin.test.AfterTest
 import kotlin.test.Test
@@ -49,7 +49,7 @@ internal class ContainerThreadingTest {
     @Test
     fun `container can process a second action while the first is suspended`() {
         val container = scope.container<Int, Nothing>(Random.nextInt())
-        val observer = container.stateFlow.test()
+        val observer = container.stateFlow.testFlowObserver()
         val newState = Random.nextInt()
 
         runBlocking {
@@ -70,7 +70,7 @@ internal class ContainerThreadingTest {
         // This scenario is meant to simulate calling only reducers from the UI thread
         runBlocking {
             val container = scope.container<TestState, Nothing>(TestState())
-            val testStateObserver = container.stateFlow.test()
+            val testStateObserver = container.stateFlow.testFlowObserver()
             val expectedStates = mutableListOf(
                 TestState(
                     emptyList()
@@ -101,7 +101,7 @@ internal class ContainerThreadingTest {
         // This scenario is meant to simulate calling only reducers from the UI thread
         runBlocking {
             val container = scope.container<TestState, Nothing>(TestState())
-            val testStateObserver = container.stateFlow.test()
+            val testStateObserver = container.stateFlow.testFlowObserver()
             val expectedStates = mutableListOf(
                 TestState(
                     emptyList()

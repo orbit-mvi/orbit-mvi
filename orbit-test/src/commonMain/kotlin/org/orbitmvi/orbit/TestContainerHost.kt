@@ -32,8 +32,11 @@ import kotlin.test.assertEquals
 public sealed class TestContainerHost<STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHost<STATE, SIDE_EFFECT>>(
     actual: CONTAINER_HOST
 ) {
-    public val stateObserver: TestFlowObserver<STATE> = actual.container.stateFlow.test()
-    public val sideEffectObserver: TestFlowObserver<SIDE_EFFECT> = actual.container.sideEffectFlow.test()
+    @OptIn(OrbitInternal::class)
+    public val stateObserver: TestFlowObserver<STATE> = actual.container.stateFlow.testFlowObserver()
+
+    @OptIn(OrbitInternal::class)
+    public val sideEffectObserver: TestFlowObserver<SIDE_EFFECT> = actual.container.sideEffectFlow.testFlowObserver()
 
     protected abstract fun awaitForEmissions(verification: OrbitVerification<STATE, SIDE_EFFECT>, timeoutMillis: Long)
 
