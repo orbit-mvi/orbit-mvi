@@ -26,6 +26,7 @@ import androidx.lifecycle.ViewModel
 import kotlinx.parcelize.Parcelize
 import org.junit.Test
 import org.orbitmvi.orbit.ContainerHost
+import org.orbitmvi.orbit.syntax.simple.SimpleSyntax
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.reduce
 import org.orbitmvi.orbit.test
@@ -105,9 +106,9 @@ class ViewModelExtensionsKtTest {
     private class Middleware(
         savedStateHandle: SavedStateHandle,
         initialState: TestState,
-        onCreate: ((TestState) -> Unit)? = null
+        onCreate: (suspend SimpleSyntax<TestState, Int>.(TestState) -> Unit)? = null
     ) : ContainerHost<TestState, Int>, ViewModel() {
-        override val container = container<TestState, Int>(
+        override val container = container(
             initialState = initialState,
             savedStateHandle = savedStateHandle,
             onCreate = onCreate

@@ -28,6 +28,7 @@ import androidx.lifecycle.viewModelScope
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.SettingsBuilder
 import org.orbitmvi.orbit.container
+import org.orbitmvi.orbit.syntax.simple.SimpleSyntax
 
 internal const val SAVED_STATE_KEY = "state"
 
@@ -35,68 +36,14 @@ internal const val SAVED_STATE_KEY = "state"
  * Creates a container scoped with ViewModelScope.
  *
  * @param initialState The initial state of the container.
- * @param settings The [Container.Settings] to set the container up with.
- * @param onCreate The lambda to execute when the container is created. By default it is
- * executed in a lazy manner after the container has been interacted with in any way.
- * @return A [Container] implementation
- */
-@Deprecated(message = "Use overload with settings builder instead. This will be removed in the future.")
-fun <STATE : Any, SIDE_EFFECT : Any> ViewModel.container(
-    initialState: STATE,
-    settings: Container.Settings,
-    onCreate: ((state: STATE) -> Unit)? = null
-): Container<STATE, SIDE_EFFECT> {
-    return viewModelScope.container(initialState, settings, onCreate)
-}
-
-/**
- * Creates a container scoped with ViewModelScope and allows you to used the
- * Android ViewModel's saved state support.
- *
- * Provide a [SavedStateHandle] in order for your [Parcelable] state to be automatically saved as
- * you use the container.
- *
- * @param initialState The initial state of the container.
- * @param savedStateHandle The [SavedStateHandle] corresponding to this host. Typically retrieved
- * from the containing [ViewModel]
- * @param settings The [Container.Settings] to set the container up with.
- * @param onCreate The lambda to execute when the container is created, parameter is false, or
- * recreated, parameter is true. By default it is executed in a lazy manner after the container
- * has been interacted with in any way.
- * @return A [Container] implementation
- */
-@Deprecated(message = "Use overload with settings builder instead. This will be removed in the future.")
-fun <STATE : Parcelable, SIDE_EFFECT : Any> ViewModel.container(
-    initialState: STATE,
-    savedStateHandle: SavedStateHandle,
-    settings: Container.Settings,
-    onCreate: ((state: STATE) -> Unit)? = null
-): Container<STATE, SIDE_EFFECT> {
-    val savedState: STATE? = savedStateHandle[SAVED_STATE_KEY]
-    val state = savedState ?: initialState
-
-    val realContainer: Container<STATE, SIDE_EFFECT> =
-        viewModelScope.container(state, settings, onCreate)
-
-    return SavedStateContainerDecorator(
-        realContainer,
-        savedStateHandle
-    )
-}
-
-/**
- * Creates a container scoped with ViewModelScope.
- *
- * @param initialState The initial state of the container.
  * @param buildSettings This builder can be used to change the container's settings.
- * @param onCreate The lambda to execute when the container is created. By default it is
- * executed in a lazy manner after the container has been interacted with in any way.
+ * @param onCreate The intent to execute when the container is created
  * @return A [Container] implementation
  */
 fun <STATE : Any, SIDE_EFFECT : Any> ViewModel.container(
     initialState: STATE,
     buildSettings: SettingsBuilder.() -> Unit = {},
-    onCreate: ((state: STATE) -> Unit)? = null
+    onCreate: (suspend SimpleSyntax<STATE, SIDE_EFFECT>.() -> Unit)? = null
 ): Container<STATE, SIDE_EFFECT> {
     return viewModelScope.container(initialState, buildSettings, onCreate)
 }
@@ -112,22 +59,20 @@ fun <STATE : Any, SIDE_EFFECT : Any> ViewModel.container(
  * @param savedStateHandle The [SavedStateHandle] corresponding to this host. Typically retrieved
  * from the containing [ViewModel]
  * @param buildSettings This builder can be used to change the container's settings.
- * @param onCreate The lambda to execute when the container is created, parameter is false, or
- * recreated, parameter is true. By default it is executed in a lazy manner after the container
- * has been interacted with in any way.
+ * @param onCreate The intent to execute when the container is created, provided with the default or recreated state
  * @return A [Container] implementation
  */
 fun <STATE : Parcelable, SIDE_EFFECT : Any> ViewModel.container(
     initialState: STATE,
     savedStateHandle: SavedStateHandle,
     buildSettings: SettingsBuilder.() -> Unit = {},
-    onCreate: ((state: STATE) -> Unit)? = null
+    onCreate: (suspend SimpleSyntax<STATE, SIDE_EFFECT>.(STATE) -> Unit)? = null
 ): Container<STATE, SIDE_EFFECT> {
     val savedState: STATE? = savedStateHandle[SAVED_STATE_KEY]
     val state = savedState ?: initialState
 
     val realContainer: Container<STATE, SIDE_EFFECT> =
-        viewModelScope.container(state, buildSettings, onCreate)
+        viewModelScope.container(state, buildSettings) { onCreate?.let { it(state) } }
 
     return SavedStateContainerDecorator(
         realContainer,
