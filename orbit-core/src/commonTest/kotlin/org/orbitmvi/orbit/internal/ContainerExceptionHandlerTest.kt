@@ -30,13 +30,14 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.test.runTest
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.container
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.reduce
 import org.orbitmvi.orbit.test
-import kotlin.coroutines.cancellation.CancellationException
 import kotlin.random.Random
 import kotlin.test.AfterTest
 import kotlin.test.Test
@@ -132,26 +133,24 @@ internal class ContainerExceptionHandlerTest {
                 this.exceptionHandler = exceptionHandler
             }
         )
-        val exceptions = mutableListOf<Throwable>()
+        val mutex = Mutex(locked = true)
         runTest {
-            val job = container.orbit {
-                try {
-                    delay(Long.MAX_VALUE)
-                } catch (e: CancellationException) {
-                    exceptions.add(e)
-                    throw e
-                }
-            }
-            coroutineScope {
-                launch {
-                    runCatching {
-                        job.join()
+            lateinit var job: Job
+            container.orbit {
+                coroutineScope {
+                    job = launch {
+                        mutex.unlock()
+                        delay(Long.MAX_VALUE)
                     }
                 }
-                scopeJob.cancelAndJoin()
             }
-            assertFalse { containerScope.isActive }
-            assertEquals(1, exceptions.size)
+            mutex.withLock {
+                scopeJob.cancelAndJoin()
+                assertFalse { containerScope.isActive }
+                println(job)
+                assertTrue { job.isCancelled }
+                assertFalse { job.isActive }
+            }
         }
     }
 
