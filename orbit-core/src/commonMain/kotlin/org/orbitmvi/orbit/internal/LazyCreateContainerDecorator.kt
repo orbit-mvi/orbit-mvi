@@ -21,6 +21,7 @@
 package org.orbitmvi.orbit.internal
 
 import kotlinx.atomicfu.atomic
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.emitAll
@@ -29,10 +30,11 @@ import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerDecorator
 import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.syntax.ContainerContext
+import org.orbitmvi.orbit.syntax.simple.intent
 
 public class LazyCreateContainerDecorator<STATE : Any, SIDE_EFFECT : Any>(
     override val actual: Container<STATE, SIDE_EFFECT>,
-    public val onCreate: (state: STATE) -> Unit
+    public val onCreate: suspend ContainerContext<STATE, SIDE_EFFECT>.() -> Unit
 ) : ContainerDecorator<STATE, SIDE_EFFECT> {
     private val created = atomic(false)
 
@@ -45,12 +47,12 @@ public class LazyCreateContainerDecorator<STATE : Any, SIDE_EFFECT : Any>(
 
     private fun runOnCreate() {
         if (created.compareAndSet(expect = false, update = true)) {
-            onCreate(actual.stateFlow.value)
+            actual.intent(registerIdling = false, transformer = onCreate)
         }
     }
 
-    override suspend fun orbit(orbitIntent: suspend ContainerContext<STATE, SIDE_EFFECT>.() -> Unit) {
-        runOnCreate().also { actual.orbit(orbitIntent) }
+    override suspend fun orbit(orbitIntent: suspend ContainerContext<STATE, SIDE_EFFECT>.() -> Unit): Job {
+        runOnCreate().also { return actual.orbit(orbitIntent) }
     }
 
     @OptIn(OrbitExperimental::class)

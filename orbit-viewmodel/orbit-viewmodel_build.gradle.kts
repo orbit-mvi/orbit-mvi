@@ -47,6 +47,7 @@ dependencies {
     testImplementation(libs.kotlinCoroutinesTest)
 
     testImplementation(libs.androidxCoreTesting)
+    testImplementation(libs.turbine)
 }
 
 android {

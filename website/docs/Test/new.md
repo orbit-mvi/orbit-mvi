@@ -1,35 +1,20 @@
 ---
 sidebar_position: 2
-sidebar_label: 'Experimental testing process'
+sidebar_label: 'New testing process'
 ---
 
-# Experimental testing process
-
-We are currently working on a new testing framework for Orbit MVI. The new
-framework is still in the experimental phase and we are looking for feedback.
+# New testing process
 
 The new framework is based on the (itself in
 alpha) [Turbine](https://github.com/cashapp/turbine)
 library. Turbine is a library for testing coroutines and flows.
 
-Orbit's experimental framework offers a subset of the Turbine APIs and
+Orbit's framework offers a subset of the Turbine APIs and
 ensures predictable coroutine scoping and context through use of the new
 [coroutine testing APIs](https://kotlinlang.org/api/kotlinx.coroutines/kotlinx-coroutines-test/kotlinx.coroutines.test/run-test.html)
 .
 
-### Current status
-
-- We have a working prototype of the new testing framework. We will be testing
-  it within a real project and will be making changes based on community
-  feedback.
-- The API is still subject to change. Notably we may be missing some convenience
-  functions in
-  the [OrbitTestContext](pathname:///dokka/orbit-test/org.orbitmvi.orbit.test/-orbit-test-context/)
-- The framework will remain experimental
-  until [Turbine](https://github.com/cashapp/turbine)
-  is stable.
-
-## Changes from the current testing framework
+## Changes from the old testing framework
 
 Our design goal was to have a simpler API and no more hidden magic in tests.
 
@@ -188,7 +173,120 @@ fun exampleTest() = runTest {
     }
 ```
 
-## Testing Flows
+## Intent Jobs
+
+If your intent does not produce any states or side effects, but e.g. affects an
+external dependency, you need to make sure the intent completes before running
+your assertions.
+
+This can be done using coroutine
+[Jobs](https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines/-job/index.html)
+, which are returned by `runOnCreate` or `invokeIntent { ... }`.
+
+
+```kotlin
+@Test
+fun exampleTest() = runTest {
+        val dependency = SomeDependency()
+        
+        ExampleViewModel(dependency).test(this) {
+            expectInitialState()
+            
+            val job = runOnCreate()
+            // OR
+            val job = invokeIntent { doSomeWorkOnDependency() }
+            
+            // Ensure intent is completed
+            job.join()
+            
+            // Run your assertions
+            assertEquals(dependency.counter, 42)
+        }
+    }
+```
+
+## Additional checks and assertions
+
+In unit testing, it is the things we don't test for that can cause the most
+unexpected bugs. In order to bring this into focus, Orbit's test framework 
+requires you to be very explicit. The only time we can be sure the test is
+complete is when the Orbit container is at rest and all states and side effects
+have been inspected.
+
+Below are some additional checks we perform to make sure this is the case.
+
+### Unconsumed states or side effects
+
+If there are any unconsumed states or side effects at the end of the test, it
+will fail.
+
+This is to ensure you check all the states and side effects that are the result
+of your intent calls - and that you don't end up in a state you didn't expect.
+
+Ideally you would assert on all states and side effects, but if this is not
+convenient, you can use `skip(n)` or `cancelAndIgnoreRemainingItems()` to
+explicitly mark that you are not interested in testing the remaining items.
+Typically, `cancelAndIgnoreRemainingItems` would be used as a last resort.
+
+```kotlin
+@Test
+fun exampleTest() = runTest {
+        ExampleViewModel().test(this) {
+            expectInitialState()
+            runOnCreate()
+            invokeIntent { countToFour() }
+
+            expectState { copy(count = 1) }
+            expectSideEffect(Toast(1))
+            
+            // Deal with unconsumed items that were emitted by the container
+            skip(4)
+            // OR ignore all unconsumed items
+            cancelAndIgnoreRemainingItems()
+        }
+    }
+```
+
+### Unfinished intents
+
+Any intents that are still running at the end of the test will cause the test to
+fail.
+
+This is to ensure that the container can't emit any more states or side effects
+after the test has finished.
+
+Typically, this is caused by an intent subscribing to a flow that never
+completes or launching a long-running, blocking intent.
+
+In order to complete the test successfully in these circumstances, the intent
+must be joined or cancelled.
+
+See below example for options to deal with this. Typically, 
+`cancelAndIgnoreRemainingItems` would be used as a last resort.
+
+```kotlin
+@Test
+fun exampleTest() = runTest {
+        ExampleViewModel().test(this) {
+            expectInitialState()
+            
+            val job = runOnCreate()
+            // OR
+            val job = invokeIntent { doSomeWork() }
+            
+            // ... run assertions
+            
+            // Ensure intent is completed
+            job.join()
+            // OR cancel the intent
+            job.cancel()
+            // OR cancel all intents
+            cancelAndIgnoreRemainingItems()
+        }
+    }
+```
+
+## Testing intents that collect Flows
 
 We can run into situations where we subscribe
 our [ContainerHost](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-container-host/)
@@ -206,7 +304,7 @@ val container = scope.container<SomeState, Unit> {
 }
 ```
 
-We should ideally replace the infinite flow with a finite flow for the test.
+A good practice is to replace the infinite flow with a finite flow for the test.
 This helps keep the test simple. If this is not possible, we have to make
 sure we disregard extra states and side effects that are emitted at the end
 of the test by calling `cancelAndIgnoreRemainingItems()`.
@@ -222,15 +320,17 @@ fun exampleTest() = runTest {
 
         ExampleViewModel(fakeLocationService).test(this) {
             expectInitialState()
-            runOnCreate()
+            val job = runOnCreate()
 
             expectState { copy(lng = 1, lat = 1) }
             expectState { copy(lng = 2, lat = 2) }
             expectState { copy(lng = 3, lat = 3) }
             
-            // If the flow is infinite, we must call this to ignore the unconsumed items
-            // No need to call this for a finite flow
-            // cancelAndIgnoreRemainingItems()
+            // If the flow is infinite, we must ensure the intent is finished
+            // at the end of the test.
+            job.join
+            // OR
+            cancelAndIgnoreRemainingItems()
         }
     }
 ```
@@ -267,15 +367,17 @@ coroutine being tested in `runTest`.
 fun delaySkipping() = runTest {
         InfiniteFlowMiddleware().test(this) {
             expectInitialState()
-            invokeIntent { incrementForever() }
+            val job = invokeIntent { incrementForever() }
 
             // Assert the first three states
             expectState(listOf(42, 43))
             expectState(listOf(42, 43, 44))
             expectState(listOf(42, 43, 44, 45))
 
-            // If the flow is infinite, we must call this to ignore the unconsumed items
-            // No need to call this for a finite flow
+            // If the flow is infinite, we must ensure the intent is finished
+            // at the end of the test.
+            job.join
+            // OR
             cancelAndIgnoreRemainingItems()
         }
     }
@@ -293,7 +395,7 @@ fun noDelaySkipping() = runTest {
 
         InfiniteFlowMiddleware().test(scope) {
             expectInitialState()
-            invokeIntent { incrementForever() }
+            val job = invokeIntent { incrementForever() }
 
             // Assert the first three states
             scope.advanceTimeBy(30_001)
@@ -303,8 +405,11 @@ fun noDelaySkipping() = runTest {
             scope.advanceTimeBy(30_001)
             expectState(listOf(42, 43, 44, 45))
 
-            // No need to call `cancelAndIgnoreRemainingItems()` since
-            // We control virtual time
+            // If the flow is infinite, we must ensure the intent is finished
+            // at the end of the test.
+            job.join
+            // OR
+            cancelAndIgnoreRemainingItems()
         }
     }
 ```

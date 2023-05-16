@@ -18,10 +18,14 @@ package org.orbitmvi.orbit.test
 
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerDecorator
+import org.orbitmvi.orbit.annotation.OrbitInternal
 import org.orbitmvi.orbit.internal.LazyCreateContainerDecorator
 import org.orbitmvi.orbit.internal.TestContainerDecorator
+import org.orbitmvi.orbit.syntax.ContainerContext
 
-internal fun <STATE : Any, SIDE_EFFECT : Any> Container<STATE, SIDE_EFFECT>.findOnCreate(): (STATE) -> Unit {
+@OptIn(OrbitInternal::class)
+internal fun <STATE : Any, SIDE_EFFECT : Any> Container<STATE, SIDE_EFFECT>.findOnCreate():
+    suspend ContainerContext<STATE, SIDE_EFFECT>.() -> Unit {
     return (this as? LazyCreateContainerDecorator<STATE, SIDE_EFFECT>)?.onCreate
         ?: (this as? ContainerDecorator<STATE, SIDE_EFFECT>)?.actual?.findOnCreate()
         ?: {}

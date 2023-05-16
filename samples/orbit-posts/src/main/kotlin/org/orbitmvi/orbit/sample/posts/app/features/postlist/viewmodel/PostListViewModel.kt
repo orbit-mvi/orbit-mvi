@@ -46,7 +46,7 @@ class PostListViewModel(
         savedStateHandle = savedStateHandle,
         buildSettings = { this.exceptionHandler = exceptionHandler }
     ) {
-        if (it.overviews.isEmpty()) {
+        if (state.overviews.isEmpty()) {
             loadOverviews()
         }
     }

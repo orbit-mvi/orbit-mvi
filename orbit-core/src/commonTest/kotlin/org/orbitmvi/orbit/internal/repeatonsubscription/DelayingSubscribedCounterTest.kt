@@ -7,8 +7,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import org.orbitmvi.orbit.internal.repeatonsubscription.Subscription.Subscribed
 import org.orbitmvi.orbit.internal.repeatonsubscription.Subscription.Unsubscribed
-import org.orbitmvi.orbit.test
 import org.orbitmvi.orbit.test.runBlocking
+import org.orbitmvi.orbit.testFlowObserver
 import kotlin.test.AfterTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -27,7 +27,7 @@ class DelayingSubscribedCounterTest {
     fun `initial value is unsubscribed`() {
         runBlocking {
             val counter = DelayingSubscribedCounter(testScope, 0)
-            val testObserver = counter.subscribed.test()
+            val testObserver = counter.subscribed.testFlowObserver()
 
             assertEquals(listOf(Unsubscribed), testObserver.values)
         }
@@ -37,7 +37,7 @@ class DelayingSubscribedCounterTest {
     fun `incrementing subscribes`() {
         runBlocking {
             val counter = DelayingSubscribedCounter(testScope, 0)
-            val testObserver = counter.subscribed.test()
+            val testObserver = counter.subscribed.testFlowObserver()
 
             counter.increment()
 
@@ -50,7 +50,7 @@ class DelayingSubscribedCounterTest {
     fun `increment decrement unsubscribes`() {
         runBlocking {
             val counter = DelayingSubscribedCounter(testScope, 0)
-            val testObserver = counter.subscribed.test()
+            val testObserver = counter.subscribed.testFlowObserver()
 
             counter.increment()
             counter.decrement()
@@ -64,7 +64,7 @@ class DelayingSubscribedCounterTest {
     fun `values received are distinct`() {
         runBlocking {
             val counter = DelayingSubscribedCounter(testScope, 0)
-            val testObserver = counter.subscribed.test()
+            val testObserver = counter.subscribed.testFlowObserver()
 
             counter.increment()
             counter.increment()
@@ -80,7 +80,7 @@ class DelayingSubscribedCounterTest {
     fun `negative decrements are ignored`() {
         runBlocking {
             val counter = DelayingSubscribedCounter(testScope, 0)
-            val testObserver = counter.subscribed.test()
+            val testObserver = counter.subscribed.testFlowObserver()
 
             counter.decrement()
             counter.decrement()
@@ -97,7 +97,7 @@ class DelayingSubscribedCounterTest {
     fun `unsubscribed received on launch immediately`() {
         runBlocking {
             val counter = DelayingSubscribedCounter(testScope, 500)
-            val testObserver = counter.subscribed.mapTimed().test()
+            val testObserver = counter.subscribed.mapTimed().testFlowObserver()
 
             testObserver.awaitCount(1)
             assertEquals(Unsubscribed, testObserver.values.first().value)
@@ -111,9 +111,9 @@ class DelayingSubscribedCounterTest {
             val counter = DelayingSubscribedCounter(testScope, 500)
 
             // Wait to receive unsubscribed at launch
-            counter.subscribed.mapTimed().test().awaitCount(1)
+            counter.subscribed.mapTimed().testFlowObserver().awaitCount(1)
 
-            val testObserver2 = counter.subscribed.mapTimed().test()
+            val testObserver2 = counter.subscribed.mapTimed().testFlowObserver()
             testObserver2.awaitCount(1)
             assertEquals(Unsubscribed, testObserver2.values.first().value)
             assertTrue(testObserver2.values.first().time < 450)
@@ -124,7 +124,7 @@ class DelayingSubscribedCounterTest {
     fun `unsubscribed received after delay`() {
         runBlocking {
             val counter = DelayingSubscribedCounter(testScope, 500)
-            val testObserver = counter.subscribed.mapTimed().test()
+            val testObserver = counter.subscribed.mapTimed().testFlowObserver()
 
             counter.increment()
             counter.decrement()

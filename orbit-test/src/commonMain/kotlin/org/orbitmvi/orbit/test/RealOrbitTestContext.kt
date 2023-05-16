@@ -18,7 +18,11 @@ package org.orbitmvi.orbit.test
 
 import app.cash.turbine.ReceiveTurbine
 import kotlinx.atomicfu.atomic
+import kotlinx.coroutines.Job
 import org.orbitmvi.orbit.ContainerHost
+import org.orbitmvi.orbit.annotation.OrbitExperimental
+import org.orbitmvi.orbit.annotation.OrbitInternal
+import org.orbitmvi.orbit.runBlocking
 import kotlin.test.assertEquals
 import kotlin.test.fail
 
@@ -34,17 +38,21 @@ public class RealOrbitTestContext<STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST
 
     private var currentConsumedState: STATE = resolvedInitialState
 
-    override fun runOnCreate() {
+    @OptIn(OrbitInternal::class)
+    override fun runOnCreate(): Job {
         if (onCreateAllowed.compareAndSet(expect = true, update = false)) {
-            actual.container.findOnCreate().invoke(resolvedInitialState)
+            val onCreate = actual.container.findOnCreate()
+            return runBlocking {
+                actual.container.orbit(onCreate)
+            }
         } else {
             error("runOnCreate should only be invoked once and before any invokeIntent call")
         }
     }
 
-    override fun invokeIntent(action: CONTAINER_HOST.() -> Unit) {
+    override fun invokeIntent(action: CONTAINER_HOST.() -> Job): Job {
         onCreateAllowed.lazySet(false)
-        actual.action()
+        return actual.action()
     }
 
     override suspend fun awaitItem(): Item<STATE, SIDE_EFFECT> {
@@ -63,8 +71,10 @@ public class RealOrbitTestContext<STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST
         return (item as? Item.SideEffectItem)?.value ?: fail("Expected Side Effect but got $item")
     }
 
+    @OptIn(OrbitExperimental::class)
     override suspend fun cancelAndIgnoreRemainingItems() {
         emissions.cancelAndIgnoreRemainingEvents()
+        actual.container.cancel()
     }
 
     override suspend fun expectInitialState() {
