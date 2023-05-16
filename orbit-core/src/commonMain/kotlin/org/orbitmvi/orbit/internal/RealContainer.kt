@@ -22,7 +22,6 @@ package org.orbitmvi.orbit.internal
 
 import kotlinx.atomicfu.atomic
 import kotlinx.coroutines.CompletableJob
-import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -55,6 +54,7 @@ public class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
 ) : Container<STATE, SIDE_EFFECT> {
     private val scope = parentScope + settings.eventLoopDispatcher
     private val intentJob = Job(scope.coroutineContext[Job])
+
     private val dispatchChannel = Channel<Pair<CompletableJob, suspend ContainerContext<STATE, SIDE_EFFECT>.() -> Unit>>(Channel.UNLIMITED)
     private val initialised = atomic(false)
     private val subscribedCounter = subscribedCounterOverride ?: DelayingSubscribedCounter(scope, settings.repeatOnSubscribedStopTimeout)
@@ -107,12 +107,10 @@ public class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
                 }
             }
 
-            scope.launch(CoroutineName(COROUTINE_NAME_EVENT_LOOP)) {
+            scope.launch {
                 for ((job, intent) in dispatchChannel) {
                     val exceptionHandlerContext =
-                        (settings.exceptionHandler?.plus(SupervisorJob(job)) ?: job) +
-                            settings.intentLaunchingDispatcher +
-                            CoroutineName("$COROUTINE_NAME_INTENT${intentCounter.getAndIncrement()}")
+                        (settings.exceptionHandler?.plus(SupervisorJob(job)) ?: job) + settings.intentLaunchingDispatcher
                     launch(exceptionHandlerContext) {
                         pluginContext.intent()
                     }.invokeOnCompletion { job.complete() }
