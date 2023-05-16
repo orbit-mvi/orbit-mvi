@@ -28,8 +28,8 @@ import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.container
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.reduce
-import org.orbitmvi.orbit.test
 import org.orbitmvi.orbit.test.assertContainExactly
+import org.orbitmvi.orbit.testFlowObserver
 import kotlin.random.Random
 import kotlin.test.AfterTest
 import kotlin.test.Test
@@ -49,7 +49,7 @@ internal class StateTest {
     fun `initial state is emitted on connection`() {
         val initialState = TestState()
         val middleware = Middleware(initialState)
-        val testStateObserver = middleware.container.stateFlow.test()
+        val testStateObserver = middleware.container.stateFlow.testFlowObserver()
 
         testStateObserver.awaitCount(1)
 
@@ -60,12 +60,12 @@ internal class StateTest {
     fun `latest state is emitted on connection`() {
         val initialState = TestState()
         val middleware = Middleware(initialState)
-        val testStateObserver = middleware.container.stateFlow.test()
+        val testStateObserver = middleware.container.stateFlow.testFlowObserver()
         val action = Random.nextInt()
         middleware.something(action)
         testStateObserver.awaitCount(2) // block until the state is updated
 
-        val testStateObserver2 = middleware.container.stateFlow.test()
+        val testStateObserver2 = middleware.container.stateFlow.testFlowObserver()
         testStateObserver2.awaitCount(1)
 
         testStateObserver.values.assertContainExactly(
@@ -92,7 +92,7 @@ internal class StateTest {
         val initialState = TestState()
         val middleware = Middleware(initialState)
         val action = Random.nextInt()
-        val testStateObserver = middleware.container.stateFlow.test()
+        val testStateObserver = middleware.container.stateFlow.testFlowObserver()
 
         middleware.something(action)
 

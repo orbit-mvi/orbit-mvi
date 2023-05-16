@@ -40,7 +40,7 @@ desugar = "2.0.2"
 jacoco = "0.8.8"
 junit4 = "4.13.2"
 robolectric = "4.9.2"
-turbine = "0.12.1"
+turbine = "0.12.3"
 
 
 [libraries]

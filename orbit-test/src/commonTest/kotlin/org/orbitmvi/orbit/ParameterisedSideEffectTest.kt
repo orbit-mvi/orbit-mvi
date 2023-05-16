@@ -20,38 +20,26 @@
 
 package org.orbitmvi.orbit
 
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.cancel
+import kotlinx.coroutines.test.TestScope
+import kotlinx.coroutines.test.runTest
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.postSideEffect
-import org.orbitmvi.orbit.test.assertContains
 import kotlin.random.Random
 import kotlin.test.assertContains
 import kotlin.test.assertFailsWith
 
+@Suppress("DEPRECATION")
 @ExperimentalCoroutinesApi
-internal class ParameterisedSideEffectTest(blocking: Boolean) {
+internal class ParameterisedSideEffectTest(private val blocking: Boolean) {
     companion object {
-        const val TIMEOUT = 1000L
+        const val TIMEOUT = 2000L
     }
 
     private val initialState = State()
-    private val scope = CoroutineScope(Job())
-    private val testSubject = if (blocking) {
-        SideEffectTestMiddleware().test(
-            initialState = initialState
-        )
-    } else {
-        SideEffectTestMiddleware().liveTest(initialState)
-    }
 
-    fun cancel() {
-        scope.cancel()
-    }
-
-    fun `succeeds if posted side effects match expected side effects`() {
+    fun `succeeds if posted side effects match expected side effects`() = runTest {
+        val testSubject = testSubject(this)
         val sideEffects = List(Random.nextInt(1, 5)) { Random.nextInt() }
 
         sideEffects.forEach { testSubject.call { something(it) } }
@@ -61,7 +49,8 @@ internal class ParameterisedSideEffectTest(blocking: Boolean) {
         }
     }
 
-    fun `fails if posted side effects do not match expected side effects`() {
+    fun `fails if posted side effects do not match expected side effects`() = runTest {
+        val testSubject = testSubject(this)
         val sideEffects = List(Random.nextInt(1, 5)) { Random.nextInt() }
         val sideEffects2 = List(Random.nextInt(1, 5)) { Random.nextInt() }
 
@@ -77,11 +66,19 @@ internal class ParameterisedSideEffectTest(blocking: Boolean) {
         assertContains(throwable.message.orEmpty(), sideEffects.toString())
     }
 
-    private inner class SideEffectTestMiddleware :
-        ContainerHost<State, Int> {
-        override val container = scope.container<State, Int>(initialState)
+    private fun testSubject(scope: TestScope) = if (blocking) {
+        SideEffectTestMiddleware(scope).test(
+            initialState = initialState
+        )
+    } else {
+        SideEffectTestMiddleware(scope).liveTest(initialState)
+    }
 
-        fun something(action: Int): Unit = intent {
+    private inner class SideEffectTestMiddleware(scope: TestScope) :
+        ContainerHost<State, Int> {
+        override val container = scope.backgroundScope.container<State, Int>(initialState)
+
+        fun something(action: Int) = intent {
             postSideEffect(action)
             somethingElse(action.toString())
         }
@@ -93,11 +90,11 @@ internal class ParameterisedSideEffectTest(blocking: Boolean) {
 
     private data class State(val count: Int = Random.nextInt())
 
-    private fun <STATE : Any, SIDE_EFFECT : Any, T : ContainerHost<STATE, SIDE_EFFECT>> TestContainerHost<STATE, SIDE_EFFECT, T>.call(
+    private suspend fun <STATE : Any, SIDE_EFFECT : Any, T : ContainerHost<STATE, SIDE_EFFECT>> TestContainerHost<STATE, SIDE_EFFECT, T>.call(
         block: T.() -> Unit
     ) {
         when (this) {
-            is SuspendingTestContainerHost -> runBlocking { testIntent { block() } }
+            is SuspendingTestContainerHost -> testIntent { block() }
             is RegularTestContainerHost -> testIntent { block() }
         }
     }

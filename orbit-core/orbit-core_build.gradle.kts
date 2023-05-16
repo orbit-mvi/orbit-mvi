@@ -48,6 +48,8 @@ kotlin {
                 implementation(project(":test-common"))
                 implementation(project(":orbit-test"))
                 implementation(libs.kotlinCoroutines)
+                implementation(libs.kotlinCoroutinesTest)
+                implementation(libs.turbine)
             }
         }
 

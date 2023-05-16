@@ -20,44 +20,41 @@
 
 package org.orbitmvi.orbit
 
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.cancel
+import kotlinx.coroutines.test.TestScope
+import kotlinx.coroutines.test.runTest
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.reduce
 import org.orbitmvi.orbit.test.assertContains
 import kotlin.random.Random
 import kotlin.test.assertFailsWith
 
+@Suppress("DEPRECATION")
 @ExperimentalCoroutinesApi
-internal class ParameterisedStateTest(blocking: Boolean) {
+internal class ParameterisedStateTest(private val blocking: Boolean) {
     companion object {
         const val TIMEOUT = 1000L
     }
 
     private val initialState = State()
 
-    private val scope = CoroutineScope(Job())
-    private val testSubject = if (blocking) {
-        StateTestMiddleware().test(
+    private fun testSubject(scope: TestScope) = if (blocking) {
+        StateTestMiddleware(scope).test(
             initialState = initialState
         )
     } else {
-        StateTestMiddleware().liveTest(initialState)
+        StateTestMiddleware(scope).liveTest(initialState)
     }
 
-    fun cancel() {
-        scope.cancel()
-    }
-
-    fun `succeeds if initial state matches expected state`() {
+    fun `succeeds if initial state matches expected state`() = runTest {
+        val testSubject = testSubject(this)
         testSubject.stateObserver.awaitCount(1)
 
         testSubject.assert(initialState)
     }
 
-    fun `fails if initial state does not match expected state`() {
+    fun `fails if initial state does not match expected state`() = runTest {
+        val testSubject = testSubject(this)
         val someRandomState = State()
 
         testSubject.stateObserver.awaitCount(1)
@@ -71,7 +68,8 @@ internal class ParameterisedStateTest(blocking: Boolean) {
         )
     }
 
-    fun `succeeds if emitted states match expected states`() {
+    fun `succeeds if emitted states match expected states`() = runTest {
+        val testSubject = testSubject(this)
         val action = Random.nextInt()
         val action2 = Random.nextInt()
 
@@ -88,7 +86,8 @@ internal class ParameterisedStateTest(blocking: Boolean) {
         }
     }
 
-    fun `fails if more states emitted than expected`() {
+    fun `fails if more states emitted than expected`() = runTest {
+        val testSubject = testSubject(this)
         val action = Random.nextInt()
         val action2 = Random.nextInt()
 
@@ -111,7 +110,8 @@ internal class ParameterisedStateTest(blocking: Boolean) {
         )
     }
 
-    fun `fails if one more state expected than emitted`() {
+    fun `fails if one more state expected than emitted`() = runTest {
+        val testSubject = testSubject(this)
         val action = Random.nextInt()
         val action2 = Random.nextInt()
         val action3 = Random.nextInt()
@@ -137,7 +137,8 @@ internal class ParameterisedStateTest(blocking: Boolean) {
         )
     }
 
-    fun `fails if two more states expected than emitted`() {
+    fun `fails if two more states expected than emitted`() = runTest {
+        val testSubject = testSubject(this)
         val action = Random.nextInt()
         val action2 = Random.nextInt()
         val action3 = Random.nextInt()
@@ -165,7 +166,8 @@ internal class ParameterisedStateTest(blocking: Boolean) {
         )
     }
 
-    fun `fails if first emitted state does not match expected`() {
+    fun `fails if first emitted state does not match expected`() = runTest {
+        val testSubject = testSubject(this)
         val action = Random.nextInt()
         val action2 = Random.nextInt()
         val action3 = Random.nextInt()
@@ -189,7 +191,8 @@ internal class ParameterisedStateTest(blocking: Boolean) {
         )
     }
 
-    fun `fails if second emitted state does not match expected`() {
+    fun `fails if second emitted state does not match expected`() = runTest {
+        val testSubject = testSubject(this)
         val action = Random.nextInt()
         val action2 = Random.nextInt()
         val action3 = Random.nextInt()
@@ -213,7 +216,8 @@ internal class ParameterisedStateTest(blocking: Boolean) {
         )
     }
 
-    fun `fails if expected states are out of order`() {
+    fun `fails if expected states are out of order`() = runTest {
+        val testSubject = testSubject(this)
         val action = Random.nextInt()
         val action2 = Random.nextInt()
 
@@ -236,7 +240,8 @@ internal class ParameterisedStateTest(blocking: Boolean) {
         )
     }
 
-    fun `succeeds with dropped assertions`() {
+    fun `succeeds with dropped assertions`() = runTest {
+        val testSubject = testSubject(this)
         val action = Random.nextInt()
         val action2 = Random.nextInt()
         val action3 = Random.nextInt()
@@ -258,7 +263,8 @@ internal class ParameterisedStateTest(blocking: Boolean) {
         }
     }
 
-    fun `fails if dropped assertions mean extra states are observed`() {
+    fun `fails if dropped assertions mean extra states are observed`() = runTest {
+        val testSubject = testSubject(this)
         val action = Random.nextInt()
         val action2 = Random.nextInt()
 
@@ -284,11 +290,11 @@ internal class ParameterisedStateTest(blocking: Boolean) {
         )
     }
 
-    private inner class StateTestMiddleware :
+    private inner class StateTestMiddleware(scope: TestScope) :
         ContainerHost<State, Nothing> {
-        override val container = scope.container<State, Nothing>(initialState)
+        override val container = scope.backgroundScope.container<State, Nothing>(initialState)
 
-        fun something(action: Int): Unit = intent {
+        fun something(action: Int) = intent {
             reduce {
                 State(count = action)
             }

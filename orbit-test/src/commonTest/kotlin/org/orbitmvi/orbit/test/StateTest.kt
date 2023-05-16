@@ -16,8 +16,8 @@
 
 package org.orbitmvi.orbit.test
 
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.annotation.OrbitExperimental
@@ -107,7 +107,7 @@ class StateTest {
                 assertEquals(State(count = action3), awaitState())
             }
         }.also {
-            assertEquals("No value produced in 1s", it.message)
+            assertEquals("No value produced in 3s", it.message)
         }
     }
 
@@ -260,23 +260,23 @@ class StateTest {
         }
     }
 
-    private inner class StateTestMiddleware(scope: CoroutineScope) :
+    private inner class StateTestMiddleware(scope: TestScope) :
         ContainerHost<State, Int> {
-        override val container = scope.container<State, Int>(initialState)
+        override val container = scope.backgroundScope.container<State, Int>(initialState)
 
-        fun newCount(action: Int): Unit = intent {
+        fun newCount(action: Int) = intent {
             reduce {
                 State(count = action)
             }
         }
 
-        fun newList(action: Int): Unit = intent {
+        fun newList(action: Int) = intent {
             reduce {
                 state.copy(list = state.list + action)
             }
         }
 
-        fun newSideEffect(action: Int): Unit = intent {
+        fun newSideEffect(action: Int) = intent {
             postSideEffect(action)
         }
     }

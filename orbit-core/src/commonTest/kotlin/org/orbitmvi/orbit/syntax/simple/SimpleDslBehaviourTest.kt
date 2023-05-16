@@ -20,77 +20,63 @@
 
 package org.orbitmvi.orbit.syntax.simple
 
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.InternalCoroutinesApi
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.test.TestScope
+import kotlinx.coroutines.test.runTest
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.container
-import org.orbitmvi.orbit.test
-import org.orbitmvi.orbit.test.runBlocking
+import org.orbitmvi.orbit.test.test
 import kotlin.random.Random
-import kotlin.test.AfterTest
 import kotlin.test.Test
 
 @ExperimentalCoroutinesApi
 @InternalCoroutinesApi
 internal class SimpleDslBehaviourTest {
 
-    private val scope = CoroutineScope(Job())
-
-    @AfterTest
-    fun afterTest() {
-        scope.cancel()
-    }
-
     private val initialState = TestState()
 
     @Test
-    fun `reducer produces new states`() = runBlocking {
+    fun `reducer produces new states`() = runTest {
         val action = Random.nextInt()
-        val middleware = BaseDslMiddleware().test(initialState)
+        BaseDslMiddleware(this).test(this, initialState) {
+            expectInitialState()
 
-        middleware.testIntent { reducer(action) }
+            invokeIntent { reducer(action) }
 
-        middleware.assert(initialState) {
-            states(
-                { TestState(action) }
-            )
+            expectState { TestState(action) }
         }
     }
 
     @Test
-    fun `transformer maps values`() = runBlocking {
+    fun `transformer maps values`() = runTest {
         val action = Random.nextInt()
-        val middleware = BaseDslMiddleware().test(initialState)
+        BaseDslMiddleware(this).test(this, initialState) {
+            expectInitialState()
 
-        middleware.testIntent { transformer(action) }
+            invokeIntent { transformer(action) }
 
-        middleware.assert(initialState) {
-            states(
-                { TestState(action + 5) }
-            )
+            expectState { TestState(action + 5) }
         }
     }
 
     @Test
-    fun `posting side effects emit side effects`() = runBlocking {
+    fun `posting side effects emit side effects`() = runTest {
         val action = Random.nextInt()
-        val middleware = BaseDslMiddleware().test(initialState)
+        BaseDslMiddleware(this).test(this, initialState) {
+            expectInitialState()
 
-        middleware.testIntent { postingSideEffect(action) }
+            invokeIntent { postingSideEffect(action) }
 
-        middleware.assert(initialState) {
-            postedSideEffects(action.toString())
+            expectSideEffect(action.toString())
         }
     }
 
     private data class TestState(val id: Int = Random.nextInt())
 
-    private inner class BaseDslMiddleware : ContainerHost<TestState, String> {
-        override val container = scope.container<TestState, String>(TestState(42))
+    private inner class BaseDslMiddleware(scope: TestScope) : ContainerHost<TestState, String> {
+        override val container = scope.backgroundScope.container<TestState, String>(TestState(42))
 
         fun reducer(action: Int) = intent {
             reduce {

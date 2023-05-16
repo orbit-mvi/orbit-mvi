@@ -23,38 +23,41 @@ import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.container
 import org.orbitmvi.orbit.syntax.simple.intent
-import org.orbitmvi.orbit.syntax.simple.reduce
-import org.orbitmvi.orbit.syntax.simple.repeatOnSubscription
 import kotlin.random.Random
 import kotlin.test.Test
-import kotlin.test.assertEquals
+import kotlin.test.assertFails
 
-@OptIn(OrbitExperimental::class)
 @ExperimentalCoroutinesApi
-class RepeatOnSubscriptionTest {
+class ExceptionTest {
+
     private val initialState = State()
 
+    @OptIn(OrbitExperimental::class)
     @Test
-    fun `test does not hang when using repeatOnSubscription`() = runTest {
-        TestMiddleware(this).test(this, initialState = initialState) {
-            expectInitialState()
+    fun `exceptions thrown during test can be asserted on`() {
+        assertFails {
+            runTest {
+                ExceptionTestMiddleware(this).test(this) {
+                    expectInitialState()
 
-            invokeIntent { callOnSubscription { 42 } }
+                    val job = invokeIntent { boom() }
 
-            assertEquals(State(42), awaitState())
-        }
-    }
-
-    private inner class TestMiddleware(scope: TestScope) : ContainerHost<State, Nothing> {
-        override val container = scope.backgroundScope.container<State, Nothing>(initialState)
-
-        fun callOnSubscription(externalCall: suspend () -> Int) = intent {
-            repeatOnSubscription {
-                val result = externalCall()
-                reduce { State(result) }
+                    job.join()
+                }
             }
         }
     }
 
-    private data class State(val count: Int = Random.nextInt())
+    private inner class ExceptionTestMiddleware(scope: TestScope) : ContainerHost<State, Int> {
+        override val container = scope.backgroundScope.container<State, Int>(initialState)
+
+        fun boom() = intent {
+            throw IllegalStateException("Boom!")
+        }
+    }
+
+    private data class State(
+        val count: Int = Random.nextInt(),
+        val list: List<Int> = emptyList()
+    )
 }

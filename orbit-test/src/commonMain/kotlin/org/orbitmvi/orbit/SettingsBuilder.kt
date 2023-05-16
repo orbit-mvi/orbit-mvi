@@ -59,13 +59,3 @@ public class LiveTestSettingsBuilder internal constructor(
 
     public fun build(): RealSettings = settings
 }
-
-@Suppress("DEPRECATION")
-internal fun Container.Settings.toRealSettings() = RealSettings(
-    sideEffectBufferSize = sideEffectBufferSize,
-    idlingRegistry = idlingRegistry,
-    eventLoopDispatcher = intentDispatcher,
-    intentLaunchingDispatcher = intentDispatcher,
-    exceptionHandler = exceptionHandler,
-    repeatOnSubscribedStopTimeout = repeatOnSubscribedStopTimeout
-)

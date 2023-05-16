@@ -5,16 +5,20 @@ sidebar_label: 'Overview'
 
 # Unit Testing module
 
+:::caution
+
+This framework is now **deprecated**. It will be removed in Orbit version 6.0.0.
+
+Use the [new framework](new.md) instead.
+
+:::
+
 This module provides a simple unit testing framework for your Orbit
 [ContainerHosts](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-container-host/).
 
 ```kotlin
 testImplementation("org.orbit-mvi:orbit-test:<latest-version>")
 ```
-
-There is also a new [experimental version](experimental.md) available. It is 
-based in the same module with the files all located under the 
-`org.orbitmvi.orbit.test` package.
 
 ## Testing goals
 

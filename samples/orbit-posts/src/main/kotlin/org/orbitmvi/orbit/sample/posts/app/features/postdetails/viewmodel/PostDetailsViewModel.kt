@@ -37,7 +37,7 @@ class PostDetailsViewModel(
 ) : ViewModel(), ContainerHost<PostDetailState, Nothing> {
 
     override val container = container<PostDetailState, Nothing>(PostDetailState.NoDetailsAvailable(postOverview), savedStateHandle) {
-        if (it !is PostDetailState.Details) {
+        if (state !is PostDetailState.Details) {
             loadDetails()
         }
     }
