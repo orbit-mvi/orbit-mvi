@@ -116,14 +116,14 @@ subprojects {
     }
     tasks.withType<KotlinCompile>().all {
         kotlinOptions {
-            jvmTarget = "1.8"
+            jvmTarget = "11"
             allWarningsAsErrors = true
         }
     }
     plugins.withType<JavaBasePlugin> {
         configure<JavaPluginExtension> {
-            sourceCompatibility = JavaVersion.VERSION_1_8
-            targetCompatibility = JavaVersion.VERSION_1_8
+            sourceCompatibility = JavaVersion.VERSION_11
+            targetCompatibility = JavaVersion.VERSION_11
         }
     }
     plugins.withType<org.jetbrains.dokka.gradle.DokkaPlugin> {
@@ -197,6 +197,11 @@ subprojects {
             sourceSets {
                 get("main").java.srcDir("src/main/kotlin")
                 get("test").java.srcDir("src/test/kotlin")
+            }
+
+            compileOptions {
+                sourceCompatibility = JavaVersion.VERSION_11
+                targetCompatibility = JavaVersion.VERSION_11
             }
         }
     }
