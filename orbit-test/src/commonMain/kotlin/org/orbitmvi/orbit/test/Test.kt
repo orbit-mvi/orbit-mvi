@@ -18,7 +18,6 @@ package org.orbitmvi.orbit.test
 
 import app.cash.turbine.test
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -44,7 +43,6 @@ import org.orbitmvi.orbit.internal.TestingStrategy
  * @param settings Use this to set overrides for some of the container's [RealSettings] for this test.
  * @param validate Perform your test within this block. See [OrbitTestContext].
  */
-@OptIn(ExperimentalCoroutinesApi::class)
 @OrbitExperimental
 public suspend fun <STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHost<STATE, SIDE_EFFECT>> CONTAINER_HOST.test(
     testScope: TestScope,
@@ -55,7 +53,7 @@ public suspend fun <STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHo
     executeWithScope(testScope, initialState, settings, validate)
 }
 
-@OptIn(ExperimentalStdlibApi::class, ExperimentalCoroutinesApi::class)
+@OptIn(ExperimentalStdlibApi::class)
 private suspend fun <STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHost<STATE, SIDE_EFFECT>> CONTAINER_HOST.executeWithScope(
     testScope: TestScope,
     initialState: STATE? = null,
@@ -81,7 +79,6 @@ private suspend fun <STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerH
     }
 }
 
-@OptIn(ExperimentalCoroutinesApi::class)
 private fun TestSettings.toRealSettings(testDispatcher: CoroutineDispatcher?): RealSettings {
     val dispatcher = testDispatcher ?: StandardTestDispatcher()
 
