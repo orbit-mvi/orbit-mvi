@@ -57,9 +57,9 @@ dependencies {
     implementation(project(":orbit-core"))
     implementation(project(":orbit-viewmodel"))
 
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.4")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
-    implementation("com.google.android.material:material:1.8.0")
+    implementation("com.google.android.material:material:1.9.0")
     implementation("io.insert-koin:koin-android:3.4.0")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.6.1")
 
@@ -71,5 +71,5 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-params:5.9.3")
     testImplementation("junit:junit:4.13.2")
     testImplementation("com.appmattus.fixture:fixture:1.2.0")
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.1")
 }
