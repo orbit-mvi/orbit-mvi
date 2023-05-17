@@ -31,7 +31,6 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertTrue
 
-@OptIn(OrbitExperimental::class)
 @ExperimentalCoroutinesApi
 class SideEffectTest {
 

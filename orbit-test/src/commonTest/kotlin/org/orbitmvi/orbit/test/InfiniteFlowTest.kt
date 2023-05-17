@@ -33,7 +33,6 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 @ExperimentalCoroutinesApi
-@OptIn(OrbitExperimental::class)
 internal class InfiniteFlowTest {
 
     @Test

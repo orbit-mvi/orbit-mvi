@@ -17,7 +17,6 @@ import kotlinx.coroutines.withTimeout
 import kotlin.coroutines.coroutineContext
 import kotlin.time.Duration
 
-@OptIn(ExperimentalCoroutinesApi::class)
 internal suspend fun <T> withAppropriateTimeout(
     timeout: Duration,
     block: suspend CoroutineScope.() -> T,

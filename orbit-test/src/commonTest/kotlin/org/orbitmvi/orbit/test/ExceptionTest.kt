@@ -32,7 +32,6 @@ class ExceptionTest {
 
     private val initialState = State()
 
-    @OptIn(OrbitExperimental::class)
     @Test
     fun `exceptions thrown during test can be asserted on`() {
         assertFails {

@@ -37,7 +37,7 @@ import org.orbitmvi.orbit.testFlowObserver
 import kotlin.random.Random
 import kotlin.test.assertEquals
 
-@OptIn(ExperimentalCoroutinesApi::class, OrbitInternal::class)
+@OptIn(OrbitInternal::class)
 class ViewModelExtensionsKtTest {
     @Test
     fun `When saved state is present it is read`() {

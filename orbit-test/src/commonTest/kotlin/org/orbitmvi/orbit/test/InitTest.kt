@@ -28,7 +28,6 @@ import kotlin.random.Random
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-@OptIn(OrbitExperimental::class)
 @ExperimentalCoroutinesApi
 internal class InitTest {
     private val initialState = State(Random.nextInt())
