@@ -17,8 +17,8 @@
 package org.orbitmvi.orbit.test
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.runTest
@@ -28,6 +28,7 @@ import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.container
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.reduce
+import kotlin.coroutines.coroutineContext
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -37,7 +38,7 @@ internal class InfiniteFlowTest {
 
     @Test
     fun `infinite flow can be tested with delay skipping`() = runTest {
-        InfiniteFlowMiddleware().test(this) {
+        InfiniteFlowMiddleware(this).test(this) {
             expectInitialState()
 
             invokeIntent { incrementForever() }
@@ -46,6 +47,7 @@ internal class InfiniteFlowTest {
             assertEquals(listOf(42, 43), awaitState())
             assertEquals(listOf(42, 43, 44), awaitState())
             assertEquals(listOf(42, 43, 44, 45), awaitState())
+
             cancelAndIgnoreRemainingItems()
         }
     }
@@ -54,27 +56,32 @@ internal class InfiniteFlowTest {
     fun `infinite flow can be tested without delay skipping`() = runTest {
         val scope = TestScope()
 
-        InfiniteFlowMiddleware().test(scope) {
+        InfiniteFlowMiddleware(this).test(scope) {
             expectInitialState()
 
-            invokeIntent { incrementForever() }
+            val job = invokeIntent { incrementForever() }
 
             // Assert the first three states
-            scope.advanceTimeBy(30_001)
+            scope.advanceTimeBy(3001)
             assertEquals(listOf(42, 43), awaitState())
-            scope.advanceTimeBy(30_001)
+            scope.advanceTimeBy(3001)
             assertEquals(listOf(42, 43, 44), awaitState())
-            scope.advanceTimeBy(30_001)
+            scope.advanceTimeBy(3001)
             assertEquals(listOf(42, 43, 44, 45), awaitState())
+
+            job.cancel()
+            scope.advanceTimeBy(1)
         }
     }
 
-    private inner class InfiniteFlowMiddleware : ContainerHost<List<Int>, Nothing> {
-        override val container: Container<List<Int>, Nothing> = MainScope().container(listOf(42))
+//    org.orbitmvi.orbit.SuspendingStrategyDispatchTest[jvm] > suspending test maintains test dispatcher through runTest[jvm] PASSED
+
+    private inner class InfiniteFlowMiddleware(testScope: TestScope) : ContainerHost<List<Int>, Nothing> {
+        override val container: Container<List<Int>, Nothing> = testScope.backgroundScope.container(listOf(42))
 
         fun incrementForever() = intent {
-            while (true) {
-                delay(30_000)
+            while (coroutineContext.isActive) {
+                delay(3000)
                 reduce { state + (state.last() + 1) }
             }
         }

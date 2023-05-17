@@ -18,6 +18,7 @@ package org.orbitmvi.orbit.internal
 
 import kotlinx.atomicfu.atomic
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
@@ -47,8 +48,8 @@ public class TestContainerDecorator<STATE : Any, SIDE_EFFECT : Any>(
     override val sideEffectFlow: Flow<SIDE_EFFECT>
         get() = delegate.value.sideEffectFlow
 
-    override suspend fun orbit(orbitIntent: suspend ContainerContext<STATE, SIDE_EFFECT>.() -> Unit) {
-        delegate.value.orbit(orbitIntent)
+    override suspend fun orbit(orbitIntent: suspend ContainerContext<STATE, SIDE_EFFECT>.() -> Unit): Job {
+        return delegate.value.orbit(orbitIntent)
     }
 
     @OptIn(OrbitExperimental::class)
@@ -82,5 +83,15 @@ public class TestContainerDecorator<STATE : Any, SIDE_EFFECT : Any>(
         if (!testDelegateSet) {
             error("Can only call test() once")
         }
+    }
+
+    @OptIn(OrbitExperimental::class)
+    public override suspend fun joinIntents() {
+        delegate.value.joinIntents()
+    }
+
+    @OptIn(OrbitExperimental::class)
+    public override fun cancel() {
+        delegate.value.cancel()
     }
 }

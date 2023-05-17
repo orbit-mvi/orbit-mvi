@@ -35,11 +35,11 @@ import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeout
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.container
-import org.orbitmvi.orbit.test
 import org.orbitmvi.orbit.test.IgnoreIos
 import org.orbitmvi.orbit.test.ScopedBlockingWorkSimulator
 import org.orbitmvi.orbit.test.assertContainExactly
 import org.orbitmvi.orbit.test.runBlocking
+import org.orbitmvi.orbit.testFlowObserver
 import kotlin.random.Random
 import kotlin.test.AfterTest
 import kotlin.test.Test
@@ -60,7 +60,7 @@ internal class SimpleDslThreadingTest {
     @IgnoreIos
     fun `blocking intent with context switch does not block the reducer`() = runBlocking {
         val action = Random.nextInt()
-        val testFlowObserver = middleware.container.stateFlow.test()
+        val testFlowObserver = middleware.container.stateFlow.testFlowObserver()
 
         middleware.backgroundIntent()
 
@@ -77,7 +77,7 @@ internal class SimpleDslThreadingTest {
     @Test
     fun `suspending intent does not block the reducer`() = runBlocking {
         val action = Random.nextInt()
-        val testFlowObserver = middleware.container.stateFlow.test()
+        val testFlowObserver = middleware.container.stateFlow.testFlowObserver()
 
         middleware.suspendingIntent()
         withTimeout(TIMEOUT) {
@@ -93,7 +93,7 @@ internal class SimpleDslThreadingTest {
     @Test
     fun `blocking intent without context switch blocks the reducer`() = runBlocking {
         val action = Random.nextInt()
-        val testFlowObserver = middleware.container.stateFlow.test()
+        val testFlowObserver = middleware.container.stateFlow.testFlowObserver()
 
         middleware.blockingIntent()
 
@@ -110,7 +110,7 @@ internal class SimpleDslThreadingTest {
 
     @Test
     fun `blocking reducer blocks an intent`(): Unit = runBlocking {
-        middleware.container.stateFlow.test()
+        middleware.container.stateFlow.testFlowObserver()
 
         middleware.blockingReducer()
         withTimeout(TIMEOUT) {

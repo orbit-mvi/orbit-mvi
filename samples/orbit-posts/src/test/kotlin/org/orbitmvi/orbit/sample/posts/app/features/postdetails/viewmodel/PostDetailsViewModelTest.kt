@@ -36,6 +36,7 @@ import org.orbitmvi.orbit.sample.posts.domain.repositories.Status
 import org.orbitmvi.orbit.test
 import java.io.IOException
 
+@Suppress("DEPRECATION")
 @ExtendWith(InstantTaskExecutorExtension::class)
 class PostDetailsViewModelTest {
 

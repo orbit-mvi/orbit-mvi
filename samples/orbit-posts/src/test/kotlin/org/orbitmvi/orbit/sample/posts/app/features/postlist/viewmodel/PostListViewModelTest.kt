@@ -32,6 +32,7 @@ import org.orbitmvi.orbit.sample.posts.domain.repositories.PostOverview
 import org.orbitmvi.orbit.sample.posts.domain.repositories.PostRepository
 import org.orbitmvi.orbit.test
 
+@Suppress("DEPRECATION")
 @ExtendWith(InstantTaskExecutorExtension::class)
 class PostListViewModelTest {
 

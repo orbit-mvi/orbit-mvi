@@ -21,10 +21,13 @@
 package org.orbitmvi.orbit.internal
 
 import kotlinx.atomicfu.atomic
+import kotlinx.coroutines.CompletableJob
+import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.channels.produce
@@ -33,6 +36,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
 import org.orbitmvi.orbit.Container
@@ -42,7 +46,6 @@ import org.orbitmvi.orbit.internal.repeatonsubscription.DelayingSubscribedCounte
 import org.orbitmvi.orbit.internal.repeatonsubscription.SubscribedCounter
 import org.orbitmvi.orbit.internal.repeatonsubscription.refCount
 import org.orbitmvi.orbit.syntax.ContainerContext
-import kotlin.coroutines.EmptyCoroutineContext
 
 public class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
     initialState: STATE,
@@ -51,18 +54,27 @@ public class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
     subscribedCounterOverride: SubscribedCounter? = null
 ) : Container<STATE, SIDE_EFFECT> {
     private val scope = parentScope + settings.eventLoopDispatcher
-    private val dispatchChannel = Channel<suspend ContainerContext<STATE, SIDE_EFFECT>.() -> Unit>(Channel.UNLIMITED)
+    private val intentJob = Job(scope.coroutineContext[Job])
+    private val dispatchChannel = Channel<Pair<CompletableJob, suspend ContainerContext<STATE, SIDE_EFFECT>.() -> Unit>>(Channel.UNLIMITED)
     private val initialised = atomic(false)
-
     private val subscribedCounter = subscribedCounterOverride ?: DelayingSubscribedCounter(scope, settings.repeatOnSubscribedStopTimeout)
-
     private val internalStateFlow = MutableStateFlow(initialState)
+    private val sideEffectChannel = Channel<SIDE_EFFECT>(settings.sideEffectBufferSize)
+    private val intentCounter = atomic(0)
 
     override val stateFlow: StateFlow<STATE> = internalStateFlow.refCount(subscribedCounter)
-
-    private val sideEffectChannel = Channel<SIDE_EFFECT>(settings.sideEffectBufferSize)
-
     override val sideEffectFlow: Flow<SIDE_EFFECT> = sideEffectChannel.receiveAsFlow().refCount(subscribedCounter)
+
+    @OrbitExperimental
+    override suspend fun joinIntents() {
+        intentJob.children.toList().joinAll()
+    }
+
+    @OrbitExperimental
+    override fun cancel() {
+        scope.cancel()
+        intentJob.cancel()
+    }
 
     internal val pluginContext: ContainerContext<STATE, SIDE_EFFECT> = ContainerContext(
         settings = settings,
@@ -72,9 +84,12 @@ public class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
         subscribedCounter
     )
 
-    override suspend fun orbit(orbitIntent: suspend ContainerContext<STATE, SIDE_EFFECT>.() -> Unit) {
+    override suspend fun orbit(orbitIntent: suspend ContainerContext<STATE, SIDE_EFFECT>.() -> Unit): Job {
         initialiseIfNeeded()
-        dispatchChannel.send(orbitIntent)
+
+        val job = Job(intentJob)
+        dispatchChannel.send(job to orbitIntent)
+        return job
     }
 
     @OrbitExperimental
@@ -91,14 +106,23 @@ public class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
                     settings.idlingRegistry.close()
                 }
             }
-            scope.launch {
-                val exceptionHandlerContext = settings.exceptionHandler?.plus(SupervisorJob(scope.coroutineContext[Job]))
-                val context = settings.intentLaunchingDispatcher + (exceptionHandlerContext ?: EmptyCoroutineContext)
 
-                for (msg in dispatchChannel) {
-                    launch(context) { pluginContext.msg() }
+            scope.launch(CoroutineName(COROUTINE_NAME_EVENT_LOOP)) {
+                for ((job, intent) in dispatchChannel) {
+                    val exceptionHandlerContext =
+                        (settings.exceptionHandler?.plus(SupervisorJob(job)) ?: job) +
+                            settings.intentLaunchingDispatcher +
+                            CoroutineName("$COROUTINE_NAME_INTENT${intentCounter.getAndIncrement()}")
+                    launch(exceptionHandlerContext) {
+                        pluginContext.intent()
+                    }.invokeOnCompletion { job.complete() }
                 }
             }
         }
+    }
+
+    private companion object {
+        private const val COROUTINE_NAME_EVENT_LOOP = "orbit-event-loop"
+        private const val COROUTINE_NAME_INTENT = "orbit-intent-"
     }
 }
