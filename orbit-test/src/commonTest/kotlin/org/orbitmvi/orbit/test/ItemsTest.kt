@@ -29,7 +29,6 @@ import kotlin.random.Random
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-@OptIn(OrbitExperimental::class)
 @ExperimentalCoroutinesApi
 class ItemsTest {
 

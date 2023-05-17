@@ -32,7 +32,6 @@ import kotlin.test.Test
 import kotlin.test.assertFails
 import kotlin.test.assertTrue
 
-@OptIn(OrbitExperimental::class)
 @ExperimentalCoroutinesApi
 class IntentJobsTest {
 
