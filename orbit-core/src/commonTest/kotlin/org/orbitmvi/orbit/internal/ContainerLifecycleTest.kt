@@ -26,7 +26,6 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.container
-import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.postSideEffect
 import org.orbitmvi.orbit.test.assertContainExactly
 import org.orbitmvi.orbit.testFlowObserver
@@ -62,12 +61,8 @@ internal class ContainerLifecycleTest {
 
     private inner class Middleware(initialState: TestState) : ContainerHost<TestState, String> {
 
-        override val container = scope.container<TestState, String>(initialState) {
-            onCreate(state)
-        }
-
-        private fun onCreate(createState: TestState) = intent {
-            postSideEffect(createState.id.toString())
+        override val container = scope.container(initialState) {
+            postSideEffect(state.id.toString())
         }
     }
 }
