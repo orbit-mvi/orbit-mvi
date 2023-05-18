@@ -28,9 +28,9 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.container
-import org.orbitmvi.orbit.test
 import org.orbitmvi.orbit.test.assertContainExactly
 import org.orbitmvi.orbit.test.assertNotContainExactly
+import org.orbitmvi.orbit.testFlowObserver
 import kotlin.random.Random
 import kotlin.test.AfterTest
 import kotlin.test.Test
@@ -50,7 +50,7 @@ internal class SideEffectTest {
     fun `side effects are emitted in order`() = runBlocking {
         val container = scope.container<Unit, Int>(Unit)
 
-        val testSideEffectObserver1 = container.sideEffectFlow.test()
+        val testSideEffectObserver1 = container.sideEffectFlow.testFlowObserver()
 
         repeat(1000) {
             container.someFlow(it)
@@ -68,9 +68,9 @@ internal class SideEffectTest {
         val action3 = Random.nextInt()
         val container = scope.container<Unit, Int>(Unit)
 
-        val testSideEffectObserver1 = container.sideEffectFlow.test()
-        val testSideEffectObserver2 = container.sideEffectFlow.test()
-        val testSideEffectObserver3 = container.sideEffectFlow.test()
+        val testSideEffectObserver1 = container.sideEffectFlow.testFlowObserver()
+        val testSideEffectObserver2 = container.sideEffectFlow.testFlowObserver()
+        val testSideEffectObserver3 = container.sideEffectFlow.testFlowObserver()
 
         container.someFlow(action)
         container.someFlow(action2)
@@ -97,7 +97,7 @@ internal class SideEffectTest {
         container.someFlow(action2)
         container.someFlow(action3)
 
-        val testSideEffectObserver1 = container.sideEffectFlow.test()
+        val testSideEffectObserver1 = container.sideEffectFlow.testFlowObserver()
 
         testSideEffectObserver1.awaitCount(3)
 
@@ -110,7 +110,7 @@ internal class SideEffectTest {
         val action2 = Random.nextInt()
         val action3 = Random.nextInt()
         val container = scope.container<Unit, Int>(Unit)
-        val testSideEffectObserver1 = container.sideEffectFlow.test()
+        val testSideEffectObserver1 = container.sideEffectFlow.testFlowObserver()
 
         container.someFlow(action)
         container.someFlow(action2)
@@ -118,7 +118,7 @@ internal class SideEffectTest {
         testSideEffectObserver1.awaitCount(3)
         testSideEffectObserver1.close()
 
-        val testSideEffectObserver2 = container.sideEffectFlow.test()
+        val testSideEffectObserver2 = container.sideEffectFlow.testFlowObserver()
 
         testSideEffectObserver1.awaitCount(3, 10L)
 
@@ -130,7 +130,7 @@ internal class SideEffectTest {
         val action = Random.nextInt()
         val container = scope.container<Unit, Int>(Unit)
 
-        val testSideEffectObserver1 = container.sideEffectFlow.test()
+        val testSideEffectObserver1 = container.sideEffectFlow.testFlowObserver()
 
         container.someFlow(action)
 
@@ -145,7 +145,7 @@ internal class SideEffectTest {
             }
         }
 
-        val testSideEffectObserver2 = container.sideEffectFlow.test()
+        val testSideEffectObserver2 = container.sideEffectFlow.testFlowObserver()
         testSideEffectObserver2.awaitCount(1000)
 
         testSideEffectObserver1.values.assertContainExactly(action)

@@ -16,8 +16,8 @@
 
 package org.orbitmvi.orbit.test
 
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.annotation.OrbitExperimental
@@ -75,17 +75,17 @@ class ItemsTest {
         }
     }
 
-    private inner class ItemTestMiddleware(scope: CoroutineScope) :
+    private inner class ItemTestMiddleware(scope: TestScope) :
         ContainerHost<State, Int> {
-        override val container = scope.container<State, Int>(initialState)
+        override val container = scope.backgroundScope.container<State, Int>(initialState)
 
-        fun newState(action: Int): Unit = intent {
+        fun newState(action: Int) = intent {
             reduce {
                 State(count = action)
             }
         }
 
-        fun newSideEffect(action: Int): Unit = intent {
+        fun newSideEffect(action: Int) = intent {
             postSideEffect(action)
         }
     }

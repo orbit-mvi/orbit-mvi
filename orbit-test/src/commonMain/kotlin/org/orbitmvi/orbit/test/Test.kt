@@ -26,8 +26,9 @@ import kotlinx.coroutines.test.runTest
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.RealSettings
-import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.internal.TestingStrategy
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.seconds
 
 /**
  *  Run tests on your [ContainerHost]. This mode uses a real Orbit container, but the container's [CoroutineDispatcher] is set to the
@@ -43,20 +44,11 @@ import org.orbitmvi.orbit.internal.TestingStrategy
  * @param settings Use this to set overrides for some of the container's [RealSettings] for this test.
  * @param validate Perform your test within this block. See [OrbitTestContext].
  */
-@OrbitExperimental
+@OptIn(ExperimentalStdlibApi::class)
 public suspend fun <STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHost<STATE, SIDE_EFFECT>> CONTAINER_HOST.test(
     testScope: TestScope,
     initialState: STATE? = null,
-    settings: TestSettings = TestSettings(),
-    validate: suspend OrbitTestContext<STATE, SIDE_EFFECT, CONTAINER_HOST>.() -> Unit
-) {
-    executeWithScope(testScope, initialState, settings, validate)
-}
-
-@OptIn(ExperimentalStdlibApi::class)
-private suspend fun <STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHost<STATE, SIDE_EFFECT>> CONTAINER_HOST.executeWithScope(
-    testScope: TestScope,
-    initialState: STATE? = null,
+    timeout: Duration? = null,
     settings: TestSettings = TestSettings(),
     validate: suspend OrbitTestContext<STATE, SIDE_EFFECT, CONTAINER_HOST>.() -> Unit
 ) {
@@ -68,13 +60,16 @@ private suspend fun <STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerH
         strategy = TestingStrategy.Live(settings.toRealSettings(testDispatcher)),
         testScope = testScope.backgroundScope
     )
-    mergedFlow().test {
+    mergedFlow().test(timeout = timeout) {
         RealOrbitTestContext(
             containerHost,
             initialState,
             this
         ).apply {
             validate(this)
+            withAppropriateTimeout(timeout ?: 1.seconds) {
+                container.findTestContainer().joinIntents()
+            }
         }
     }
 }

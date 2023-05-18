@@ -260,7 +260,7 @@ class Example : ContainerHost<ExampleState, ExampleSideEffect> {
 
 :::note
 
-`reduce` is a special operator, where state is captured when it's lambda is
+`reduce` is a special operator, where state is captured when its lambda is
 invoked. This means that within a `reduce` block, your state is guaranteed
 not to change.
 

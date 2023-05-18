@@ -21,17 +21,11 @@
 package org.orbitmvi.orbit
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlin.test.AfterTest
 import kotlin.test.Test
 
 @ExperimentalCoroutinesApi
 internal class StateTest {
-    lateinit var testCase: ParameterisedStateTest
-
-    @AfterTest
-    fun afterTest() {
-        testCase.cancel()
-    }
+    private lateinit var testCase: ParameterisedStateTest
 
     @Test
     fun `BLOCKING - succeeds if initial state matches expected state`() {

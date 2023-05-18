@@ -23,15 +23,21 @@ package org.orbitmvi.orbit.viewmodel
 import android.os.Parcelable
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runTest
 import kotlinx.parcelize.Parcelize
 import org.junit.Test
 import org.orbitmvi.orbit.ContainerHost
+import org.orbitmvi.orbit.annotation.OrbitInternal
+import org.orbitmvi.orbit.syntax.simple.SimpleSyntax
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.reduce
-import org.orbitmvi.orbit.test
+import org.orbitmvi.orbit.test.test
+import org.orbitmvi.orbit.testFlowObserver
 import kotlin.random.Random
 import kotlin.test.assertEquals
 
+@OptIn(ExperimentalCoroutinesApi::class, OrbitInternal::class)
 class ViewModelExtensionsKtTest {
     @Test
     fun `When saved state is present it is read`() {
@@ -60,54 +66,48 @@ class ViewModelExtensionsKtTest {
         val something = Random.nextInt()
         val savedStateHandle = SavedStateHandle()
         val middleware = Middleware(savedStateHandle, initialState)
-        val testStateObserver = middleware.container.stateFlow.test()
+        val testStateObserver = middleware.container.stateFlow.testFlowObserver()
 
         middleware.something(something)
 
         testStateObserver.awaitCount(2)
 
-        assertEquals(TestState(something), savedStateHandle.get<TestState?>(SAVED_STATE_KEY))
+        assertEquals(TestState(something), savedStateHandle[SAVED_STATE_KEY])
     }
 
     @Test
-    fun `When saved state is present calls onCreate with true`() {
+    fun `When saved state is present calls onCreate with restored state`() = runTest {
         val initialState = TestState()
         val savedState = TestState()
         val savedStateHandle = SavedStateHandle(mapOf(SAVED_STATE_KEY to savedState))
-        var onCreateState: TestState? = null
 
-        val middleware = Middleware(savedStateHandle, initialState) {
-            onCreateState = it
+        Middleware(savedStateHandle, initialState) {
+            assertEquals(savedState, state)
+        }.test(this) {
+            expectInitialState()
+            runOnCreate()
         }
-
-        // Used to trigger execution of onCreate
-        middleware.container.stateFlow.test().awaitCount(1)
-
-        assertEquals(savedState, onCreateState)
     }
 
     @Test
-    fun `When saved state is not present calls onCreate with false`() {
+    fun `When saved state is not present calls onCreate with initial state`() = runTest {
         val initialState = TestState()
         val savedStateHandle = SavedStateHandle()
-        var onCreateState: TestState? = null
 
-        val middleware = Middleware(savedStateHandle, initialState) {
-            onCreateState = it
+        Middleware(savedStateHandle, initialState) {
+            assertEquals(initialState, state)
+        }.test(this) {
+            expectInitialState()
+            runOnCreate()
         }
-
-        // Used to trigger execution of onCreate
-        middleware.container.stateFlow.test().awaitCount(1)
-
-        assertEquals(initialState, onCreateState)
     }
 
     private class Middleware(
         savedStateHandle: SavedStateHandle,
         initialState: TestState,
-        onCreate: ((TestState) -> Unit)? = null
+        onCreate: (suspend SimpleSyntax<TestState, Int>.() -> Unit)? = null
     ) : ContainerHost<TestState, Int>, ViewModel() {
-        override val container = container<TestState, Int>(
+        override val container = container(
             initialState = initialState,
             savedStateHandle = savedStateHandle,
             onCreate = onCreate

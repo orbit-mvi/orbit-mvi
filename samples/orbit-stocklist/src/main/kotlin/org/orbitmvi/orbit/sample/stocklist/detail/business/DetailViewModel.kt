@@ -38,7 +38,7 @@ class DetailViewModel(
     override val container =
         container<DetailState, Nothing>(DetailState(), savedStateHandle) { requestStock() }
 
-    private fun requestStock(): Unit = intent(registerIdling = false) {
+    private fun requestStock() = intent(registerIdling = false) {
         stockRepository.stockDetails(itemName).collect {
             reduce {
                 state.copy(stock = it)

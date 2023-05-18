@@ -38,7 +38,7 @@ class ListViewModel(
 
     override val container = container<ListState, ListSideEffect>(ListState(), savedStateHandle) { requestStocks() }
 
-    private fun requestStocks(): Unit = intent(registerIdling = false) {
+    private fun requestStocks() = intent(registerIdling = false) {
         repeatOnSubscription {
             stockRepository.stockList().collect {
                 reduce {

@@ -18,55 +18,13 @@
  * See: https://github.com/orbit-mvi/orbit-mvi/compare/c5b8b3f2b83b5972ba2ad98f73f75086a89653d3...main
  */
 
-@file:Suppress("DEPRECATION")
-
 package org.orbitmvi.orbit
 
 import kotlinx.coroutines.CoroutineScope
-import org.orbitmvi.orbit.Container.Settings
 import org.orbitmvi.orbit.internal.LazyCreateContainerDecorator
 import org.orbitmvi.orbit.internal.RealContainer
 import org.orbitmvi.orbit.internal.TestContainerDecorator
-
-/**
- * Helps create a concrete container in a standard way.
- *
- * @param initialState The initial state of the container.
- * @param settings The [Settings] to set the container up with.
- * @param onCreate The lambda to execute when the container is created. By default it is
- * executed in a lazy manner when the container is first interacted with in any way.
- * @return A [Container] implementation
- */
-@Deprecated(message = "Use overload with settings builder instead. This will be removed in the future.")
-public fun <STATE : Any, SIDE_EFFECT : Any> CoroutineScope.container(
-    initialState: STATE,
-    settings: Settings,
-    onCreate: ((state: STATE) -> Unit)? = null
-): Container<STATE, SIDE_EFFECT> =
-    if (onCreate == null) {
-        TestContainerDecorator(
-            initialState,
-            parentScope = this,
-            RealContainer(
-                initialState = initialState,
-                settings = settings.toRealSettings(),
-                parentScope = this
-            )
-        )
-    } else {
-        TestContainerDecorator(
-            initialState,
-            parentScope = this,
-            LazyCreateContainerDecorator(
-                RealContainer(
-                    initialState = initialState,
-                    settings = settings.toRealSettings(),
-                    parentScope = this
-                ),
-                onCreate
-            )
-        )
-    }
+import org.orbitmvi.orbit.syntax.simple.SimpleSyntax
 
 /**
  * Helps create a concrete container in a standard way.
@@ -80,7 +38,7 @@ public fun <STATE : Any, SIDE_EFFECT : Any> CoroutineScope.container(
 public fun <STATE : Any, SIDE_EFFECT : Any> CoroutineScope.container(
     initialState: STATE,
     buildSettings: SettingsBuilder.() -> Unit = {},
-    onCreate: ((state: STATE) -> Unit)? = null
+    onCreate: (suspend SimpleSyntax<STATE, SIDE_EFFECT>.() -> Unit)? = null
 ): Container<STATE, SIDE_EFFECT> =
     if (onCreate == null) {
         TestContainerDecorator(
@@ -101,8 +59,7 @@ public fun <STATE : Any, SIDE_EFFECT : Any> CoroutineScope.container(
                     initialState = initialState,
                     settings = SettingsBuilder().apply { buildSettings() }.settings,
                     parentScope = this
-                ),
-                onCreate
-            )
+                )
+            ) { SimpleSyntax(this).onCreate() }
         )
     }

@@ -16,6 +16,7 @@
 
 package org.orbitmvi.orbit.test
 
+import kotlinx.coroutines.Job
 import org.orbitmvi.orbit.ContainerHost
 
 public interface OrbitTestContext<STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHost<STATE, SIDE_EFFECT>> {
@@ -23,12 +24,12 @@ public interface OrbitTestContext<STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST
     /**
      * Invoke `onCreate` lambda for the [ContainerHost].
      */
-    public fun runOnCreate()
+    public fun runOnCreate(): Job
 
     /**
      * Invoke an intent on the [ContainerHost] under test.
      */
-    public fun invokeIntent(action: CONTAINER_HOST.() -> Unit)
+    public fun invokeIntent(action: CONTAINER_HOST.() -> Job): Job
 
     /**
      * Sanity check assertion. Checks if the initial state is emitted and matches
@@ -97,6 +98,7 @@ public interface OrbitTestContext<STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST
 
     /**
      * Finish this test and ignore any events which have already been received.
+     * This also cancels any in-progress intents.
      */
     public suspend fun cancelAndIgnoreRemainingItems()
 }

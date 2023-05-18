@@ -16,6 +16,7 @@
 
 package org.orbitmvi.orbit.internal
 
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import org.orbitmvi.orbit.ContainerDecorator
 import org.orbitmvi.orbit.syntax.ContainerContext
@@ -25,8 +26,9 @@ public class InterceptingContainerDecorator<STATE : Any, SIDE_EFFECT : Any>(
 ) : ContainerDecorator<STATE, SIDE_EFFECT> {
     public val savedIntents: Channel<suspend () -> Unit> = Channel(Channel.UNLIMITED)
 
-    override suspend fun orbit(orbitIntent: suspend ContainerContext<STATE, SIDE_EFFECT>.() -> Unit) {
+    override suspend fun orbit(orbitIntent: suspend ContainerContext<STATE, SIDE_EFFECT>.() -> Unit): Job {
         savedIntents.send { actual.pluginContext.orbitIntent() }
+        return Job()
     }
 
     override suspend fun inlineOrbit(orbitIntent: suspend ContainerContext<STATE, SIDE_EFFECT>.() -> Unit) {

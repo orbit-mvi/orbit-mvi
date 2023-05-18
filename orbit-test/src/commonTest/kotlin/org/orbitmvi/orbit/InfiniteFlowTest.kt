@@ -6,12 +6,12 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
-import kotlinx.coroutines.test.runTest
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.reduce
 import kotlin.test.AfterTest
 import kotlin.test.Test
 
+@Suppress("DEPRECATION")
 @ExperimentalCoroutinesApi
 internal class InfiniteFlowTest {
 
@@ -23,7 +23,7 @@ internal class InfiniteFlowTest {
     }
 
     @Test
-    fun `infinite flow can be tested`() = runTest {
+    fun `infinite flow can be tested`() {
         val dispatcher = UnconfinedTestDispatcher()
         val middleware = InfiniteFlowMiddleware().liveTest {
             this.dispatcher = dispatcher
