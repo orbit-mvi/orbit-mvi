@@ -7,7 +7,7 @@ sidebar_label: 'Overview'
 
 :::caution
 
-This framework is now **deprecated**. It will be removed in Orbit version 6.0.0.
+This framework is now **deprecated**. It will be removed in Orbit version 7.0.0.
 
 Use the [new framework](new.md) instead.
 
