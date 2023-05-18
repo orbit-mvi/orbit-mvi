@@ -112,7 +112,7 @@ The Core module contains built-in Orbit operators. Here's how
 they map to MVI concepts:
 
 | MVI Operation      | Orbit DSL                      | Purpose                                                                       |
-| ------------------ | ------------------------------ | ----------------------------------------------------------------------------- |
+|--------------------|--------------------------------|-------------------------------------------------------------------------------|
 | block              | `intent { ... }`               | Contains business logic journeys, allows you to invoke other operators within |
 | transformation     | operations within `intent`     | Run business operations to transform data                                     |
 | posted side effect | `postSideEffect(...)`          | Sends one-off events to the side effect channel                               |
@@ -272,21 +272,44 @@ not to change.
 perform("Toast the current state")
 class Example : ContainerHost<ExampleState, ExampleSideEffect> {
     override val container = container<ExampleState, ExampleSideEffect>(ExampleState()) {
-        onCreate()
-    }
-
-    fun onCreate() = intent {
-        ...
+        // This block is an intent invoked when the container is first created
+        reduce { ... }
     }
 }
 ```
 
 Containers are typically not created directly but through convenient factory
-functions. This allows you to pass through extra settings or a lambda to invoke
-when the
+functions. This allows you to pass through extra settings or an intent lambda to
+invoke when the
 [Container](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-container/)
 is first created (important for containers that can be recreated from a saved
 state or live longer than the UI).
+
+A typical use case for this is to collect `Flow`s that we need to start
+observing right after the container is created.
+
+``` kotlin
+perform("Toast the current state")
+class Example(
+    private val flow1: Flow<Int>,
+    private val flow2: Flow<Int>,
+): ContainerHost<ExampleState, ExampleSideEffect> {
+    override val container = container<ExampleState, ExampleSideEffect>(ExampleState()) {
+        coroutineScope {
+            repeatOnSubscription {
+            launch {
+                flow1.collect {
+                    reduce { ... }
+                }
+            launch {
+                flow2.collect {
+                    reduce { ... }
+                }
+            }
+        }
+    }
+}
+```
 
 Extra
 [Container](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-container/)
