@@ -24,7 +24,7 @@ import com.appmattus.markdown.rules.ProperNamesRule
 import com.appmattus.markdown.rules.ProperNamesRule.Companion.DefaultNames
 import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import java.net.URL
+import java.net.URI
 
 buildscript {
     repositories {
@@ -116,14 +116,14 @@ subprojects {
     }
     tasks.withType<KotlinCompile>().all {
         kotlinOptions {
-            jvmTarget = "1.8"
+            jvmTarget = "11"
             allWarningsAsErrors = true
         }
     }
     plugins.withType<JavaBasePlugin> {
         configure<JavaPluginExtension> {
-            sourceCompatibility = JavaVersion.VERSION_1_8
-            targetCompatibility = JavaVersion.VERSION_1_8
+            sourceCompatibility = JavaVersion.VERSION_11
+            targetCompatibility = JavaVersion.VERSION_11
         }
     }
     plugins.withType<org.jetbrains.dokka.gradle.DokkaPlugin> {
@@ -136,7 +136,7 @@ subprojects {
 
                     sourceLink {
                         localDirectory.set(rootDir)
-                        remoteUrl.set(URL("https://github.com/orbit-mvi/orbit-mvi/blob/main"))
+                        remoteUrl.set(URI("https://github.com/orbit-mvi/orbit-mvi/blob/main").toURL())
                         remoteLineSuffix.set("#L")
                     }
                 }
@@ -186,7 +186,6 @@ subprojects {
             compileSdk = 33
             defaultConfig {
                 minSdk = 21
-                targetSdk = 33
             }
 
             buildTypes {
@@ -198,6 +197,11 @@ subprojects {
             sourceSets {
                 get("main").java.srcDir("src/main/kotlin")
                 get("test").java.srcDir("src/test/kotlin")
+            }
+
+            compileOptions {
+                sourceCompatibility = JavaVersion.VERSION_11
+                targetCompatibility = JavaVersion.VERSION_11
             }
         }
     }

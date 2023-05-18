@@ -37,7 +37,7 @@ ij_kotlin_method_parameters_wrap = on_every_item
 ij_kotlin_name_count_to_use_star_import = 2147483647
 ij_kotlin_name_count_to_use_star_import_for_members = 2147483647
 ij_kotlin_wrap_expression_body_functions = 1
-ij_kotlin_imports_layout = *
+ij_kotlin_imports_layout = *,java.**,javax.**,kotlin.**,^
 
 [*.md]
 trim_trailing_whitespace = false

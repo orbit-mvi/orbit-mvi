@@ -51,5 +51,7 @@ dependencies {
 }
 
 android {
+    namespace = "org.orbitmvi.orbit.viewmodel"
+
     testOptions.unitTests.isIncludeAndroidResources = true
 }

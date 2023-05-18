@@ -26,6 +26,7 @@ plugins {
 }
 
 android {
+    namespace = "org.orbitmvi.orbit.sample.stocklist"
     compileSdk = 33
     defaultConfig {
         minSdk = 23
@@ -42,8 +43,8 @@ android {
     compileOptions {
         isCoreLibraryDesugaringEnabled = true
 
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
 
     buildFeatures {
@@ -52,12 +53,14 @@ android {
 
     testOptions.unitTests.isIncludeAndroidResources = true
 
-    packagingOptions {
-        pickFirst("build.number")
-        pickFirst("version.number")
-        pickFirst("compatibility_version.number")
-        exclude("META-INF/INDEX.LIST")
-        exclude("META-INF/io.netty.versions.properties")
+    packaging {
+        resources {
+            pickFirsts += "build.number"
+            pickFirsts += "version.number"
+            pickFirsts += "compatibility_version.number"
+            excludes += "META-INF/INDEX.LIST"
+            excludes += "META-INF/io.netty.versions.properties"
+        }
     }
 }
 
@@ -80,14 +83,14 @@ dependencies {
     implementation(project(":orbit-viewmodel"))
 
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
-    implementation("com.google.android.material:material:1.8.0")
+    implementation("com.google.android.material:material:1.9.0")
     implementation("androidx.navigation:navigation-fragment-ktx:2.5.3")
     implementation("androidx.navigation:navigation-ui-ktx:2.5.3")
     implementation("com.lightstreamer:ls-android-client:4.2.6")
     implementation("com.github.lisawray.groupie:groupie:2.10.1")
     implementation("com.github.lisawray.groupie:groupie-kotlin-android-extensions:2.10.1")
     implementation("com.github.lisawray.groupie:groupie-viewbinding:2.10.1")
-    implementation("io.insert-koin:koin-android:3.3.3")
+    implementation("io.insert-koin:koin-android:3.4.0")
     implementation("androidx.lifecycle:lifecycle-common-java8:2.6.1")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.6.1")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.1")

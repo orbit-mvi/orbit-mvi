@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 2021-2023 Mikołaj Leszczyński & Appmattus Limited
  * Copyright 2020 Babylon Partners Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,7 +23,6 @@ package org.orbitmvi.orbit.viewmodel
 import android.os.Parcelable
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import kotlinx.parcelize.Parcelize
 import org.junit.Test
@@ -37,7 +36,7 @@ import org.orbitmvi.orbit.testFlowObserver
 import kotlin.random.Random
 import kotlin.test.assertEquals
 
-@OptIn(ExperimentalCoroutinesApi::class, OrbitInternal::class)
+@OptIn(OrbitInternal::class)
 class ViewModelExtensionsKtTest {
     @Test
     fun `When saved state is present it is read`() {

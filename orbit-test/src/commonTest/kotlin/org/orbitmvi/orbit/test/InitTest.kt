@@ -22,13 +22,11 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
 import org.orbitmvi.orbit.ContainerHost
-import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.container
 import kotlin.random.Random
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-@OptIn(OrbitExperimental::class)
 @ExperimentalCoroutinesApi
 internal class InitTest {
     private val initialState = State(Random.nextInt())

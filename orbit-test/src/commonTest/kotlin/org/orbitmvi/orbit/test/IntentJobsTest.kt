@@ -23,7 +23,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
 import org.orbitmvi.orbit.ContainerHost
-import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.container
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.reduce
@@ -32,7 +31,6 @@ import kotlin.test.Test
 import kotlin.test.assertFails
 import kotlin.test.assertTrue
 
-@OptIn(OrbitExperimental::class)
 @ExperimentalCoroutinesApi
 class IntentJobsTest {
 

@@ -22,7 +22,7 @@ jobs:
             -   uses: actions/setup-java@v3
                 with:
                     distribution: 'zulu'
-                    java-version: '11'
+                    java-version: '17'
                     cache: 'gradle'
 
             -   name: Detekt
@@ -38,7 +38,7 @@ jobs:
             -   uses: actions/setup-java@v3
                 with:
                     distribution: 'zulu'
-                    java-version: '11'
+                    java-version: '17'
                     cache: 'gradle'
 
             -   name: Lint
@@ -51,7 +51,7 @@ jobs:
             -   uses: actions/setup-java@v3
                 with:
                     distribution: 'zulu'
-                    java-version: '11'
+                    java-version: '17'
                     cache: 'gradle'
 
             -   name: konan cache
@@ -83,7 +83,7 @@ jobs:
             -   uses: actions/setup-java@v3
                 with:
                     distribution: 'zulu'
-                    java-version: '11'
+                    java-version: '17'
                     cache: 'gradle'
 
             -   name: konan cache

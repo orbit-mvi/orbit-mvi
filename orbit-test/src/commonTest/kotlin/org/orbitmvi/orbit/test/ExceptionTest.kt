@@ -20,7 +20,6 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
 import org.orbitmvi.orbit.ContainerHost
-import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.container
 import org.orbitmvi.orbit.syntax.simple.intent
 import kotlin.random.Random
@@ -32,7 +31,6 @@ class ExceptionTest {
 
     private val initialState = State()
 
-    @OptIn(OrbitExperimental::class)
     @Test
     fun `exceptions thrown during test can be asserted on`() {
         assertFails {
