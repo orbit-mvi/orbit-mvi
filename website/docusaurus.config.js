@@ -14,7 +14,7 @@ module.exports = {
     projectName: 'orbit-mvi', // Usually your repo name.
     themeConfig: {
         navbar: {
-            title: 'Orbit MVI',
+            title: 'Orbit Multiplatform',
             logo: {
                 alt: 'Orbit Logo',
                 src: 'img/orbit.svg',
