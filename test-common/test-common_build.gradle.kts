@@ -37,7 +37,7 @@ kotlin {
             }
         }
 
-        @Suppress("UnusedPrivateMember")
+        @Suppress("UNUSED_VARIABLE")
         val jvmMain by getting {
             dependencies {
                 implementation(kotlin("test-junit"))
