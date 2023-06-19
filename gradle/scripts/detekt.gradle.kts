@@ -41,7 +41,7 @@ repositories {
 apply<DetektPlugin>()
 
 tasks.named("detekt", Detekt::class.java).configure {
-    setSource(files(rootProject.projectDir))
+    setSource(rootProject.files())
 
     include("**/*.kt")
     include("**/*.kts")
@@ -52,7 +52,7 @@ tasks.named("detekt", Detekt::class.java).configure {
 
     autoCorrect = true
     buildUponDefaultConfig = true
-    config.setFrom(files("${rootProject.projectDir}/gradle/scripts/detekt.yml"))
+    config.setFrom(rootProject.files("gradle/scripts/detekt.yml"))
 
     reports {
         xml { // /build/reports/detekt/detekt.xml
