@@ -85,3 +85,4 @@ gradleMavenPublishPlugin = { id = "com.vanniktech.maven.publish", version.ref = 
 gradleVersionsPlugin = { id = "com.github.ben-manes.versions", version.ref = "gradleVersionsPlugin" }
 markdownlintGradlePlugin = { id = "com.appmattus.markdown", version.ref = "markdownLintPlugin" }
 kotlin-pluginSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+atomicfu = { id = "kotlinx-atomicfu", version.ref = "atomicfu" }
