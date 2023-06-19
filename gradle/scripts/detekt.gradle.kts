@@ -55,11 +55,10 @@ tasks.named("detekt", Detekt::class.java).configure {
     config.setFrom(files("${rootProject.projectDir}/gradle/scripts/detekt.yml"))
 
     reports {
-        xml {
+        xml { // /build/reports/detekt/detekt.xml
             required.set(true)
-            outputLocation.set(file("build/reports/detekt/detekt.xml"))
         }
-        html {
+        html { // /build/reports/detekt/detekt.html
             required.set(true)
         }
     }
