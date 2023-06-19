@@ -56,11 +56,11 @@ tasks.named("detekt", Detekt::class.java).configure {
 
     reports {
         xml {
-            enabled = true
-            destination = file("build/reports/detekt/detekt.xml")
+            required.set(true)
+            outputLocation.set(file("build/reports/detekt/detekt.xml"))
         }
         html {
-            enabled = true
+            required.set(true)
         }
     }
 }
