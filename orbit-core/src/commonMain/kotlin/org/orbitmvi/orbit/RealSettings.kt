@@ -37,4 +37,16 @@ public class SettingsBuilder {
         public set(value) {
             settings = settings.copy(repeatOnSubscribedStopTimeout = value)
         }
+
+    public var eventLoopDispatcher: CoroutineDispatcher
+        get() = settings.eventLoopDispatcher
+        public set(value) {
+            settings = settings.copy(eventLoopDispatcher = value)
+        }
+
+    public var intentLaunchingDispatcher: CoroutineDispatcher
+        get() = settings.intentLaunchingDispatcher
+        public set(value) {
+            settings = settings.copy(intentLaunchingDispatcher = value)
+        }
 }
