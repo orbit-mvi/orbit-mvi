@@ -35,8 +35,8 @@ kotlin {
         commonMain {
             dependencies {
                 implementation(kotlin("test-common"))
-                implementation(libs.kotlinCoroutines)
-                implementation(libs.kotlinCoroutinesTest)
+                api(libs.kotlinCoroutines)
+                api(libs.kotlinCoroutinesTest)
                 implementation(libs.turbine)
 
                 api(project(":orbit-core"))
