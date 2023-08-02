@@ -20,8 +20,8 @@
 
 plugins {
     kotlin("multiplatform")
+    id(libs.plugins.atomicfu.get().pluginId)
 }
-apply<kotlinx.atomicfu.plugin.gradle.AtomicFUGradlePlugin>()
 
 kotlin {
     jvm()
@@ -37,7 +37,7 @@ kotlin {
             }
         }
 
-        @Suppress("UnusedPrivateMember")
+        @Suppress("UNUSED_VARIABLE")
         val jvmMain by getting {
             dependencies {
                 implementation(kotlin("test-junit"))

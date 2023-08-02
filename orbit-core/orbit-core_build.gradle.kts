@@ -18,14 +18,12 @@
  * See: https://github.com/orbit-mvi/orbit-mvi/compare/c5b8b3f2b83b5972ba2ad98f73f75086a89653d3...main
  */
 
-import kotlinx.atomicfu.plugin.gradle.AtomicFUGradlePlugin
-
 plugins {
     kotlin("multiplatform")
     id(libs.plugins.gradleMavenPublishPlugin.get().pluginId)
     id(libs.plugins.dokkaPlugin.get().pluginId)
+    id(libs.plugins.atomicfu.get().pluginId)
 }
-apply<AtomicFUGradlePlugin>()
 
 kotlin {
     jvm()
