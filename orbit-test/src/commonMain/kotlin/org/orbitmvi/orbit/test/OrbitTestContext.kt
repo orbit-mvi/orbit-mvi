@@ -31,6 +31,7 @@ public interface OrbitTestContext<STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST
     /**
      * Invoke an intent on the [ContainerHost] under test.
      */
+    @Deprecated("Use containerHost instead", ReplaceWith("action(containerHost)"))
     public fun invokeIntent(action: CONTAINER_HOST.() -> Job): Job
 
     /**
