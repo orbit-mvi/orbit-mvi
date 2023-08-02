@@ -21,6 +21,8 @@ import org.orbitmvi.orbit.ContainerHost
 
 public interface OrbitTestContext<STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHost<STATE, SIDE_EFFECT>> {
 
+    public val containerHost: CONTAINER_HOST
+
     /**
      * Invoke `onCreate` lambda for the [ContainerHost].
      */
