@@ -69,6 +69,13 @@ public interface OrbitTestContext<STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST
     public suspend fun expectSideEffect(expected: SIDE_EFFECT)
 
     /**
+     * Assert there are no unconsumed items
+     *
+     * @throws AssertionError if unconsumed items are found
+     */
+    public suspend fun expectNoItems()
+
+    /**
      * Return the next item received.
      * This function will suspend if no items have been received.
      */
