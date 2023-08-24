@@ -310,9 +310,15 @@ val container = scope.container<SomeState, Unit> {
 ```
 
 A good practice is to replace the infinite flow with a finite flow for the test.
-This helps keep the test simple. If this is not possible, we have to make
-sure we disregard extra states and side effects that are emitted at the end
-of the test by calling `cancelAndIgnoreRemainingItems()`.
+This helps keep the test simple. 
+
+If this is not possible or desirable, we may run the intent collecting the
+infinite flow as normal and `join()` the `Job` returned by the intent to ensure
+it is completed at the end of the test. 
+
+Our last resort is calling `cancelAndIgnoreRemainingItems()` to cancel the scope
+and disregard any extra states and side effects that are emitted at the end
+of the test.
 
 Otherwise, testing a container that subscribes to an infinite flow is no
 different to normal testing.
@@ -333,7 +339,7 @@ fun exampleTest() = runTest {
             
             // If the flow is infinite, we must ensure the intent is finished
             // at the end of the test.
-            job.join
+            job.join()
             // OR
             cancelAndIgnoreRemainingItems()
         }
