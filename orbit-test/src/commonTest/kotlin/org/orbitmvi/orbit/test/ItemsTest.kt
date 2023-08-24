@@ -27,6 +27,8 @@ import org.orbitmvi.orbit.syntax.simple.reduce
 import kotlin.random.Random
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFails
+import kotlin.test.fail
 
 @ExperimentalCoroutinesApi
 class ItemsTest {
@@ -70,6 +72,21 @@ class ItemsTest {
             assertEquals(Item.SideEffectItem(3), awaitItem())
             assertEquals(Item.StateItem(State(2)), awaitItem())
             assertEquals(Item.SideEffectItem(4), awaitItem())
+        }
+    }
+
+    @Test
+    fun `correctly expects no items`() = runTest {
+        ItemTestMiddleware(this).test(this) {
+            expectInitialState()
+            expectNoItems()
+        }
+    }
+
+    @Test
+    fun `expects no items fails when there are unconsumed items`() = runTest {
+        ItemTestMiddleware(this).test(this) {
+            assertFails { expectNoItems() }
         }
     }
 
