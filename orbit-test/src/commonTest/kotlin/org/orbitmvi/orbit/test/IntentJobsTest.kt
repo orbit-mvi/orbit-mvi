@@ -43,7 +43,7 @@ class IntentJobsTest {
                 IntentJobsMiddleware(this).test(this) {
                     expectInitialState()
 
-                    this.containerHost.infiniteIntent()
+                    containerHost.infiniteIntent()
                 }
             }
         }
@@ -54,7 +54,7 @@ class IntentJobsTest {
         IntentJobsMiddleware(this).test(this) {
             expectInitialState()
 
-            this.containerHost.infiniteIntent()
+            containerHost.infiniteIntent()
             cancelAndIgnoreRemainingItems()
         }
     }
@@ -64,7 +64,7 @@ class IntentJobsTest {
         IntentJobsMiddleware(this).test(this) {
             expectInitialState()
 
-            val job = this.containerHost.infiniteIntent()
+            val job = containerHost.infiniteIntent()
 
             job.cancel()
         }
@@ -76,7 +76,7 @@ class IntentJobsTest {
         IntentJobsMiddleware(this).test(scope) {
             expectInitialState()
 
-            val job = this.containerHost.longIntent()
+            val job = containerHost.longIntent()
 
             scope.testScheduler.advanceTimeBy(300)
 

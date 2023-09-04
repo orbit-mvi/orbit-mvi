@@ -62,8 +62,8 @@ class StateTest {
 
         StateTestMiddleware(this).test(this) {
             expectInitialState()
-            this.containerHost.newCount(action)
-            this.containerHost.newCount(action2)
+            containerHost.newCount(action)
+            containerHost.newCount(action2)
             assertEquals(State(count = action), awaitState())
             assertEquals(State(count = action2), awaitState())
         }
@@ -78,9 +78,9 @@ class StateTest {
         assertFailsWith<AssertionError> {
             StateTestMiddleware(this).test(this) {
                 expectInitialState()
-                this.containerHost.newCount(action)
-                this.containerHost.newCount(action2)
-                this.containerHost.newCount(action3)
+                containerHost.newCount(action)
+                containerHost.newCount(action2)
+                containerHost.newCount(action3)
                 assertEquals(State(count = action), awaitState())
                 assertEquals(State(count = action2), awaitState())
             }
@@ -98,8 +98,8 @@ class StateTest {
         assertFailsWith<AssertionError> {
             StateTestMiddleware(this).test(this) {
                 expectInitialState()
-                this.containerHost.newCount(action)
-                this.containerHost.newCount(action2)
+                containerHost.newCount(action)
+                containerHost.newCount(action2)
                 assertEquals(State(count = action), awaitState())
                 assertEquals(State(count = action2), awaitState())
                 assertEquals(State(count = action3), awaitState())
@@ -118,8 +118,8 @@ class StateTest {
         assertFailsWith<AssertionError> {
             StateTestMiddleware(this).test(this) {
                 expectInitialState()
-                this.containerHost.newCount(action)
-                this.containerHost.newCount(action2)
+                containerHost.newCount(action)
+                containerHost.newCount(action2)
                 assertEquals(State(count = action2), awaitState())
                 assertEquals(State(count = action3), awaitState())
             }
@@ -137,8 +137,8 @@ class StateTest {
         assertFailsWith<AssertionError> {
             StateTestMiddleware(this).test(this) {
                 expectInitialState()
-                this.containerHost.newCount(action)
-                this.containerHost.newCount(action2)
+                containerHost.newCount(action)
+                containerHost.newCount(action2)
                 assertEquals(State(count = action), awaitState())
                 assertEquals(State(count = action3), awaitState())
             }
@@ -156,9 +156,9 @@ class StateTest {
         assertFailsWith<AssertionError> {
             StateTestMiddleware(this).test(this) {
                 expectInitialState()
-                this.containerHost.newCount(action)
-                this.containerHost.newCount(action2)
-                this.containerHost.newCount(action3)
+                containerHost.newCount(action)
+                containerHost.newCount(action2)
+                containerHost.newCount(action3)
                 assertEquals(State(count = action), awaitState())
                 assertEquals(State(count = action3), awaitState())
                 assertEquals(State(count = action2), awaitState())
@@ -174,8 +174,8 @@ class StateTest {
 
         assertFailsWith<AssertionError> {
             StateTestMiddleware(this).test(this) {
-                this.containerHost.newSideEffect(sideEffect)
-                this.containerHost.newCount(sideEffect)
+                containerHost.newSideEffect(sideEffect)
+                containerHost.newCount(sideEffect)
 
                 expectInitialState()
                 awaitState()
@@ -194,9 +194,9 @@ class StateTest {
 
         StateTestMiddleware(this).test(this) {
             expectInitialState()
-            this.containerHost.newList(action)
-            this.containerHost.newList(action2)
-            this.containerHost.newList(action3)
+            containerHost.newList(action)
+            containerHost.newList(action2)
+            containerHost.newList(action3)
             expectState { copy(list = listOf(action)) }
             expectState { copy(list = listOf(action, action2)) }
             expectState { copy(list = listOf(action, action2, action3)) }
@@ -211,9 +211,9 @@ class StateTest {
 
         StateTestMiddleware(this).test(this) {
             expectInitialState()
-            this.containerHost.newList(action)
-            this.containerHost.newList(action2)
-            this.containerHost.newList(action3)
+            containerHost.newList(action)
+            containerHost.newList(action2)
+            containerHost.newList(action3)
             expectState(State(count = initialState.count, list = listOf(action)))
             expectState(State(count = initialState.count, list = listOf(action, action2)))
             expectState(State(count = initialState.count, list = listOf(action, action2, action3)))
@@ -229,9 +229,9 @@ class StateTest {
         assertFailsWith<AssertionError> {
             StateTestMiddleware(this).test(this) {
                 expectInitialState()
-                this.containerHost.newList(action)
-                this.containerHost.newList(action2)
-                this.containerHost.newList(action3)
+                containerHost.newList(action)
+                containerHost.newList(action2)
+                containerHost.newList(action3)
                 expectState { copy(list = listOf(action)) }
                 expectState { copy(list = listOf(action, action2, action3)) }
                 expectState { copy(list = listOf(action, action2)) }
@@ -248,9 +248,9 @@ class StateTest {
         assertFailsWith<AssertionError> {
             StateTestMiddleware(this).test(this) {
                 expectInitialState()
-                this.containerHost.newList(action)
-                this.containerHost.newList(action2)
-                this.containerHost.newList(action3)
+                containerHost.newList(action)
+                containerHost.newList(action2)
+                containerHost.newList(action3)
                 expectState(State(count = initialState.count, list = listOf(action)))
                 expectState(State(count = initialState.count, list = listOf(action, action2, action3)))
                 expectState(State(count = initialState.count, list = listOf(action, action2)))

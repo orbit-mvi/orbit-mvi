@@ -105,7 +105,7 @@ set a correct initial state instead.
 @Test
 fun exampleTest() = runTest {
         ExampleViewModel().test(this) {
-            runOnCreate() // may be invoked only once and before `invokeIntent`
+            runOnCreate()
             expectInitialState()
             containerHost.countToFour()
         }

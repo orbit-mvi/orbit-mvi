@@ -40,7 +40,7 @@ class SideEffectTest {
         val sideEffects = List(Random.nextInt(1, 5)) { Random.nextInt() }
 
         SideEffectTestMiddleware(this).test(this) {
-            sideEffects.forEach { this.containerHost.something(it) }
+            sideEffects.forEach { containerHost.something(it) }
 
             expectInitialState()
 
@@ -60,7 +60,7 @@ class SideEffectTest {
         val sideEffects = List(Random.nextInt(1, 5)) { Random.nextInt() }
 
         SideEffectTestMiddleware(this).test(this) {
-            sideEffects.forEach { this.containerHost.something(it) }
+            sideEffects.forEach { containerHost.something(it) }
 
             expectInitialState()
 
@@ -77,7 +77,7 @@ class SideEffectTest {
 
         assertFailsWith<AssertionError> {
             SideEffectTestMiddleware(this).test(this) {
-                sideEffects.forEach { this.containerHost.something(it) }
+                sideEffects.forEach { containerHost.something(it) }
 
                 expectInitialState()
                 assertEquals(
@@ -100,8 +100,8 @@ class SideEffectTest {
 
         assertFailsWith<AssertionError> {
             SideEffectTestMiddleware(this).test(this) {
-                this.containerHost.newState(sideEffect)
-                this.containerHost.something(sideEffect)
+                containerHost.newState(sideEffect)
+                containerHost.something(sideEffect)
 
                 expectInitialState()
                 awaitSideEffect()
