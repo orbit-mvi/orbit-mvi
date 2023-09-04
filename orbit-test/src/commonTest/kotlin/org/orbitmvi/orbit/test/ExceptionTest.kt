@@ -38,7 +38,7 @@ class ExceptionTest {
                 ExceptionTestMiddleware(this).test(this) {
                     expectInitialState()
 
-                    val job = invokeIntent { boom() }
+                    val job = containerHost.boom()
 
                     job.join()
                 }

@@ -17,7 +17,6 @@
 package org.orbitmvi.orbit.test
 
 import app.cash.turbine.ReceiveTurbine
-import kotlinx.atomicfu.atomic
 import kotlinx.coroutines.Job
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.annotation.OrbitExperimental
@@ -27,32 +26,24 @@ import kotlin.test.assertEquals
 import kotlin.test.fail
 
 public class RealOrbitTestContext<STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHost<STATE, SIDE_EFFECT>>(
-    private val actual: CONTAINER_HOST,
+    override val containerHost: CONTAINER_HOST,
     initialState: STATE?,
     private val emissions: ReceiveTurbine<Item<STATE, SIDE_EFFECT>>
 ) : OrbitTestContext<STATE, SIDE_EFFECT, CONTAINER_HOST> {
-
-    private val onCreateAllowed = atomic(true)
-
-    private val resolvedInitialState: STATE by lazy { initialState ?: actual.container.findTestContainer().originalInitialState }
-
+    private val resolvedInitialState: STATE by lazy { initialState ?: containerHost.container.findTestContainer().originalInitialState }
     private var currentConsumedState: STATE = resolvedInitialState
 
     @OptIn(OrbitInternal::class)
     override fun runOnCreate(): Job {
-        if (onCreateAllowed.compareAndSet(expect = true, update = false)) {
-            val onCreate = actual.container.findOnCreate()
-            return runBlocking {
-                actual.container.orbit(onCreate)
-            }
-        } else {
-            error("runOnCreate should only be invoked once and before any invokeIntent call")
+        val onCreate = containerHost.container.findOnCreate()
+        return runBlocking {
+            containerHost.container.orbit(onCreate)
         }
     }
 
+    @Deprecated("Use containerHost instead", replaceWith = ReplaceWith("action(containerHost)"))
     override fun invokeIntent(action: CONTAINER_HOST.() -> Job): Job {
-        onCreateAllowed.lazySet(false)
-        return actual.action()
+        return containerHost.action()
     }
 
     override suspend fun awaitItem(): Item<STATE, SIDE_EFFECT> {
@@ -74,7 +65,7 @@ public class RealOrbitTestContext<STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST
     @OptIn(OrbitExperimental::class)
     override suspend fun cancelAndIgnoreRemainingItems() {
         emissions.cancelAndIgnoreRemainingEvents()
-        actual.container.cancel()
+        containerHost.container.cancel()
     }
 
     override suspend fun expectInitialState() {

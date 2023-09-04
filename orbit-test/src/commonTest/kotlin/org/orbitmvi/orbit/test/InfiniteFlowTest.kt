@@ -39,7 +39,7 @@ internal class InfiniteFlowTest {
         InfiniteFlowMiddleware(this).test(this) {
             expectInitialState()
 
-            invokeIntent { incrementForever() }
+            containerHost.incrementForever()
 
             // Assert the first three states
             assertEquals(listOf(42, 43), awaitState())
@@ -57,7 +57,7 @@ internal class InfiniteFlowTest {
         InfiniteFlowMiddleware(this).test(scope) {
             expectInitialState()
 
-            val job = invokeIntent { incrementForever() }
+            val job = containerHost.incrementForever()
 
             // Assert the first three states
             scope.advanceTimeBy(3001)

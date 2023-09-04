@@ -21,6 +21,8 @@ import org.orbitmvi.orbit.ContainerHost
 
 public interface OrbitTestContext<STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHost<STATE, SIDE_EFFECT>> {
 
+    public val containerHost: CONTAINER_HOST
+
     /**
      * Invoke `onCreate` lambda for the [ContainerHost].
      */
@@ -29,6 +31,7 @@ public interface OrbitTestContext<STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST
     /**
      * Invoke an intent on the [ContainerHost] under test.
      */
+    @Deprecated("Use containerHost instead", ReplaceWith("action(containerHost)"))
     public fun invokeIntent(action: CONTAINER_HOST.() -> Job): Job
 
     /**

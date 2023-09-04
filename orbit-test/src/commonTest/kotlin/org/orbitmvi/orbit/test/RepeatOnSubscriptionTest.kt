@@ -37,7 +37,7 @@ class RepeatOnSubscriptionTest {
         TestMiddleware(this).test(this, initialState = initialState) {
             expectInitialState()
 
-            invokeIntent { callOnSubscription { 42 } }
+            containerHost.callOnSubscription { 42 }
 
             assertEquals(State(42), awaitState())
         }

@@ -47,7 +47,7 @@ Our design goal was to have a simpler API and no more hidden magic in tests.
 2. Assert the initial state using `expectInitialState()`.
 3. (Optional) Run `runOnCreate()` within the test block to run the container
    create lambda.
-4. (Optional) Run `invokeIntent { foo() }` to run the
+4. (Optional) Run `containerHost.foo()` to run the
    [ContainerHost](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-container-host/)
    intent of your choice.
 5. Await for side effects and states using `awaitSideEffect()`
@@ -74,7 +74,7 @@ data class State(val count: Int = 0)
 fun exampleTest() = runTest {
     ExampleViewModel().test(this, State()) {
         expectInitialState()
-        invokeIntent { countToFour() }
+        containerHost.countToFour()
 
         // await states and side effects, perform assertions
     }
@@ -94,15 +94,20 @@ It is strongly suggested you avoid calling `runOnCreate()` if you are not
 testing the intents called within. For other cases, it is recommended to
 set a correct initial state instead.
 
-Note: `runOnCreate` can only be invoked once and before `invokeIntent`:
+:::note
+
+`runOnCreate` can only be invoked once, before invoking any intents on
+`ContainerHost`.
+
+:::
 
 ```kotlin
 @Test
 fun exampleTest() = runTest {
         ExampleViewModel().test(this) {
-            runOnCreate() // may be invoked only once and before `invokeIntent`
+            runOnCreate()
             expectInitialState()
-            invokeIntent { countToFour() }
+            containerHost.countToFour()
         }
     }
 ```
@@ -117,7 +122,7 @@ explicitly asserted first, as a sanity check.
 fun exampleTest() = runTest {
         ExampleViewModel().test(this) {
             expectInitialState()
-            invokeIntent { countToFour() }
+            containerHost.countToFour()
 
             expectState { copy(count = 1) }
             // alternatively assertEquals(State(count = 1), awaitState())
@@ -139,7 +144,7 @@ ensure no unwanted extra states or side effects are emitted.
 fun exampleTest() = runTest {
         ExampleViewModel().test(this) {
             expectInitialState()
-            invokeIntent { countToFour() }
+            containerHost.countToFour()
 
             expectSideEffect(Toast(1))
             expectSideEffect(Toast(2))
@@ -159,7 +164,7 @@ fun exampleTest() = runTest {
         ExampleViewModel().test(this) {
             expectInitialState()
             runOnCreate()
-            invokeIntent { countToFour() }
+            containerHost.countToFour()
 
             expectState { copy(count = 1) }
             expectSideEffect(Toast(1))
@@ -181,7 +186,7 @@ your assertions.
 
 This can be done using coroutine
 [Jobs](https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines/-job/index.html)
-, which are returned by `runOnCreate` or `invokeIntent { ... }`.
+, which are returned by `runOnCreate` or `containerHost.foo()`.
 
 
 ```kotlin
@@ -194,7 +199,7 @@ fun exampleTest() = runTest {
             
             val job = runOnCreate()
             // OR
-            val job = invokeIntent { doSomeWorkOnDependency() }
+            val job = containerHost.doSomeWorkOnDependency()
             
             // Ensure intent is completed
             job.join()
@@ -234,7 +239,7 @@ fun exampleTest() = runTest {
         ExampleViewModel().test(this) {
             expectInitialState()
             runOnCreate()
-            invokeIntent { countToFour() }
+            containerHost.countToFour()
 
             expectState { copy(count = 1) }
             expectSideEffect(Toast(1))
@@ -272,7 +277,7 @@ fun exampleTest() = runTest {
             
             val job = runOnCreate()
             // OR
-            val job = invokeIntent { doSomeWork() }
+            val job = containerHost.doSomeWork()
             
             // ... run assertions
             
@@ -305,9 +310,15 @@ val container = scope.container<SomeState, Unit> {
 ```
 
 A good practice is to replace the infinite flow with a finite flow for the test.
-This helps keep the test simple. If this is not possible, we have to make
-sure we disregard extra states and side effects that are emitted at the end
-of the test by calling `cancelAndIgnoreRemainingItems()`.
+This helps keep the test simple. 
+
+If this is not possible or desirable, we may run the intent collecting the
+infinite flow as normal and `join()` the `Job` returned by the intent to ensure
+it is completed at the end of the test. 
+
+Our last resort is calling `cancelAndIgnoreRemainingItems()` to cancel the scope
+and disregard any extra states and side effects that are emitted at the end
+of the test.
 
 Otherwise, testing a container that subscribes to an infinite flow is no
 different to normal testing.
@@ -328,7 +339,7 @@ fun exampleTest() = runTest {
             
             // If the flow is infinite, we must ensure the intent is finished
             // at the end of the test.
-            job.join
+            job.join()
             // OR
             cancelAndIgnoreRemainingItems()
         }
@@ -367,7 +378,7 @@ coroutine being tested in `runTest`.
 fun delaySkipping() = runTest {
         InfiniteFlowMiddleware().test(this) {
             expectInitialState()
-            val job = invokeIntent { incrementForever() }
+            val job = containerHost.incrementForever()
 
             // Assert the first three states
             expectState(listOf(42, 43))
@@ -395,7 +406,7 @@ fun noDelaySkipping() = runTest {
 
         InfiniteFlowMiddleware().test(scope) {
             expectInitialState()
-            val job = invokeIntent { incrementForever() }
+            val job = containerHost.incrementForever()
 
             // Assert the first three states
             scope.advanceTimeBy(30_001)

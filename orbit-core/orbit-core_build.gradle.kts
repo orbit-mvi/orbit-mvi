@@ -36,7 +36,7 @@ kotlin {
         }
         commonMain {
             dependencies {
-                implementation(libs.kotlinCoroutines)
+                api(libs.kotlinCoroutines)
             }
         }
         commonTest {

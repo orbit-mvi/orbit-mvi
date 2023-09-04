@@ -43,7 +43,7 @@ internal class SimpleDslBehaviourTest {
         BaseDslMiddleware(this).test(this, initialState) {
             expectInitialState()
 
-            invokeIntent { reducer(action) }
+            containerHost.reducer(action)
 
             expectState { TestState(action) }
         }
@@ -55,7 +55,7 @@ internal class SimpleDslBehaviourTest {
         BaseDslMiddleware(this).test(this, initialState) {
             expectInitialState()
 
-            invokeIntent { transformer(action) }
+            containerHost.transformer(action)
 
             expectState { TestState(action + 5) }
         }
@@ -67,7 +67,7 @@ internal class SimpleDslBehaviourTest {
         BaseDslMiddleware(this).test(this, initialState) {
             expectInitialState()
 
-            invokeIntent { postingSideEffect(action) }
+            containerHost.postingSideEffect(action)
 
             expectSideEffect(action.toString())
         }

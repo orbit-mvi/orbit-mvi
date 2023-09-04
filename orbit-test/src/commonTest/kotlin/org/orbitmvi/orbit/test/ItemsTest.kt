@@ -44,10 +44,10 @@ class ItemsTest {
 
         ItemTestMiddleware(this).test(this) {
             expectInitialState()
-            invokeIntent { newState(state1) }
-            invokeIntent { newSideEffect(sideEffect1) }
-            invokeIntent { newState(state2) }
-            invokeIntent { newSideEffect(sideEffect2) }
+            containerHost.newState(state1)
+            containerHost.newSideEffect(sideEffect1)
+            containerHost.newState(state2)
+            containerHost.newSideEffect(sideEffect2)
 
             skipItems(3)
             assertEquals(4, awaitSideEffect())
@@ -63,10 +63,10 @@ class ItemsTest {
 
         ItemTestMiddleware(this).test(this) {
             expectInitialState()
-            invokeIntent { newState(state1) }
-            invokeIntent { newSideEffect(sideEffect1) }
-            invokeIntent { newState(state2) }
-            invokeIntent { newSideEffect(sideEffect2) }
+            containerHost.newState(state1)
+            containerHost.newSideEffect(sideEffect1)
+            containerHost.newState(state2)
+            containerHost.newSideEffect(sideEffect2)
 
             assertEquals(Item.StateItem(State(1)), awaitItem())
             assertEquals(Item.SideEffectItem(3), awaitItem())
