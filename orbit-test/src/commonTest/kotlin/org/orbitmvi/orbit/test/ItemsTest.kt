@@ -28,7 +28,6 @@ import kotlin.random.Random
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFails
-import kotlin.test.fail
 
 @ExperimentalCoroutinesApi
 class ItemsTest {
