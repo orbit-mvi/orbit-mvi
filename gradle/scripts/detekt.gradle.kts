@@ -47,6 +47,7 @@ tasks.named("detekt", Detekt::class.java).configure {
     include("**/*.kts")
     exclude("**/resources/**")
     exclude("**/build/**")
+    exclude("**/.gradle/**")
 
     parallel = true
 
