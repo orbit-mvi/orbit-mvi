@@ -26,6 +26,18 @@ public class SettingsBuilder {
             settings = settings.copy(idlingRegistry = value)
         }
 
+    public var eventLoopDispatcher: CoroutineDispatcher
+        get() = settings.eventLoopDispatcher
+        public set(value) {
+            settings = settings.copy(eventLoopDispatcher = value)
+        }
+
+    public var intentLaunchingDispatcher: CoroutineDispatcher
+        get() = settings.intentLaunchingDispatcher
+        public set(value) {
+            settings = settings.copy(intentLaunchingDispatcher = value)
+        }
+
     public var exceptionHandler: CoroutineExceptionHandler?
         get() = settings.exceptionHandler
         public set(value) {
