@@ -28,7 +28,6 @@ import kotlin.random.Random
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFails
-import kotlin.test.fail
 
 @ExperimentalCoroutinesApi
 class ItemsTest {
@@ -36,7 +35,7 @@ class ItemsTest {
     private val initialState = State()
 
     @Test
-    fun `items can be skipped`() = runTest {
+    fun items_can_be_skipped() = runTest {
         val state1 = 1
         val state2 = 2
         val sideEffect1 = 3
@@ -55,7 +54,7 @@ class ItemsTest {
     }
 
     @Test
-    fun `items can be retrieved`() = runTest {
+    fun items_can_be_retrieved() = runTest {
         val state1 = 1
         val state2 = 2
         val sideEffect1 = 3
@@ -76,7 +75,7 @@ class ItemsTest {
     }
 
     @Test
-    fun `correctly expects no items`() = runTest {
+    fun correctly_expects_no_items() = runTest {
         ItemTestMiddleware(this).test(this) {
             expectInitialState()
             expectNoItems()
@@ -84,7 +83,7 @@ class ItemsTest {
     }
 
     @Test
-    fun `expects no items fails when there are unconsumed items`() = runTest {
+    fun expects_no_items_fails_when_there_are_unconsumed_items() = runTest {
         ItemTestMiddleware(this).test(this) {
             assertFails { expectNoItems() }
         }

@@ -37,7 +37,7 @@ internal class GeneralTest {
     private val initialState = State(Random.nextInt())
 
     @Test
-    fun `created is not invoked by default`() = runTest {
+    fun created_is_not_invoked_by_default() = runTest {
         val mockDependency = FakeDependency()
         val testSubject = GeneralTestMiddleware(this, mockDependency)
 
@@ -47,7 +47,7 @@ internal class GeneralTest {
     }
 
     @Test
-    fun `created is invoked upon request`() = runTest {
+    fun created_is_invoked_upon_request() = runTest {
         val mockDependency = FakeDependency()
         val testSubject = GeneralTestMiddleware(this, mockDependency)
 
@@ -57,7 +57,7 @@ internal class GeneralTest {
     }
 
     @Test
-    fun `created is not invoked by default in live test`() = runTest {
+    fun created_is_not_invoked_by_default_in_live_test() = runTest {
         val mockDependency = FakeDependency()
         val testSubject = GeneralTestMiddleware(this, mockDependency)
 
@@ -67,7 +67,7 @@ internal class GeneralTest {
     }
 
     @Test
-    fun `created is invoked upon request in live test`() = runTest {
+    fun created_is_invoked_upon_request_in_live_test() = runTest {
         val mockDependency = FakeDependency()
         val testSubject = GeneralTestMiddleware(this, mockDependency)
 
@@ -79,7 +79,7 @@ internal class GeneralTest {
     }
 
     @Test
-    fun `first intent is isolated by default`() = runTest {
+    fun first_intent_is_isolated_by_default() = runTest {
         val testSubject = GeneralTestMiddleware(this)
         val testContainerHost = testSubject.test(initialState)
 
@@ -90,7 +90,7 @@ internal class GeneralTest {
     }
 
     @Test
-    fun `initial state can be omitted from test`() = runTest {
+    fun initial_state_can_be_omitted_from_test() = runTest {
         val testSubject = GeneralTestMiddleware(this)
         val testContainerHost = testSubject.test()
 
