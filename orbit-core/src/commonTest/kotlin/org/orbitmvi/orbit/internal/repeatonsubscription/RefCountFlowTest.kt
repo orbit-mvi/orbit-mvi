@@ -1,6 +1,5 @@
 package org.orbitmvi.orbit.internal.repeatonsubscription
 
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.take
 import org.orbitmvi.orbit.test.runBlocking
@@ -10,7 +9,7 @@ import kotlin.test.assertEquals
 class RefCountFlowTest {
 
     @Test
-    fun `increments on collection and decrements once completed`() {
+    fun increments_on_collection_and_decrements_once_completed() {
         runBlocking {
             val subscribedCounter = TestSubscribedCounter()
 
@@ -25,7 +24,7 @@ class RefCountFlowTest {
     }
 
     @Test
-    fun `decrements even after exception`() {
+    fun decrements_even_after_exception() {
         runBlocking {
             val subscribedCounter = TestSubscribedCounter()
 

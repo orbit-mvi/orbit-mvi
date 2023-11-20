@@ -57,7 +57,7 @@ internal class ContainerExceptionHandlerTest {
     }
 
     @Test
-    fun `by default any exception breaks the scope`() = runTest {
+    fun by_default_any_exception_breaks_the_scope() = runTest {
         val initState = Random.nextInt()
         val container = scope.container<Int, Nothing>(
             initialState = initState
@@ -79,7 +79,7 @@ internal class ContainerExceptionHandlerTest {
     }
 
     @Test
-    fun `with exception handler exceptions are caught`() = runTest {
+    fun with_exception_handler_exceptions_are_caught() = runTest {
         val initState = Random.nextInt()
         val exceptions = mutableListOf<Throwable>()
         val exceptionHandler = CoroutineExceptionHandler { _, throwable -> exceptions += throwable }
@@ -109,12 +109,12 @@ internal class ContainerExceptionHandlerTest {
     }
 
     @Test
-    fun `with exception handler cancellation exception is propagated normally`() {
+    fun with_exception_handler_cancellation_exception_is_propagated_normally() {
         checkCancellationPropagation(withExceptionHandler = true)
     }
 
     @Test
-    fun `without exception handler cancellation exception is propagated normally`() {
+    fun without_exception_handler_cancellation_exception_is_propagated_normally() {
         checkCancellationPropagation(withExceptionHandler = false)
     }
 
@@ -155,7 +155,7 @@ internal class ContainerExceptionHandlerTest {
     }
 
     @Test
-    fun `with exception handler test does not break`() {
+    fun with_exception_handler_test_does_not_break() {
         val initState = Random.nextInt()
         val exceptions = mutableListOf<Throwable>()
         val exceptionHandler = CoroutineExceptionHandler { _, throwable -> exceptions += throwable }
@@ -193,7 +193,7 @@ internal class ContainerExceptionHandlerTest {
     }
 
     @Test
-    fun `without exception handler test does break`() {
+    fun without_exception_handler_test_does_break() {
         val initState = Random.nextInt()
         val containerHost = object : ContainerHost<Int, Nothing> {
             override val container = scope.container<Int, Nothing>(

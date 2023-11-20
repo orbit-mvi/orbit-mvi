@@ -47,7 +47,7 @@ internal class SideEffectTest {
     }
 
     @Test
-    fun `side effects are emitted in order`() = runBlocking {
+    fun side_effects_are_emitted_in_order() = runBlocking {
         val container = scope.container<Unit, Int>(Unit)
 
         val testSideEffectObserver1 = container.sideEffectFlow.testFlowObserver()
@@ -62,7 +62,7 @@ internal class SideEffectTest {
     }
 
     @Test
-    fun `side effects are not multicast`() = runBlocking {
+    fun side_effects_are_not_multicast() = runBlocking {
         val action = Random.nextInt()
         val action2 = Random.nextInt()
         val action3 = Random.nextInt()
@@ -87,7 +87,7 @@ internal class SideEffectTest {
     }
 
     @Test
-    fun `side effects are cached when there are no subscribers`() = runBlocking {
+    fun side_effects_are_cached_when_there_are_no_subscribers() = runBlocking {
         val action = Random.nextInt()
         val action2 = Random.nextInt()
         val action3 = Random.nextInt()
@@ -105,7 +105,7 @@ internal class SideEffectTest {
     }
 
     @Test
-    fun `consumed side effects are not resent`() = runBlocking {
+    fun consumed_side_effects_are_not_resent() = runBlocking {
         val action = Random.nextInt()
         val action2 = Random.nextInt()
         val action3 = Random.nextInt()
@@ -126,7 +126,7 @@ internal class SideEffectTest {
     }
 
     @Test
-    fun `only new side effects are emitted when resubscribing`() = runBlocking {
+    fun only_new_side_effects_are_emitted_when_resubscribing() = runBlocking {
         val action = Random.nextInt()
         val container = scope.container<Unit, Int>(Unit)
 

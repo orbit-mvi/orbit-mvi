@@ -46,7 +46,7 @@ internal class StateTest {
     }
 
     @Test
-    fun `initial state is emitted on connection`() {
+    fun initial_state_is_emitted_on_connection() {
         val initialState = TestState()
         val middleware = Middleware(initialState)
         val testStateObserver = middleware.container.stateFlow.testFlowObserver()
@@ -57,7 +57,7 @@ internal class StateTest {
     }
 
     @Test
-    fun `latest state is emitted on connection`() {
+    fun latest_state_is_emitted_on_connection() {
         val initialState = TestState()
         val middleware = Middleware(initialState)
         val testStateObserver = middleware.container.stateFlow.testFlowObserver()
@@ -80,7 +80,7 @@ internal class StateTest {
     }
 
     @Test
-    fun `current state is set to the initial state after instantiation`() {
+    fun current_state_is_set_to_the_initial_state_after_instantiation() {
         val initialState = TestState()
         val middleware = Middleware(initialState)
 
@@ -88,7 +88,7 @@ internal class StateTest {
     }
 
     @Test
-    fun `current state is up to date after modification`() {
+    fun current_state_is_up_to_date_after_modification() {
         val initialState = TestState()
         val middleware = Middleware(initialState)
         val action = Random.nextInt()

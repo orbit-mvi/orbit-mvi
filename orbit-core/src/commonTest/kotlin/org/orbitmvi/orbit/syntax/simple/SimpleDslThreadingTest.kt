@@ -58,7 +58,7 @@ internal class SimpleDslThreadingTest {
 
     @Test
     @IgnoreIos
-    fun `blocking intent with context switch does not block the reducer`() = runBlocking {
+    fun blocking_intent_with_context_switch_does_not_block_the_reducer() = runBlocking {
         val action = Random.nextInt()
         val testFlowObserver = middleware.container.stateFlow.testFlowObserver()
 
@@ -75,7 +75,7 @@ internal class SimpleDslThreadingTest {
     }
 
     @Test
-    fun `suspending intent does not block the reducer`() = runBlocking {
+    fun suspending_intent_does_not_block_the_reducer() = runBlocking {
         val action = Random.nextInt()
         val testFlowObserver = middleware.container.stateFlow.testFlowObserver()
 
@@ -91,7 +91,7 @@ internal class SimpleDslThreadingTest {
     }
 
     @Test
-    fun `blocking intent without context switch blocks the reducer`() = runBlocking {
+    fun blocking_intent_without_context_switch_blocks_the_reducer() = runBlocking {
         val action = Random.nextInt()
         val testFlowObserver = middleware.container.stateFlow.testFlowObserver()
 
@@ -109,7 +109,7 @@ internal class SimpleDslThreadingTest {
     }
 
     @Test
-    fun `blocking reducer blocks an intent`(): Unit = runBlocking {
+    fun blocking_reducer_blocks_an_intent(): Unit = runBlocking {
         middleware.container.stateFlow.testFlowObserver()
 
         middleware.blockingReducer()

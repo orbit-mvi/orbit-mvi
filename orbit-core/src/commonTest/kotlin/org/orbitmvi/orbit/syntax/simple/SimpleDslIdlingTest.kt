@@ -52,7 +52,7 @@ internal class SimpleDslIdlingTest {
     }
 
     @Test
-    fun `idle when nothing running`() {
+    fun idle_when_nothing_running() {
         runBlocking {
             scope.createContainerHost()
             delay(50)
@@ -62,7 +62,7 @@ internal class SimpleDslIdlingTest {
     }
 
     @Test
-    fun `not idle when actively running`() {
+    fun not_idle_when_actively_running() {
         runBlocking {
             val containerHost = scope.createContainerHost()
 
@@ -82,7 +82,7 @@ internal class SimpleDslIdlingTest {
     }
 
     @Test
-    fun `idle when actively running with registration disabled`() {
+    fun idle_when_actively_running_with_registration_disabled() {
         runBlocking {
             val containerHost = scope.createContainerHost()
 
@@ -102,7 +102,7 @@ internal class SimpleDslIdlingTest {
     }
 
     @Test
-    fun `idle after running`() {
+    fun idle_after_running() {
         runBlocking {
             val containerHost = scope.createContainerHost()
 

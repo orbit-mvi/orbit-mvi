@@ -44,7 +44,7 @@ internal class ContainerLifecycleTest {
     }
 
     @Test
-    fun `onCreate is called once after connecting to the container`() {
+    fun onCreate_is_called_once_after_connecting_to_the_container() {
         val initialState = TestState()
         val middleware = Middleware(initialState)
         val testStateObserver = middleware.container.stateFlow.testFlowObserver()

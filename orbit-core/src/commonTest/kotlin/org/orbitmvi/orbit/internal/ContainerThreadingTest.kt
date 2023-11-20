@@ -47,7 +47,7 @@ internal class ContainerThreadingTest {
     }
 
     @Test
-    fun `container can process a second action while the first is suspended`() {
+    fun container_can_process_a_second_action_while_the_first_is_suspended() {
         val container = scope.container<Int, Nothing>(Random.nextInt())
         val observer = container.stateFlow.testFlowObserver()
         val newState = Random.nextInt()
@@ -66,7 +66,7 @@ internal class ContainerThreadingTest {
     }
 
     @Test
-    fun `reductions are applied in order if called from single thread`() {
+    fun reductions_are_applied_in_order_if_called_from_single_thread() {
         // This scenario is meant to simulate calling only reducers from the UI thread
         runBlocking {
             val container = scope.container<TestState, Nothing>(TestState())
@@ -97,7 +97,7 @@ internal class ContainerThreadingTest {
     }
 
     @Test
-    fun `reductions run in sequence but in an undefined order when executed from multiple threads`() {
+    fun reductions_run_in_sequence_but_in_an_undefined_order_when_executed_from_multiple_threads() {
         // This scenario is meant to simulate calling only reducers from the UI thread
         runBlocking {
             val container = scope.container<TestState, Nothing>(TestState())

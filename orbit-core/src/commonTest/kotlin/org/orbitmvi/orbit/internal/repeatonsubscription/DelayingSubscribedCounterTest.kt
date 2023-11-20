@@ -24,7 +24,7 @@ class DelayingSubscribedCounterTest {
     }
 
     @Test
-    fun `initial value is unsubscribed`() {
+    fun initial_value_is_unsubscribed() {
         runBlocking {
             val counter = DelayingSubscribedCounter(testScope, 0)
             val testObserver = counter.subscribed.testFlowObserver()
@@ -34,7 +34,7 @@ class DelayingSubscribedCounterTest {
     }
 
     @Test
-    fun `incrementing subscribes`() {
+    fun incrementing_subscribes() {
         runBlocking {
             val counter = DelayingSubscribedCounter(testScope, 0)
             val testObserver = counter.subscribed.testFlowObserver()
@@ -47,7 +47,7 @@ class DelayingSubscribedCounterTest {
     }
 
     @Test
-    fun `increment decrement unsubscribes`() {
+    fun increment_decrement_unsubscribes() {
         runBlocking {
             val counter = DelayingSubscribedCounter(testScope, 0)
             val testObserver = counter.subscribed.testFlowObserver()
@@ -61,7 +61,7 @@ class DelayingSubscribedCounterTest {
     }
 
     @Test
-    fun `values received are distinct`() {
+    fun values_received_are_distinct() {
         runBlocking {
             val counter = DelayingSubscribedCounter(testScope, 0)
             val testObserver = counter.subscribed.testFlowObserver()
@@ -77,7 +77,7 @@ class DelayingSubscribedCounterTest {
     }
 
     @Test
-    fun `negative decrements are ignored`() {
+    fun negative_decrements_are_ignored() {
         runBlocking {
             val counter = DelayingSubscribedCounter(testScope, 0)
             val testObserver = counter.subscribed.testFlowObserver()
@@ -94,7 +94,7 @@ class DelayingSubscribedCounterTest {
     }
 
     @Test
-    fun `unsubscribed received on launch immediately`() {
+    fun unsubscribed_received_on_launch_immediately() {
         runBlocking {
             val counter = DelayingSubscribedCounter(testScope, 500)
             val testObserver = counter.subscribed.mapTimed().testFlowObserver()
@@ -106,7 +106,7 @@ class DelayingSubscribedCounterTest {
     }
 
     @Test
-    fun `unsubscribed received immediately on second observation`() {
+    fun unsubscribed_received_immediately_on_second_observation() {
         runBlocking {
             val counter = DelayingSubscribedCounter(testScope, 500)
 
@@ -121,7 +121,7 @@ class DelayingSubscribedCounterTest {
     }
 
     @Test
-    fun `unsubscribed received after delay`() {
+    fun unsubscribed_received_after_delay() {
         runBlocking {
             val counter = DelayingSubscribedCounter(testScope, 500)
             val testObserver = counter.subscribed.mapTimed().testFlowObserver()
