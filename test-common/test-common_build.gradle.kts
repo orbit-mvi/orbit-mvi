@@ -47,6 +47,12 @@ kotlin {
             }
         }
 
+        val jsMain by getting {
+            dependencies {
+                implementation(kotlin("test-js"))
+            }
+        }
+
         val iosMain by getting {
         }
         val iosSimulatorArm64Main by getting {

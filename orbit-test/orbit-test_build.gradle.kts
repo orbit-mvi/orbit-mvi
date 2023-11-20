@@ -36,6 +36,7 @@ kotlin {
         commonMain {
             dependencies {
                 implementation(kotlin("test-common"))
+                implementation(kotlin("test-annotations-common"))
                 api(libs.kotlinCoroutines)
                 api(libs.kotlinCoroutinesTest)
                 implementation(libs.turbine)
@@ -54,6 +55,12 @@ kotlin {
         val iosMain by getting {
             dependencies {
                 implementation(libs.kotlinCoroutines)
+            }
+        }
+
+        val jsMain by getting {
+            dependencies {
+                implementation(kotlin("test-js"))
             }
         }
 
