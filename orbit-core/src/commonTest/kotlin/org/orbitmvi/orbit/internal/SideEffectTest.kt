@@ -26,6 +26,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.runTest
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.container
 import org.orbitmvi.orbit.test.assertContainExactly
@@ -47,7 +48,7 @@ internal class SideEffectTest {
     }
 
     @Test
-    fun side_effects_are_emitted_in_order() = runBlocking {
+    fun side_effects_are_emitted_in_order() = runTest {
         val container = scope.container<Unit, Int>(Unit)
 
         val testSideEffectObserver1 = container.sideEffectFlow.testFlowObserver()
@@ -62,7 +63,7 @@ internal class SideEffectTest {
     }
 
     @Test
-    fun side_effects_are_not_multicast() = runBlocking {
+    fun side_effects_are_not_multicast() = runTest {
         val action = Random.nextInt()
         val action2 = Random.nextInt()
         val action3 = Random.nextInt()
@@ -87,7 +88,7 @@ internal class SideEffectTest {
     }
 
     @Test
-    fun side_effects_are_cached_when_there_are_no_subscribers() = runBlocking {
+    fun side_effects_are_cached_when_there_are_no_subscribers() = runTest {
         val action = Random.nextInt()
         val action2 = Random.nextInt()
         val action3 = Random.nextInt()
@@ -105,7 +106,7 @@ internal class SideEffectTest {
     }
 
     @Test
-    fun consumed_side_effects_are_not_resent() = runBlocking {
+    fun consumed_side_effects_are_not_resent() = runTest {
         val action = Random.nextInt()
         val action2 = Random.nextInt()
         val action3 = Random.nextInt()
@@ -126,7 +127,7 @@ internal class SideEffectTest {
     }
 
     @Test
-    fun only_new_side_effects_are_emitted_when_resubscribing() = runBlocking {
+    fun only_new_side_effects_are_emitted_when_resubscribing() = runTest {
         val action = Random.nextInt()
         val container = scope.container<Unit, Int>(Unit)
 

@@ -155,7 +155,7 @@ internal class ContainerExceptionHandlerTest {
     }
 
     @Test
-    fun with_exception_handler_test_does_not_break() {
+    fun with_exception_handler_test_does_not_break() = runTest {
         val initState = Random.nextInt()
         val exceptions = mutableListOf<Throwable>()
         val exceptionHandler = CoroutineExceptionHandler { _, throwable -> exceptions += throwable }
@@ -171,16 +171,14 @@ internal class ContainerExceptionHandlerTest {
         }
         val newState = Random.nextInt()
 
-        runBlocking {
-            containerHost.testIntent {
-                intent {
-                    reduce { throw IllegalStateException() }
-                }
+        containerHost.testIntent {
+            intent {
+                reduce { throw IllegalStateException() }
             }
-            containerHost.testIntent {
-                intent {
-                    reduce { newState }
-                }
+        }
+        containerHost.testIntent {
+            intent {
+                reduce { newState }
             }
         }
 
@@ -193,7 +191,7 @@ internal class ContainerExceptionHandlerTest {
     }
 
     @Test
-    fun without_exception_handler_test_does_break() {
+    fun without_exception_handler_test_does_break() = runTest {
         val initState = Random.nextInt()
         val containerHost = object : ContainerHost<Int, Nothing> {
             override val container = scope.container<Int, Nothing>(
@@ -206,26 +204,24 @@ internal class ContainerExceptionHandlerTest {
             isolateFlow = false
         }
 
-        runBlocking {
-            assertFailsWith<IllegalStateException> {
-                containerHost.testIntent {
-                    intent {
-                        reduce { throw IllegalStateException() }
-                    }
-                }
-            }
-            // Note: another `intent{}` would still work
-            // as `test()` moves all the job to scope of invocation,
-            // and out of a container's scope (so it's ignored)
-            val newState = Random.nextInt()
+        assertFailsWith<IllegalStateException> {
             containerHost.testIntent {
                 intent {
-                    reduce { newState }
+                    reduce { throw IllegalStateException() }
                 }
             }
-            containerHost.assert(initState) {
-                states({ newState })
+        }
+        // Note: another `intent{}` would still work
+        // as `test()` moves all the job to scope of invocation,
+        // and out of a container's scope (so it's ignored)
+        val newState = Random.nextInt()
+        containerHost.testIntent {
+            intent {
+                reduce { newState }
             }
+        }
+        containerHost.assert(initState) {
+            states({ newState })
         }
 
         assertEquals(true, scope.isActive)
