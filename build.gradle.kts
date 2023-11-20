@@ -50,10 +50,6 @@ plugins {
 
 apply(from = "gradle/scripts/detekt.gradle.kts")
 
-tasks.register<Delete>("clean") {
-    delete(rootProject.buildDir)
-}
-
 tasks.withType<DependencyUpdatesTask> {
     resolutionStrategy {
         componentSelection {

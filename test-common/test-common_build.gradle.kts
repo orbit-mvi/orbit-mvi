@@ -25,6 +25,9 @@ plugins {
 
 kotlin {
     jvm()
+    js(IR) {
+        browser()
+    }
     ios()
     iosSimulatorArm64()
     sourceSets {
