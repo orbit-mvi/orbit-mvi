@@ -99,15 +99,13 @@ public fun <STATE : Any, SIDE_EFFECT : Any> ContainerHost<STATE, SIDE_EFFECT>.in
  */
 @OrbitDsl
 @OrbitExperimental
-public fun <STATE : Any, SIDE_EFFECT : Any> ContainerHost<STATE, SIDE_EFFECT>.blockingIntent(
+public suspend fun <STATE : Any, SIDE_EFFECT : Any> ContainerHost<STATE, SIDE_EFFECT>.blockingIntent(
     registerIdling: Boolean = true,
     transformer: suspend SimpleSyntax<STATE, SIDE_EFFECT>.() -> Unit
 ) {
-    CoroutineScope(Dispatchers.Default).launch {
-        container.inlineOrbit {
-            withIdling(registerIdling) {
-                SimpleSyntax(this).transformer()
-            }
+    container.inlineOrbit {
+        withIdling(registerIdling) {
+            SimpleSyntax(this).transformer()
         }
     }
 }
