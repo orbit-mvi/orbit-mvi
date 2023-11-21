@@ -174,12 +174,12 @@ internal class ContainerExceptionHandlerTest {
         containerHost.testIntent {
             intent {
                 reduce { throw IllegalStateException() }
-            }
+            }.join()
         }
         containerHost.testIntent {
             intent {
                 reduce { newState }
-            }
+            }.join()
         }
 
         containerHost.assert(initState) {
@@ -208,7 +208,7 @@ internal class ContainerExceptionHandlerTest {
             containerHost.testIntent {
                 intent {
                     reduce { throw IllegalStateException() }
-                }
+                }.join()
             }
         }
         // Note: another `intent{}` would still work
@@ -218,7 +218,7 @@ internal class ContainerExceptionHandlerTest {
         containerHost.testIntent {
             intent {
                 reduce { newState }
-            }
+            }.join()
         }
         containerHost.assert(initState) {
             states({ newState })

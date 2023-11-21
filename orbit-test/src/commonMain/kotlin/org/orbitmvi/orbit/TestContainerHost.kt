@@ -106,7 +106,7 @@ public class SuspendingTestContainerHost<STATE : Any, SIDE_EFFECT : Any, CONTAIN
     /**
      * Invoke an intent on the [ContainerHost] under test as a suspending function.
      */
-    public suspend fun testIntent(action: CONTAINER_HOST.() -> Unit): SuspendingTestContainerHost<STATE, SIDE_EFFECT, CONTAINER_HOST> {
+    public suspend fun testIntent(action: suspend CONTAINER_HOST.() -> Unit): SuspendingTestContainerHost<STATE, SIDE_EFFECT, CONTAINER_HOST> {
         onCreateAllowed.lazySet(false)
         actual.suspendingIntent(isolateFlow, action)
         return this
@@ -115,7 +115,7 @@ public class SuspendingTestContainerHost<STATE : Any, SIDE_EFFECT : Any, CONTAIN
     @OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
     private suspend fun <STATE : Any, SIDE_EFFECT : Any, T : ContainerHost<STATE, SIDE_EFFECT>> T.suspendingIntent(
         shouldIsolateFlow: Boolean,
-        block: T.() -> Unit
+        block: suspend T.() -> Unit
     ) {
         val testContainer = container.findTestContainer()
 
