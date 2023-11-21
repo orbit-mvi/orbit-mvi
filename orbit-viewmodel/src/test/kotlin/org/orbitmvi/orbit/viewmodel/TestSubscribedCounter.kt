@@ -22,10 +22,10 @@ import kotlinx.coroutines.flow.asStateFlow
 import org.orbitmvi.orbit.internal.repeatonsubscription.SubscribedCounter
 import org.orbitmvi.orbit.internal.repeatonsubscription.Subscription
 
-public class TestSubscribedCounter : SubscribedCounter {
-    public var counter: Int = 0
+class TestSubscribedCounter : SubscribedCounter {
+    var counter: Int = 0
 
-    public val flow: MutableStateFlow<Subscription> = MutableStateFlow(Subscription.Unsubscribed)
+    private val flow: MutableStateFlow<Subscription> = MutableStateFlow(Subscription.Unsubscribed)
     override val subscribed: Flow<Subscription> = flow.asStateFlow()
 
     override suspend fun increment() {
