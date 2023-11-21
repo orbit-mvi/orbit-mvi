@@ -273,3 +273,4 @@ fabric.properties
 !/gradle/wrapper/gradle-wrapper.jar
 
 # End of https://www.gitignore.io/api/linux,macos,kotlin,windows,android,androidstudio
+/kotlin-js-store/yarn.lock
