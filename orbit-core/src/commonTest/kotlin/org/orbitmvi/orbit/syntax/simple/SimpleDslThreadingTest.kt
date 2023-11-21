@@ -36,6 +36,7 @@ import kotlinx.coroutines.withContext
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.container
 import org.orbitmvi.orbit.test.IgnoreIos
+import org.orbitmvi.orbit.test.IgnoreJs
 import org.orbitmvi.orbit.test.ScopedBlockingWorkSimulator
 import org.orbitmvi.orbit.test.assertContainExactly
 import org.orbitmvi.orbit.test.withTimeoutRealtime
@@ -46,6 +47,7 @@ import kotlin.test.Test
 import kotlin.test.assertFailsWith
 
 @ExperimentalCoroutinesApi
+@IgnoreJs
 internal class SimpleDslThreadingTest {
 
     private val scope = CoroutineScope(Job())
