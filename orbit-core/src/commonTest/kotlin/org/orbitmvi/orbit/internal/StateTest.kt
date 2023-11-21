@@ -24,6 +24,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.test.runTest
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.container
 import org.orbitmvi.orbit.syntax.simple.intent
@@ -46,7 +47,7 @@ internal class StateTest {
     }
 
     @Test
-    fun initial_state_is_emitted_on_connection() {
+    fun initial_state_is_emitted_on_connection() = runTest {
         val initialState = TestState()
         val middleware = Middleware(initialState)
         val testStateObserver = middleware.container.stateFlow.testFlowObserver()
@@ -57,7 +58,7 @@ internal class StateTest {
     }
 
     @Test
-    fun latest_state_is_emitted_on_connection() {
+    fun latest_state_is_emitted_on_connection() = runTest {
         val initialState = TestState()
         val middleware = Middleware(initialState)
         val testStateObserver = middleware.container.stateFlow.testFlowObserver()
@@ -80,7 +81,7 @@ internal class StateTest {
     }
 
     @Test
-    fun current_state_is_set_to_the_initial_state_after_instantiation() {
+    fun current_state_is_set_to_the_initial_state_after_instantiation() = runTest {
         val initialState = TestState()
         val middleware = Middleware(initialState)
 
@@ -88,7 +89,7 @@ internal class StateTest {
     }
 
     @Test
-    fun current_state_is_up_to_date_after_modification() {
+    fun current_state_is_up_to_date_after_modification() = runTest {
         val initialState = TestState()
         val middleware = Middleware(initialState)
         val action = Random.nextInt()

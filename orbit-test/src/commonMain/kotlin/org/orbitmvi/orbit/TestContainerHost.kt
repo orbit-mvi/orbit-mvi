@@ -152,16 +152,14 @@ public class RegularTestContainerHost<STATE : Any, SIDE_EFFECT : Any, CONTAINER_
      * e.g.: created by [CoroutineScope.container]
      */
     @OptIn(OrbitInternal::class)
-    public fun runOnCreate(): RegularTestContainerHost<STATE, SIDE_EFFECT, CONTAINER_HOST> {
+    public suspend fun runOnCreate(): RegularTestContainerHost<STATE, SIDE_EFFECT, CONTAINER_HOST> {
         if (!onCreateAllowed.compareAndSet(expect = true, update = false)) {
             error("runOnCreate should only be invoked once and before any testIntent call")
         }
 
         val onCreate = actual.container.findOnCreate()
 
-        runBlocking {
-            actual.container.orbit(onCreate)
-        }
+        actual.container.orbit(onCreate)
         return this
     }
 

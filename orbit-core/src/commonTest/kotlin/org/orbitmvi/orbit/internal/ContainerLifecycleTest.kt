@@ -24,6 +24,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.test.runTest
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.container
 import org.orbitmvi.orbit.syntax.simple.postSideEffect
@@ -44,7 +45,7 @@ internal class ContainerLifecycleTest {
     }
 
     @Test
-    fun onCreate_is_called_once_after_connecting_to_the_container() {
+    fun onCreate_is_called_once_after_connecting_to_the_container() = runTest {
         val initialState = TestState()
         val middleware = Middleware(initialState)
         val testStateObserver = middleware.container.stateFlow.testFlowObserver()
