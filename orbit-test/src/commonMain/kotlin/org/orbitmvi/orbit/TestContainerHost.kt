@@ -38,7 +38,7 @@ public sealed class TestContainerHost<STATE : Any, SIDE_EFFECT : Any, CONTAINER_
     @OptIn(OrbitInternal::class)
     public val sideEffectObserver: TestFlowObserver<SIDE_EFFECT> = actual.container.sideEffectFlow.testFlowObserver()
 
-    protected abstract fun awaitForEmissions(verification: OrbitVerification<STATE, SIDE_EFFECT>, timeoutMillis: Long)
+    protected abstract suspend fun awaitForEmissions(verification: OrbitVerification<STATE, SIDE_EFFECT>, timeoutMillis: Long)
 
     /**
      * Perform assertions on your [ContainerHost].
@@ -50,7 +50,7 @@ public sealed class TestContainerHost<STATE : Any, SIDE_EFFECT : Any, CONTAINER_
      * @param timeoutMillis How long the assert call should wait for emissions before timing out
      * @param block The block containing assertions for your [ContainerHost]
      */
-    public fun assert(
+    public suspend fun assert(
         initialState: STATE,
         timeoutMillis: Long = 1000L,
         block: OrbitVerification<STATE, SIDE_EFFECT>.() -> Unit = {}
@@ -137,7 +137,7 @@ public class SuspendingTestContainerHost<STATE : Any, SIDE_EFFECT : Any, CONTAIN
     }
 
     // Nothing to do here, since intents are executed entirely as suspending
-    protected override fun awaitForEmissions(verification: OrbitVerification<STATE, SIDE_EFFECT>, timeoutMillis: Long): Unit = Unit
+    protected override suspend fun awaitForEmissions(verification: OrbitVerification<STATE, SIDE_EFFECT>, timeoutMillis: Long): Unit = Unit
 }
 
 public class RegularTestContainerHost<STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHost<STATE, SIDE_EFFECT>>(
@@ -172,19 +172,17 @@ public class RegularTestContainerHost<STATE : Any, SIDE_EFFECT : Any, CONTAINER_
         return this
     }
 
-    protected override fun awaitForEmissions(verification: OrbitVerification<STATE, SIDE_EFFECT>, timeoutMillis: Long) {
+    protected override suspend fun awaitForEmissions(verification: OrbitVerification<STATE, SIDE_EFFECT>, timeoutMillis: Long) {
         // With non-blocking mode await for expected states
-        runBlocking {
-            coroutineScope {
-                joinAll(
-                    launch {
-                        stateObserver.awaitCountSuspending(verification.expectedStateChanges.size + 1, timeoutMillis)
-                    },
-                    launch {
-                        sideEffectObserver.awaitCountSuspending(verification.expectedSideEffects.size, timeoutMillis)
-                    }
-                )
-            }
+        coroutineScope {
+            joinAll(
+                launch {
+                    stateObserver.awaitCountSuspending(verification.expectedStateChanges.size + 1, timeoutMillis)
+                },
+                launch {
+                    sideEffectObserver.awaitCountSuspending(verification.expectedSideEffects.size, timeoutMillis)
+                }
+            )
         }
     }
 }
