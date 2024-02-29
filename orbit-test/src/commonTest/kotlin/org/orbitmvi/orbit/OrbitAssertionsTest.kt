@@ -26,7 +26,7 @@ import kotlin.test.assertFailsWith
 
 internal class OrbitAssertionsTest {
     @Test
-    fun `FAIL - No states emitted`() {
+    fun FAIL___No_states_emitted() {
         // Given Empty state list
         val stateList: List<TestState> = emptyList()
         // And Assertion list with some assertions
@@ -53,7 +53,7 @@ internal class OrbitAssertionsTest {
     }
 
     @Test
-    fun `PASS - No states = no assertions`() {
+    fun PASS___No_states_equals_no_assertions() {
         // Given Empty state list"
         val stateList: List<TestState> = emptyList()
 
@@ -65,7 +65,7 @@ internal class OrbitAssertionsTest {
     }
 
     @Test
-    fun `PASS - Several states in order = matching assertions`() {
+    fun PASS___Several_states_in_order_equals_matching_assertions() {
         // Given State list with several states
         val stateList: List<TestState> = listOf(
             TestState("foobar", 1),
@@ -85,7 +85,7 @@ internal class OrbitAssertionsTest {
     }
 
     @Test
-    fun `PASS - states with already satisfied assertion`() {
+    fun PASS___states_with_already_satisfied_assertion() {
         // Given State list with several states
         val stateList: List<TestState> = listOf(
             TestState("foobar", 2),
@@ -106,7 +106,7 @@ internal class OrbitAssertionsTest {
     }
 
     @Test
-    fun `PASS - states with already satisfied assertions the end`() {
+    fun PASS___states_with_already_satisfied_assertions_the_end() {
         // Given State list with several states
         val stateList: List<TestState> = listOf()
 
@@ -122,7 +122,7 @@ internal class OrbitAssertionsTest {
     }
 
     @Test
-    fun `FAIL - More states emitted than expected`() {
+    fun FAIL___More_states_emitted_than_expected() {
         // Given State list with several states
         val stateList: List<TestState> = listOf(
             TestState("foobar", 1),
@@ -151,7 +151,7 @@ internal class OrbitAssertionsTest {
     }
 
     @Test
-    fun `FAIL - Several states out of order vs matching assertions`() {
+    fun FAIL___Several_states_out_of_order_vs_matching_assertions() {
         // Given State list with several states
         val stateList: List<TestState> = listOf(
             TestState("foobar", 1),
@@ -177,7 +177,7 @@ internal class OrbitAssertionsTest {
     }
 
     @Test
-    fun `FAIL - Permuted states out of order vs assertions`() {
+    fun FAIL___Permuted_states_out_of_order_vs_assertions() {
         listOf(
             TestState("foobar", 1),
             TestState("foobarbaz", 1),
@@ -203,7 +203,7 @@ internal class OrbitAssertionsTest {
     }
 
     @Test
-    fun `FAIL - Permuted assertions out of order vs states`() {
+    fun FAIL___Permuted_assertions_out_of_order_vs_states() {
         listOf<TestState.() -> TestState>(
             { copy(label = label + "bar") },
             { copy(label = label + "baz") },

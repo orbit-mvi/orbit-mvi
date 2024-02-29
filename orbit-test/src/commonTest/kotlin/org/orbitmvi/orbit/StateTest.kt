@@ -28,134 +28,134 @@ internal class StateTest {
     private lateinit var testCase: ParameterisedStateTest
 
     @Test
-    fun `BLOCKING - succeeds if initial state matches expected state`() {
+    fun BLOCKING___succeedsif_initial_state_matches_expected_state() {
         testCase = ParameterisedStateTest(blocking = true)
-        testCase.`succeeds if initial state matches expected state`()
+        testCase.succeeds_if_initial_state_matches_expected_state()
     }
 
     @Test
-    fun `NON BLOCKING - succeeds if initial state matches expected state`() {
+    fun NON_BLOCKING___succeeds_if_initial_state_matches_expected_state() {
         testCase = ParameterisedStateTest(blocking = false)
-        testCase.`succeeds if initial state matches expected state`()
+        testCase.succeeds_if_initial_state_matches_expected_state()
     }
 
     @Test
-    fun `BLOCKING - fails if initial state does not match expected state`() {
+    fun BLOCKING_fails_if_initial_state_does_not_match_expected_state() {
         testCase = ParameterisedStateTest(blocking = true)
-        testCase.`fails if initial state does not match expected state`()
+        testCase.fails_if_initial_state_does_not_match_expected_state()
     }
 
     @Test
-    fun `NON BLOCKING - fails if initial state does not match expected state`() {
+    fun NON_BLOCKING___fails_if_initial_state_does_not_match_expected_state() {
         testCase = ParameterisedStateTest(blocking = false)
-        testCase.`fails if initial state does not match expected state`()
+        testCase.fails_if_initial_state_does_not_match_expected_state()
     }
 
     @Test
-    fun `BLOCKING - succeeds if emitted states match expected states`() {
+    fun BLOCKING___succeeds_if_emitted_states_match_expected_states() {
         testCase = ParameterisedStateTest(blocking = true)
-        testCase.`succeeds if emitted states match expected states`()
+        testCase.succeeds_if_emitted_states_match_expected_states()
     }
 
     @Test
-    fun `NON BLOCKING - succeeds if emitted states match expected states`() {
+    fun NON_BLOCKING___succeeds_if_emitted_states_match_expected_states() {
         testCase = ParameterisedStateTest(blocking = false)
-        testCase.`succeeds if emitted states match expected states`()
+        testCase.succeeds_if_emitted_states_match_expected_states()
     }
 
     @Test
-    fun `BLOCKING - fails if more states emitted than expected`() {
+    fun BLOCKING___fails_if_more_states_emitted_than_expected() {
         testCase = ParameterisedStateTest(blocking = true)
-        testCase.`fails if more states emitted than expected`()
+        testCase.fails_if_more_states_emitted_than_expected()
     }
 
     @Test
-    fun `NON BLOCKING - fails if more states emitted than expected`() {
+    fun NON_BLOCKING___fails_if_more_states_emitted_than_expected() {
         testCase = ParameterisedStateTest(blocking = false)
-        testCase.`fails if more states emitted than expected`()
+        testCase.fails_if_more_states_emitted_than_expected()
     }
 
     @Test
-    fun `BLOCKING - fails if one more state expected than emitted`() {
+    fun BLOCKING___fails_if_one_more_state_expected_than_emitted() {
         testCase = ParameterisedStateTest(blocking = true)
-        testCase.`fails if one more state expected than emitted`()
+        testCase.fails_if_one_more_state_expected_than_emitted()
     }
 
     @Test
-    fun `NON BLOCKING - fails if one more state expected than emitted`() {
+    fun NON_BLOCKING___fails_if_one_more_state_expected_than_emitted() {
         testCase = ParameterisedStateTest(blocking = false)
-        testCase.`fails if one more state expected than emitted`()
+        testCase.fails_if_one_more_state_expected_than_emitted()
     }
 
     @Test
-    fun `BLOCKING - fails if two more states expected than emitted`() {
+    fun BLOCKING___fails_if_two_more_states_expected_than_emitted() {
         testCase = ParameterisedStateTest(blocking = true)
-        testCase.`fails if two more states expected than emitted`()
+        testCase.fails_if_two_more_states_expected_than_emitted()
     }
 
     @Test
-    fun `NON BLOCKING - fails if two more states expected than emitted`() {
+    fun NON_BLOCKING___fails_if_two_more_states_expected_than_emitted() {
         testCase = ParameterisedStateTest(blocking = false)
-        testCase.`fails if two more states expected than emitted`()
+        testCase.fails_if_two_more_states_expected_than_emitted()
     }
 
     @Test
-    fun `BLOCKING - fails if first emitted state does not match expected`() {
+    fun BLOCKING___fails_if_first_emitted_state_does_not_match_expected() {
         testCase = ParameterisedStateTest(blocking = true)
-        testCase.`fails if first emitted state does not match expected`()
+        testCase.fails_if_first_emitted_state_does_not_match_expected()
     }
 
     @Test
-    fun `NON BLOCKING - fails if first emitted state does not match expected`() {
+    fun NON_BLOCKING___fails_if_first_emitted_state_does_not_match_expected() {
         testCase = ParameterisedStateTest(blocking = false)
-        testCase.`fails if first emitted state does not match expected`()
+        testCase.fails_if_first_emitted_state_does_not_match_expected()
     }
 
     @Test
-    fun `BLOCKING - fails if second emitted state does not match expected`() {
+    fun BLOCKING___fails_if_second_emitted_state_does_not_match_expected() {
         testCase = ParameterisedStateTest(blocking = true)
-        testCase.`fails if second emitted state does not match expected`()
+        testCase.fails_if_second_emitted_state_does_not_match_expected()
     }
 
     @Test
-    fun `NON BLOCKING - fails if second emitted state does not match expected`() {
+    fun NON_BLOCKING___fails_if_second_emitted_state_does_not_match_expected() {
         testCase = ParameterisedStateTest(blocking = false)
-        testCase.`fails if second emitted state does not match expected`()
+        testCase.fails_if_second_emitted_state_does_not_match_expected()
     }
 
     @Test
-    fun `BLOCKING - fails if expected states are out of order`() {
+    fun BLOCKING___fails_if_expected_states_are_out_of_order() {
         testCase = ParameterisedStateTest(blocking = true)
-        testCase.`fails if expected states are out of order`()
+        testCase.fails_if_expected_states_are_out_of_order()
     }
 
     @Test
-    fun `NON BLOCKING - fails if expected states are out of order`() {
+    fun NON_BLOCKING___fails_if_expected_states_are_out_of_order() {
         testCase = ParameterisedStateTest(blocking = false)
-        testCase.`fails if expected states are out of order`()
+        testCase.fails_if_expected_states_are_out_of_order()
     }
 
     @Test
-    fun `BLOCKING - succeeds with dropped assertions`() {
+    fun BLOCKING___succeeds_with_dropped_assertions() {
         testCase = ParameterisedStateTest(blocking = true)
-        testCase.`succeeds with dropped assertions`()
+        testCase.succeeds_with_dropped_assertions()
     }
 
     @Test
-    fun `NON BLOCKING - succeeds with dropped assertions`() {
+    fun NON_BLOCKING___succeeds_with_dropped_assertions() {
         testCase = ParameterisedStateTest(blocking = false)
-        testCase.`succeeds with dropped assertions`()
+        testCase.succeeds_with_dropped_assertions()
     }
 
     @Test
-    fun `BLOCKING - fails if dropped assertions mean extra states are observed`() {
+    fun BLOCKING___fails_if_dropped_assertions_mean_extra_states_are_observed() {
         testCase = ParameterisedStateTest(blocking = true)
-        testCase.`fails if dropped assertions mean extra states are observed`()
+        testCase.fails_if_dropped_assertions_mean_extra_states_are_observed()
     }
 
     @Test
-    fun `NON BLOCKING - fails if dropped assertions mean extra states are observed`() {
+    fun NON_BLOCKING___fails_if_dropped_assertions_mean_extra_states_are_observed() {
         testCase = ParameterisedStateTest(blocking = false)
-        testCase.`fails if dropped assertions mean extra states are observed`()
+        testCase.fails_if_dropped_assertions_mean_extra_states_are_observed()
     }
 }

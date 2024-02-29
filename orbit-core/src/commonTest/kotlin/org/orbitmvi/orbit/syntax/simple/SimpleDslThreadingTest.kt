@@ -31,14 +31,15 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.withContext
-import kotlinx.coroutines.withTimeout
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.container
 import org.orbitmvi.orbit.test.IgnoreIos
+import org.orbitmvi.orbit.test.IgnoreJs
 import org.orbitmvi.orbit.test.ScopedBlockingWorkSimulator
 import org.orbitmvi.orbit.test.assertContainExactly
-import org.orbitmvi.orbit.test.runBlocking
+import org.orbitmvi.orbit.test.withTimeoutRealtime
 import org.orbitmvi.orbit.testFlowObserver
 import kotlin.random.Random
 import kotlin.test.AfterTest
@@ -46,6 +47,7 @@ import kotlin.test.Test
 import kotlin.test.assertFailsWith
 
 @ExperimentalCoroutinesApi
+@IgnoreJs
 internal class SimpleDslThreadingTest {
 
     private val scope = CoroutineScope(Job())
@@ -58,13 +60,13 @@ internal class SimpleDslThreadingTest {
 
     @Test
     @IgnoreIos
-    fun `blocking intent with context switch does not block the reducer`() = runBlocking {
+    fun blocking_intent_with_context_switch_does_not_block_the_reducer() = runTest {
         val action = Random.nextInt()
         val testFlowObserver = middleware.container.stateFlow.testFlowObserver()
 
         middleware.backgroundIntent()
 
-        withTimeout(TIMEOUT) {
+        withTimeoutRealtime(TIMEOUT) {
             middleware.intentMutex.withLock {}
         }
 
@@ -75,12 +77,12 @@ internal class SimpleDslThreadingTest {
     }
 
     @Test
-    fun `suspending intent does not block the reducer`() = runBlocking {
+    fun suspending_intent_does_not_block_the_reducer() = runTest {
         val action = Random.nextInt()
         val testFlowObserver = middleware.container.stateFlow.testFlowObserver()
 
         middleware.suspendingIntent()
-        withTimeout(TIMEOUT) {
+        withTimeoutRealtime(TIMEOUT) {
             middleware.intentMutex.withLock {}
         }
 
@@ -91,13 +93,13 @@ internal class SimpleDslThreadingTest {
     }
 
     @Test
-    fun `blocking intent without context switch blocks the reducer`() = runBlocking {
+    fun blocking_intent_without_context_switch_blocks_the_reducer() = runTest {
         val action = Random.nextInt()
         val testFlowObserver = middleware.container.stateFlow.testFlowObserver()
 
         middleware.blockingIntent()
 
-        withTimeout(TIMEOUT) {
+        withTimeoutRealtime(TIMEOUT) {
             middleware.intentMutex.withLock {
             }
         }
@@ -109,21 +111,19 @@ internal class SimpleDslThreadingTest {
     }
 
     @Test
-    fun `blocking reducer blocks an intent`(): Unit = runBlocking {
+    fun blocking_reducer_blocks_an_intent() = runTest {
         middleware.container.stateFlow.testFlowObserver()
 
         middleware.blockingReducer()
-        withTimeout(TIMEOUT) {
+        withTimeoutRealtime(TIMEOUT) {
             middleware.reducerMutex.withLock {}
         }
 
         middleware.simpleIntent()
 
         assertFailsWith<TimeoutCancellationException> {
-            runBlocking {
-                withTimeout(500L) {
-                    middleware.intentMutex.withLock {}
-                }
+            withTimeoutRealtime(500L) {
+                middleware.intentMutex.withLock {}
             }
         }
     }

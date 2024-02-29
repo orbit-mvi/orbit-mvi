@@ -38,7 +38,7 @@ public sealed class TestContainerHost<STATE : Any, SIDE_EFFECT : Any, CONTAINER_
     @OptIn(OrbitInternal::class)
     public val sideEffectObserver: TestFlowObserver<SIDE_EFFECT> = actual.container.sideEffectFlow.testFlowObserver()
 
-    protected abstract fun awaitForEmissions(verification: OrbitVerification<STATE, SIDE_EFFECT>, timeoutMillis: Long)
+    protected abstract suspend fun awaitForEmissions(verification: OrbitVerification<STATE, SIDE_EFFECT>, timeoutMillis: Long)
 
     /**
      * Perform assertions on your [ContainerHost].
@@ -50,7 +50,7 @@ public sealed class TestContainerHost<STATE : Any, SIDE_EFFECT : Any, CONTAINER_
      * @param timeoutMillis How long the assert call should wait for emissions before timing out
      * @param block The block containing assertions for your [ContainerHost]
      */
-    public fun assert(
+    public suspend fun assert(
         initialState: STATE,
         timeoutMillis: Long = 1000L,
         block: OrbitVerification<STATE, SIDE_EFFECT>.() -> Unit = {}
@@ -106,7 +106,7 @@ public class SuspendingTestContainerHost<STATE : Any, SIDE_EFFECT : Any, CONTAIN
     /**
      * Invoke an intent on the [ContainerHost] under test as a suspending function.
      */
-    public suspend fun testIntent(action: CONTAINER_HOST.() -> Unit): SuspendingTestContainerHost<STATE, SIDE_EFFECT, CONTAINER_HOST> {
+    public suspend fun testIntent(action: suspend CONTAINER_HOST.() -> Unit): SuspendingTestContainerHost<STATE, SIDE_EFFECT, CONTAINER_HOST> {
         onCreateAllowed.lazySet(false)
         actual.suspendingIntent(isolateFlow, action)
         return this
@@ -115,7 +115,7 @@ public class SuspendingTestContainerHost<STATE : Any, SIDE_EFFECT : Any, CONTAIN
     @OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
     private suspend fun <STATE : Any, SIDE_EFFECT : Any, T : ContainerHost<STATE, SIDE_EFFECT>> T.suspendingIntent(
         shouldIsolateFlow: Boolean,
-        block: T.() -> Unit
+        block: suspend T.() -> Unit
     ) {
         val testContainer = container.findTestContainer()
 
@@ -137,7 +137,7 @@ public class SuspendingTestContainerHost<STATE : Any, SIDE_EFFECT : Any, CONTAIN
     }
 
     // Nothing to do here, since intents are executed entirely as suspending
-    protected override fun awaitForEmissions(verification: OrbitVerification<STATE, SIDE_EFFECT>, timeoutMillis: Long): Unit = Unit
+    protected override suspend fun awaitForEmissions(verification: OrbitVerification<STATE, SIDE_EFFECT>, timeoutMillis: Long): Unit = Unit
 }
 
 public class RegularTestContainerHost<STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHost<STATE, SIDE_EFFECT>>(
@@ -152,16 +152,14 @@ public class RegularTestContainerHost<STATE : Any, SIDE_EFFECT : Any, CONTAINER_
      * e.g.: created by [CoroutineScope.container]
      */
     @OptIn(OrbitInternal::class)
-    public fun runOnCreate(): RegularTestContainerHost<STATE, SIDE_EFFECT, CONTAINER_HOST> {
+    public suspend fun runOnCreate(): RegularTestContainerHost<STATE, SIDE_EFFECT, CONTAINER_HOST> {
         if (!onCreateAllowed.compareAndSet(expect = true, update = false)) {
             error("runOnCreate should only be invoked once and before any testIntent call")
         }
 
         val onCreate = actual.container.findOnCreate()
 
-        runBlocking {
-            actual.container.orbit(onCreate)
-        }
+        actual.container.orbit(onCreate)
         return this
     }
 
@@ -174,19 +172,17 @@ public class RegularTestContainerHost<STATE : Any, SIDE_EFFECT : Any, CONTAINER_
         return this
     }
 
-    protected override fun awaitForEmissions(verification: OrbitVerification<STATE, SIDE_EFFECT>, timeoutMillis: Long) {
+    protected override suspend fun awaitForEmissions(verification: OrbitVerification<STATE, SIDE_EFFECT>, timeoutMillis: Long) {
         // With non-blocking mode await for expected states
-        runBlocking {
-            coroutineScope {
-                joinAll(
-                    launch {
-                        stateObserver.awaitCountSuspending(verification.expectedStateChanges.size + 1, timeoutMillis)
-                    },
-                    launch {
-                        sideEffectObserver.awaitCountSuspending(verification.expectedSideEffects.size, timeoutMillis)
-                    }
-                )
-            }
+        coroutineScope {
+            joinAll(
+                launch {
+                    stateObserver.awaitCountSuspending(verification.expectedStateChanges.size + 1, timeoutMillis)
+                },
+                launch {
+                    sideEffectObserver.awaitCountSuspending(verification.expectedSideEffects.size, timeoutMillis)
+                }
+            )
         }
     }
 }

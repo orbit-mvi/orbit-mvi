@@ -32,7 +32,7 @@ internal class RepeatOnSubscriptionTest {
     private val initialState = State()
 
     @Test
-    fun `test does not hang when using repeatOnSubscription`() = runTest {
+    fun test_does_not_hang_when_using_repeatOnSubscription() = runTest {
         val testSubject = TestMiddleware(this).test(initialState = initialState)
 
         withTimeout(1000L) {

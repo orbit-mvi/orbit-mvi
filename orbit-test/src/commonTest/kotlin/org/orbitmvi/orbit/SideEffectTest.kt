@@ -28,26 +28,26 @@ internal class SideEffectTest {
     private lateinit var testCase: ParameterisedSideEffectTest
 
     @Test
-    fun `BLOCKING - succeeds if posted side effects match expected side effects`() {
+    fun BLOCKING___succeedsif_posted_side_effects_match_expected_side_effects() {
         testCase = ParameterisedSideEffectTest(blocking = true)
-        testCase.`succeeds if posted side effects match expected side effects`()
+        testCase.succeeds_if_posted_side_effects_match_expected_side_effects()
     }
 
     @Test
-    fun `NON BLOCKING - succeeds if posted side effects match expected side effects`() {
+    fun NON_BLOCKING___succeeds_if_posted_side_effects_match_expected_side_effects() {
         testCase = ParameterisedSideEffectTest(blocking = false)
-        testCase.`succeeds if posted side effects match expected side effects`()
+        testCase.succeeds_if_posted_side_effects_match_expected_side_effects()
     }
 
     @Test
-    fun `BLOCKING - fails if posted side effects do not match expected side effects`() {
+    fun BLOCKING___fails_if_posted_side_effects_do_not_match_expected_side_effects() {
         testCase = ParameterisedSideEffectTest(blocking = true)
-        testCase.`fails if posted side effects do not match expected side effects`()
+        testCase.fails_if_posted_side_effects_do_not_match_expected_side_effects()
     }
 
     @Test
-    fun `NON BLOCKING - fails if posted side effects do not match expected side effects`() {
+    fun NON_BLOCKING___failsif_posted_side_effects_do_not_match_expected_side_effects() {
         testCase = ParameterisedSideEffectTest(blocking = false)
-        testCase.`fails if posted side effects do not match expected side effects`()
+        testCase.fails_if_posted_side_effects_do_not_match_expected_side_effects()
     }
 }

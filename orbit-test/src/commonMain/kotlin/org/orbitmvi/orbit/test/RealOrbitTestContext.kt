@@ -21,7 +21,6 @@ import kotlinx.coroutines.Job
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.annotation.OrbitInternal
-import org.orbitmvi.orbit.runBlocking
 import kotlin.test.assertEquals
 import kotlin.test.fail
 
@@ -34,11 +33,9 @@ public class RealOrbitTestContext<STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST
     private var currentConsumedState: STATE = resolvedInitialState
 
     @OptIn(OrbitInternal::class)
-    override fun runOnCreate(): Job {
+    override suspend fun runOnCreate(): Job {
         val onCreate = containerHost.container.findOnCreate()
-        return runBlocking {
-            containerHost.container.orbit(onCreate)
-        }
+        return containerHost.container.orbit(onCreate)
     }
 
     @Deprecated("Use containerHost instead", replaceWith = ReplaceWith("action(containerHost)"))

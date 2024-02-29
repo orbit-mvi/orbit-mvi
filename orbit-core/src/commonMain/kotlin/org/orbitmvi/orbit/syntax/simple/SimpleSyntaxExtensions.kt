@@ -21,6 +21,7 @@
 package org.orbitmvi.orbit.syntax.simple
 
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.collect
@@ -31,7 +32,6 @@ import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.annotation.OrbitDsl
 import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.idling.withIdling
-import org.orbitmvi.orbit.internal.runBlocking
 import org.orbitmvi.orbit.syntax.ContainerContext
 
 /**
@@ -69,7 +69,7 @@ internal fun <STATE : Any, SIDE_EFFECT : Any> Container<STATE, SIDE_EFFECT>.inte
     registerIdling: Boolean = true,
     transformer: suspend ContainerContext<STATE, SIDE_EFFECT>.() -> Unit
 ): Job =
-    kotlinx.coroutines.runBlocking {
+    CoroutineScope(Dispatchers.Default).launch {
         orbit {
             withIdling(registerIdling) {
                 transformer()
@@ -99,17 +99,17 @@ public fun <STATE : Any, SIDE_EFFECT : Any> ContainerHost<STATE, SIDE_EFFECT>.in
  */
 @OrbitDsl
 @OrbitExperimental
-public fun <STATE : Any, SIDE_EFFECT : Any> ContainerHost<STATE, SIDE_EFFECT>.blockingIntent(
+public suspend fun <STATE : Any, SIDE_EFFECT : Any> ContainerHost<STATE, SIDE_EFFECT>.blockingIntent(
     registerIdling: Boolean = true,
     transformer: suspend SimpleSyntax<STATE, SIDE_EFFECT>.() -> Unit
-): Unit =
-    runBlocking {
-        container.inlineOrbit {
-            withIdling(registerIdling) {
-                SimpleSyntax(this).transformer()
-            }
+) {
+    container.inlineOrbit {
+        withIdling(registerIdling) {
+            SimpleSyntax(this).transformer()
         }
     }
+}
+
 
 @OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
 @OrbitDsl

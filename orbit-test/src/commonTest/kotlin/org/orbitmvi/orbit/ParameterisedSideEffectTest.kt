@@ -38,7 +38,7 @@ internal class ParameterisedSideEffectTest(private val blocking: Boolean) {
 
     private val initialState = State()
 
-    fun `succeeds if posted side effects match expected side effects`() = runTest {
+    fun succeeds_if_posted_side_effects_match_expected_side_effects() = runTest {
         val testSubject = testSubject(this)
         val sideEffects = List(Random.nextInt(1, 5)) { Random.nextInt() }
 
@@ -49,7 +49,7 @@ internal class ParameterisedSideEffectTest(private val blocking: Boolean) {
         }
     }
 
-    fun `fails if posted side effects do not match expected side effects`() = runTest {
+    fun fails_if_posted_side_effects_do_not_match_expected_side_effects() = runTest {
         val testSubject = testSubject(this)
         val sideEffects = List(Random.nextInt(1, 5)) { Random.nextInt() }
         val sideEffects2 = List(Random.nextInt(1, 5)) { Random.nextInt() }

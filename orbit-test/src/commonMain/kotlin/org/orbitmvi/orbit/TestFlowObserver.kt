@@ -71,10 +71,8 @@ public class TestFlowObserver<T>(flow: Flow<T>) {
      * @param count The awaited element count.
      * @param timeout How long to wait for in milliseconds
      */
-    public fun awaitCount(count: Int, timeout: Long = 5000L) {
-        runBlocking {
-            awaitFor(timeout) { values.size == count }
-        }
+    public suspend fun awaitCount(count: Int, timeout: Long = 5000L) {
+        awaitFor(timeout) { values.size == count }
     }
 
     /**

@@ -23,7 +23,7 @@ internal class InfiniteFlowTest {
     }
 
     @Test
-    fun `infinite flow can be tested`() {
+    fun infinite_flow_can_be_tested() {
         val dispatcher = UnconfinedTestDispatcher()
         val middleware = InfiniteFlowMiddleware().liveTest {
             this.dispatcher = dispatcher

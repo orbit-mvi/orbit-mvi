@@ -36,7 +36,7 @@ class SideEffectTest {
     private val initialState = State()
 
     @Test
-    fun `succeeds if posted side effects match expected side effects`() = runTest {
+    fun succeeds_if_posted_side_effects_match_expected_side_effects() = runTest {
         val sideEffects = List(Random.nextInt(1, 5)) { Random.nextInt() }
 
         SideEffectTestMiddleware(this).test(this) {
@@ -56,7 +56,7 @@ class SideEffectTest {
     }
 
     @Test
-    fun `succeeds if posted side effects match expected side effects - shorthand syntax`() = runTest {
+    fun succeeds_if_posted_side_effects_match_expected_side_effects___shorthand_syntax() = runTest {
         val sideEffects = List(Random.nextInt(1, 5)) { Random.nextInt() }
 
         SideEffectTestMiddleware(this).test(this) {
@@ -71,7 +71,7 @@ class SideEffectTest {
     }
 
     @Test
-    fun `fails if posted side effects do not match expected side effects`() = runTest {
+    fun fails_if_posted_side_effects_do_not_match_expected_side_effects() = runTest {
         val sideEffects = List(Random.nextInt(1, 5)) { Random.nextInt() }
         val sideEffects2 = List(Random.nextInt(1, 5)) { Random.nextInt() }
 
@@ -95,7 +95,7 @@ class SideEffectTest {
     }
 
     @Test
-    fun `fails if expected a side effect but got a state`() = runTest {
+    fun fails_if_expected_a_side_effect_but_got_a_state() = runTest {
         val sideEffect = Random.nextInt()
 
         assertFailsWith<AssertionError> {

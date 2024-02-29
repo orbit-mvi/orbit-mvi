@@ -46,14 +46,14 @@ internal class ParameterisedStateTest(private val blocking: Boolean) {
         StateTestMiddleware(scope).liveTest(initialState)
     }
 
-    fun `succeeds if initial state matches expected state`() = runTest {
+    fun succeeds_if_initial_state_matches_expected_state() = runTest {
         val testSubject = testSubject(this)
         testSubject.stateObserver.awaitCount(1)
 
         testSubject.assert(initialState)
     }
 
-    fun `fails if initial state does not match expected state`() = runTest {
+    fun fails_if_initial_state_does_not_match_expected_state() = runTest {
         val testSubject = testSubject(this)
         val someRandomState = State()
 
@@ -68,7 +68,7 @@ internal class ParameterisedStateTest(private val blocking: Boolean) {
         )
     }
 
-    fun `succeeds if emitted states match expected states`() = runTest {
+    fun succeeds_if_emitted_states_match_expected_states() = runTest {
         val testSubject = testSubject(this)
         val action = Random.nextInt()
         val action2 = Random.nextInt()
@@ -86,7 +86,7 @@ internal class ParameterisedStateTest(private val blocking: Boolean) {
         }
     }
 
-    fun `fails if more states emitted than expected`() = runTest {
+    fun fails_if_more_states_emitted_than_expected() = runTest {
         val testSubject = testSubject(this)
         val action = Random.nextInt()
         val action2 = Random.nextInt()
@@ -110,7 +110,7 @@ internal class ParameterisedStateTest(private val blocking: Boolean) {
         )
     }
 
-    fun `fails if one more state expected than emitted`() = runTest {
+    fun fails_if_one_more_state_expected_than_emitted() = runTest {
         val testSubject = testSubject(this)
         val action = Random.nextInt()
         val action2 = Random.nextInt()
@@ -137,7 +137,7 @@ internal class ParameterisedStateTest(private val blocking: Boolean) {
         )
     }
 
-    fun `fails if two more states expected than emitted`() = runTest {
+    fun fails_if_two_more_states_expected_than_emitted() = runTest {
         val testSubject = testSubject(this)
         val action = Random.nextInt()
         val action2 = Random.nextInt()
@@ -166,7 +166,7 @@ internal class ParameterisedStateTest(private val blocking: Boolean) {
         )
     }
 
-    fun `fails if first emitted state does not match expected`() = runTest {
+    fun fails_if_first_emitted_state_does_not_match_expected() = runTest {
         val testSubject = testSubject(this)
         val action = Random.nextInt()
         val action2 = Random.nextInt()
@@ -191,7 +191,7 @@ internal class ParameterisedStateTest(private val blocking: Boolean) {
         )
     }
 
-    fun `fails if second emitted state does not match expected`() = runTest {
+    fun fails_if_second_emitted_state_does_not_match_expected() = runTest {
         val testSubject = testSubject(this)
         val action = Random.nextInt()
         val action2 = Random.nextInt()
@@ -216,7 +216,7 @@ internal class ParameterisedStateTest(private val blocking: Boolean) {
         )
     }
 
-    fun `fails if expected states are out of order`() = runTest {
+    fun fails_if_expected_states_are_out_of_order() = runTest {
         val testSubject = testSubject(this)
         val action = Random.nextInt()
         val action2 = Random.nextInt()
@@ -240,7 +240,7 @@ internal class ParameterisedStateTest(private val blocking: Boolean) {
         )
     }
 
-    fun `succeeds with dropped assertions`() = runTest {
+    fun succeeds_with_dropped_assertions() = runTest {
         val testSubject = testSubject(this)
         val action = Random.nextInt()
         val action2 = Random.nextInt()
@@ -263,7 +263,7 @@ internal class ParameterisedStateTest(private val blocking: Boolean) {
         }
     }
 
-    fun `fails if dropped assertions mean extra states are observed`() = runTest {
+    fun fails_if_dropped_assertions_mean_extra_states_are_observed() = runTest {
         val testSubject = testSubject(this)
         val action = Random.nextInt()
         val action2 = Random.nextInt()

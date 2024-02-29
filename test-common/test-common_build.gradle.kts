@@ -25,6 +25,9 @@ plugins {
 
 kotlin {
     jvm()
+    js(IR) {
+        browser()
+    }
     ios()
     iosSimulatorArm64()
     sourceSets {
@@ -41,6 +44,12 @@ kotlin {
         val jvmMain by getting {
             dependencies {
                 implementation(kotlin("test-junit"))
+            }
+        }
+
+        val jsMain by getting {
+            dependencies {
+                implementation(kotlin("test-js"))
             }
         }
 

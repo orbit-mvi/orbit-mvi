@@ -19,6 +19,7 @@ package org.orbitmvi.orbit.sample.text.app
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.runBlocking
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.annotation.OrbitExperimental
@@ -40,10 +41,12 @@ class TextViewModel : ContainerHost<TextViewModel.State, Nothing> {
         reduce { state.copy(badField = text) }
     }
 
-    fun updateTextGood(text: String) = blockingIntent {
-        // simulate considerable load on the device
-        delay(Random.nextLong(30, 60))
-        reduce { state.copy(goodField = text) }
+    fun updateTextGood(text: String) = runBlocking {
+        blockingIntent {
+            // simulate considerable load on the device
+            delay(Random.nextLong(30, 60))
+            reduce { state.copy(goodField = text) }
+        }
     }
 
     data class State(

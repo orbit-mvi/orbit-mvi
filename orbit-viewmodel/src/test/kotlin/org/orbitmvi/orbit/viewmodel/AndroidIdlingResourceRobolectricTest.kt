@@ -45,7 +45,7 @@ class AndroidIdlingResourceRobolectricTest {
     }
 
     @Test
-    fun `idling resources have unique names`() {
+    fun idling_resources_have_unique_names() {
         scope.container<TestState, Int>(
             initialState = TestState(0),
             buildSettings = { idlingRegistry = AndroidIdlingResource() }
