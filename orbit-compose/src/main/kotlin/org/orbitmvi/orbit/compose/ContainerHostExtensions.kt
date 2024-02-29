@@ -21,7 +21,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
@@ -42,9 +44,11 @@ public fun <STATE : Any, SIDE_EFFECT : Any> ContainerHost<STATE, SIDE_EFFECT>.co
     val sideEffectFlow = container.sideEffectFlow
     val lifecycleOwner = LocalLifecycleOwner.current
 
+    val callback by rememberUpdatedState(newValue = sideEffect)
+
     LaunchedEffect(sideEffectFlow, lifecycleOwner) {
         lifecycleOwner.lifecycle.repeatOnLifecycle(lifecycleState) {
-            sideEffectFlow.collect { sideEffect(it) }
+            sideEffectFlow.collect { callback(it) }
         }
     }
 }
@@ -62,9 +66,11 @@ public fun <STATE : Any, SIDE_EFFECT : Any> ContainerHost<STATE, SIDE_EFFECT>.co
     val stateFlow = container.stateFlow
     val lifecycleOwner = LocalLifecycleOwner.current
 
+    val callback by rememberUpdatedState(newValue = state)
+
     LaunchedEffect(stateFlow, lifecycleOwner) {
         lifecycleOwner.lifecycle.repeatOnLifecycle(lifecycleState) {
-            stateFlow.collect { state(it) }
+            stateFlow.collect { callback(it) }
         }
     }
 }
