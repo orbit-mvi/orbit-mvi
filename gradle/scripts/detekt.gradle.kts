@@ -41,12 +41,13 @@ repositories {
 apply<DetektPlugin>()
 
 tasks.named("detekt", Detekt::class.java).configure {
-    setSource(rootProject.files())
+    setSource(rootProject.files("."))
 
     include("**/*.kt")
     include("**/*.kts")
     exclude("**/resources/**")
     exclude("**/build/**")
+    exclude("**/.gradle/**")
 
     parallel = true
 
