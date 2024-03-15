@@ -111,6 +111,53 @@ public fun <STATE : Any, SIDE_EFFECT : Any> ContainerHost<STATE, SIDE_EFFECT>.bl
         }
     }
 
+/**
+ * Used for parallel decomposition or subdivision of a larger intent into smaller parts.
+ *
+ * Should only be used from within an [intent] or [subIntent] block.
+ *
+ * An example use case for sub-intents is to [launch] multiple from a single intent using [coroutineScope].
+ * For example, when listening to multiple flows from the [Container] `onCreate` lambda.
+ *
+ * ```
+ * override val container = scope.container<TestState, String>(initialState) {
+ *             coroutineScope {
+ *                 launch {
+ *                     sendSideEffect1()
+ *                 }
+ *                 launch {
+ *                     sendSideEffect2()
+ *                 }
+ *             }
+ *         }
+ *
+ * @OptIn(OrbitExperimental::class)
+ * private suspend fun sendSideEffect1() = subIntent {
+ *     flow1.collect {
+ *         postSideEffect(it)
+ *     }
+ * }
+ *
+ * @OptIn(OrbitExperimental::class)
+ * private suspend fun sendSideEffect1() = subIntent {
+ *     flow2.collect {
+ *         postSideEffect(it)
+ *     }
+ * }
+ *
+ * ```
+ *
+ * @param transformer lambda representing the transformer
+ */
+@OrbitDsl
+@OrbitExperimental
+public suspend fun <STATE : Any, SIDE_EFFECT : Any> ContainerHost<STATE, SIDE_EFFECT>.subIntent(
+    transformer: suspend SimpleSyntax<STATE, SIDE_EFFECT>.() -> Unit,
+): Unit =
+    container.inlineOrbit {
+        SimpleSyntax(this).transformer()
+    }
+
 @OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
 @OrbitDsl
 public suspend fun <S : Any, SE : Any> SimpleSyntax<S, SE>.repeatOnSubscription(
