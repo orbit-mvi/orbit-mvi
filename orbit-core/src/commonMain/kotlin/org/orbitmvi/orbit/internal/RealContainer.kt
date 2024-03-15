@@ -41,7 +41,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.RealSettings
-import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.internal.repeatonsubscription.DelayingSubscribedCounter
 import org.orbitmvi.orbit.internal.repeatonsubscription.SubscribedCounter
 import org.orbitmvi.orbit.internal.repeatonsubscription.refCount
@@ -65,12 +64,10 @@ public class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
     override val stateFlow: StateFlow<STATE> = internalStateFlow.refCount(subscribedCounter)
     override val sideEffectFlow: Flow<SIDE_EFFECT> = sideEffectChannel.receiveAsFlow().refCount(subscribedCounter)
 
-    @OrbitExperimental
     override suspend fun joinIntents() {
         intentJob.children.toList().joinAll()
     }
 
-    @OrbitExperimental
     override fun cancel() {
         scope.cancel()
         intentJob.cancel()
@@ -92,7 +89,6 @@ public class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
         return job
     }
 
-    @OrbitExperimental
     override suspend fun inlineOrbit(orbitIntent: suspend ContainerContext<STATE, SIDE_EFFECT>.() -> Unit) {
         initialiseIfNeeded()
         pluginContext.orbitIntent()

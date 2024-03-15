@@ -19,7 +19,6 @@ package org.orbitmvi.orbit.test
 import app.cash.turbine.ReceiveTurbine
 import kotlinx.coroutines.Job
 import org.orbitmvi.orbit.ContainerHost
-import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.annotation.OrbitInternal
 import org.orbitmvi.orbit.runBlocking
 import kotlin.test.assertEquals
@@ -62,7 +61,6 @@ public class RealOrbitTestContext<STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST
         return (item as? Item.SideEffectItem)?.value ?: fail("Expected Side Effect but got $item")
     }
 
-    @OptIn(OrbitExperimental::class)
     override suspend fun cancelAndIgnoreRemainingItems() {
         emissions.cancelAndIgnoreRemainingEvents()
         containerHost.container.cancel()

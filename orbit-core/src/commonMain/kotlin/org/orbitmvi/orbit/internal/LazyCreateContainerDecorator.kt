@@ -28,7 +28,6 @@ import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.flow
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerDecorator
-import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.syntax.ContainerContext
 import org.orbitmvi.orbit.syntax.simple.intent
 
@@ -55,7 +54,6 @@ public class LazyCreateContainerDecorator<STATE : Any, SIDE_EFFECT : Any>(
         runOnCreate().also { return actual.orbit(orbitIntent) }
     }
 
-    @OptIn(OrbitExperimental::class)
     override suspend fun inlineOrbit(orbitIntent: suspend ContainerContext<STATE, SIDE_EFFECT>.() -> Unit) {
         runOnCreate().also { actual.inlineOrbit(orbitIntent) }
     }
