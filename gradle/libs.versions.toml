@@ -1,5 +1,5 @@
 #
-# Copyright 2023 Mikołaj Leszczyński & Appmattus Limited
+# Copyright 2023-2024 Mikołaj Leszczyński & Appmattus Limited
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -53,6 +53,7 @@ kotlinTest = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = 
 # AndroidX
 androidxLifecycleSavedState = { module = "androidx.lifecycle:lifecycle-viewmodel-savedstate", version.ref = "androidxLifecycles" }
 androidxLifecycleViewmodelKtx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "androidxLifecycles" }
+androidxLifecycleRuntimeCompose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "androidxLifecycles" }
 androidxLifecycleRuntimeKtx = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "androidxLifecycles" }
 androidxEspressoIdlingResource = { module = "androidx.test.espresso:espresso-idling-resource", version.ref = "androidxEspresso" }
 androidxEspressoCore = { module = "androidx.test.espresso:espresso-core", version.ref = "androidxEspresso" }

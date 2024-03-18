@@ -49,8 +49,8 @@ fun <STATE : Any, SIDE_EFFECT : Any> ContainerHost<STATE, SIDE_EFFECT>.observe(
     lifecycleOwner.lifecycleScope.launch {
         // See https://medium.com/androiddevelopers/a-safer-way-to-collect-flows-from-android-uis-23080b1f8bda
         lifecycleOwner.lifecycle.repeatOnLifecycle(lifecycleState) {
-            state?.let { launch { container.stateFlow.collect { state(it) } } }
-            sideEffect?.let { launch { container.sideEffectFlow.collect { sideEffect(it) } } }
+            state?.let { launch { container.refCountStateFlow.collect { state(it) } } }
+            sideEffect?.let { launch { container.refCountSideEffectFlow.collect { sideEffect(it) } } }
         }
     }
 }

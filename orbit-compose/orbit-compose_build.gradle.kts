@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-2023 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 2021-2024 Mikołaj Leszczyński & Appmattus Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,6 +43,7 @@ dependencies {
     api(project(":orbit-core"))
 
     implementation(libs.androidxComposeRuntime)
+    implementation(libs.androidxLifecycleRuntimeCompose)
     implementation(libs.androidxLifecycleRuntimeKtx)
     implementation(libs.androidxComposeUi)
 

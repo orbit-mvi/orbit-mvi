@@ -41,6 +41,7 @@ import org.robolectric.RobolectricTestRunner
 import kotlin.random.Random
 import kotlin.test.assertEquals
 
+@Suppress("DEPRECATION")
 @RunWith(RobolectricTestRunner::class)
 @ExperimentalCoroutinesApi
 class ContainerHostExtensionsKtTest {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 2021-2024 Mikołaj Leszczyński & Appmattus Limited
  * Copyright 2020 Babylon Partners Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -24,6 +24,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 import org.orbitmvi.orbit.syntax.ContainerContext
+import org.orbitmvi.orbit.syntax.simple.repeatOnSubscription
 
 /**
  * The heart of the Orbit MVI system. Represents an MVI container with its input and outputs.
@@ -47,6 +48,17 @@ public interface Container<STATE : Any, SIDE_EFFECT : Any> {
     public val stateFlow: StateFlow<STATE>
 
     /**
+     *
+     * A version of [stateFlow] ref-counted for the [repeatOnSubscription] operator. Do not use when subscribing to state updates within
+     * your [ContainerHost].
+     *
+     * A [StateFlow] of state updates. Emits the latest state upon subscription and serves only distinct
+     * values (through equality comparison).
+     *
+     */
+    public val refCountStateFlow: StateFlow<STATE>
+
+    /**
      * A [Flow] of one-off side effects posted from [Container]. Caches side effects when there are no collectors.
      * The size of the cache can be controlled via [SettingsBuilder] and determines if and when the orbit thread suspends when you
      * post a side effect. The default is unlimited. You don't have to touch this unless you are posting many side effects which could result in
@@ -57,6 +69,23 @@ public interface Container<STATE : Any, SIDE_EFFECT : Any> {
      * resulting `BroadcastChannel`.
      */
     public val sideEffectFlow: Flow<SIDE_EFFECT>
+
+    /**
+     * A version of [sideEffectFlow] ref-counted for the [repeatOnSubscription] operator. Do not use when subscribing to state updates within
+     * your [ContainerHost].
+     *
+     * [Flow] of one-off side effects posted from [Container]. Caches side effects when there are no collectors.
+     * The size of the cache can be controlled via [SettingsBuilder] and determines if and when the orbit thread suspends when you
+     * post a side effect. The default is unlimited. You don't have to touch this unless you are posting many side effects which could result in
+     * `OutOfMemoryError`.
+     *
+     * This is designed to be collected by one observer only in order to ensure that side effect caching works in a predictable way.
+     * If your particular use case requires multi-casting use `broadcast` on this [Flow], but be aware that caching will not work for the
+     * resulting `BroadcastChannel`.
+     *
+     *  It's the same as [stateFlow], but it's ref-counted for the [repeatOnSubscription] operator.
+     */
+    public val refCountSideEffectFlow: Flow<SIDE_EFFECT>
 
     /**
      * Executes an orbit intent. The intents are built in the [ContainerHost] using your chosen syntax.
