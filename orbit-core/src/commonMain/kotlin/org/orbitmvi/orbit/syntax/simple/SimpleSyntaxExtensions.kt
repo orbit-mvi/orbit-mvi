@@ -29,7 +29,6 @@ import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.annotation.OrbitDsl
-import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.idling.withIdling
 import org.orbitmvi.orbit.internal.runBlocking
 import org.orbitmvi.orbit.syntax.ContainerContext
@@ -98,7 +97,6 @@ public fun <STATE : Any, SIDE_EFFECT : Any> ContainerHost<STATE, SIDE_EFFECT>.in
  * @param transformer lambda representing the transformer
  */
 @OrbitDsl
-@OrbitExperimental
 public fun <STATE : Any, SIDE_EFFECT : Any> ContainerHost<STATE, SIDE_EFFECT>.blockingIntent(
     registerIdling: Boolean = true,
     transformer: suspend SimpleSyntax<STATE, SIDE_EFFECT>.() -> Unit

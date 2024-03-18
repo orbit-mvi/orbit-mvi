@@ -25,7 +25,6 @@ import kotlinx.coroutines.flow.StateFlow
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerDecorator
 import org.orbitmvi.orbit.RealSettings
-import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.syntax.ContainerContext
 
 public class TestContainerDecorator<STATE : Any, SIDE_EFFECT : Any>(
@@ -52,7 +51,6 @@ public class TestContainerDecorator<STATE : Any, SIDE_EFFECT : Any>(
         return delegate.value.orbit(orbitIntent)
     }
 
-    @OptIn(OrbitExperimental::class)
     override suspend fun inlineOrbit(orbitIntent: suspend ContainerContext<STATE, SIDE_EFFECT>.() -> Unit) {
         delegate.value.inlineOrbit(orbitIntent)
     }
@@ -85,12 +83,10 @@ public class TestContainerDecorator<STATE : Any, SIDE_EFFECT : Any>(
         }
     }
 
-    @OptIn(OrbitExperimental::class)
     public override suspend fun joinIntents() {
         delegate.value.joinIntents()
     }
 
-    @OptIn(OrbitExperimental::class)
     public override fun cancel() {
         delegate.value.cancel()
     }

@@ -21,14 +21,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
-import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.container
 import org.orbitmvi.orbit.syntax.simple.blockingIntent
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.reduce
 import kotlin.random.Random
 
-@OptIn(OrbitExperimental::class)
 @Suppress("MagicNumber")
 class TextViewModel : ContainerHost<TextViewModel.State, Nothing> {
     private val scope = CoroutineScope(Dispatchers.Main)

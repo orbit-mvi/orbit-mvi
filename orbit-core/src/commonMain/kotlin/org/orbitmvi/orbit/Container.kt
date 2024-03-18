@@ -23,7 +23,6 @@ package org.orbitmvi.orbit
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
-import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.syntax.ContainerContext
 
 /**
@@ -71,18 +70,15 @@ public interface Container<STATE : Any, SIDE_EFFECT : Any> {
      *
      * @param orbitIntent lambda returning the suspend function representing the intent
      */
-    @OrbitExperimental
     public suspend fun inlineOrbit(orbitIntent: suspend ContainerContext<STATE, SIDE_EFFECT>.() -> Unit)
 
     /**
      * Cancels the container scope and all intents in progress.
      */
-    @OrbitExperimental
     public fun cancel()
 
     /**
      * Joins all in progress intents in the container. This suspends until all intents have completed.
      */
-    @OrbitExperimental
     public suspend fun joinIntents()
 }
