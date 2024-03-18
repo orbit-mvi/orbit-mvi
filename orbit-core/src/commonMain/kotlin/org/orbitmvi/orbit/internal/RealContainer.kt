@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-2022 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 2021-2024 Mikołaj Leszczyński & Appmattus Limited
  * Copyright 2020 Babylon Partners Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -34,6 +34,7 @@ import kotlinx.coroutines.channels.produce
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.joinAll
@@ -61,8 +62,11 @@ public class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
     private val sideEffectChannel = Channel<SIDE_EFFECT>(settings.sideEffectBufferSize)
     private val intentCounter = atomic(0)
 
-    override val stateFlow: StateFlow<STATE> = internalStateFlow.refCount(subscribedCounter)
-    override val sideEffectFlow: Flow<SIDE_EFFECT> = sideEffectChannel.receiveAsFlow().refCount(subscribedCounter)
+    override val stateFlow: StateFlow<STATE> = internalStateFlow.asStateFlow()
+    override val sideEffectFlow: Flow<SIDE_EFFECT> = sideEffectChannel.receiveAsFlow()
+
+    override val refCountStateFlow: StateFlow<STATE> = internalStateFlow.refCount(subscribedCounter)
+    override val refCountSideEffectFlow: Flow<SIDE_EFFECT> = sideEffectFlow.refCount(subscribedCounter)
 
     override suspend fun joinIntents() {
         intentJob.children.toList().joinAll()
@@ -78,7 +82,7 @@ public class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
         postSideEffect = { sideEffectChannel.send(it) },
         getState = { internalStateFlow.value },
         reduce = { reducer -> internalStateFlow.update(reducer) },
-        subscribedCounter
+        subscribedCounter,
     )
 
     override suspend fun orbit(orbitIntent: suspend ContainerContext<STATE, SIDE_EFFECT>.() -> Unit): Job {

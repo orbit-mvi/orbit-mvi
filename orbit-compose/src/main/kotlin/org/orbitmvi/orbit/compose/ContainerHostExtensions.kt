@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-2022 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 2021-2024 Mikołaj Leszczyński & Appmattus Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,19 +20,21 @@ import android.annotation.SuppressLint
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.flowWithLifecycle
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
+import org.orbitmvi.orbit.syntax.simple.repeatOnSubscription
 
 /**
  * Observe [Container.sideEffectFlow] in a Compose [LaunchedEffect].
+ *
+ * Active subscriptions from this operator count towards [repeatOnSubscription] subscribers.
+ *
  * @param lifecycleState [Lifecycle.State] in which [state] block runs.
  */
 @SuppressLint("ComposableNaming")
@@ -41,7 +43,7 @@ public fun <STATE : Any, SIDE_EFFECT : Any> ContainerHost<STATE, SIDE_EFFECT>.co
     lifecycleState: Lifecycle.State = Lifecycle.State.STARTED,
     sideEffect: (suspend (sideEffect: SIDE_EFFECT) -> Unit)
 ) {
-    val sideEffectFlow = container.sideEffectFlow
+    val sideEffectFlow = container.refCountSideEffectFlow
     val lifecycleOwner = LocalLifecycleOwner.current
 
     val callback by rememberUpdatedState(newValue = sideEffect)
@@ -56,14 +58,17 @@ public fun <STATE : Any, SIDE_EFFECT : Any> ContainerHost<STATE, SIDE_EFFECT>.co
 /**
  * Observe [Container.stateFlow] in a Compose [LaunchedEffect].
  * @param lifecycleState [Lifecycle.State] in which [state] block runs.
+ *
+ * Active subscriptions from this operator count towards [repeatOnSubscription] subscribers.
  */
 @SuppressLint("ComposableNaming")
 @Composable
+@Deprecated("This API will no longer be supported for Compose. Use collectAsState or container.refCountStateFlow instead")
 public fun <STATE : Any, SIDE_EFFECT : Any> ContainerHost<STATE, SIDE_EFFECT>.collectState(
     lifecycleState: Lifecycle.State = Lifecycle.State.STARTED,
     state: (suspend (state: STATE) -> Unit)
 ) {
-    val stateFlow = container.stateFlow
+    val stateFlow = container.refCountStateFlow
     val lifecycleOwner = LocalLifecycleOwner.current
 
     val callback by rememberUpdatedState(newValue = state)
@@ -77,21 +82,13 @@ public fun <STATE : Any, SIDE_EFFECT : Any> ContainerHost<STATE, SIDE_EFFECT>.co
 
 /**
  * Observe [Container.stateFlow] as [State].
- * @param lifecycleState The Lifecycle where the restarting collecting from this flow work will be kept alive.
+ * @param lifecycleState The minimum lifecycle state at which the state is observed.
+ *
+ * Active subscriptions from this operator count towards [repeatOnSubscription] subscribers.
  */
 @Composable
 public fun <STATE : Any, SIDE_EFFECT : Any> ContainerHost<STATE, SIDE_EFFECT>.collectAsState(
     lifecycleState: Lifecycle.State = Lifecycle.State.STARTED
 ): State<STATE> {
-    val stateFlow = container.stateFlow
-    val lifecycleOwner = LocalLifecycleOwner.current
-
-    val stateFlowLifecycleAware = remember(stateFlow, lifecycleOwner) {
-        stateFlow.flowWithLifecycle(lifecycleOwner.lifecycle, lifecycleState)
-    }
-
-    // Need to access the initial value to convert to State - collectAsState() suppresses this lint warning too
-    @SuppressLint("StateFlowValueCalledInComposition")
-    val initialValue = stateFlow.value
-    return stateFlowLifecycleAware.collectAsState(initialValue)
+    return container.refCountStateFlow.collectAsStateWithLifecycle(minActiveState = lifecycleState)
 }

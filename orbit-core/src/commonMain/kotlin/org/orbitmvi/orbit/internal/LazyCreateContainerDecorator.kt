@@ -38,10 +38,14 @@ public class LazyCreateContainerDecorator<STATE : Any, SIDE_EFFECT : Any>(
     private val created = atomic(false)
 
     override val stateFlow: StateFlow<STATE> = actual.stateFlow.onSubscribe { runOnCreate() }
-
+    override val refCountStateFlow: StateFlow<STATE> = actual.refCountStateFlow.onSubscribe { runOnCreate() }
     override val sideEffectFlow: Flow<SIDE_EFFECT> = flow {
         runOnCreate()
         emitAll(actual.sideEffectFlow)
+    }
+    override val refCountSideEffectFlow: Flow<SIDE_EFFECT> = flow {
+        runOnCreate()
+        emitAll(actual.refCountSideEffectFlow)
     }
 
     private fun runOnCreate() {
