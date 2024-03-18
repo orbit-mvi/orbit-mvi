@@ -13,7 +13,6 @@ public class TestSettingsBuilder internal constructor(
         UnconfinedTestDispatcher().let {
             RealSettings(
                 eventLoopDispatcher = it,
-                intentLaunchingDispatcher = it
             )
         }
     )
@@ -37,7 +36,6 @@ public class LiveTestSettingsBuilder internal constructor(
         UnconfinedTestDispatcher().let {
             RealSettings(
                 eventLoopDispatcher = it,
-                intentLaunchingDispatcher = it
             )
         }
     )
@@ -47,7 +45,6 @@ public class LiveTestSettingsBuilder internal constructor(
         public set(value) {
             settings = settings.copy(
                 eventLoopDispatcher = value,
-                intentLaunchingDispatcher = value
             )
         }
 
