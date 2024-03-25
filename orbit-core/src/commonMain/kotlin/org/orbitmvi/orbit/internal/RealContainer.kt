@@ -47,6 +47,7 @@ import org.orbitmvi.orbit.internal.repeatonsubscription.DelayingSubscribedCounte
 import org.orbitmvi.orbit.internal.repeatonsubscription.SubscribedCounter
 import org.orbitmvi.orbit.internal.repeatonsubscription.refCount
 import org.orbitmvi.orbit.syntax.ContainerContext
+import kotlin.coroutines.EmptyCoroutineContext
 
 public class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
     initialState: STATE,
@@ -112,7 +113,8 @@ public class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
                 for ((job, intent) in dispatchChannel) {
                     val exceptionHandlerContext =
                         (settings.exceptionHandler?.plus(SupervisorJob(job)) ?: job) +
-                            CoroutineName("$COROUTINE_NAME_INTENT${intentCounter.getAndIncrement()}")
+                                (settings.intentLaunchingDispatcher ?: EmptyCoroutineContext) +
+                                CoroutineName("$COROUTINE_NAME_INTENT${intentCounter.getAndIncrement()}")
                     launch(exceptionHandlerContext, start = CoroutineStart.UNDISPATCHED) {
                         pluginContext.intent()
                     }.invokeOnCompletion { job.complete() }

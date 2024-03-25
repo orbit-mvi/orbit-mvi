@@ -79,6 +79,7 @@ private fun TestSettings.toRealSettings(testDispatcher: CoroutineDispatcher?): R
 
     return RealSettings(
         eventLoopDispatcher = dispatcher,
+        intentLaunchingDispatcher = dispatcher,
         exceptionHandler = exceptionHandlerOverride,
         repeatOnSubscribedStopTimeout = 0L
     )

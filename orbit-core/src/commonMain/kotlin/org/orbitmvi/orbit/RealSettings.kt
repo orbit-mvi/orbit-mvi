@@ -26,6 +26,7 @@ public data class RealSettings(
     public val sideEffectBufferSize: Int = Channel.BUFFERED,
     public val idlingRegistry: IdlingResource = NoopIdlingResource(),
     public val eventLoopDispatcher: CoroutineDispatcher = Dispatchers.Default,
+    public val intentLaunchingDispatcher: CoroutineDispatcher? = null,
     public val exceptionHandler: CoroutineExceptionHandler? = null,
     public val repeatOnSubscribedStopTimeout: Long = 100L,
 )
