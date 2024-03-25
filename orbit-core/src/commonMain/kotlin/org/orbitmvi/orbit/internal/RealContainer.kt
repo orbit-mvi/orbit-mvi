@@ -115,7 +115,9 @@ public class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
                         (settings.exceptionHandler?.plus(SupervisorJob(job)) ?: job) +
                             (settings.intentLaunchingDispatcher ?: EmptyCoroutineContext) +
                             CoroutineName("$COROUTINE_NAME_INTENT${intentCounter.getAndIncrement()}")
-                    launch(exceptionHandlerContext, start = CoroutineStart.UNDISPATCHED) {
+
+                    val coroutineStart = if (settings.intentLaunchingDispatcher != null) CoroutineStart.DEFAULT else CoroutineStart.UNDISPATCHED
+                    launch(exceptionHandlerContext, start = coroutineStart) {
                         pluginContext.intent()
                     }.invokeOnCompletion { job.complete() }
                 }
