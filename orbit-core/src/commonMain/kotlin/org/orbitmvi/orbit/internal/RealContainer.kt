@@ -113,8 +113,8 @@ public class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
                 for ((job, intent) in dispatchChannel) {
                     val exceptionHandlerContext =
                         (settings.exceptionHandler?.plus(SupervisorJob(job)) ?: job) +
-                                (settings.intentLaunchingDispatcher ?: EmptyCoroutineContext) +
-                                CoroutineName("$COROUTINE_NAME_INTENT${intentCounter.getAndIncrement()}")
+                            (settings.intentLaunchingDispatcher ?: EmptyCoroutineContext) +
+                            CoroutineName("$COROUTINE_NAME_INTENT${intentCounter.getAndIncrement()}")
                     launch(exceptionHandlerContext, start = CoroutineStart.UNDISPATCHED) {
                         pluginContext.intent()
                     }.invokeOnCompletion { job.complete() }
