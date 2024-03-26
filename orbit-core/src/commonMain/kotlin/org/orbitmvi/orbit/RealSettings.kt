@@ -52,4 +52,10 @@ public class SettingsBuilder {
         public set(value) {
             settings = settings.copy(repeatOnSubscribedStopTimeout = value)
         }
+
+    public var sideEffectBufferSize: Int
+        get() = settings.sideEffectBufferSize
+        public set(value) {
+            settings = settings.copy(sideEffectBufferSize = value)
+        }
 }
