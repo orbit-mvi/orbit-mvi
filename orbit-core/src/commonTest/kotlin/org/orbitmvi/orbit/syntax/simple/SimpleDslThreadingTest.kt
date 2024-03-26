@@ -21,6 +21,7 @@
 package org.orbitmvi.orbit.syntax.simple
 
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.TimeoutCancellationException
@@ -30,9 +31,11 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeout
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.container
+import org.orbitmvi.orbit.test.IgnoreIos
 import org.orbitmvi.orbit.test.ScopedBlockingWorkSimulator
 import org.orbitmvi.orbit.test.assertContainExactly
 import org.orbitmvi.orbit.test.runBlocking
@@ -51,6 +54,24 @@ internal class SimpleDslThreadingTest {
     @AfterTest
     fun afterTest() {
         scope.cancel()
+    }
+
+    @Test
+    @IgnoreIos
+    fun `blocking intent with context switch does not block the reducer`() = runBlocking {
+        val action = Random.nextInt()
+        val testFlowObserver = middleware.container.stateFlow.testFlowObserver()
+
+        middleware.backgroundIntent()
+
+        withTimeout(TIMEOUT) {
+            middleware.intentMutex.withLock {}
+        }
+
+        middleware.reducer(action)
+
+        testFlowObserver.awaitCount(2)
+        testFlowObserver.values.assertContainExactly(TestState(42), TestState(action))
     }
 
     @Test
@@ -129,6 +150,14 @@ internal class SimpleDslThreadingTest {
                 reducerMutex.unlock()
                 workSimulator.simulateWork()
                 state.copy(id = 123)
+            }
+        }
+
+        fun backgroundIntent() = intent {
+            intentMutex.unlock()
+            withContext(Dispatchers.Default) {
+                while (currentCoroutineContext().isActive) {
+                }
             }
         }
 

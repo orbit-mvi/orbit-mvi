@@ -24,7 +24,6 @@ import kotlinx.atomicfu.atomic
 import kotlinx.coroutines.CompletableJob
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
@@ -112,8 +111,9 @@ public class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
                 for ((job, intent) in dispatchChannel) {
                     val exceptionHandlerContext =
                         (settings.exceptionHandler?.plus(SupervisorJob(job)) ?: job) +
+                            settings.intentLaunchingDispatcher +
                             CoroutineName("$COROUTINE_NAME_INTENT${intentCounter.getAndIncrement()}")
-                    launch(exceptionHandlerContext, start = CoroutineStart.UNDISPATCHED) {
+                    launch(exceptionHandlerContext) {
                         pluginContext.intent()
                     }.invokeOnCompletion { job.complete() }
                 }
