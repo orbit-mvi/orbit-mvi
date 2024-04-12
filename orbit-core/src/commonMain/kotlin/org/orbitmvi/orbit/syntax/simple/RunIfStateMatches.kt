@@ -89,6 +89,7 @@ public suspend fun <S : Any, SE : Any, T : S> SubclassStateSimpleSyntax<S, SE, T
  * Executes the given block only if the current state is of the given subtype and the given [predicate] matches.
  *
  * The block will be cancelled as soon as the state changes to a different type or the predicate does not return true.
+ * Note that this does not guarantee the operation in the block is atomic.
  *
  * @param clazz the class of the state to match. Must be a subclass of the [Container]'s state type.
  * @param predicate optional predicate to match the state against. Defaults to true.
