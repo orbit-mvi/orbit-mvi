@@ -80,9 +80,9 @@ public class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
     internal val pluginContext: ContainerContext<STATE, SIDE_EFFECT> = ContainerContext(
         settings = settings,
         postSideEffect = { sideEffectChannel.send(it) },
-        getState = { internalStateFlow.value },
         reduce = { reducer -> internalStateFlow.update(reducer) },
-        subscribedCounter,
+        subscribedCounter = subscribedCounter,
+        stateFlow = stateFlow,
     )
 
     override suspend fun orbit(orbitIntent: suspend ContainerContext<STATE, SIDE_EFFECT>.() -> Unit): Job {
