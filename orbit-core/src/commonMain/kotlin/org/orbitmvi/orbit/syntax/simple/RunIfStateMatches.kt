@@ -19,17 +19,16 @@
 
 package org.orbitmvi.orbit.syntax.simple
 
-import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.filterIsInstance
+import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.transformWhile
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.RealSettings
 import org.orbitmvi.orbit.annotation.OrbitDsl
+import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.annotation.OrbitInternal
 import org.orbitmvi.orbit.internal.repeatonsubscription.SubscribedCounter
 import org.orbitmvi.orbit.syntax.ContainerContext
@@ -44,7 +43,6 @@ public data class SubclassStateContainerContext<S : Any, SE : Any, T : S>(
     private val getState: () -> T,
     public val reduce: suspend ((T) -> S) -> Unit,
     public val subscribedCounter: SubscribedCounter,
-    public val stateFlow: Flow<T>,
 ) {
     public val state: T
         get() = getState()
@@ -91,52 +89,81 @@ public suspend fun <S : Any, SE : Any, T : S> SubclassStateSimpleSyntax<S, SE, T
  * The block will be cancelled as soon as the state changes to a different type or the predicate does not return true.
  * Note that this does not guarantee the operation in the block is atomic.
  *
+ * The state is captured and does not change within this block.
+ *
+ * @param clazz the class of the state to match. Must be a subclass of the [Container]'s state type.
+ * @param predicate optional predicate to match the state against. Defaults to true.
+ */
+@OrbitExperimental
+@OrbitDsl
+public suspend fun <S : Any, SE : Any, T : S> SimpleSyntax<S, SE>.runOn(
+    clazz: KClass<T>,
+    predicate: (T) -> Boolean = { true },
+    block: suspend SubclassStateSimpleSyntax<S, SE, T>.() -> Unit
+) {
+    containerContext.stateFlow
+        .runOn(clazz, predicate) {
+            SubclassStateSimpleSyntax(containerContext.toSubclassContainerContext(clazz, predicate, it)).block()
+        }
+}
+
+/**
+ * This API is intended to simplify and add type-safety to working with sealed class states.
+ * This can be applied to any [Flow] of states, not just the [Container]'s own. The main purpose of this API is to help you
+ * work with child container states.
+ *
+ * Executes the given block only if the current state is of the given subtype and the given [predicate] matches.
+ *
+ * The block will be cancelled as soon as the state changes to a different type or the predicate does not return true.
+ * Note that this does not guarantee the operation in the block is atomic.
+ *
+ * The state is captured and does not change within this block.
+ *
  * @param clazz the class of the state to match. Must be a subclass of the [Container]'s state type.
  * @param predicate optional predicate to match the state against. Defaults to true.
  */
 @OptIn(ExperimentalCoroutinesApi::class)
+@OrbitExperimental
 @OrbitDsl
-public suspend inline fun <reified S : Any, reified SE : Any, T : S> SimpleSyntax<S, SE>.runIfStateMatches(
+public suspend fun <S : Any, T : S> Flow<S>.runOn(
     clazz: KClass<T>,
-    crossinline predicate: (T) -> Boolean = { true },
-    crossinline block: suspend SubclassStateSimpleSyntax<S, SE, T>.() -> Unit
+    predicate: (T) -> Boolean = { true },
+    block: suspend (capturedState: T) -> Unit
 ) {
-    containerContext.stateFlow
-        .transformWhile {
-            if (clazz.isInstance(it) && predicate(clazz.cast(it))) {
-                emit(true)
-                true
-            } else {
-                emit(false)
-                false
-            }
+    this.transformWhile {
+        if (clazz.isInstance(it) && predicate(clazz.cast(it))) {
+            emit(clazz.cast(it))
+            true
+        } else {
+            emit(null)
+            false
         }
-        .distinctUntilChanged()
+    }
+        .distinctUntilChangedBy { it != null }
         .mapLatest {
-            if (it) {
-                this@runIfStateMatches.containerContext
-                    .toSubclassContainerContext(clazz)
-                    .let { SubclassStateSimpleSyntax(it) }
-                    .block()
+            if (it != null) {
+                block(it)
             }
         }
         .firstOrNull()
 }
 
 @OrbitInternal
-public inline fun <reified S : Any, reified SE : Any, T : S> ContainerContext<S, SE>.toSubclassContainerContext(
-    clazz: KClass<T>
+private fun <S : Any, SE : Any, T : S> ContainerContext<S, SE>.toSubclassContainerContext(
+    clazz: KClass<T>,
+    predicate: (T) -> Boolean = { true },
+    capturedState: T,
 ): SubclassStateContainerContext<S, SE, T> {
-    return SubclassStateContainerContext<S, SE, T>(
+    println(capturedState)
+    return SubclassStateContainerContext(
         settings = settings,
         postSideEffect = postSideEffect,
         reduce = { reducer ->
             reduce { state ->
-                reducer(clazz.safeCast(state) ?: throw CancellationException("Not in require state"))
+                clazz.safeCast(state)?.takeIf(predicate)?.let { reducer(it) } ?: state
             }
         },
-        stateFlow = stateFlow.filterIsInstance(clazz),
         subscribedCounter = subscribedCounter,
-        getState = { clazz.safeCast(stateFlow.value) ?: throw CancellationException("Not in require state") }
+        getState = { capturedState }
     )
 }

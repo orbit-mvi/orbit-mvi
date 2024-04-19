@@ -24,12 +24,15 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.test.runTest
 import org.orbitmvi.orbit.ContainerHost
+import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.container
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.reduce
-import org.orbitmvi.orbit.syntax.simple.runIfStateMatches
+import org.orbitmvi.orbit.syntax.simple.runOn
 import org.orbitmvi.orbit.test.test
 import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 internal class RunIfStateMatchesTest {
 
@@ -111,7 +114,7 @@ internal class RunIfStateMatchesTest {
             val job = middleware.collectIfInReadyState()
 
             middleware.channel.send(123) // Sending something to ensure intent is started
-            expectState { TestState.Ready(123) }
+            assertEquals(123, middleware.collectorChannel.receive())
 
             middleware.changeToState(TestState.Loading)
             expectState { TestState.Loading }
@@ -132,8 +135,8 @@ internal class RunIfStateMatchesTest {
 
             val job = middleware.collectIfInReadyState(predicate = { it.id % 2 == 0 })
 
-            middleware.channel.send(48) // Sending something to ensure intent is started
-            expectState { TestState.Ready(48) }
+            middleware.channel.send(123) // Sending something to ensure intent is started
+            assertEquals(123, middleware.collectorChannel.receive())
 
             middleware.changeToState(TestState.Ready(43))
             expectState { TestState.Ready(43) }
@@ -142,15 +145,40 @@ internal class RunIfStateMatchesTest {
         }
     }
 
+    @Test
+    fun `ifState does not cancel when predicate keeps matching on subsequent emissions`() = runTest {
+        val middleware = Middleware(backgroundScope)
+
+        middleware.test(this) {
+            expectState { TestState.Loading }
+
+            middleware.changeToState(TestState.Ready(42))
+            expectState { TestState.Ready(42) }
+
+            val job = middleware.collectIfInReadyState(predicate = { it.id % 2 == 0 })
+
+            middleware.channel.send(123) // Sending something to ensure intent is started
+            assertEquals(123, middleware.collectorChannel.receive())
+
+            middleware.changeToState(TestState.Ready(50))
+            expectState { TestState.Ready(50) }
+
+            assertTrue(job.isActive)
+            job.cancel()
+        }
+    }
+
     sealed interface TestState {
         object Loading : TestState
         data class Ready(val id: Int = 42) : TestState
     }
 
+    @OptIn(OrbitExperimental::class)
     private inner class Middleware(scope: CoroutineScope) : ContainerHost<TestState, String> {
         override val container = scope.container<TestState, String>(TestState.Loading)
 
         val channel: Channel<Int> = Channel()
+        val collectorChannel: Channel<Int> = Channel()
 
         fun changeToState(state: TestState) = intent {
             reduce {
@@ -159,7 +187,7 @@ internal class RunIfStateMatchesTest {
         }
 
         fun doIfInReadyState(predicate: (TestState.Ready) -> Boolean = { true }) = intent {
-            runIfStateMatches(TestState.Ready::class, predicate = predicate) {
+            runOn(TestState.Ready::class, predicate = predicate) {
                 reduce {
                     state.copy(id = state.id + 1)
                 }
@@ -167,11 +195,9 @@ internal class RunIfStateMatchesTest {
         }
 
         fun collectIfInReadyState(predicate: (TestState.Ready) -> Boolean = { true }) = intent {
-            runIfStateMatches(TestState.Ready::class, predicate = predicate) {
+            runOn(TestState.Ready::class, predicate = predicate) {
                 channel.consumeAsFlow()
-                    .collect {
-                        reduce { state.copy(id = it) }
-                    }
+                    .collect(collectorChannel::send)
             }
         }
     }
