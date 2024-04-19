@@ -119,7 +119,7 @@ they map to MVI concepts:
 | reduction          | `reduce { ... }`               | Atomically updates the Container's  state                                                                 |
 | -                  | `repeatOnSubscription { ... }` | Helps collect infinite flows only when there are active subscribers                                       |
 | -                  | `subIntent { ... }`            | Use this to break big `intent` blocks into smaller parts, or for parallel decomposition.                  |
-| -                  | `runIfStateMatches { ... }`    | Useful for working with sealed class states. The block is only executed if (and while) the state matches. |
+| -                  | `runOn { ... }`                | Useful for working with sealed class states. The block is only executed if (and while) the state matches. |
 
 Operators are invoked through the `intent` block in a
 [ContainerHost](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-container-host/).
@@ -299,7 +299,7 @@ Most commonly, you would combine several `subIntent` calls in a single
 `onCreate` block of the container factory. This is a common pattern when 
 collecting several flows or performing several parallel operations on creation.
 
-### RunIfStateMatches
+### RunOn
 
 ``` kotlin
 class Example : ContainerHost<ExampleSealedClassState, ExampleSideEffect> {

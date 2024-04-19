@@ -34,10 +34,10 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-internal class RunIfStateMatchesTest {
+internal class RunOnTest {
 
     @Test
-    fun `ifState does not run when state does not match expected`() = runTest {
+    fun `runOn does not run when state does not match expected`() = runTest {
         val middleware = Middleware(backgroundScope)
 
         middleware.test(this) {
@@ -52,7 +52,7 @@ internal class RunIfStateMatchesTest {
     }
 
     @Test
-    fun `ifState runs when state matches expected`() = runTest {
+    fun `runOn runs when state matches expected`() = runTest {
         val middleware = Middleware(backgroundScope)
 
         middleware.test(this) {
@@ -67,7 +67,7 @@ internal class RunIfStateMatchesTest {
     }
 
     @Test
-    fun `ifState does not run when state matches expected but predicate does not match`() = runTest {
+    fun `runOn does not run when state matches expected but predicate does not match`() = runTest {
         val middleware = Middleware(backgroundScope)
 
         middleware.test(this) {
@@ -84,7 +84,7 @@ internal class RunIfStateMatchesTest {
     }
 
     @Test
-    fun `ifState runs when state matches expected and predicate matches`() = runTest {
+    fun `runOn runs when state matches expected and predicate matches`() = runTest {
         val middleware = Middleware(backgroundScope)
 
         middleware.test(this) {
@@ -102,7 +102,7 @@ internal class RunIfStateMatchesTest {
     }
 
     @Test
-    fun `ifState cancels when state stops matching expected`() = runTest {
+    fun `runOn cancels when state stops matching expected`() = runTest {
         val middleware = Middleware(backgroundScope)
 
         middleware.test(this) {
@@ -124,7 +124,7 @@ internal class RunIfStateMatchesTest {
     }
 
     @Test
-    fun `ifState cancels when predicate stops matching`() = runTest {
+    fun `runOn cancels when predicate stops matching`() = runTest {
         val middleware = Middleware(backgroundScope)
 
         middleware.test(this) {
@@ -146,7 +146,7 @@ internal class RunIfStateMatchesTest {
     }
 
     @Test
-    fun `ifState does not cancel when predicate keeps matching on subsequent emissions`() = runTest {
+    fun `runOn does not cancel when predicate keeps matching on subsequent emissions`() = runTest {
         val middleware = Middleware(backgroundScope)
 
         middleware.test(this) {
