@@ -154,7 +154,6 @@ private fun <S : Any, SE : Any, T : S> ContainerContext<S, SE>.toSubclassContain
     predicate: (T) -> Boolean = { true },
     capturedState: T,
 ): SubclassStateContainerContext<S, SE, T> {
-    println(capturedState)
     return SubclassStateContainerContext(
         settings = settings,
         postSideEffect = postSideEffect,
