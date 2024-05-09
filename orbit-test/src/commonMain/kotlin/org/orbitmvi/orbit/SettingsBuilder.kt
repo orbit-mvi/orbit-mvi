@@ -9,15 +9,6 @@ import kotlinx.coroutines.test.UnconfinedTestDispatcher
 public class TestSettingsBuilder internal constructor(
     private var settings: RealSettings
 ) {
-    public constructor() : this(
-        UnconfinedTestDispatcher().let {
-            RealSettings(
-                eventLoopDispatcher = it,
-                intentLaunchingDispatcher = it
-            )
-        }
-    )
-
     public var exceptionHandler: CoroutineExceptionHandler?
         get() = settings.exceptionHandler
         public set(value) {
@@ -33,15 +24,6 @@ public class TestSettingsBuilder internal constructor(
 public class LiveTestSettingsBuilder internal constructor(
     private var settings: RealSettings
 ) {
-    public constructor() : this(
-        UnconfinedTestDispatcher().let {
-            RealSettings(
-                eventLoopDispatcher = it,
-                intentLaunchingDispatcher = it
-            )
-        }
-    )
-
     public var dispatcher: CoroutineDispatcher
         get() = settings.eventLoopDispatcher
         public set(value) {

@@ -17,8 +17,10 @@ package org.orbitmvi.orbit
 
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.plus
 import org.orbitmvi.orbit.idling.IdlingResource
 import org.orbitmvi.orbit.idling.NoopIdlingResource
 
@@ -29,10 +31,13 @@ public data class RealSettings(
     public val intentLaunchingDispatcher: CoroutineDispatcher = Dispatchers.Unconfined,
     public val exceptionHandler: CoroutineExceptionHandler? = null,
     public val repeatOnSubscribedStopTimeout: Long = 100L,
-)
+    public val parentScope: CoroutineScope
+) {
+    public val containerScope: CoroutineScope = parentScope + eventLoopDispatcher
+}
 
-public class SettingsBuilder {
-    internal var settings = RealSettings()
+public class SettingsBuilder(parentScope: CoroutineScope) {
+    internal var settings = RealSettings(parentScope = parentScope)
         private set
 
     public var idlingRegistry: IdlingResource

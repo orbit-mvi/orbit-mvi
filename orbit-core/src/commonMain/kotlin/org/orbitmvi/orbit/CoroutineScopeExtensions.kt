@@ -46,8 +46,7 @@ public fun <STATE : Any, SIDE_EFFECT : Any> CoroutineScope.container(
             parentScope = this,
             RealContainer(
                 initialState = initialState,
-                settings = SettingsBuilder().apply { buildSettings() }.settings,
-                parentScope = this
+                settings = SettingsBuilder(this).apply { buildSettings() }.settings,
             )
         )
     } else {
@@ -57,8 +56,7 @@ public fun <STATE : Any, SIDE_EFFECT : Any> CoroutineScope.container(
             LazyCreateContainerDecorator(
                 RealContainer(
                     initialState = initialState,
-                    settings = SettingsBuilder().apply { buildSettings() }.settings,
-                    parentScope = this
+                    settings = SettingsBuilder(this).apply { buildSettings() }.settings,
                 )
             ) { SimpleSyntax(this).onCreate() }
         )

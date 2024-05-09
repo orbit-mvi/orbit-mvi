@@ -83,7 +83,9 @@ public class TestFlowObserver<T>(flow: Flow<T>) {
      * @param count The awaited element count.
      * @param timeout How long to wait for in milliseconds
      */
-    public suspend fun awaitCountSuspending(count: Int, timeout: Long = 5000L): Unit = awaitFor(timeout) { values.size == count }
+    public suspend fun awaitCountSuspending(count: Int, timeout: Long = 5000L): Unit = awaitFor(timeout) {
+        values.size == count
+    }
 
     /**
      * Closes the subscription on the underlying stream. No further values will be received after

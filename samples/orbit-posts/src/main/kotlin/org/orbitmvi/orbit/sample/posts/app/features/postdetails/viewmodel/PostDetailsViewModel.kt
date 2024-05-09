@@ -36,11 +36,12 @@ class PostDetailsViewModel(
     private val postOverview: PostOverview
 ) : ViewModel(), ContainerHost<PostDetailState, Nothing> {
 
-    override val container = container<PostDetailState, Nothing>(PostDetailState.NoDetailsAvailable(postOverview), savedStateHandle) {
-        if (state !is PostDetailState.Details) {
-            loadDetails()
+    override val container =
+        container<PostDetailState, Nothing>(PostDetailState.NoDetailsAvailable(postOverview), savedStateHandle) {
+            if (state !is PostDetailState.Details) {
+                loadDetails()
+            }
         }
-    }
 
     private fun loadDetails() = intent {
         val status = postRepository.getDetail(postOverview.id)

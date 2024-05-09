@@ -23,7 +23,6 @@ package org.orbitmvi.orbit.internal
 import kotlinx.atomicfu.atomic
 import kotlinx.coroutines.CompletableJob
 import kotlinx.coroutines.CoroutineName
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
@@ -49,13 +48,13 @@ import org.orbitmvi.orbit.syntax.ContainerContext
 
 public class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
     initialState: STATE,
-    parentScope: CoroutineScope,
     public override val settings: RealSettings,
     subscribedCounterOverride: SubscribedCounter? = null
 ) : Container<STATE, SIDE_EFFECT> {
-    private val scope = parentScope + settings.eventLoopDispatcher
+    private val scope = settings.containerScope
     private val intentJob = Job(scope.coroutineContext[Job])
-    private val dispatchChannel = Channel<Pair<CompletableJob, suspend ContainerContext<STATE, SIDE_EFFECT>.() -> Unit>>(Channel.UNLIMITED)
+    private val dispatchChannel =
+        Channel<Pair<CompletableJob, suspend ContainerContext<STATE, SIDE_EFFECT>.() -> Unit>>(Channel.UNLIMITED)
     private val initialised = atomic(false)
     private val subscribedCounter = subscribedCounterOverride ?: DelayingSubscribedCounter(scope, settings.repeatOnSubscribedStopTimeout)
     private val internalStateFlow = MutableStateFlow(initialState)

@@ -16,6 +16,7 @@
 
 package org.orbitmvi.orbit.test
 
+@Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
 @OptIn(ExperimentalMultiplatform::class)
 @OptionalExpectation
 @Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION)

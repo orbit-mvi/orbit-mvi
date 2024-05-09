@@ -16,6 +16,6 @@
 
 package org.orbitmvi.orbit.internal.repeatonsubscription
 
-import kotlin.system.getTimeMillis
+import kotlin.time.TimeSource
 
-internal actual fun getSystemTimeInMillis() = getTimeMillis()
+internal actual fun getSystemTimeInMillis() = TimeSource.Monotonic.markNow()

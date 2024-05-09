@@ -40,8 +40,7 @@ class ShadowScrollBehavior(context: Context, attrs: AttributeSet) : AppBarLayout
     @SuppressLint("PrivateResource")
     private val maxElevation = context.resources.getDimensionPixelSize(R.dimen.appbar_elevation).toFloat()
 
-    override fun onDependentViewChanged(parent: CoordinatorLayout, child: View, dependency: View):
-        Boolean {
+    override fun onDependentViewChanged(parent: CoordinatorLayout, child: View, dependency: View): Boolean {
         if (dependency is AppBarLayout) {
             when (child) {
                 is NestedScrollView -> {

@@ -65,8 +65,7 @@ public class TestContainerDecorator<STATE : Any, SIDE_EFFECT : Any>(
     ) {
         val testDelegate = RealContainer<STATE, SIDE_EFFECT>(
             initialState = initialState ?: originalInitialState,
-            parentScope = testScope ?: parentScope,
-            settings = strategy.settings,
+            settings = strategy.settings.copy(parentScope = testScope ?: parentScope),
             subscribedCounterOverride = AlwaysSubscribedCounter
         ).let {
             if (strategy is TestingStrategy.Suspending) {

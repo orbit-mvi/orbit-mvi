@@ -13,6 +13,10 @@ import kotlin.test.AfterTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.ExperimentalTime
+import kotlin.time.TimeSource
 
 class DelayingSubscribedCounterTest {
 
@@ -101,7 +105,7 @@ class DelayingSubscribedCounterTest {
 
             testObserver.awaitCount(1)
             assertEquals(Unsubscribed, testObserver.values.first().value)
-            assertTrue(testObserver.values.first().time < 450)
+            assertTrue(testObserver.values.first().time < 450.milliseconds)
         }
     }
 
@@ -116,7 +120,7 @@ class DelayingSubscribedCounterTest {
             val testObserver2 = counter.subscribed.mapTimed().testFlowObserver()
             testObserver2.awaitCount(1)
             assertEquals(Unsubscribed, testObserver2.values.first().value)
-            assertTrue(testObserver2.values.first().time < 450)
+            assertTrue(testObserver2.values.first().time < 450.milliseconds)
         }
     }
 
@@ -131,19 +135,20 @@ class DelayingSubscribedCounterTest {
 
             testObserver.awaitCount(3)
             assertEquals(listOf(Unsubscribed, Subscribed, Unsubscribed), testObserver.values.map { it.value })
-            assertTrue(testObserver.values.last().time > 450)
+            assertTrue(testObserver.values.last().time > 450.milliseconds)
         }
     }
 
+    @OptIn(ExperimentalTime::class)
     private fun Flow<Subscription>.mapTimed(): Flow<Timed<Subscription>> {
-        var last = getSystemTimeInMillis()
+        var last = TimeSource.Monotonic.markNow()
         return map {
-            val current = getSystemTimeInMillis()
+            val current = TimeSource.Monotonic.markNow()
             val diff = current - last
             last = current
             Timed(diff, it)
         }
     }
 
-    private data class Timed<T>(val time: Long, val value: T)
+    private data class Timed<T>(val time: Duration, val value: T)
 }
