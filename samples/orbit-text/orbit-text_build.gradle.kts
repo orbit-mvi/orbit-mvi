@@ -1,5 +1,5 @@
 /*
- * Copyright 2022-2023 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 2022-2024 Mikołaj Leszczyński & Appmattus Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,10 +29,10 @@ android {
         targetCompatibility = JavaVersion.VERSION_11
     }
 
-    compileSdk = 33
+    compileSdk = 34
     defaultConfig {
         minSdk = 21
-        targetSdk = 33
+        targetSdk = 34
         applicationId = "org.orbitmvi.orbit.sample.text"
         versionCode = 1
         versionName = "1.0"
@@ -60,10 +60,10 @@ dependencies {
     implementation(libs.androidxLifecycleRuntimeKtx)
     implementation(libs.androidxComposeUi)
 
-    implementation("androidx.compose.foundation:foundation:1.4.3")
-    implementation("androidx.compose.material:material:1.4.3")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.1")
-    implementation("io.insert-koin:koin-android:3.4.0")
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.6.1")
+    implementation("androidx.compose.foundation:foundation:1.6.7")
+    implementation("androidx.compose.material:material:1.6.7")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0")
+    implementation("io.insert-koin:koin-android:3.5.6")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.7.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
 }

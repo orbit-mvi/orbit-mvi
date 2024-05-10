@@ -29,7 +29,9 @@ public class RealOrbitTestContext<STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST
     initialState: STATE?,
     private val emissions: ReceiveTurbine<Item<STATE, SIDE_EFFECT>>
 ) : OrbitTestContext<STATE, SIDE_EFFECT, CONTAINER_HOST> {
-    private val resolvedInitialState: STATE by lazy { initialState ?: containerHost.container.findTestContainer().originalInitialState }
+    private val resolvedInitialState: STATE by lazy {
+        initialState ?: containerHost.container.findTestContainer().originalInitialState
+    }
     private var currentConsumedState: STATE = resolvedInitialState
 
     @OptIn(OrbitInternal::class)

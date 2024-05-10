@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 2021-2024 Mikołaj Leszczyński & Appmattus Limited
  * Copyright 2020 Babylon Partners Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -33,7 +33,7 @@ import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.atomic.AtomicReference
 
-class AndroidIdlingResource : IdlingResource {
+public class AndroidIdlingResource : IdlingResource {
 
     private val counter: AtomicInteger = AtomicInteger(0)
     private val idle = AtomicBoolean(true)
@@ -81,7 +81,7 @@ class AndroidIdlingResource : IdlingResource {
         IdlingRegistry.getInstance().unregister(espressoIdlingResource)
     }
 
-    companion object {
+    public companion object {
         private const val MILLIS_BEFORE_IDLE = 100L
     }
 }

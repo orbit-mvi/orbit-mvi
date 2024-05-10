@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 2021-2024 Mikołaj Leszczyński & Appmattus Limited
  * Copyright 2020 Babylon Partners Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,7 +17,6 @@
  * File modified by Mikołaj Leszczyński & Appmattus Limited
  * See: https://github.com/orbit-mvi/orbit-mvi/compare/c5b8b3f2b83b5972ba2ad98f73f75086a89653d3...main
  */
-@file:Suppress("DEPRECATION")
 
 package org.orbitmvi.orbit.viewmodel
 
@@ -40,7 +39,7 @@ internal const val SAVED_STATE_KEY = "state"
  * @param onCreate The intent to execute when the container is created
  * @return A [Container] implementation
  */
-fun <STATE : Any, SIDE_EFFECT : Any> ViewModel.container(
+public fun <STATE : Any, SIDE_EFFECT : Any> ViewModel.container(
     initialState: STATE,
     buildSettings: SettingsBuilder.() -> Unit = {},
     onCreate: (suspend SimpleSyntax<STATE, SIDE_EFFECT>.() -> Unit)? = null
@@ -62,7 +61,7 @@ fun <STATE : Any, SIDE_EFFECT : Any> ViewModel.container(
  * @param onCreate The intent to execute when the container is created, provided with the default or recreated state
  * @return A [Container] implementation
  */
-fun <STATE : Parcelable, SIDE_EFFECT : Any> ViewModel.container(
+public fun <STATE : Parcelable, SIDE_EFFECT : Any> ViewModel.container(
     initialState: STATE,
     savedStateHandle: SavedStateHandle,
     buildSettings: SettingsBuilder.() -> Unit = {},

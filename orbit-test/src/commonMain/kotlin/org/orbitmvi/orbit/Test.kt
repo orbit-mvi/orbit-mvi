@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-2022 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 2021-2024 Mikołaj Leszczyński & Appmattus Limited
  * Copyright 2020 Babylon Partners Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,8 +17,6 @@
  * File modified by Mikołaj Leszczyński & Appmattus Limited
  * See: https://github.com/orbit-mvi/orbit-mvi/compare/c5b8b3f2b83b5972ba2ad98f73f75086a89653d3...main
  */
-
-@file:Suppress("DEPRECATION")
 
 package org.orbitmvi.orbit
 

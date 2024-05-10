@@ -16,31 +16,31 @@
 
 [versions]
 
-gradleVersionsPlugin = "0.46.0"
-gradleAndroidPlugin = "8.0.1"
-gradleMavenPublishPlugin = "0.25.2"
+gradleVersionsPlugin = "0.51.0"
+gradleAndroidPlugin = "8.4.0"
+gradleMavenPublishPlugin = "0.28.0"
 markdownLintPlugin = "0.6.0"
-detektPlugin = "1.22.0"
-safeargs = "2.5.3"
-atomicfu = "0.20.2"
-dokka = "1.8.10"
+detektPlugin = "1.23.6"
+safeargs = "2.7.7"
+atomicfu = "0.24.0"
+dokka = "1.9.20"
 
-kotlin = "1.8.21"
-coroutines = "1.7.1"
+kotlin = "1.9.23"
+coroutines = "1.8.0"
 
-androidxLifecycles = "2.6.1"
+androidxLifecycles = "2.7.0"
 androidxEspresso = "3.5.1"
-androidxCompose = "1.4.3"
-androidxComposeCompiler = "1.4.7"
+androidxCompose = "1.6.7"
+androidxComposeCompiler = "1.5.13"
 androidxCoreTesting = "2.2.0"
 
-desugar = "2.0.3"
+desugar = "2.0.4"
 
 # Testing
 jacoco = "0.8.8"
 junit4 = "4.13.2"
-robolectric = "4.10.2"
-turbine = "1.0.0"
+robolectric = "4.12.1"
+turbine = "1.1.0"
 
 
 [libraries]

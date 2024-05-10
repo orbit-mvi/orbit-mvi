@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 2021-2024 Mikołaj Leszczyński & Appmattus Limited
  * Copyright 2020 Babylon Partners Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -40,14 +40,14 @@ class ShadowScrollBehavior(context: Context, attrs: AttributeSet) : AppBarLayout
     @SuppressLint("PrivateResource")
     private val maxElevation = context.resources.getDimensionPixelSize(R.dimen.appbar_elevation).toFloat()
 
-    override fun onDependentViewChanged(parent: CoordinatorLayout, child: View, dependency: View):
-        Boolean {
+    override fun onDependentViewChanged(parent: CoordinatorLayout, child: View, dependency: View): Boolean {
         if (dependency is AppBarLayout) {
             when (child) {
                 is NestedScrollView -> {
                     setElevation(child, dependency)
                     addScrollListener(child, dependency)
                 }
+
                 is RecyclerView -> {
                     setElevation(child, dependency)
                     addScrollListener(child, dependency)

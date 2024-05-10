@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-2023 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 2021-2024 Mikołaj Leszczyński & Appmattus Limited
  * Copyright 2020 Babylon Partners Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -27,49 +27,30 @@ plugins {
 
 kotlin {
     jvm()
-    ios()
+    iosX64()
+    iosArm64()
     iosSimulatorArm64()
     sourceSets {
         all {
             languageSettings.optIn("kotlin.RequiresOptIn")
             languageSettings.optIn("org.orbitmvi.orbit.annotation.OrbitInternal")
         }
-        commonMain {
-            dependencies {
-                api(libs.kotlinCoroutines)
-            }
+
+        commonMain.dependencies {
+            api(libs.kotlinCoroutines)
         }
-        commonTest {
-            dependencies {
-                implementation(kotlin("test-common"))
-                implementation(kotlin("test-annotations-common"))
-                implementation(project(":test-common"))
-                implementation(project(":orbit-test"))
-                implementation(libs.kotlinCoroutines)
-                implementation(libs.kotlinCoroutinesTest)
-                implementation(libs.turbine)
-            }
+        commonTest.dependencies {
+            implementation(kotlin("test-common"))
+            implementation(kotlin("test-annotations-common"))
+            implementation(project(":test-common"))
+            implementation(project(":orbit-test"))
+            implementation(libs.kotlinCoroutines)
+            implementation(libs.kotlinCoroutinesTest)
+            implementation(libs.turbine)
         }
 
-        @Suppress("UNUSED_VARIABLE")
-        val jvmMain by getting
-
-        @Suppress("UNUSED_VARIABLE")
-        val jvmTest by getting {
-            dependencies {
-                implementation(kotlin("test-junit"))
-            }
+        jvmTest.dependencies {
+            implementation(kotlin("test-junit"))
         }
-
-        val iosMain by getting {
-        }
-        val iosTest by getting {
-        }
-        val iosSimulatorArm64Main by getting {
-        }
-        val iosSimulatorArm64Test by getting {
-        }
-        iosSimulatorArm64Main.dependsOn(iosMain)
-        iosSimulatorArm64Test.dependsOn(iosTest)
     }
 }

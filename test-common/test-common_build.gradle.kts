@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-2023 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 2021-2024 Mikołaj Leszczyński & Appmattus Limited
  * Copyright 2020 Babylon Partners Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,29 +25,19 @@ plugins {
 
 kotlin {
     jvm()
-    ios()
+    iosX64()
+    iosArm64()
     iosSimulatorArm64()
     sourceSets {
-        commonMain {
-            dependencies {
-                implementation(libs.kotlinCoroutines)
-                implementation(kotlin("stdlib"))
-                implementation(kotlin("test-common"))
-                implementation(kotlin("test-annotations-common"))
-            }
+        commonMain.dependencies {
+            implementation(libs.kotlinCoroutines)
+            implementation(kotlin("stdlib"))
+            implementation(kotlin("test-common"))
+            implementation(kotlin("test-annotations-common"))
         }
 
-        @Suppress("UNUSED_VARIABLE")
-        val jvmMain by getting {
-            dependencies {
-                implementation(kotlin("test-junit"))
-            }
+        jvmMain.dependencies {
+            implementation(kotlin("test-junit"))
         }
-
-        val iosMain by getting {
-        }
-        val iosSimulatorArm64Main by getting {
-        }
-        iosSimulatorArm64Main.dependsOn(iosMain)
     }
 }
