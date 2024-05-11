@@ -56,6 +56,11 @@ internal class ParameterisedSideEffectTest(private val blocking: Boolean) {
 
         sideEffects.forEach { testSubject.call { something(it) } }
 
+        // Ensure all events are sent
+        testSubject.assert(initialState, timeoutMillis = TIMEOUT) {
+            postedSideEffects(sideEffects)
+        }
+
         val throwable = assertFailsWith<AssertionError> {
             testSubject.assert(initialState, timeoutMillis = TIMEOUT) {
                 postedSideEffects(sideEffects2)
