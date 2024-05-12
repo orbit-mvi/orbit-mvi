@@ -26,7 +26,7 @@ atomicfu = "0.24.0"
 dokka = "1.9.20"
 
 kotlin = "1.9.23"
-coroutines = "1.8.0"
+coroutines = "1.8.1"
 
 androidxLifecycles = "2.7.0"
 androidxEspresso = "3.5.1"
