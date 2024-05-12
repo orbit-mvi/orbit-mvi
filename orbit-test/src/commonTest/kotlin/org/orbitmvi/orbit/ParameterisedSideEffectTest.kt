@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 2021-2024 Mikołaj Leszczyński & Appmattus Limited
  * Copyright 2020 Babylon Partners Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -55,6 +55,11 @@ internal class ParameterisedSideEffectTest(private val blocking: Boolean) {
         val sideEffects2 = List(Random.nextInt(1, 5)) { Random.nextInt() }
 
         sideEffects.forEach { testSubject.call { something(it) } }
+
+        // Ensure all events are sent
+        testSubject.assert(initialState, timeoutMillis = TIMEOUT) {
+            postedSideEffects(sideEffects)
+        }
 
         val throwable = assertFailsWith<AssertionError> {
             testSubject.assert(initialState, timeoutMillis = TIMEOUT) {

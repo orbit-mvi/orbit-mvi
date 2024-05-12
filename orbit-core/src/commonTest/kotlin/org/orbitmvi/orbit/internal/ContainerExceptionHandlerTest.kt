@@ -49,7 +49,8 @@ import kotlin.test.assertTrue
 @ExperimentalCoroutinesApi
 internal class ContainerExceptionHandlerTest {
 
-    private val scope = CoroutineScope(Job() + CoroutineExceptionHandler { _, _ -> /*just be silent*/ })
+    // Just be silent
+    private val scope = CoroutineScope(Job() + CoroutineExceptionHandler { _, _ -> })
 
     @AfterTest
     fun afterTest() {
@@ -123,7 +124,8 @@ internal class ContainerExceptionHandlerTest {
         val containerScope = CoroutineScope(scopeJob)
         val exceptionHandler =
             if (withExceptionHandler) {
-                CoroutineExceptionHandler { _, _ -> /*don't care*/ }
+                // Don't care
+                CoroutineExceptionHandler { _, _ -> }
             } else {
                 null
             }

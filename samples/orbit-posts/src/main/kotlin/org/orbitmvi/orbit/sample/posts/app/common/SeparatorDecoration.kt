@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 2021-2024 Mikołaj Leszczyński & Appmattus Limited
  * Copyright 2020 Babylon Partners Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,10 +25,9 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Rect
 import android.view.View
+import android.view.View.LAYOUT_DIRECTION_LTR
 import androidx.annotation.DimenRes
 import androidx.core.content.ContextCompat
-import androidx.core.view.ViewCompat
-import androidx.core.view.ViewCompat.LAYOUT_DIRECTION_LTR
 import androidx.core.view.children
 import androidx.recyclerview.widget.RecyclerView
 import org.orbitmvi.orbit.sample.posts.R
@@ -69,7 +68,7 @@ class SeparatorDecoration(context: Context, @DimenRes marginStart: Int, @DimenRe
         // Line is drawn offset by half the width to ensure correct positioning
         val offset = (paint.strokeWidth / 2).toInt()
 
-        val layoutDirection = ViewCompat.getLayoutDirection(parent)
+        val layoutDirection = parent.layoutDirection
         val leftMargin = if (layoutDirection == LAYOUT_DIRECTION_LTR) startMargin else endMargin
         val rightMargin = if (layoutDirection == LAYOUT_DIRECTION_LTR) endMargin else startMargin
 

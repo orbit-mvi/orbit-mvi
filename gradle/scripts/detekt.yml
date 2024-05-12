@@ -1,25 +1,27 @@
 build:
-  maxIssues: 0
+    maxIssues: 0
 
 formatting:
-  ArgumentListWrapping:
-      maxLineLength: 145 # increased from 120
-  ContextReceiverMapping:
-      maxLineLength: 145 # increased from 120
-  FunctionSignature:
-      maxLineLength: 145 # increased from 120
-  MaximumLineLength:
-      active: false
-      maxLineLength: 145 # increased from 120
-  ParameterListWrapping:
-      maxLineLength: 145 # increased from 120
+    ArgumentListWrapping:
+        maxLineLength: 145 # increased from 120
+    ContextReceiverMapping:
+        maxLineLength: 145 # increased from 120
+    FunctionSignature:
+        maxLineLength: 145 # increased from 120
+    MaximumLineLength:
+        active: false
+        maxLineLength: 145 # increased from 120
+    ParameterListWrapping:
+        maxLineLength: 145 # increased from 120
+    PropertyWrapping:
+        maxLineLength: 145 # increased from 120
 
 style:
-  MaxLineLength:
-    maxLineLength: 145 # increased from 120
-  MagicNumber:
-    excludes: "**/test/**,**/androidTest/**,**Test.kt,**Spec.kt,**Spek.kt,**.kts"
+    MaxLineLength:
+        maxLineLength: 145 # increased from 120
+    MagicNumber:
+        excludes: "**/test/**,**/androidTest/**,**Test.kt,**Spec.kt,**Spek.kt,**.kts"
 
 complexity:
-  LongMethod:
-    excludes: "**/test/**,**/androidTest/**,**/*.Test.kt,**/*.Spec.kt,**/*.Spek.kt"
+    LongMethod:
+        excludes: "**/test/**,**/androidTest/**,**/*.Test.kt,**/*.Spec.kt,**/*.Spek.kt"

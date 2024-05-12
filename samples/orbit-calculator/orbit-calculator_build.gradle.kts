@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-2023 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 2021-2024 Mikołaj Leszczyński & Appmattus Limited
  * Copyright 2020 Babylon Partners Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -27,10 +27,10 @@ plugins {
 android {
     namespace = "org.orbitmvi.orbit.sample.calculator"
 
-    compileSdk = 33
+    compileSdk = 34
     defaultConfig {
         minSdk = 21
-        targetSdk = 33
+        targetSdk = 34
         versionCode = 1
         versionName = "1.0"
         applicationId = "org.orbitmvi.orbit.sample.calculator"
@@ -57,19 +57,19 @@ dependencies {
     implementation(project(":orbit-core"))
     implementation(project(":orbit-viewmodel"))
 
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.4")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
-    implementation("com.google.android.material:material:1.9.0")
-    implementation("io.insert-koin:koin-android:3.4.0")
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.6.1")
+    implementation("com.google.android.material:material:1.12.0")
+    implementation("io.insert-koin:koin-android:3.5.6")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.7.0")
 
     // Testing
     testImplementation(project(":orbit-test"))
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.9.3")
-    testImplementation("org.junit.platform:junit-platform-console:1.9.3")
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.3")
-    testImplementation("org.junit.jupiter:junit-jupiter-params:5.9.3")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.2")
+    testImplementation("org.junit.platform:junit-platform-console:1.10.2")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.2")
+    testImplementation("org.junit.jupiter:junit-jupiter-params:5.10.2")
     testImplementation("junit:junit:4.13.2")
     testImplementation("com.appmattus.fixture:fixture:1.2.0")
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.1")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.0")
 }

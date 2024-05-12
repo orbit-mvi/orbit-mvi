@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-2023 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 2021-2024 Mikołaj Leszczyński & Appmattus Limited
  * Copyright 2020 Babylon Partners Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -27,56 +27,35 @@ plugins {
 
 kotlin {
     jvm()
-    ios()
+    iosX64()
+    iosArm64()
     iosSimulatorArm64()
     sourceSets {
-        commonMain {
-            dependencies {
-                implementation(kotlin("test-common"))
-                api(libs.kotlinCoroutines)
-                api(libs.kotlinCoroutinesTest)
-                implementation(libs.turbine)
+        commonMain.dependencies {
+            implementation(kotlin("test-common"))
+            api(libs.kotlinCoroutines)
+            api(libs.kotlinCoroutinesTest)
+            implementation(libs.turbine)
 
-                api(project(":orbit-core"))
-            }
+            api(project(":orbit-core"))
         }
-        commonTest {
-            dependencies {
-                implementation(project(":test-common"))
-                implementation(kotlin("test-common"))
-                implementation(kotlin("test-annotations-common"))
-            }
+        commonTest.dependencies {
+            implementation(project(":test-common"))
+            implementation(kotlin("test-common"))
+            implementation(kotlin("test-annotations-common"))
         }
 
-        val iosMain by getting {
-            dependencies {
-                implementation(libs.kotlinCoroutines)
-            }
+        iosMain.dependencies {
+            implementation(libs.kotlinCoroutines)
         }
 
-        val iosTest by getting {
+        jvmMain.dependencies {
+            implementation(kotlin("test-junit"))
+            implementation(libs.kotlinCoroutines)
+            implementation(libs.junit4)
         }
-        val iosSimulatorArm64Main by getting {
-        }
-        val iosSimulatorArm64Test by getting {
-        }
-        iosSimulatorArm64Main.dependsOn(iosMain)
-        iosSimulatorArm64Test.dependsOn(iosTest)
-
-        @Suppress("UNUSED_VARIABLE")
-        val jvmMain by getting {
-            dependencies {
-                implementation(kotlin("test-junit"))
-                implementation(libs.kotlinCoroutines)
-                implementation(libs.junit4)
-            }
-        }
-
-        @Suppress("UNUSED_VARIABLE")
-        val jvmTest by getting {
-            dependencies {
-                implementation(libs.kotlinCoroutinesTest)
-            }
+        jvmTest.dependencies {
+            implementation(libs.kotlinCoroutinesTest)
         }
     }
 }
