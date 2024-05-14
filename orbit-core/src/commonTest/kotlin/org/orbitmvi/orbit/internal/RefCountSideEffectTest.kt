@@ -45,31 +45,6 @@ internal class RefCountSideEffectTest {
             }
         }
     }
-//
-//    @Test
-//    fun `side effects are not multicast`() = runTest {
-//        val container = backgroundScope.container<Unit, Int>(Unit)
-//        val action = Random.nextInt()
-//        val action2 = Random.nextInt()
-//        val action3 = Random.nextInt()
-//
-//        val testSideEffectObserver1 = container.refCountSideEffectFlow.testFlowObserver()
-//        val testSideEffectObserver2 = container.refCountSideEffectFlow.testFlowObserver()
-//        val testSideEffectObserver3 = container.refCountSideEffectFlow.testFlowObserver()
-//
-//        container.someFlow(action)
-//        container.someFlow(action2)
-//        container.someFlow(action3)
-//
-//        val timeout = 500L
-//        testSideEffectObserver1.awaitCount(3, timeout)
-//        testSideEffectObserver2.awaitCount(3, timeout)
-//        testSideEffectObserver3.awaitCount(3, timeout)
-//
-//        testSideEffectObserver1.values.assertNotContainExactly(action, action2, action3)
-//        testSideEffectObserver2.values.assertNotContainExactly(action, action2, action3)
-//        testSideEffectObserver3.values.assertNotContainExactly(action, action2, action3)
-//    }
 
     @Test
     fun `side effects are cached when there are no subscribers`() = runTest {
@@ -120,13 +95,9 @@ internal class RefCountSideEffectTest {
             assertEquals(action, awaitItem())
         }
 
-//        coroutineScope {
-//            launch {
         repeat(1000) {
             container.someFlow(it)
         }
-//            }
-//        }
 
         container.refCountSideEffectFlow.test {
             repeat(1000) {
