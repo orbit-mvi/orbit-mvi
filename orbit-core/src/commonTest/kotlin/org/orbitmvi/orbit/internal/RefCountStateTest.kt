@@ -19,91 +19,71 @@
 
 package org.orbitmvi.orbit.internal
 
-import kotlinx.coroutines.CoroutineScope
+import app.cash.turbine.test
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.cancel
+import kotlinx.coroutines.test.TestScope
+import kotlinx.coroutines.test.runTest
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.container
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.reduce
-import org.orbitmvi.orbit.test.assertContainExactly
-import org.orbitmvi.orbit.testFlowObserver
 import kotlin.random.Random
-import kotlin.test.AfterTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 @ExperimentalCoroutinesApi
 internal class RefCountStateTest {
 
-    private val scope = CoroutineScope(Job())
-
-    @AfterTest
-    fun afterTest() {
-        scope.cancel()
+    @Test
+    fun `initial state is emitted on connection`() = runTest {
+        val initialState = TestState()
+        val middleware = Middleware(this, initialState)
+        middleware.container.refCountStateFlow.test {
+            assertEquals(initialState, awaitItem())
+        }
     }
 
     @Test
-    fun `initial state is emitted on connection`() {
+    fun `latest state is emitted on connection`() = runTest {
         val initialState = TestState()
-        val middleware = Middleware(initialState)
-        val testStateObserver = middleware.container.refCountStateFlow.testFlowObserver()
-
-        testStateObserver.awaitCount(1)
-
-        testStateObserver.values.assertContainExactly(initialState)
-    }
-
-    @Test
-    fun `latest state is emitted on connection`() {
-        val initialState = TestState()
-        val middleware = Middleware(initialState)
-        val testStateObserver = middleware.container.refCountStateFlow.testFlowObserver()
+        val middleware = Middleware(this, initialState)
         val action = Random.nextInt()
-        middleware.something(action)
-        testStateObserver.awaitCount(2) // block until the state is updated
+        middleware.container.refCountStateFlow.test {
+            middleware.something(action)
+            assertEquals(initialState, awaitItem())
+            assertEquals(TestState(action), awaitItem())
+        }
 
-        val testStateObserver2 = middleware.container.refCountStateFlow.testFlowObserver()
-        testStateObserver2.awaitCount(1)
-
-        testStateObserver.values.assertContainExactly(
-            initialState,
-            TestState(action)
-        )
-        testStateObserver2.values.assertContainExactly(
-            TestState(
-                action
-            )
-        )
+        middleware.container.refCountStateFlow.test {
+            assertEquals(TestState(action), awaitItem())
+        }
     }
 
     @Test
-    fun `current state is set to the initial state after instantiation`() {
+    fun `current state is set to the initial state after instantiation`() = runTest {
         val initialState = TestState()
-        val middleware = Middleware(initialState)
+        val middleware = Middleware(this, initialState)
 
         assertEquals(initialState, middleware.container.refCountStateFlow.value)
     }
 
     @Test
-    fun `current state is up to date after modification`() {
+    fun `current state is up to date after modification`() = runTest {
         val initialState = TestState()
-        val middleware = Middleware(initialState)
+        val middleware = Middleware(this, initialState)
         val action = Random.nextInt()
-        val testStateObserver = middleware.container.refCountStateFlow.testFlowObserver()
+        middleware.container.refCountStateFlow.test {
+            skipItems(1)
+            middleware.something(action).join()
 
-        middleware.something(action)
-
-        testStateObserver.awaitCount(2)
-
-        assertEquals(testStateObserver.values.last(), middleware.container.refCountStateFlow.value)
+            assertEquals(middleware.container.refCountStateFlow.value, awaitItem())
+        }
     }
 
     private data class TestState(val id: Int = Random.nextInt())
 
-    private inner class Middleware(initialState: TestState) : ContainerHost<TestState, String> {
-        override val container = scope.container<TestState, String>(initialState)
+    private inner class Middleware(scope: TestScope, initialState: TestState) : ContainerHost<TestState, String> {
+        override val container = scope.backgroundScope.container<TestState, String>(initialState)
 
         fun something(action: Int) = intent {
             reduce {

@@ -16,8 +16,5 @@
 
 package org.orbitmvi.orbit.internal
 
-import kotlin.coroutines.CoroutineContext
 
 internal actual fun <T> runBlocking(block: suspend () -> T): T = kotlinx.coroutines.runBlocking { block() }
-internal actual fun <T> runBlocking(coroutineContext: CoroutineContext, block: suspend () -> T): T =
-    kotlinx.coroutines.runBlocking(coroutineContext) { block() }

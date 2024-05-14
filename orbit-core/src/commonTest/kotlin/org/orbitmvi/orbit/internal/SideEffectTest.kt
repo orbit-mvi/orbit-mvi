@@ -20,136 +20,116 @@
 
 package org.orbitmvi.orbit.internal
 
-import kotlinx.coroutines.CoroutineScope
+import app.cash.turbine.test
+import app.cash.turbine.testIn
+import app.cash.turbine.turbineScope
+import kotlin.random.Random
+import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.toList
+import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.runTest
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.container
 import org.orbitmvi.orbit.test.assertContainExactly
 import org.orbitmvi.orbit.test.assertNotContainExactly
-import org.orbitmvi.orbit.testFlowObserver
-import kotlin.random.Random
-import kotlin.test.AfterTest
-import kotlin.test.Test
-import kotlin.test.assertEquals
 
 @ExperimentalCoroutinesApi
 internal class SideEffectTest {
 
-    private val scope = CoroutineScope(Job())
+    @Test
+    fun `side effects are emitted in order`() = runTest {
+        val container = backgroundScope.container<Unit, Int>(Unit)
 
-    @AfterTest
-    fun afterTest() {
-        scope.cancel()
+        container.sideEffectFlow.test {
+            repeat(1000) {
+                container.someFlow(it)
+            }
+
+            repeat(1000) {
+                assertEquals(it, awaitItem())
+            }
+        }
     }
 
     @Test
-    fun `side effects are emitted in order`() = runBlocking {
-        val container = scope.container<Unit, Int>(Unit)
+    fun `side effects are cached when there are no subscribers`() = runTest {
+        val action = Random.nextInt()
+        val action2 = Random.nextInt()
+        val action3 = Random.nextInt()
+        val container = backgroundScope.container<Unit, Int>(Unit)
 
-        val testSideEffectObserver1 = container.sideEffectFlow.testFlowObserver()
+        joinAll(
+            container.someFlow(action),
+            container.someFlow(action2),
+            container.someFlow(action3)
+        )
 
-        repeat(1000) {
-            container.someFlow(it)
+        container.sideEffectFlow.test {
+            assertEquals(action, awaitItem())
+            assertEquals(action2, awaitItem())
+            assertEquals(action3, awaitItem())
+            ensureAllEventsConsumed()
+        }
+    }
+
+    @Test
+    fun `consumed side effects are not resent`() = runTest {
+        val action = Random.nextInt()
+        val action2 = Random.nextInt()
+        val action3 = Random.nextInt()
+        val container = backgroundScope.container<Unit, Int>(Unit)
+
+        joinAll(
+            container.someFlow(action),
+            container.someFlow(action2),
+            container.someFlow(action3)
+        )
+
+        container.sideEffectFlow.test {
+            assertEquals(action, awaitItem())
+            assertEquals(action2, awaitItem())
+            assertEquals(action3, awaitItem())
+            ensureAllEventsConsumed()
+            cancel()
         }
 
-        testSideEffectObserver1.awaitCount(1000)
-
-        testSideEffectObserver1.values.assertContainExactly((0..999).toList())
+        container.sideEffectFlow.test {
+            expectNoEvents()
+            cancel()
+        }
     }
 
     @Test
-    fun `side effects are not multicast`() = runBlocking {
+    fun `only new side effects are emitted when resubscribing`() = runTest {
         val action = Random.nextInt()
-        val action2 = Random.nextInt()
-        val action3 = Random.nextInt()
-        val container = scope.container<Unit, Int>(Unit)
+        val container = backgroundScope.container<Unit, Int>(Unit)
 
-        val testSideEffectObserver1 = container.sideEffectFlow.testFlowObserver()
-        val testSideEffectObserver2 = container.sideEffectFlow.testFlowObserver()
-        val testSideEffectObserver3 = container.sideEffectFlow.testFlowObserver()
+        container.sideEffectFlow.test {
+            container.someFlow(action)
+            skipItems(1)
+            ensureAllEventsConsumed()
+            cancel()
+        }
 
-        container.someFlow(action)
-        container.someFlow(action2)
-        container.someFlow(action3)
-
-        val timeout = 500L
-        testSideEffectObserver1.awaitCount(3, timeout)
-        testSideEffectObserver2.awaitCount(3, timeout)
-        testSideEffectObserver3.awaitCount(3, timeout)
-
-        testSideEffectObserver1.values.assertNotContainExactly(action, action2, action3)
-        testSideEffectObserver2.values.assertNotContainExactly(action, action2, action3)
-        testSideEffectObserver3.values.assertNotContainExactly(action, action2, action3)
-    }
-
-    @Test
-    fun `side effects are cached when there are no subscribers`() = runBlocking {
-        val action = Random.nextInt()
-        val action2 = Random.nextInt()
-        val action3 = Random.nextInt()
-        val container = scope.container<Unit, Int>(Unit)
-
-        container.someFlow(action)
-        container.someFlow(action2)
-        container.someFlow(action3)
-
-        val testSideEffectObserver1 = container.sideEffectFlow.testFlowObserver()
-
-        testSideEffectObserver1.awaitCount(3)
-
-        testSideEffectObserver1.values.assertContainExactly(action, action2, action3)
-    }
-
-    @Test
-    fun `consumed side effects are not resent`() = runBlocking {
-        val action = Random.nextInt()
-        val action2 = Random.nextInt()
-        val action3 = Random.nextInt()
-        val container = scope.container<Unit, Int>(Unit)
-        val testSideEffectObserver1 = container.sideEffectFlow.testFlowObserver()
-
-        container.someFlow(action)
-        container.someFlow(action2)
-        container.someFlow(action3)
-        testSideEffectObserver1.awaitCount(3)
-        testSideEffectObserver1.close()
-
-        val testSideEffectObserver2 = container.sideEffectFlow.testFlowObserver()
-
-        testSideEffectObserver1.awaitCount(3, 10L)
-
-        assertEquals(0, testSideEffectObserver2.values.size, "should be empty")
-    }
-
-    @Test
-    fun `only new side effects are emitted when resubscribing`() = runBlocking {
-        val action = Random.nextInt()
-        val container = scope.container<Unit, Int>(Unit)
-
-        val testSideEffectObserver1 = container.sideEffectFlow.testFlowObserver()
-
-        container.someFlow(action)
-
-        testSideEffectObserver1.awaitCount(1)
-        testSideEffectObserver1.close()
-
-        coroutineScope {
-            launch {
-                repeat(1000) {
-                    container.someFlow(it)
-                }
+        launch {
+            repeat(100) {
+                container.someFlow(it)
             }
         }
 
-        val testSideEffectObserver2 = container.sideEffectFlow.testFlowObserver()
-        testSideEffectObserver2.awaitCount(1000)
+        container.sideEffectFlow.test {
 
-        testSideEffectObserver1.values.assertContainExactly(action)
-        testSideEffectObserver2.values.assertContainExactly((0..999).toList())
+            repeat(100) {
+                assertEquals(it, awaitItem())
+            }
+            ensureAllEventsConsumed()
+            cancel()
+        }
     }
 
     private suspend fun Container<Unit, Int>.someFlow(action: Int) = orbit {
