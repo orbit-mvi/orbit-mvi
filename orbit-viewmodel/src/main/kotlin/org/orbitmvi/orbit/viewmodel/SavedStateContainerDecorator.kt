@@ -35,4 +35,10 @@ internal class SavedStateContainerDecorator<STATE : Any, SIDE_EFFECT : Any>(
             savedStateHandle[SAVED_STATE_KEY] = it
         }
     }
+
+    override val refCountStateFlow: StateFlow<STATE> by lazy {
+        actual.refCountStateFlow.onEach {
+            savedStateHandle[SAVED_STATE_KEY] = it
+        }
+    }
 }
