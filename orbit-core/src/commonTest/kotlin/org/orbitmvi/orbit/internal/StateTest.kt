@@ -21,10 +21,6 @@
 package org.orbitmvi.orbit.internal
 
 import app.cash.turbine.test
-import kotlin.random.Random
-import kotlin.test.AfterTest
-import kotlin.test.Test
-import kotlin.test.assertEquals
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
@@ -34,6 +30,10 @@ import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.container
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.reduce
+import kotlin.random.Random
+import kotlin.test.AfterTest
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
 @ExperimentalCoroutinesApi
 internal class StateTest {
@@ -88,7 +88,6 @@ internal class StateTest {
             middleware.something(action)
             skipItems(2)
         }
-
 
         assertEquals(middleware.container.stateFlow.value, middleware.container.stateFlow.value)
     }

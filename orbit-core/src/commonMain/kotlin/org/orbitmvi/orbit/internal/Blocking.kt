@@ -16,7 +16,4 @@
 
 package org.orbitmvi.orbit.internal
 
-import kotlin.coroutines.CoroutineContext
-import kotlin.coroutines.EmptyCoroutineContext
-
 internal expect fun <T> runBlocking(block: suspend () -> T): T

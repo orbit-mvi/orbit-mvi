@@ -21,15 +21,15 @@
 package org.orbitmvi.orbit.internal
 
 import app.cash.turbine.test
-import kotlin.random.Random
-import kotlin.test.Test
-import kotlin.test.assertEquals
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.runTest
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.container
+import kotlin.random.Random
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
 @ExperimentalCoroutinesApi
 internal class ContainerThreadingTest {
@@ -39,7 +39,6 @@ internal class ContainerThreadingTest {
         val initState = Random.nextInt()
         val newState = Random.nextInt()
         val container = backgroundScope.container<Int, Nothing>(initState)
-
 
         container.stateFlow.test {
             container.orbit {

@@ -18,11 +18,11 @@ package org.orbitmvi.orbit.test
 
 import app.cash.turbine.ReceiveTurbine
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.runBlocking
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.annotation.OrbitInternal
 import kotlin.test.assertEquals
 import kotlin.test.fail
-import kotlinx.coroutines.runBlocking
 
 public class RealOrbitTestContext<STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHost<STATE, SIDE_EFFECT>>(
     override val containerHost: CONTAINER_HOST,

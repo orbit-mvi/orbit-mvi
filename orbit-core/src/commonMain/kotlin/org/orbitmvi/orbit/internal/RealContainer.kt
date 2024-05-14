@@ -114,7 +114,6 @@ public class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
                             settings.intentLaunchingDispatcher +
                             CoroutineName("$COROUTINE_NAME_INTENT${intentCounter.getAndIncrement()}")
                     launch(exceptionHandlerContext) {
-                        println(coroutineContext)
                         pluginContext.intent()
                     }.invokeOnCompletion { job.complete() }
                 }

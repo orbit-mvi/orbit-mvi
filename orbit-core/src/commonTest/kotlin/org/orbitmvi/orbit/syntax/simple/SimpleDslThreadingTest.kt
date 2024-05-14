@@ -21,10 +21,6 @@
 package org.orbitmvi.orbit.syntax.simple
 
 import app.cash.turbine.test
-import kotlin.random.Random
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFails
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.currentCoroutineContext
@@ -33,11 +29,14 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.withContext
-import kotlinx.coroutines.withTimeoutOrNull
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.container
 import org.orbitmvi.orbit.test.IgnoreIos
 import org.orbitmvi.orbit.test.ScopedBlockingWorkSimulator
+import kotlin.random.Random
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFails
 
 @ExperimentalCoroutinesApi
 internal class SimpleDslThreadingTest {
@@ -141,9 +140,5 @@ internal class SimpleDslThreadingTest {
         fun suspendingIntent() = intent {
             delay(Int.MAX_VALUE.toLong())
         }
-    }
-
-    companion object {
-        private const val TIMEOUT = 1000L
     }
 }

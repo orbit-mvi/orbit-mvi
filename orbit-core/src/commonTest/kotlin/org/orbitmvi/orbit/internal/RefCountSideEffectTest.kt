@@ -20,19 +20,11 @@
 package org.orbitmvi.orbit.internal
 
 import app.cash.turbine.test
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.runTest
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.container
-import org.orbitmvi.orbit.test.assertContainExactly
-import org.orbitmvi.orbit.test.assertNotContainExactly
 import kotlin.random.Random
-import kotlin.test.AfterTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -48,7 +40,7 @@ internal class RefCountSideEffectTest {
                 container.someFlow(it)
             }
 
-            for(i in 0..999) {
+            for (i in 0..999) {
                 assertEquals(i, awaitItem())
             }
         }
@@ -80,7 +72,7 @@ internal class RefCountSideEffectTest {
 //    }
 
     @Test
-    fun `side effects are cached when there are no subscribers`() =  runTest {
+    fun `side effects are cached when there are no subscribers`() = runTest {
         val container = backgroundScope.container<Unit, Int>(Unit)
         val action = Random.nextInt()
         val action2 = Random.nextInt()
@@ -119,7 +111,7 @@ internal class RefCountSideEffectTest {
     }
 
     @Test
-    fun `only new side effects are emitted when resubscribing`()  = runTest {
+    fun `only new side effects are emitted when resubscribing`() = runTest {
         val container = backgroundScope.container<Unit, Int>(Unit)
         val action = Random.nextInt()
 
@@ -130,9 +122,9 @@ internal class RefCountSideEffectTest {
 
 //        coroutineScope {
 //            launch {
-                repeat(1000) {
-                    container.someFlow(it)
-                }
+        repeat(1000) {
+            container.someFlow(it)
+        }
 //            }
 //        }
 

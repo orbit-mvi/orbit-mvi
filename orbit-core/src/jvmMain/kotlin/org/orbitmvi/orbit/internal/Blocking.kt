@@ -16,5 +16,4 @@
 
 package org.orbitmvi.orbit.internal
 
-
 internal actual fun <T> runBlocking(block: suspend () -> T): T = kotlinx.coroutines.runBlocking { block() }

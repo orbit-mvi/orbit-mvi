@@ -1,9 +1,6 @@
 package org.orbitmvi.orbit.internal.repeatonsubscription
 
 import app.cash.turbine.test
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -13,6 +10,9 @@ import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.orbitmvi.orbit.internal.repeatonsubscription.Subscription.Subscribed
 import org.orbitmvi.orbit.internal.repeatonsubscription.Subscription.Unsubscribed
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class DelayingSubscribedCounterTest {
@@ -121,7 +121,6 @@ class DelayingSubscribedCounterTest {
         val counter = DelayingSubscribedCounter(innerScope, 500)
 
         counter.subscribed.mapTimed(innerScope.testScheduler).test {
-
             assertEquals(Unsubscribed, awaitItem().value)
             counter.increment()
             innerScope.advanceUntilIdle()

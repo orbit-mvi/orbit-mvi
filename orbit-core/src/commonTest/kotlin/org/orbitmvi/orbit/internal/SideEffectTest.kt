@@ -21,22 +21,15 @@
 package org.orbitmvi.orbit.internal
 
 import app.cash.turbine.test
-import app.cash.turbine.testIn
-import app.cash.turbine.turbineScope
-import kotlin.random.Random
-import kotlin.test.Test
-import kotlin.test.assertEquals
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.receiveAsFlow
-import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.runTest
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.container
-import org.orbitmvi.orbit.test.assertContainExactly
-import org.orbitmvi.orbit.test.assertNotContainExactly
+import kotlin.random.Random
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
 @ExperimentalCoroutinesApi
 internal class SideEffectTest {
@@ -123,7 +116,6 @@ internal class SideEffectTest {
         }
 
         container.sideEffectFlow.test {
-
             repeat(100) {
                 assertEquals(it, awaitItem())
             }
