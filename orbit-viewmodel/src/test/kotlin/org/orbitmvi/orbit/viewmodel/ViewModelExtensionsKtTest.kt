@@ -75,6 +75,21 @@ class ViewModelExtensionsKtTest {
     }
 
     @Test
+    fun `Modified state is saved in the saved state handle for refCountStateFlow`() {
+        val initialState = TestState()
+        val something = Random.nextInt()
+        val savedStateHandle = SavedStateHandle()
+        val middleware = Middleware(savedStateHandle, initialState)
+        val testStateObserver = middleware.container.refCountStateFlow.testFlowObserver()
+
+        middleware.something(something)
+
+        testStateObserver.awaitCount(2)
+
+        assertEquals(TestState(something), savedStateHandle[SAVED_STATE_KEY])
+    }
+
+    @Test
     fun `When saved state is present calls onCreate with restored state`() = runTest {
         val initialState = TestState()
         val savedState = TestState()
