@@ -22,7 +22,6 @@ package org.orbitmvi.orbit.syntax.simple
 
 import app.cash.turbine.test
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
@@ -38,7 +37,6 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFails
 
-@ExperimentalCoroutinesApi
 internal class SimpleDslThreadingTest {
 
     @Test

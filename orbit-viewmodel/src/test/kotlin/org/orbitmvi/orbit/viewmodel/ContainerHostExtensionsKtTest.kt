@@ -35,7 +35,6 @@ import org.orbitmvi.orbit.internal.RealContainer
 import kotlin.random.Random
 import kotlin.test.assertEquals
 
-@ExperimentalCoroutinesApi
 class ContainerHostExtensionsKtTest {
 
     @get:Rule
@@ -57,12 +56,14 @@ class ContainerHostExtensionsKtTest {
     }
 
     @Before
+    @ExperimentalCoroutinesApi
     fun beforeTest() {
         Dispatchers.setMain(Dispatchers.Unconfined)
         mockLifecycleOwner.dispatchEvent(Lifecycle.Event.ON_STOP)
     }
 
     @After
+    @ExperimentalCoroutinesApi
     fun afterTest() {
         Dispatchers.resetMain()
         scope.cancel()

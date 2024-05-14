@@ -21,7 +21,6 @@
 package org.orbitmvi.orbit.internal
 
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
@@ -37,7 +36,6 @@ import org.orbitmvi.orbit.test.test
 import kotlin.random.Random
 import kotlin.test.Test
 
-@ExperimentalCoroutinesApi
 internal class SubIntentTest {
 
     @Test

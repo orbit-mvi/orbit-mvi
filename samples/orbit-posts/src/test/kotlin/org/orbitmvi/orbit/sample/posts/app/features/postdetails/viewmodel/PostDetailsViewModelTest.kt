@@ -33,7 +33,7 @@ import org.orbitmvi.orbit.sample.posts.domain.repositories.PostDetail
 import org.orbitmvi.orbit.sample.posts.domain.repositories.PostOverview
 import org.orbitmvi.orbit.sample.posts.domain.repositories.PostRepository
 import org.orbitmvi.orbit.sample.posts.domain.repositories.Status
-import org.orbitmvi.orbit.test
+import org.orbitmvi.orbit.test.test
 import java.io.IOException
 
 @Suppress("DEPRECATION")
@@ -58,7 +58,9 @@ class PostDetailsViewModelTest {
         // when we observe details from the view model
         val viewModel = PostDetailsViewModel(SavedStateHandle(), repository, overview).test(
             initialState = initialState,
-        )
+        ) {
+
+        }
         viewModel.runOnCreate()
 
         // then the view model loads the details

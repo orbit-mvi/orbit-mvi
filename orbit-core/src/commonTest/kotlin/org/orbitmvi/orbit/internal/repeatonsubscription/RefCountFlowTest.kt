@@ -1,6 +1,5 @@
 package org.orbitmvi.orbit.internal.repeatonsubscription
 
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.take
 import org.orbitmvi.orbit.test.runBlocking

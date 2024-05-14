@@ -23,20 +23,18 @@ package org.orbitmvi.orbit.viewmodel
 import android.os.Parcelable
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import app.cash.turbine.test
 import kotlinx.coroutines.test.runTest
 import kotlinx.parcelize.Parcelize
 import org.junit.Test
 import org.orbitmvi.orbit.ContainerHost
-import org.orbitmvi.orbit.annotation.OrbitInternal
 import org.orbitmvi.orbit.syntax.simple.SimpleSyntax
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.reduce
 import org.orbitmvi.orbit.test.test
-import org.orbitmvi.orbit.testFlowObserver
 import kotlin.random.Random
 import kotlin.test.assertEquals
 
-@OptIn(OrbitInternal::class)
 class ViewModelExtensionsKtTest {
     @Test
     fun `When saved state is present it is read`() {
@@ -60,18 +58,20 @@ class ViewModelExtensionsKtTest {
     }
 
     @Test
-    fun `Modified state is saved in the saved state handle for stateFlow`() {
+    fun `Modified state is saved in the saved state handle for stateFlow`() = runTest {
         val initialState = TestState()
         val something = Random.nextInt()
         val savedStateHandle = SavedStateHandle()
         val middleware = Middleware(savedStateHandle, initialState)
-        val testStateObserver = middleware.container.stateFlow.testFlowObserver()
 
-        middleware.something(something)
+        middleware.container.stateFlow.test {
+            assertEquals(initialState, awaitItem())
 
-        testStateObserver.awaitCount(2)
+            middleware.something(something).join()
 
-        assertEquals(TestState(something), savedStateHandle[SAVED_STATE_KEY])
+            assertEquals(TestState(something), awaitItem())
+            assertEquals(TestState(something), savedStateHandle[SAVED_STATE_KEY])
+        }
     }
 
     @Test
