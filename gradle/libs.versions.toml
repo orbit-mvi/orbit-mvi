@@ -25,13 +25,13 @@ safeargs = "2.7.7"
 atomicfu = "0.24.0"
 dokka = "1.9.20"
 
-kotlin = "1.9.23"
+kotlin = "1.9.24"
 coroutines = "1.8.1"
 
-androidxLifecycles = "2.7.0"
+androidxLifecycles = "2.8.0"
 androidxEspresso = "3.5.1"
 androidxCompose = "1.6.7"
-androidxComposeCompiler = "1.5.13"
+androidxComposeCompiler = "1.5.14"
 androidxCoreTesting = "2.2.0"
 
 desugar = "2.0.4"
