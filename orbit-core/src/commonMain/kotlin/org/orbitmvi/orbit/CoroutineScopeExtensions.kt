@@ -39,27 +39,23 @@ public fun <STATE : Any, SIDE_EFFECT : Any> CoroutineScope.container(
     initialState: STATE,
     buildSettings: SettingsBuilder.() -> Unit = {},
     onCreate: (suspend SimpleSyntax<STATE, SIDE_EFFECT>.() -> Unit)? = null
-): Container<STATE, SIDE_EFFECT> =
-    if (onCreate == null) {
+): Container<STATE, SIDE_EFFECT> {
+    val realContainer = RealContainer<STATE, SIDE_EFFECT>(
+        initialState = initialState,
+        settings = SettingsBuilder().apply { buildSettings() }.settings,
+        parentScope = this
+    )
+    return if (onCreate == null) {
         TestContainerDecorator(
             initialState,
-            parentScope = this,
-            RealContainer(
-                initialState = initialState,
-                settings = SettingsBuilder().apply { buildSettings() }.settings,
-                parentScope = this
-            )
+            realContainer
         )
     } else {
         TestContainerDecorator(
             initialState,
-            parentScope = this,
             LazyCreateContainerDecorator(
-                RealContainer(
-                    initialState = initialState,
-                    settings = SettingsBuilder().apply { buildSettings() }.settings,
-                    parentScope = this
-                )
+                realContainer
             ) { SimpleSyntax(this).onCreate() }
         )
     }
+}

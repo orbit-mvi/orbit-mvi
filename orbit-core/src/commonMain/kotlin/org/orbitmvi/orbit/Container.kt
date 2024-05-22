@@ -20,6 +20,7 @@
 
 package org.orbitmvi.orbit
 
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
@@ -35,6 +36,8 @@ import org.orbitmvi.orbit.syntax.simple.repeatOnSubscription
  * container never posts side effects.
  */
 public interface Container<STATE : Any, SIDE_EFFECT : Any> {
+
+    public val scope: CoroutineScope
 
     /**
      * Settings that the container was set up with

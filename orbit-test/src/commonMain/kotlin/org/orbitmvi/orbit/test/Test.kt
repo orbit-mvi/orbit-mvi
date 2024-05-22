@@ -27,7 +27,6 @@ import kotlinx.coroutines.test.runTest
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.RealSettings
-import org.orbitmvi.orbit.internal.TestingStrategy
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
@@ -59,7 +58,7 @@ public suspend fun <STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHo
 
     container.findTestContainer().test(
         initialState = initialState,
-        strategy = TestingStrategy.Live(createRealSettings(testDispatcher, testExceptionHandler)),
+        settings = createRealSettings(testDispatcher, testExceptionHandler),
         testScope = testScope.backgroundScope
     )
     mergedFlow().test(timeout = timeout) {

@@ -42,11 +42,6 @@ public class RealOrbitTestContext<STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST
         }
     }
 
-    @Deprecated("Use containerHost instead", replaceWith = ReplaceWith("action(containerHost)"))
-    override fun invokeIntent(action: CONTAINER_HOST.() -> Job): Job {
-        return containerHost.action()
-    }
-
     override suspend fun awaitItem(): Item<STATE, SIDE_EFFECT> {
         return emissions.awaitItem()
     }
