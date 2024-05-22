@@ -19,7 +19,6 @@ package org.orbitmvi.orbit.internal
 import kotlinx.atomicfu.atomic
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 import org.orbitmvi.orbit.Container
@@ -29,14 +28,10 @@ import org.orbitmvi.orbit.syntax.ContainerContext
 
 public class TestContainerDecorator<STATE : Any, SIDE_EFFECT : Any>(
     public val originalInitialState: STATE,
-    private val parentScope: CoroutineScope,
     override val actual: Container<STATE, SIDE_EFFECT>
 ) : ContainerDecorator<STATE, SIDE_EFFECT> {
 
     private val delegate = atomic(actual)
-
-    public val savedIntents: Channel<(suspend () -> Unit)>
-        get() = (delegate.value as? InterceptingContainerDecorator)?.savedIntents ?: Channel()
 
     override val settings: RealSettings
         get() = delegate.value.settings
@@ -60,21 +55,15 @@ public class TestContainerDecorator<STATE : Any, SIDE_EFFECT : Any>(
 
     public fun test(
         initialState: STATE? = null,
-        strategy: TestingStrategy,
-        testScope: CoroutineScope?
+        settings: RealSettings,
+        testScope: CoroutineScope
     ) {
         val testDelegate = RealContainer<STATE, SIDE_EFFECT>(
             initialState = initialState ?: originalInitialState,
-            parentScope = testScope ?: parentScope,
-            settings = strategy.settings,
+            parentScope = testScope,
+            settings = settings,
             subscribedCounterOverride = AlwaysSubscribedCounter
-        ).let {
-            if (strategy is TestingStrategy.Suspending) {
-                InterceptingContainerDecorator(it)
-            } else {
-                it
-            }
-        }
+        )
 
         val testDelegateSet = delegate.compareAndSet(
             expect = actual,

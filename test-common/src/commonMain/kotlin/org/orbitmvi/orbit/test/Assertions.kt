@@ -24,7 +24,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeout
 import kotlinx.coroutines.yield
-import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 public suspend fun assertEventually(timeout: Long = 2000L, block: suspend () -> Unit) {
@@ -41,24 +40,6 @@ public suspend fun assertEventually(timeout: Long = 2000L, block: suspend () -> 
         }
     }
 }
-
-public fun CharSequence?.assertContains(expected: CharSequence) {
-    assertTrue("Does not contain $expected") {
-        this?.contains(expected) ?: false
-    }
-}
-
-public fun CharSequence?.assertContains(expected: Regex) {
-    assertTrue("Does not contain ${expected.pattern}") {
-        this?.contains(expected) ?: false
-    }
-}
-
-/** Assert that a collection contains exactly the given values and nothing else, in order. */
-public fun <T> Collection<T>.assertContainExactly(vararg expected: T): Unit = assertContainExactly(expected.asList())
-
-/** Assert that a collection contains exactly the given values and nothing else, in order. */
-public fun <T> Collection<T>.assertEmpty(): Unit = assertContainExactly(emptyList())
 
 /** Assert that a collection contains exactly the given values and nothing else, in order. */
 public fun <T, C : Collection<T>> C.assertContainExactly(expected: C) {
@@ -88,15 +69,6 @@ public fun <T, C : Collection<T>> C.assertContainExactly(expected: C) {
     }
 
     assertTrue(passed, failureMessage())
-}
-
-/** Assert that a collection not contains exactly the given values and nothing else, in order. */
-public fun <T> Collection<T>.assertNotContainExactly(vararg expected: T) {
-    val actual = this
-
-    val passed = actual.size == expected.size && actual.zip(expected).all { (a, b) -> a == b }
-
-    assertFalse(passed, "Collection should not be exactly ${expected.asList().printed()}")
 }
 
 private fun <T, C : Collection<T>> C.printed(): String {

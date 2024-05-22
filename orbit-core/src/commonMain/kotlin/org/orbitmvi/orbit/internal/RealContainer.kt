@@ -52,7 +52,7 @@ public class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
     public override val settings: RealSettings,
     subscribedCounterOverride: SubscribedCounter? = null
 ) : Container<STATE, SIDE_EFFECT> {
-    private val scope = parentScope + settings.eventLoopDispatcher
+    override val scope: CoroutineScope = parentScope + settings.eventLoopDispatcher
     private val intentJob = Job(scope.coroutineContext[Job])
     private val dispatchChannel = Channel<Pair<CompletableJob, suspend ContainerContext<STATE, SIDE_EFFECT>.() -> Unit>>(Channel.UNLIMITED)
     private val initialised = atomic(false)

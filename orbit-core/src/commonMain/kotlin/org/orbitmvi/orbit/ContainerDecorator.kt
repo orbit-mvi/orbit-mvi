@@ -20,6 +20,7 @@
 
 package org.orbitmvi.orbit
 
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
@@ -37,6 +38,9 @@ public interface ContainerDecorator<STATE : Any, SIDE_EFFECT : Any> : Container<
      * The wrapped container.
      */
     public val actual: Container<STATE, SIDE_EFFECT>
+
+    override val scope: CoroutineScope
+        get() = actual.scope
 
     override val settings: RealSettings
         get() = actual.settings

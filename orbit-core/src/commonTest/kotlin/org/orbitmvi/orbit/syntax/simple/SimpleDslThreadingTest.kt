@@ -30,7 +30,6 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.withContext
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.container
-import org.orbitmvi.orbit.test.IgnoreIos
 import org.orbitmvi.orbit.test.ScopedBlockingWorkSimulator
 import kotlin.random.Random
 import kotlin.test.Test
@@ -40,7 +39,6 @@ import kotlin.test.assertFails
 internal class SimpleDslThreadingTest {
 
     @Test
-    @IgnoreIos
     fun `blocking intent with context switch does not block the reducer`() = runTest {
         val middleware = BaseDslMiddleware(this)
         val action = Random.nextInt()

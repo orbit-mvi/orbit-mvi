@@ -29,12 +29,6 @@ public interface OrbitTestContext<STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST
     public fun runOnCreate(): Job
 
     /**
-     * Invoke an intent on the [ContainerHost] under test.
-     */
-    @Deprecated("Use containerHost instead", ReplaceWith("action(containerHost)"))
-    public fun invokeIntent(action: CONTAINER_HOST.() -> Job): Job
-
-    /**
      * Sanity check assertion. Checks if the initial state is emitted and matches
      * the initial state defined for the production container (or the one specified
      * in the test).
