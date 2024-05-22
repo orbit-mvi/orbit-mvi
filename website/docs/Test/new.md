@@ -3,38 +3,15 @@ sidebar_position: 2
 sidebar_label: 'New testing process'
 ---
 
-# New testing process
+# Resting process
 
-The new framework is based on the (itself in
-alpha) [Turbine](https://github.com/cashapp/turbine)
+The framework is based on the [Turbine](https://github.com/cashapp/turbine)
 library. Turbine is a library for testing coroutines and flows.
 
 Orbit's framework offers a subset of the Turbine APIs and
 ensures predictable coroutine scoping and context through use of the new
 [coroutine testing APIs](https://kotlinlang.org/api/kotlinx.coroutines/kotlinx-coroutines-test/kotlinx.coroutines.test/run-test.html)
 .
-
-## Changes from the old testing framework
-
-Our design goal was to have a simpler API and no more hidden magic in tests.
-
-- The new testing framework is available under the `org.orbitmvi.orbit.test`
-  package.
-- Flow isolation is gone. If you have any loopbacks in your intents, you will
-  need to test them explicitly.
-- Removed the orbit-specific assertions. You are now free to use any assertion
-  library you like.
-- Gone are the two testing modes - suspending and live. The new framework
-  always runs a real Orbit container and uses the `TestScope`'s background
-  dispatcher. We no longer see a need to have both modes, as it often led to
-  confusion and bad practices.
-- The framework is a light wrapper
-  around [Turbine](https://github.com/cashapp/turbine),
-  while also adding some Orbit-specific functionality and ensuring we use the
-  correct coroutine context to have predictable tests and proper cleanup.
-- Side effects and states must be awaited for in order. Previously, states and
-  side effects were asserted separately, which meant we were not testing the
-  order in which they were emitted.
 
 ## Testing process
 
