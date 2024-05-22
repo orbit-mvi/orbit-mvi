@@ -1,9 +1,9 @@
 ---
 sidebar_position: 2
-sidebar_label: 'New testing process'
+sidebar_label: 'Test'
 ---
 
-# Resting process
+# Test
 
 The framework is based on the [Turbine](https://github.com/cashapp/turbine)
 library. Turbine is a library for testing coroutines and flows.
@@ -12,6 +12,10 @@ Orbit's framework offers a subset of the Turbine APIs and
 ensures predictable coroutine scoping and context through use of the new
 [coroutine testing APIs](https://kotlinlang.org/api/kotlinx.coroutines/kotlinx-coroutines-test/kotlinx.coroutines.test/run-test.html)
 .
+
+```kotlin
+testImplementation("org.orbit-mvi:orbit-test:<latest-version>")
+```
 
 ## Testing process
 
