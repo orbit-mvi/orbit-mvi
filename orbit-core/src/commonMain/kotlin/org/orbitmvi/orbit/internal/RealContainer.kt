@@ -26,7 +26,6 @@ import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.awaitClose
@@ -110,11 +109,17 @@ public class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
             scope.launch(CoroutineName(COROUTINE_NAME_EVENT_LOOP)) {
                 for ((job, intent) in dispatchChannel) {
                     val exceptionHandlerContext =
-                        (settings.exceptionHandler?.plus(SupervisorJob(job)) ?: job) +
-                            settings.intentLaunchingDispatcher +
-                            CoroutineName("$COROUTINE_NAME_INTENT${intentCounter.getAndIncrement()}")
+                        CoroutineName("$COROUTINE_NAME_INTENT${intentCounter.getAndIncrement()}") +
+                                job +
+                                settings.intentLaunchingDispatcher
                     launch(exceptionHandlerContext) {
-                        pluginContext.intent()
+                        runCatching { pluginContext.intent() }.onFailure { e ->
+                            settings.exceptionHandler?.handleException(
+                                coroutineContext,
+                                e
+                            )
+                                ?: throw e
+                        }
                     }.invokeOnCompletion { job.complete() }
                 }
             }

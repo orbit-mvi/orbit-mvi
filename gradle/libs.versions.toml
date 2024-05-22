@@ -28,7 +28,7 @@ dokka = "1.9.20"
 kotlin = "1.9.24"
 coroutines = "1.8.1"
 
-androidxLifecycles = "2.8.0"
+androidxLifecycles = "2.7.0"
 androidxEspresso = "3.5.1"
 androidxCompose = "1.6.7"
 androidxComposeCompiler = "1.5.14"
