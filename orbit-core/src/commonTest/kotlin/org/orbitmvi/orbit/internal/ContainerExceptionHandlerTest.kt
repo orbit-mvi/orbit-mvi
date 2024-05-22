@@ -14,98 +14,92 @@
  * limitations under the License.
  */
 
-@file:Suppress("DEPRECATION")
-
 package org.orbitmvi.orbit.internal
 
 import app.cash.turbine.test
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.cancelAndJoin
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.container
 import org.orbitmvi.orbit.syntax.simple.intent
-import org.orbitmvi.orbit.syntax.simple.reduce
-import org.orbitmvi.orbit.test
+import org.orbitmvi.orbit.test.test
 import kotlin.random.Random
-import kotlin.test.AfterTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-@ExperimentalCoroutinesApi
 internal class ContainerExceptionHandlerTest {
 
-    // Just be silent
-    private val scope = CoroutineScope(Job() + CoroutineExceptionHandler { _, _ -> })
-
-    @AfterTest
-    fun afterTest() {
-        scope.cancel()
-    }
-
     @Test
-    fun `by default any exception breaks the scope`() = runTest {
-        val initState = Random.nextInt()
-        val container = scope.container<Int, Nothing>(
-            initialState = initState
-        )
-        container.stateFlow.test {
-            val newState = Random.nextInt()
+    fun `by default exceptions are uncaught`() {
+        assertFailsWith<IllegalStateException> {
+            runTest {
+                ExceptionTestMiddleware(this).test(this) {
+                    expectInitialState()
 
-            val job = container.orbit {
-                throw IllegalStateException()
+                    containerHost.exceptionIntent().join()
+                }
             }
-            container.orbit {
-                reduce { newState }
-            }
-
-            assertEquals(initState, awaitItem())
-            job.join()
-            assertEquals(false, scope.isActive)
         }
     }
 
     @Test
-    fun `with exception handler exceptions are caught`() = runTest {
+    fun `with exception handler exceptions are caught`() {
         val initState = Random.nextInt()
-        val exceptions = mutableListOf<Throwable>()
-        val exceptionHandler = CoroutineExceptionHandler { _, throwable -> exceptions += throwable }
-        val container = scope.container<Int, Nothing>(
-            initialState = initState,
-            buildSettings = {
-                this.exceptionHandler = exceptionHandler
-            }
-        )
+        val exceptions = Channel<Throwable>(capacity = Channel.BUFFERED)
+        val exceptionHandler = CoroutineExceptionHandler { _, throwable -> exceptions.trySend(throwable) }
 
-        container.stateFlow.test {
-            val newState = Random.nextInt()
+        runTest {
+            val container = backgroundScope.container<Int, Nothing>(
+                initialState = initState,
+                buildSettings = {
+                    this.exceptionHandler = exceptionHandler
+                }
+            )
+            container.stateFlow.test {
+                assertEquals(initState, awaitItem())
 
-            container.orbit {
-                reduce { throw IllegalStateException() }
+                container.orbit {
+                    throw IllegalStateException()
+                }
             }
-            container.orbit {
-                reduce { newState }
+            exceptions.consumeAsFlow().test {
+                assertEquals(IllegalStateException::class, awaitItem()::class)
+                cancel()
             }
+        }
+    }
 
-            assertEquals(initState, awaitItem())
-            assertEquals(newState, awaitItem())
-            assertEquals(true, scope.isActive)
-            assertEquals(1, exceptions.size)
-            assertTrue { exceptions.first() is IllegalStateException }
+    @Test
+    fun `with exception handler test does not break`() = runTest {
+        val initState = Random.nextInt()
+        val exceptions = Channel<Throwable>(capacity = Channel.BUFFERED)
+        val exceptionHandler = CoroutineExceptionHandler { _, throwable -> exceptions.trySend(throwable) }
+        ExceptionTestMiddleware(this, exceptionHandler).test(this, initState) {
+            expectInitialState()
+
+            containerHost.exceptionIntent()
+
+            exceptions.consumeAsFlow().test {
+                assertEquals(IllegalStateException::class, awaitItem()::class)
+                cancel()
+            }
+            cancelAndIgnoreRemainingItems()
         }
     }
 
@@ -157,79 +151,32 @@ internal class ContainerExceptionHandlerTest {
     }
 
     @Test
-    fun `with exception handler test does not break`() {
-        val initState = Random.nextInt()
-        val exceptions = mutableListOf<Throwable>()
-        val exceptionHandler = CoroutineExceptionHandler { _, throwable -> exceptions += throwable }
-        val containerHost = object : ContainerHost<Int, Nothing> {
-            override val container = scope.container<Int, Nothing>(
-                initialState = initState,
-                buildSettings = {
-                    this.exceptionHandler = exceptionHandler
-                }
-            )
-        }.test(initState) {
-            isolateFlow = false
-        }
-        val newState = Random.nextInt()
+    fun `without exception handler test does break`() {
+        assertFailsWith<IllegalStateException> {
+            runTest {
+                ExceptionTestMiddleware(this).test(this) {
+                    expectInitialState()
 
-        runBlocking {
-            containerHost.testIntent {
-                intent {
-                    reduce { throw IllegalStateException() }
-                }
-            }
-            containerHost.testIntent {
-                intent {
-                    reduce { newState }
+                    containerHost.exceptionIntent().join()
                 }
             }
         }
-
-        containerHost.assert(initState) {
-            states({ newState })
-        }
-        assertEquals(true, scope.isActive)
-        assertEquals(1, exceptions.size)
-        assertTrue { exceptions.first() is IllegalStateException }
     }
 
-    @Test
-    fun `without exception handler test does break`() {
+    private inner class ExceptionTestMiddleware(
+        scope: TestScope,
+        exceptionHandler: CoroutineExceptionHandler? = null
+    ) : ContainerHost<Int, Nothing> {
         val initState = Random.nextInt()
-        val containerHost = object : ContainerHost<Int, Nothing> {
-            override val container = scope.container<Int, Nothing>(
-                initialState = initState,
-                buildSettings = {
-                    this.exceptionHandler = exceptionHandler
-                }
-            )
-        }.test(initState) {
-            isolateFlow = false
-        }
+        override val container = scope.backgroundScope.container<Int, Nothing>(
+            initialState = initState,
+            buildSettings = {
+                this.exceptionHandler = exceptionHandler
+            }
+        )
 
-        runBlocking {
-            assertFailsWith<IllegalStateException> {
-                containerHost.testIntent {
-                    intent {
-                        reduce { throw IllegalStateException() }
-                    }
-                }
-            }
-            // Note: another `intent{}` would still work
-            // as `test()` moves all the job to scope of invocation,
-            // and out of a container's scope (so it's ignored)
-            val newState = Random.nextInt()
-            containerHost.testIntent {
-                intent {
-                    reduce { newState }
-                }
-            }
-            containerHost.assert(initState) {
-                states({ newState })
-            }
+        fun exceptionIntent() = intent {
+            throw IllegalStateException()
         }
-
-        assertEquals(true, scope.isActive)
     }
 }

@@ -23,11 +23,12 @@ package org.orbitmvi.orbit.sample.posts.app.features.postdetails.viewmodel
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import org.orbitmvi.orbit.ContainerHost
+import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.sample.posts.domain.repositories.PostOverview
 import org.orbitmvi.orbit.sample.posts.domain.repositories.PostRepository
 import org.orbitmvi.orbit.sample.posts.domain.repositories.Status
-import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.reduce
+import org.orbitmvi.orbit.syntax.simple.subIntent
 import org.orbitmvi.orbit.viewmodel.container
 
 class PostDetailsViewModel(
@@ -42,7 +43,8 @@ class PostDetailsViewModel(
         }
     }
 
-    private fun loadDetails() = intent {
+    @OptIn(OrbitExperimental::class)
+    private suspend fun loadDetails() = subIntent {
         val status = postRepository.getDetail(postOverview.id)
 
         reduce {

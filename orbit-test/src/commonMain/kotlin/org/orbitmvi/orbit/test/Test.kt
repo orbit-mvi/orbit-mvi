@@ -18,6 +18,7 @@ package org.orbitmvi.orbit.test
 
 import app.cash.turbine.test
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -54,10 +55,11 @@ public suspend fun <STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHo
 ) {
     val containerHost = this
     val testDispatcher = settings.dispatcherOverride ?: testScope.backgroundScope.coroutineContext[CoroutineDispatcher.Key]
+    val testExceptionHandler = settings.exceptionHandlerOverride ?: containerHost.container.settings.exceptionHandler
 
     container.findTestContainer().test(
         initialState = initialState,
-        strategy = TestingStrategy.Live(settings.toRealSettings(testDispatcher)),
+        strategy = TestingStrategy.Live(createRealSettings(testDispatcher, testExceptionHandler)),
         testScope = testScope.backgroundScope
     )
     mergedFlow().test(timeout = timeout) {
@@ -74,13 +76,13 @@ public suspend fun <STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHo
     }
 }
 
-private fun TestSettings.toRealSettings(testDispatcher: CoroutineDispatcher?): RealSettings {
+private fun createRealSettings(testDispatcher: CoroutineDispatcher?, testExceptionHandler: CoroutineExceptionHandler?): RealSettings {
     val dispatcher = testDispatcher ?: StandardTestDispatcher()
 
     return RealSettings(
         eventLoopDispatcher = dispatcher,
         intentLaunchingDispatcher = dispatcher,
-        exceptionHandler = exceptionHandlerOverride,
+        exceptionHandler = testExceptionHandler,
         repeatOnSubscribedStopTimeout = 0L
     )
 }

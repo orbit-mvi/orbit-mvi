@@ -83,7 +83,7 @@ public interface Container<STATE : Any, SIDE_EFFECT : Any> {
      * If your particular use case requires multi-casting use `broadcast` on this [Flow], but be aware that caching will not work for the
      * resulting `BroadcastChannel`.
      *
-     *  It's the same as [stateFlow], but it's ref-counted for the [repeatOnSubscription] operator.
+     *  It's the same as [sideEffectFlow], but it's ref-counted for the [repeatOnSubscription] operator.
      */
     public val refCountSideEffectFlow: Flow<SIDE_EFFECT>
 

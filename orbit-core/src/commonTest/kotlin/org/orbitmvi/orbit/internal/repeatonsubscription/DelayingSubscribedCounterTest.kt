@@ -1,144 +1,143 @@
 package org.orbitmvi.orbit.internal.repeatonsubscription
 
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.cancel
+import app.cash.turbine.test
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.test.TestCoroutineScheduler
+import kotlinx.coroutines.test.TestScope
+import kotlinx.coroutines.test.advanceUntilIdle
+import kotlinx.coroutines.test.runTest
 import org.orbitmvi.orbit.internal.repeatonsubscription.Subscription.Subscribed
 import org.orbitmvi.orbit.internal.repeatonsubscription.Subscription.Unsubscribed
-import org.orbitmvi.orbit.test.runBlocking
-import org.orbitmvi.orbit.testFlowObserver
-import kotlin.test.AfterTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class DelayingSubscribedCounterTest {
 
-    private val testScope = CoroutineScope(Dispatchers.Unconfined)
-
-    @AfterTest
-    fun tearDown() {
-        testScope.cancel()
-    }
-
     @Test
-    fun `initial value is unsubscribed`() {
-        runBlocking {
-            val counter = DelayingSubscribedCounter(testScope, 0)
-            val testObserver = counter.subscribed.testFlowObserver()
-
-            assertEquals(listOf(Unsubscribed), testObserver.values)
+    fun `initial value is unsubscribed`() = runTest {
+        val counter = DelayingSubscribedCounter(backgroundScope, 0)
+        counter.subscribed.test {
+            assertEquals(Unsubscribed, awaitItem())
         }
     }
 
     @Test
-    fun `incrementing subscribes`() {
-        runBlocking {
-            val counter = DelayingSubscribedCounter(testScope, 0)
-            val testObserver = counter.subscribed.testFlowObserver()
+    fun `incrementing subscribes`() = runTest {
+        val counter = DelayingSubscribedCounter(backgroundScope, 0)
 
+        counter.subscribed.test {
             counter.increment()
-
-            testObserver.awaitCount(2)
-            assertEquals(listOf(Unsubscribed, Subscribed), testObserver.values)
+            assertEquals(Unsubscribed, awaitItem())
+            assertEquals(Subscribed, awaitItem())
         }
     }
 
     @Test
-    fun `increment decrement unsubscribes`() {
-        runBlocking {
-            val counter = DelayingSubscribedCounter(testScope, 0)
-            val testObserver = counter.subscribed.testFlowObserver()
+    fun `increment decrement unsubscribes`() = runTest {
+        val counter = DelayingSubscribedCounter(backgroundScope, 0)
 
+        counter.subscribed.test {
             counter.increment()
             counter.decrement()
-
-            testObserver.awaitCount(3)
-            assertEquals(listOf(Unsubscribed, Subscribed, Unsubscribed), testObserver.values)
+            assertEquals(Unsubscribed, awaitItem())
+            assertEquals(Subscribed, awaitItem())
+            assertEquals(Unsubscribed, awaitItem())
         }
     }
 
     @Test
-    fun `values received are distinct`() {
-        runBlocking {
-            val counter = DelayingSubscribedCounter(testScope, 0)
-            val testObserver = counter.subscribed.testFlowObserver()
+    fun `values received are distinct`() = runTest {
+        val counter = DelayingSubscribedCounter(backgroundScope, 0)
 
+        counter.subscribed.test {
             counter.increment()
             counter.increment()
             counter.decrement()
             counter.decrement()
 
-            testObserver.awaitCount(3)
-            assertEquals(listOf(Unsubscribed, Subscribed, Unsubscribed), testObserver.values)
+            assertEquals(Unsubscribed, awaitItem())
+            assertEquals(Subscribed, awaitItem())
+            assertEquals(Unsubscribed, awaitItem())
         }
     }
 
     @Test
-    fun `negative decrements are ignored`() {
-        runBlocking {
-            val counter = DelayingSubscribedCounter(testScope, 0)
-            val testObserver = counter.subscribed.testFlowObserver()
+    fun `negative decrements are ignored`() = runTest {
+        val counter = DelayingSubscribedCounter(backgroundScope, 0)
 
+        counter.subscribed.test {
             counter.decrement()
             counter.decrement()
             counter.decrement()
             counter.increment()
             counter.decrement()
 
-            testObserver.awaitCount(3)
-            assertEquals(listOf(Unsubscribed, Subscribed, Unsubscribed), testObserver.values)
+            assertEquals(Unsubscribed, awaitItem())
+            assertEquals(Subscribed, awaitItem())
+            assertEquals(Unsubscribed, awaitItem())
         }
     }
 
     @Test
-    fun `unsubscribed received on launch immediately`() {
-        runBlocking {
-            val counter = DelayingSubscribedCounter(testScope, 500)
-            val testObserver = counter.subscribed.mapTimed().testFlowObserver()
+    fun `unsubscribed received on launch immediately`() = runTest {
+        val innerScope = TestScope()
+        val counter = DelayingSubscribedCounter(innerScope, 500)
+        counter.subscribed.mapTimed(innerScope.testScheduler).test {
+            innerScope.advanceUntilIdle()
+            val item = awaitItem()
 
-            testObserver.awaitCount(1)
-            assertEquals(Unsubscribed, testObserver.values.first().value)
-            assertTrue(testObserver.values.first().time < 450)
+            assertEquals(Unsubscribed, item.value)
+            assertTrue(item.time < 450)
         }
     }
 
     @Test
-    fun `unsubscribed received immediately on second observation`() {
-        runBlocking {
-            val counter = DelayingSubscribedCounter(testScope, 500)
+    fun `unsubscribed received immediately on second observation`() = runTest {
+        val innerScope = TestScope()
+        val counter = DelayingSubscribedCounter(backgroundScope, 500)
 
+        counter.subscribed.mapTimed(innerScope.testScheduler).test {
+            innerScope.advanceUntilIdle()
             // Wait to receive unsubscribed at launch
-            counter.subscribed.mapTimed().testFlowObserver().awaitCount(1)
+            skipItems(1)
+        }
 
-            val testObserver2 = counter.subscribed.mapTimed().testFlowObserver()
-            testObserver2.awaitCount(1)
-            assertEquals(Unsubscribed, testObserver2.values.first().value)
-            assertTrue(testObserver2.values.first().time < 450)
+        counter.subscribed.mapTimed(innerScope.testScheduler).test {
+            innerScope.advanceUntilIdle()
+            val item = awaitItem()
+
+            assertEquals(Unsubscribed, item.value)
+            assertTrue(item.time < 450)
         }
     }
 
     @Test
-    fun `unsubscribed received after delay`() {
-        runBlocking {
-            val counter = DelayingSubscribedCounter(testScope, 500)
-            val testObserver = counter.subscribed.mapTimed().testFlowObserver()
+    fun `unsubscribed received after delay`() = runTest {
+        val innerScope = TestScope()
+        val counter = DelayingSubscribedCounter(innerScope, 500)
 
+        counter.subscribed.mapTimed(innerScope.testScheduler).test {
+            assertEquals(Unsubscribed, awaitItem().value)
             counter.increment()
+            innerScope.advanceUntilIdle()
+            assertEquals(Subscribed, awaitItem().value)
             counter.decrement()
+            innerScope.advanceUntilIdle()
 
-            testObserver.awaitCount(3)
-            assertEquals(listOf(Unsubscribed, Subscribed, Unsubscribed), testObserver.values.map { it.value })
-            assertTrue(testObserver.values.last().time > 450)
+            val item = awaitItem()
+            assertEquals(Unsubscribed, item.value)
+            assertTrue(item.time > 450)
         }
     }
 
-    private fun Flow<Subscription>.mapTimed(): Flow<Timed<Subscription>> {
-        var last = getSystemTimeInMillis()
+    private fun Flow<Subscription>.mapTimed(testCoroutineScheduler: TestCoroutineScheduler): Flow<Timed<Subscription>> {
+        var last = testCoroutineScheduler.currentTime
         return map {
-            val current = getSystemTimeInMillis()
+            val current = testCoroutineScheduler.currentTime
             val diff = current - last
             last = current
             Timed(diff, it)

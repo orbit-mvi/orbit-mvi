@@ -31,7 +31,6 @@ import kotlin.coroutines.coroutineContext
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-@ExperimentalCoroutinesApi
 internal class InfiniteFlowTest {
 
     @Test
@@ -51,6 +50,7 @@ internal class InfiniteFlowTest {
     }
 
     @Test
+    @ExperimentalCoroutinesApi
     fun `infinite flow can be tested without delay skipping`() = runTest {
         val scope = TestScope()
 

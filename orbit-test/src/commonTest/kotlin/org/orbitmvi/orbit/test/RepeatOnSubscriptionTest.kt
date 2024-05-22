@@ -16,7 +16,6 @@
 
 package org.orbitmvi.orbit.test
 
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
 import org.orbitmvi.orbit.ContainerHost
@@ -28,7 +27,6 @@ import kotlin.random.Random
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-@ExperimentalCoroutinesApi
 class RepeatOnSubscriptionTest {
     private val initialState = State()
 

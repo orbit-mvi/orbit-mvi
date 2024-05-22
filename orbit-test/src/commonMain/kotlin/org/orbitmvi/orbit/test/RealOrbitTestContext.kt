@@ -18,9 +18,9 @@ package org.orbitmvi.orbit.test
 
 import app.cash.turbine.ReceiveTurbine
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.runBlocking
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.annotation.OrbitInternal
-import org.orbitmvi.orbit.runBlocking
 import kotlin.test.assertEquals
 import kotlin.test.fail
 

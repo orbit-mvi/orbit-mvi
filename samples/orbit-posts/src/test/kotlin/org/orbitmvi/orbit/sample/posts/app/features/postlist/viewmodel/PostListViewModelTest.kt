@@ -22,7 +22,7 @@ package org.orbitmvi.orbit.sample.posts.app.features.postlist.viewmodel
 
 import androidx.lifecycle.SavedStateHandle
 import com.appmattus.kotlinfixture.kotlinFixture
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.kotlin.mock
@@ -30,9 +30,8 @@ import org.mockito.kotlin.whenever
 import org.orbitmvi.orbit.sample.posts.InstantTaskExecutorExtension
 import org.orbitmvi.orbit.sample.posts.domain.repositories.PostOverview
 import org.orbitmvi.orbit.sample.posts.domain.repositories.PostRepository
-import org.orbitmvi.orbit.test
+import org.orbitmvi.orbit.test.test
 
-@Suppress("DEPRECATION")
 @ExtendWith(InstantTaskExecutorExtension::class)
 class PostListViewModelTest {
 
@@ -40,7 +39,7 @@ class PostListViewModelTest {
     private val repository = mock<PostRepository>()
 
     @Test
-    fun `loads post overviews from repository if no overviews present`() = runBlocking {
+    fun `loads post overviews from repository if no overviews present`() = runTest {
         val overviews = fixture<List<PostOverview>>()
         val initialState = PostListState()
 
@@ -49,21 +48,21 @@ class PostListViewModelTest {
             .thenReturn(overviews)
 
         // when we observe details from the view model
-        val viewModel = PostListViewModel(SavedStateHandle(), repository).test(
+        PostListViewModel(SavedStateHandle(), repository).test(
+            this,
             initialState = initialState,
-        )
-        viewModel.runOnCreate()
+        ) {
+            expectInitialState()
 
-        // then the view model loads the overviews
-        viewModel.assert(initialState) {
-            states(
-                { copy(overviews = overviews) }
-            )
+            runOnCreate().join()
+
+            // then the view model loads the overviews
+            expectState { copy(overviews = overviews) }
         }
     }
 
     @Test
-    fun `does not load post overviews from repository if already populated`() = runBlocking {
+    fun `does not load post overviews from repository if already populated`() = runTest {
         val overviews = fixture<List<PostOverview>>()
         val initialState = PostListState(overviews)
 
@@ -72,30 +71,36 @@ class PostListViewModelTest {
             .thenReturn(overviews)
 
         // when we observe details from the view model
-        val viewModel = PostListViewModel(SavedStateHandle(), repository).test(
+        PostListViewModel(SavedStateHandle(), repository).test(
+            this,
             initialState = initialState,
-        )
-        viewModel.runOnCreate()
+        ) {
+            expectInitialState()
 
-        // then the view model loads the overviews
-        viewModel.assert(initialState)
+            runOnCreate()
+
+            expectNoItems()
+        }
     }
 
     @Test
-    fun `navigates to detail screen`() = runBlocking {
+    fun `navigates to detail screen`() = runTest {
         val overviews = fixture<List<PostOverview>>()
         val detailTarget = overviews.random()
         val initialState = PostListState(overviews)
 
         // given we have already loaded the overviews
-        val testContainerHost = PostListViewModel(SavedStateHandle(), repository).test(initialState = initialState)
+        PostListViewModel(SavedStateHandle(), repository).test(
+            this,
+            initialState = initialState,
+        ) {
+            expectInitialState()
 
-        // when we click a post
-        testContainerHost.testIntent { onPostClicked(detailTarget) }
+            // when we click a post
+            containerHost.onPostClicked(detailTarget)
 
-        // then the view model loads the overviews
-        testContainerHost.assert(initialState) {
-            postedSideEffects(OpenPostNavigationEvent(detailTarget))
+            // then we navigate to post details
+            expectSideEffect(OpenPostNavigationEvent(detailTarget))
         }
     }
 }

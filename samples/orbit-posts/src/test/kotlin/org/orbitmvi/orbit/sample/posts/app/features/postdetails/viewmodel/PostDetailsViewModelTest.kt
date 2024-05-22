@@ -22,21 +22,19 @@ package org.orbitmvi.orbit.sample.posts.app.features.postdetails.viewmodel
 
 import androidx.lifecycle.SavedStateHandle
 import com.appmattus.kotlinfixture.kotlinFixture
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.kotlin.mock
-import org.mockito.kotlin.verifyNoMoreInteractions
 import org.mockito.kotlin.whenever
 import org.orbitmvi.orbit.sample.posts.InstantTaskExecutorExtension
 import org.orbitmvi.orbit.sample.posts.domain.repositories.PostDetail
 import org.orbitmvi.orbit.sample.posts.domain.repositories.PostOverview
 import org.orbitmvi.orbit.sample.posts.domain.repositories.PostRepository
 import org.orbitmvi.orbit.sample.posts.domain.repositories.Status
-import org.orbitmvi.orbit.test
+import org.orbitmvi.orbit.test.test
 import java.io.IOException
 
-@Suppress("DEPRECATION")
 @ExtendWith(InstantTaskExecutorExtension::class)
 class PostDetailsViewModelTest {
 
@@ -44,7 +42,7 @@ class PostDetailsViewModelTest {
     private val repository = mock<PostRepository>()
 
     @Test
-    fun `loads post details from repository if no details present`() = runBlocking {
+    fun `loads post details from repository if no details present`() = runTest {
         val overview = fixture<PostOverview>()
         val details = fixture<PostDetail> {
             property(PostDetail::id) { overview.id }
@@ -56,21 +54,21 @@ class PostDetailsViewModelTest {
             .thenReturn(Status.Success(details))
 
         // when we observe details from the view model
-        val viewModel = PostDetailsViewModel(SavedStateHandle(), repository, overview).test(
+        PostDetailsViewModel(SavedStateHandle(), repository, overview).test(
+            this,
             initialState = initialState,
-        )
-        viewModel.runOnCreate()
+        ) {
+            expectInitialState()
 
-        // then the view model loads the details
-        viewModel.assert(initialState) {
-            states(
-                { PostDetailState.Details(postOverview, details) }
-            )
+            runOnCreate()
+
+            // then the view model loads the details
+            expectState { PostDetailState.Details(overview, details) }
         }
     }
 
     @Test
-    fun `does not load post details from repository if details present`() = runBlocking {
+    fun `does not load post details from repository if details present`() = runTest {
         val overview = fixture<PostOverview>()
         val details = fixture<PostDetail> {
             property(PostDetail::id) { overview.id }
@@ -80,18 +78,22 @@ class PostDetailsViewModelTest {
         val initialState = PostDetailState.Details(overview, details)
 
         // when we observe details from the view model
-        val viewModel = PostDetailsViewModel(SavedStateHandle(), repository, overview).test(
+        // when we observe details from the view model
+        PostDetailsViewModel(SavedStateHandle(), repository, overview).test(
+            this,
             initialState = initialState,
-        )
-        viewModel.runOnCreate()
+        ) {
+            runOnCreate()
 
-        // then the view model only emits initial state
-        viewModel.assert(initialState)
-        verifyNoMoreInteractions(repository)
+            // then the view model only emits initial state
+            expectState { initialState }
+
+            expectNoItems()
+        }
     }
 
     @Test
-    fun `no details available on failure`() = runBlocking {
+    fun `no details available on failure`() = runTest {
         val overview = fixture<PostOverview>()
         val exception = IOException()
         val initialState = PostDetailState.NoDetailsAvailable(overview)
@@ -101,16 +103,14 @@ class PostDetailsViewModelTest {
             .thenReturn(Status.Failure(exception))
 
         // when we observe details from the view model
-        val viewModel = PostDetailsViewModel(SavedStateHandle(), repository, overview).test(
+        PostDetailsViewModel(SavedStateHandle(), repository, overview).test(
+            this,
             initialState = initialState,
-        )
-        viewModel.runOnCreate()
+        ) {
+            runOnCreate().join()
 
-        // then the view model shows no details
-        viewModel.assert(initialState) {
-            states(
-                { PostDetailState.NoDetailsAvailable(postOverview) }
-            )
+            // then the view model shows no details
+            expectState { PostDetailState.NoDetailsAvailable(postOverview) }
         }
     }
 }

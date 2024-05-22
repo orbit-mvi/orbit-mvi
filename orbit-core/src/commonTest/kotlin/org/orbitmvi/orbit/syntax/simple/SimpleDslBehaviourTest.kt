@@ -20,8 +20,6 @@
 
 package org.orbitmvi.orbit.syntax.simple
 
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
@@ -31,8 +29,6 @@ import org.orbitmvi.orbit.test.test
 import kotlin.random.Random
 import kotlin.test.Test
 
-@ExperimentalCoroutinesApi
-@InternalCoroutinesApi
 internal class SimpleDslBehaviourTest {
 
     private val initialState = TestState()

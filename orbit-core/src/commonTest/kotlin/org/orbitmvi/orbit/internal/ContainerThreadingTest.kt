@@ -20,67 +20,46 @@
 
 package org.orbitmvi.orbit.internal
 
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.coroutineScope
+import app.cash.turbine.test
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.runTest
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.container
-import org.orbitmvi.orbit.test.runBlocking
-import org.orbitmvi.orbit.testFlowObserver
 import kotlin.random.Random
-import kotlin.test.AfterTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-@ExperimentalCoroutinesApi
 internal class ContainerThreadingTest {
 
-    private val scope = CoroutineScope(Job())
-
-    @AfterTest
-    fun afterTest() {
-        scope.cancel()
-    }
-
     @Test
-    fun `container can process a second action while the first is suspended`() {
-        val container = scope.container<Int, Nothing>(Random.nextInt())
-        val observer = container.stateFlow.testFlowObserver()
+    fun `container can process a second action while the first is suspended`() = runTest {
+        val initState = Random.nextInt()
         val newState = Random.nextInt()
+        val container = backgroundScope.container<Int, Nothing>(initState)
 
-        runBlocking {
+        container.stateFlow.test {
             container.orbit {
                 delay(Long.MAX_VALUE)
             }
             container.orbit {
                 reduce { newState }
             }
+            assertEquals(initState, awaitItem())
+            assertEquals(newState, awaitItem())
         }
-
-        observer.awaitCount(2)
-        assertEquals(newState, container.stateFlow.value)
     }
 
     @Test
-    fun `reductions are applied in order if called from single thread`() {
-        // This scenario is meant to simulate calling only reducers from the UI thread
-        runBlocking {
-            val container = scope.container<TestState, Nothing>(TestState())
-            val testStateObserver = container.stateFlow.testFlowObserver()
-            val expectedStates = mutableListOf(
-                TestState(
-                    emptyList()
-                )
-            )
+    fun `reductions are applied in order if called from single thread`() = runTest {
+        var expectedState = TestState()
+        val container = backgroundScope.container<TestState, Nothing>(expectedState)
+        container.stateFlow.test {
+            skipItems(1)
+
             for (i in 0 until ITEM_COUNT) {
                 val value = (i % 3)
-                expectedStates.add(
-                    expectedStates.last().copy(ids = expectedStates.last().ids + (value + 1))
-                )
+                expectedState = expectedState.copy(ids = expectedState.ids + (value + 1))
 
                 when (value) {
                     0 -> container.one()
@@ -88,47 +67,43 @@ internal class ContainerThreadingTest {
                     2 -> container.three()
                     else -> error("misconfigured test")
                 }
+
+                assertEquals(expectedState, awaitItem())
             }
-
-            testStateObserver.awaitFor { values.isNotEmpty() && values.last().ids.size == ITEM_COUNT }
-
-            assertEquals(expectedStates.last(), testStateObserver.values.last())
         }
     }
 
     @Test
-    fun `reductions run in sequence but in an undefined order when executed from multiple threads`() {
-        // This scenario is meant to simulate calling only reducers from the UI thread
-        runBlocking {
-            val container = scope.container<TestState, Nothing>(TestState())
-            val testStateObserver = container.stateFlow.testFlowObserver()
-            val expectedStates = mutableListOf(
-                TestState(
-                    emptyList()
-                )
+    fun `reductions run in sequence but in an undefined order when executed from multiple threads`() = runTest {
+        val expectedStates = mutableListOf(
+            TestState(
+                emptyList()
             )
-            coroutineScope {
-                for (i in 0 until ITEM_COUNT) {
-                    val value = (i % 3)
-                    expectedStates.add(
-                        expectedStates.last().copy(ids = expectedStates.last().ids + (value + 1))
-                    )
+        )
+        val container = backgroundScope.container<TestState, Nothing>(expectedStates.first())
+        container.stateFlow.test {
+            skipItems(1)
 
-                    launch {
-                        when (value) {
-                            0 -> container.one(true)
-                            1 -> container.two(true)
-                            2 -> container.three(true)
-                            else -> error("misconfigured test")
-                        }
+            for (i in 0 until ITEM_COUNT) {
+                val value = (i % 3)
+                expectedStates.add(
+                    expectedStates.last().copy(ids = expectedStates.last().ids + (value + 1))
+                )
+
+                launch {
+                    when (value) {
+                        0 -> container.one()
+                        1 -> container.two()
+                        2 -> container.three()
+                        else -> error("misconfigured test")
                     }
                 }
             }
 
-            testStateObserver.awaitFor { values.isNotEmpty() && values.last().ids.size == ITEM_COUNT }
-
-            assertEquals(ITEM_COUNT / 3, testStateObserver.values.last().ids.count { it == 1 })
-            assertEquals(ITEM_COUNT / 3, testStateObserver.values.last().ids.count { it == 2 })
+            skipItems(ITEM_COUNT - 1)
+            val lastState = awaitItem()
+            assertEquals(ITEM_COUNT / 3, lastState.ids.count { it == 1 })
+            assertEquals(ITEM_COUNT / 3, lastState.ids.count { it == 2 })
         }
     }
 

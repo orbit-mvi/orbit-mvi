@@ -20,22 +20,20 @@
 
 package org.orbitmvi.orbit.internal
 
+import app.cash.turbine.test
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.test.runTest
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.container
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.reduce
-import org.orbitmvi.orbit.test.assertContainExactly
-import org.orbitmvi.orbit.testFlowObserver
 import kotlin.random.Random
 import kotlin.test.AfterTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-@ExperimentalCoroutinesApi
 internal class StateTest {
 
     private val scope = CoroutineScope(Job())
@@ -46,37 +44,29 @@ internal class StateTest {
     }
 
     @Test
-    fun `initial state is emitted on connection`() {
+    fun `initial state is emitted on connection`() = runTest {
         val initialState = TestState()
         val middleware = Middleware(initialState)
-        val testStateObserver = middleware.container.stateFlow.testFlowObserver()
-
-        testStateObserver.awaitCount(1)
-
-        testStateObserver.values.assertContainExactly(initialState)
+        middleware.container.stateFlow.test {
+            assertEquals(initialState, awaitItem())
+        }
     }
 
     @Test
-    fun `latest state is emitted on connection`() {
+    fun `latest state is emitted on connection`() = runTest {
         val initialState = TestState()
-        val middleware = Middleware(initialState)
-        val testStateObserver = middleware.container.stateFlow.testFlowObserver()
         val action = Random.nextInt()
-        middleware.something(action)
-        testStateObserver.awaitCount(2) // block until the state is updated
+        val middleware = Middleware(initialState)
 
-        val testStateObserver2 = middleware.container.stateFlow.testFlowObserver()
-        testStateObserver2.awaitCount(1)
+        middleware.container.stateFlow.test {
+            assertEquals(initialState, awaitItem())
+            middleware.something(action)
+            assertEquals(TestState(action), awaitItem())
+        }
 
-        testStateObserver.values.assertContainExactly(
-            initialState,
-            TestState(action)
-        )
-        testStateObserver2.values.assertContainExactly(
-            TestState(
-                action
-            )
-        )
+        middleware.container.stateFlow.test {
+            assertEquals(TestState(action), awaitItem())
+        }
     }
 
     @Test
@@ -88,17 +78,16 @@ internal class StateTest {
     }
 
     @Test
-    fun `current state is up to date after modification`() {
+    fun `current state is up to date after modification`() = runTest {
         val initialState = TestState()
         val middleware = Middleware(initialState)
         val action = Random.nextInt()
-        val testStateObserver = middleware.container.stateFlow.testFlowObserver()
+        middleware.container.stateFlow.test {
+            middleware.something(action)
+            skipItems(2)
+        }
 
-        middleware.something(action)
-
-        testStateObserver.awaitCount(2)
-
-        assertEquals(testStateObserver.values.last(), middleware.container.stateFlow.value)
+        assertEquals(middleware.container.stateFlow.value, middleware.container.stateFlow.value)
     }
 
     private data class TestState(val id: Int = Random.nextInt())

@@ -16,7 +16,6 @@
 
 package org.orbitmvi.orbit.test
 
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
 import org.orbitmvi.orbit.ContainerHost
@@ -30,7 +29,6 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertTrue
 
-@ExperimentalCoroutinesApi
 class StateTest {
 
     private val initialState = State()

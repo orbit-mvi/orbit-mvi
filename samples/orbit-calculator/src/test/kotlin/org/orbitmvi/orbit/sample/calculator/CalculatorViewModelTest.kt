@@ -29,6 +29,7 @@ import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
 import org.junit.Assert.assertEquals
 import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.RepeatedTest
 import org.junit.jupiter.api.Test
@@ -44,7 +45,6 @@ import org.orbitmvi.orbit.sample.calculator.livedata.MockLifecycleOwner
 import org.orbitmvi.orbit.sample.calculator.livedata.test
 import java.util.stream.Stream
 
-@ExperimentalCoroutinesApi
 @ExtendWith(InstantTaskExecutorExtension::class)
 class CalculatorViewModelTest {
 
@@ -52,6 +52,7 @@ class CalculatorViewModelTest {
 
     private val mockLifecycleOwner = MockLifecycleOwner()
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @BeforeEach
     fun beforeEach() {
         Dispatchers.setMain(Dispatchers.Unconfined)
@@ -61,6 +62,7 @@ class CalculatorViewModelTest {
         }
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @AfterEach
     fun afterEach() {
         Dispatchers.resetMain()
@@ -94,7 +96,7 @@ class CalculatorViewModelTest {
 
         testLiveData.awaitCount(1)
 
-        assertEquals("0", testLiveData.values.last().digitalDisplay)
+        Assertions.assertEquals("0", testLiveData.values.last().digitalDisplay)
     }
 
     @Test
@@ -105,7 +107,7 @@ class CalculatorViewModelTest {
 
         testLiveData.awaitCount(2)
 
-        assertEquals("-0", testLiveData.values.last().digitalDisplay)
+        Assertions.assertEquals("-0", testLiveData.values.last().digitalDisplay)
     }
 
     @ParameterizedTest(name = "{0} + {1}")
@@ -120,7 +122,7 @@ class CalculatorViewModelTest {
 
         testLiveData.awaitCount(aCount + bCount + 3)
 
-        assertEquals(a + b, testLiveData.values.last().digitalDisplay.toDouble(), 0.00001)
+        Assertions.assertEquals(a + b, testLiveData.values.last().digitalDisplay.toDouble(), 0.00001)
     }
 
     @ParameterizedTest(name = "{0} + {1}")
@@ -135,7 +137,7 @@ class CalculatorViewModelTest {
 
         testLiveData.awaitCount(aCount + bCount + 3)
 
-        assertEquals(a + b, testLiveData.values.last().digitalDisplay.toInt())
+        Assertions.assertEquals(a + b, testLiveData.values.last().digitalDisplay.toInt())
     }
 
     @ParameterizedTest(name = "{0} − {1}")
@@ -150,7 +152,7 @@ class CalculatorViewModelTest {
 
         testLiveData.awaitCount(aCount + bCount + 3)
 
-        assertEquals(a - b, testLiveData.values.last().digitalDisplay.toDouble(), 0.00001)
+        Assertions.assertEquals(a - b, testLiveData.values.last().digitalDisplay.toDouble(), 0.00001)
     }
 
     @ParameterizedTest(name = "{0} − {1}")
@@ -165,7 +167,7 @@ class CalculatorViewModelTest {
 
         testLiveData.awaitCount(aCount + bCount + 3)
 
-        assertEquals(a - b, testLiveData.values.last().digitalDisplay.toInt())
+        Assertions.assertEquals(a - b, testLiveData.values.last().digitalDisplay.toInt())
     }
 
     @ParameterizedTest(name = "{0} × {1}")
@@ -180,7 +182,7 @@ class CalculatorViewModelTest {
 
         testLiveData.awaitCount(aCount + bCount + 3)
 
-        assertEquals(a * b, testLiveData.values.last().digitalDisplay.toDouble(), 0.00001)
+        Assertions.assertEquals(a * b, testLiveData.values.last().digitalDisplay.toDouble(), 0.00001)
     }
 
     @ParameterizedTest(name = "{0} × {1}")
@@ -195,7 +197,7 @@ class CalculatorViewModelTest {
 
         testLiveData.awaitCount(aCount + bCount + 3)
 
-        assertEquals(a * b, testLiveData.values.last().digitalDisplay.toInt())
+        Assertions.assertEquals(a * b, testLiveData.values.last().digitalDisplay.toInt())
     }
 
     @ParameterizedTest(name = "{0} ÷ {1}")
@@ -210,7 +212,7 @@ class CalculatorViewModelTest {
 
         testLiveData.awaitCount(aCount + bCount + 3)
 
-        assertEquals(a / b, testLiveData.values.last().digitalDisplay.toDouble(), 0.00001)
+        Assertions.assertEquals(a / b, testLiveData.values.last().digitalDisplay.toDouble(), 0.00001)
     }
 
     @ParameterizedTest(name = "{0} ÷ {1}")
@@ -226,9 +228,9 @@ class CalculatorViewModelTest {
         testLiveData.awaitCount(aCount + bCount + 3)
 
         if (b == 0) {
-            assertEquals("Err", testLiveData.values.last().digitalDisplay)
+            Assertions.assertEquals("Err", testLiveData.values.last().digitalDisplay)
         } else {
-            assertEquals(a.toDouble() / b.toDouble(), testLiveData.values.last().digitalDisplay.toDouble(), 0.00001)
+            Assertions.assertEquals(a.toDouble() / b.toDouble(), testLiveData.values.last().digitalDisplay.toDouble(), 0.00001)
         }
     }
 
@@ -242,7 +244,7 @@ class CalculatorViewModelTest {
 
         testLiveData.awaitCount(aCount + 2)
 
-        assertEquals(a / 100, testLiveData.values.last().digitalDisplay.toDouble(), 0.00001)
+        Assertions.assertEquals(a / 100, testLiveData.values.last().digitalDisplay.toDouble(), 0.00001)
     }
 
     @ParameterizedTest(name = "{0}")
@@ -255,7 +257,7 @@ class CalculatorViewModelTest {
 
         testLiveData.awaitCount(aCount + 2)
 
-        assertEquals(a.toDouble() / 100, testLiveData.values.last().digitalDisplay.toDouble(), 0.00001)
+        Assertions.assertEquals(a.toDouble() / 100, testLiveData.values.last().digitalDisplay.toDouble(), 0.00001)
     }
 
     @RepeatedTest(10)
@@ -281,7 +283,7 @@ class CalculatorViewModelTest {
 
         testLiveData.awaitIdle()
 
-        assertEquals("0", testLiveData.values.last().digitalDisplay)
+        Assertions.assertEquals("0", testLiveData.values.last().digitalDisplay)
     }
 
     class DecimalNumberPairProvider : ArgumentsProvider {

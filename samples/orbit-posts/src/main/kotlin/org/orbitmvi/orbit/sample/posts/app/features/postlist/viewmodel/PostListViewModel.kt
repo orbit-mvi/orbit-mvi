@@ -20,42 +20,41 @@
 
 package org.orbitmvi.orbit.sample.posts.app.features.postlist.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import kotlinx.coroutines.CoroutineExceptionHandler
 import org.orbitmvi.orbit.ContainerHost
+import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.sample.posts.app.common.NavigationEvent
 import org.orbitmvi.orbit.sample.posts.domain.repositories.PostOverview
 import org.orbitmvi.orbit.sample.posts.domain.repositories.PostRepository
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.postSideEffect
 import org.orbitmvi.orbit.syntax.simple.reduce
+import org.orbitmvi.orbit.syntax.simple.subIntent
 import org.orbitmvi.orbit.viewmodel.container
 
 class PostListViewModel(
     savedStateHandle: SavedStateHandle,
-    private val postRepository: PostRepository,
-    exceptionHandler: CoroutineExceptionHandler = CoroutineExceptionHandler { _, throwable ->
-        Log.w("PostListViewModel", "orbit caught the exception", throwable)
-    }
+    private val postRepository: PostRepository
 ) : ViewModel(), ContainerHost<PostListState, NavigationEvent> {
 
     override val container = container<PostListState, NavigationEvent>(
         initialState = PostListState(),
-        savedStateHandle = savedStateHandle,
-        buildSettings = { this.exceptionHandler = exceptionHandler }
+        savedStateHandle = savedStateHandle
     ) {
         if (state.overviews.isEmpty()) {
             loadOverviews()
         }
     }
 
-    private fun loadOverviews() = intent {
-        val overviews = postRepository.getOverviews()
+    @OptIn(OrbitExperimental::class)
+    private suspend fun loadOverviews() = subIntent {
+        runCatching {
+            val overviews = postRepository.getOverviews()
 
-        reduce {
-            state.copy(overviews = overviews)
+            reduce {
+                state.copy(overviews = overviews)
+            }
         }
     }
 
