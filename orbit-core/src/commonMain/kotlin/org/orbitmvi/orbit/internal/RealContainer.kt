@@ -110,8 +110,8 @@ public class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
                 for ((job, intent) in dispatchChannel) {
                     val exceptionHandlerContext =
                         CoroutineName("$COROUTINE_NAME_INTENT${intentCounter.getAndIncrement()}") +
-                                job +
-                                settings.intentLaunchingDispatcher
+                            job +
+                            settings.intentLaunchingDispatcher
                     launch(exceptionHandlerContext) {
                         runCatching { pluginContext.intent() }.onFailure { e ->
                             settings.exceptionHandler?.handleException(
