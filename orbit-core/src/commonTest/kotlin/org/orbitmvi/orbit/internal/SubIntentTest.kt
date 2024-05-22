@@ -39,7 +39,7 @@ import kotlin.test.Test
 internal class SubIntentTest {
 
     @Test
-    fun `sub intents can be executed in parallel`() = runTest {
+    fun sub_intents_can_be_executed_in_parallel() = runTest {
         val initialState = TestState()
         val channel1 = Channel<String>()
         val channel2 = Channel<String>()

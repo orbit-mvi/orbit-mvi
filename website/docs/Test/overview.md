@@ -1,133 +1,96 @@
 ---
-sidebar_position: 1
-sidebar_label: 'Overview'
+sidebar_position: 2
+sidebar_label: 'Test'
 ---
 
-# Unit Testing module
+# Test
 
-:::caution
+The framework is based on the [Turbine](https://github.com/cashapp/turbine)
+library. Turbine is a library for testing coroutines and flows.
 
-This framework is now **deprecated**. It will be removed in Orbit version 7.0.0.
-
-Use the [new framework](new.md) instead.
-
-:::
-
-This module provides a simple unit testing framework for your Orbit
-[ContainerHosts](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-container-host/).
+Orbit's framework offers a subset of the Turbine APIs and
+ensures predictable coroutine scoping and context through use of the new
+[coroutine testing APIs](https://kotlinlang.org/api/kotlinx.coroutines/kotlinx-coroutines-test/kotlinx.coroutines.test/run-test.html)
+.
 
 ```kotlin
 testImplementation("org.orbit-mvi:orbit-test:<latest-version>")
 ```
 
-## Testing goals
-
-Experience with [Orbit 1](https://github.com/babylonhealth/orbit-mvi/blob/main/history.md) has taught us what works and what doesn't. This helped
-us put constraints around our tests that we hope will make your tests
-predictable and easy to write and maintain.
-
-The testing methodology adopted here conforms to the typical testing goals of
-MVI.
-
-Concepts that we consider important to test:
-
-- Emitted states
-- Emitted side effects
-- Loopbacks i.e. intent A calling intent B
-- Dependencies being called
-
-The last two items on the list are outside of the scope of this library and can
-be easily tested using a mocking framework like `mockito`.
-
-For the first two items we have created utilities that should make them easy to
-test. The framework follows the Arrange/Act/Assert methodology.
-
-### Test modes
-
-The testing framework adds two testing modes for your
-[ContainerHosts](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-container-host/).
-Below is a quick summary of what they are and what are the benefits and
-downsides.
-
-1. **Suspending test mode** is the default test mode. Use it by calling
-   `ContainerHost.test()`. In this mode we focus on testing the business logic
-   in your `ContainerHost` by running the intercepted intents directly in the
-   test as simple suspending functions. 
-   - Tests must run in a coroutine - e.g. `runTest`
-   - Tests circumvent the Orbit dispatching/threading mechanisms completely. We 
-     believe there is no benefit to gain from running on a live container for
-     most of your code. Orbit is well unit-tested, so there's no point in
-     testing the framework along with your business logic.
-   - Pitfalls inherent in testing a multi-threaded system are avoided
-   - Assertions run instantly after all intents called are processed
-   - Your tests fail fast
-   - Testing infinite flows can be more difficult. See [Testing Flows](#testing-flows).
-   - By default this mode isolates the first intent called on the
-     [ContainerHost](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-container-host/)
-     Isolating intents helps avoid unexpected state/side effect emissions from
-     loopbacks in your intent under test. This can be turned off if you have a
-     particular testing need.
-2. **Live test mode** is an alternative test mode. Use it by calling
-   `ContainerHost.liveTest()`. This is recommended for more complex scenarios
-   that might be difficult to test in suspending mode.
-   - Tests run on a normal Orbit [Container](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-container/)
-     with `Unconfined` dispatcher set by default.
-   - Assertions await for emissions with a timeout
-   - Your tests may take some time to fail e.g. if awaiting for a missing
-     emission
-   - Testing infinite flows can be easier. See [Testing Flows](#testing-flows).
-
-Other than that both test modes are very similar in terms of how you actually
-write the tests.
-
 ## Testing process
 
-Here's the testing process for both test modes:
-
-1. Put the [ContainerHost](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-container-host/)
-   in your chosen test mode using `test()` or `liveTest()`. You may optionally
+1. Put the
+   [ContainerHost](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-container-host/)
+   in your chosen test mode using `test()`. You may optionally
    provide them with the initial state to seed the container with. This helps
    avoid having to call several intents just to get the container in the right
    state for the test.
-2. (Optional) Run `testContainerHost.runOnCreate()` to run the container create
-   lambda.
-3. (Optional) Run `testContainerHost.testIntent { foo() }` to run the 
+2. Assert the initial state using `expectInitialState()`.
+3. (Optional) Run `runOnCreate()` within the test block to run the container
+   create lambda.
+4. (Optional) Run `containerHost.foo()` to run the
    [ContainerHost](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-container-host/)
    intent of your choice.
-4. Run assertions on states and side effects using
+5. Await for side effects and states using `awaitSideEffect()`
+   and `awaitState()`.
    `testContainerHost.assert { ... }`.
 
 Let's start and put our
 [ContainerHost](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-container-host/)
-into test mode. We pass in the initial state to seed the container with (or omit
-it entirely to use the initial state from the real container). Next, we call our
-intent method under test.
+into test mode. We pass in the test scope and initial state to seed the
+container with (you may omit it entirely to use the initial state from the real
+container).
+
+Next, it is suggested to assert the initial state. This is a sanity check to
+ensure that the container is in the correct state before we start testing.
+
+We provide a convenience function `expectInitialState()` for this purpose.
+
+After that, we can invoke intents on the container to continue testing.
 
 ```kotlin
 data class State(val count: Int = 0)
 
-val testSubject = ExampleViewModel().test(State())
+@Test
+fun exampleTest() = runTest {
+    ExampleViewModel().test(this, State()) {
+        expectInitialState()
+        containerHost.countToFour()
 
-testSubject.testIntent { countToFour() }
+        // await states and side effects, perform assertions
+    }
+}
 ```
 
 ### Run `onCreate`
 
 If the `Container` is created with `CoroutineScope.container()` or
 `ViewModel.container()` there is an option to provide the `onCreate` lambda.
-In test mode this function has to be run manually (if needed)
-by calling `runOnCreate`, so it's effectively isolated in the test; the other
+In test mode this function must be run manually (if needed) by calling
+`runOnCreate`, so it's effectively isolated in the test; the other
 reason why is `onCreate` could include any number of `intent{}` calls, so it's
 crucial in terms of testing.
 
-Note: `runOnCreate`
-should only be invoked once and before any `testIntent` call:
+It is strongly suggested you avoid calling `runOnCreate()` if you are not
+testing the intents called within. For other cases, it is recommended to
+set a correct initial state instead.
+
+:::note
+
+`runOnCreate` can only be invoked once, before invoking any intents on
+`ContainerHost`.
+
+:::
 
 ```kotlin
-val testSubject = ExampleViewModel().test(State())
-
-testSubject.runOnCreate() // must be invoked once and before `testIntent`
-testSubject.testIntent { countToFour() }
+@Test
+fun exampleTest() = runTest {
+        ExampleViewModel().test(this) {
+            runOnCreate()
+            expectInitialState()
+            containerHost.countToFour()
+        }
+    }
 ```
 
 ### Asserting states
@@ -136,161 +99,309 @@ Having done the above, we can move to assertions. The initial state has to be
 explicitly asserted first, as a sanity check.
 
 ```kotlin
-testSubject.assert(State()) {
-    states(
-        { copy(count = 1) },
-        { copy(count = 2) },
-        { copy(count = 3) },
-        { copy(count = 4) }
-    )
-}
+@Test
+fun exampleTest() = runTest {
+        ExampleViewModel().test(this) {
+            expectInitialState()
+            containerHost.countToFour()
+
+            expectState { copy(count = 1) }
+            // alternatively assertEquals(State(count = 1), awaitState())
+            expectState { copy(count = 2) }
+            expectState { copy(count = 3) }
+            expectState { copy(count = 4) }
+        }
+    }
 ```
 
-The state list must match exactly the states that are emitted. Each lambda
-receives the previous state as the receiver to easily accumulate state changes.
+If any unconsumed items (states or side effects) are left at the end of the
+test, it will fail. All items must be consumed before the test ends. This is to
+ensure no unwanted extra states or side effects are emitted.
 
 ### Asserting posted side effects
 
 ```kotlin
-testSubject.assert(State()) {
-    postedSideEffects(
-        Toast(1),
-        Toast(2),
-        Toast(3),
-        Toast(4)
-    )
-}
-```
+@Test
+fun exampleTest() = runTest {
+        ExampleViewModel().test(this) {
+            expectInitialState()
+            containerHost.countToFour()
 
-The side effect list must match exactly the side effects that are emitted.
-
-### Asserting loopbacks
-
-Loopbacks can be tested using a mocking framework like `Mockito` which will
-allow you to spy on your `ContainerHost`. It is not the responsibility of this
-library to provide this functionality.
-
-```kotlin
-val testSubject = spy(SomeClass())
-
-verify(testSubject).doSomething()
-verify(testSubject).doSomethingElse(2)
+            expectSideEffect(Toast(1))
+            expectSideEffect(Toast(2))
+            expectSideEffect(Toast(3))
+            expectSideEffect(Toast(4))
+        }
+    }
 ```
 
 ### Putting it all together
 
-Since all of the assertions need to be done within the same `assert` block
-here's what it looks like once we put it together.
+Here's what it looks like once we put it together.
 
 ```kotlin
-val testSubject = spy(ExampleViewModel()).test(State())
+@Test
+fun exampleTest() = runTest {
+        ExampleViewModel().test(this) {
+            expectInitialState()
+            runOnCreate()
+            containerHost.countToFour()
 
-testSubject.testIntent { countToFour() }
-
-testSubject.assert(State()) {
-    states(
-        { copy(count = 1) },
-        { copy(count = 2) },
-        { copy(count = 3) },
-        { copy(count = 4) }
-    )
-
-    postedSideEffects(
-        Toast(1),
-        Toast(2),
-        Toast(3),
-        Toast(4)
-    )
-}
-
-verify(testSubject).doSomething()
-verify(testSubject).doSomethingElse(2)
+            expectState { copy(count = 1) }
+            expectSideEffect(Toast(1))
+            expectState { copy(count = 2) }
+            expectSideEffect(Toast(2))
+            expectState { copy(count = 3) }
+            expectSideEffect(Toast(3))
+            expectState { copy(count = 4) }
+            expectSideEffect(Toast(4))
+        }
+    }
 ```
-## Testing Flows
 
-We can run into situations where we subscribe our [ContainerHost](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-container-host/)
+## Intent Jobs
+
+If your intent does not produce any states or side effects, but e.g. affects an
+external dependency, you need to make sure the intent completes before running
+your assertions.
+
+This can be done using coroutine
+[Jobs](https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines/-job/index.html)
+, which are returned by `runOnCreate` or `containerHost.foo()`.
+
+
+```kotlin
+@Test
+fun exampleTest() = runTest {
+        val dependency = SomeDependency()
+        
+        ExampleViewModel(dependency).test(this) {
+            expectInitialState()
+            
+            val job = runOnCreate()
+            // OR
+            val job = containerHost.doSomeWorkOnDependency()
+            
+            // Ensure intent is completed
+            job.join()
+            
+            // Run your assertions
+            assertEquals(dependency.counter, 42)
+        }
+    }
+```
+
+## Additional checks and assertions
+
+In unit testing, it is the things we don't test for that can cause the most
+unexpected bugs. In order to bring this into focus, Orbit's test framework 
+requires you to be very explicit. The only time we can be sure the test is
+complete is when the Orbit container is at rest and all states and side effects
+have been inspected.
+
+Below are some additional checks we perform to make sure this is the case.
+
+### Unconsumed states or side effects
+
+If there are any unconsumed states or side effects at the end of the test, it
+will fail.
+
+This is to ensure you check all the states and side effects that are the result
+of your intent calls - and that you don't end up in a state you didn't expect.
+
+Ideally you would assert on all states and side effects, but if this is not
+convenient, you can use `skip(n)` or `cancelAndIgnoreRemainingItems()` to
+explicitly mark that you are not interested in testing the remaining items.
+Typically, `cancelAndIgnoreRemainingItems` would be used as a last resort.
+
+```kotlin
+@Test
+fun exampleTest() = runTest {
+        ExampleViewModel().test(this) {
+            expectInitialState()
+            runOnCreate()
+            containerHost.countToFour()
+
+            expectState { copy(count = 1) }
+            expectSideEffect(Toast(1))
+            
+            // Deal with unconsumed items that were emitted by the container
+            skip(4)
+            // OR ignore all unconsumed items
+            cancelAndIgnoreRemainingItems()
+        }
+    }
+```
+
+### Unfinished intents
+
+Any intents that are still running at the end of the test will cause the test to
+fail.
+
+This is to ensure that the container can't emit any more states or side effects
+after the test has finished.
+
+Typically, this is caused by an intent subscribing to a flow that never
+completes or launching a long-running, blocking intent.
+
+In order to complete the test successfully in these circumstances, the intent
+must be joined or cancelled.
+
+See below example for options to deal with this. Typically, 
+`cancelAndIgnoreRemainingItems` would be used as a last resort.
+
+```kotlin
+@Test
+fun exampleTest() = runTest {
+        ExampleViewModel().test(this) {
+            expectInitialState()
+            
+            val job = runOnCreate()
+            // OR
+            val job = containerHost.doSomeWork()
+            
+            // ... run assertions
+            
+            // Ensure intent is completed
+            job.join()
+            // OR cancel the intent
+            job.cancel()
+            // OR cancel all intents
+            cancelAndIgnoreRemainingItems()
+        }
+    }
+```
+
+## Testing intents that collect Flows
+
+We can run into situations where we subscribe
+our [ContainerHost](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-container-host/)
 to an infinite (hot) flow of data like so:
 
 ```kotlin
-val container = container<SomeState, Unit> {
-    listenToLocationUpdates()
-}
-
-private fun listenToLocationUpdates() = intent {
-    runOnSubscription {
-        locationService.locationUpdates.collect {
-            reduce { state.copy(lng = it.lng, lat = it.lat) }
+val container = scope.container<SomeState, Unit> {
+    intent {
+        runOnSubscription {
+            locationService.locationUpdates.collect {
+                reduce { state.copy(lng = it.lng, lat = it.lat) }
+            }
         }
     }
 }
 ```
 
-We have two options to test code like this.
+A good practice is to replace the infinite flow with a finite flow for the test.
+This helps keep the test simple. 
 
-### Flows in suspending test mode
+If this is not possible or desirable, we may run the intent collecting the
+infinite flow as normal and `join()` the `Job` returned by the intent to ensure
+it is completed at the end of the test. 
 
-In this mode an infinite flow would hang our test, since the collect lambda
-would never complete. To get around this, we need to provide a fake/mock
-finite (cold) flow (e.g. using `flowOf(...)`)
+Our last resort is calling `cancelAndIgnoreRemainingItems()` to cancel the scope
+and disregard any extra states and side effects that are emitted at the end
+of the test.
+
+Otherwise, testing a container that subscribes to an infinite flow is no
+different to normal testing.
 
 ```kotlin
-// Fake returning a cold, finite flow. Alternatively use Mockito.
-val fakeService = FakeService()
-val testSubject = ExampleViewModel(fakeService).test()
+@Test
+fun exampleTest() = runTest {
+        // Fake returning a cold, finite flow.
+        val fakeLocationService = FakeLocationService()
 
-testSubject.runOnCreate()
+        ExampleViewModel(fakeLocationService).test(this) {
+            expectInitialState()
+            val job = runOnCreate()
 
-testSubject.assert(State()) {
-    states(
-        { copy(lng = 1, lat = 1) },
-        { copy(lng = 2, lat = 2) },
-        { copy(lng = 3, lat = 3) },
-    )
-}
+            expectState { copy(lng = 1, lat = 1) }
+            expectState { copy(lng = 2, lat = 2) }
+            expectState { copy(lng = 3, lat = 3) }
+            
+            // If the flow is infinite, we must ensure the intent is finished
+            // at the end of the test.
+            job.join()
+            // OR
+            cancelAndIgnoreRemainingItems()
+        }
+    }
 ```
 
-### Flows in live test mode
+## Control over virtual time
 
-Flows in this mode don't need to be cold, finite flows. They can remain hot. 
-The test won't hang if the
-[ContainerHost](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-container-host/)
-connects to such flow, since we're running a real container underneath.
+By default, and by virtue of running within the `runTest` block internally,
+the tests will skip any delays. When this is not desirable and we want granular
+control over virtual time, we need to create a separate `TestScope` and pass it
+to the test function.
 
-If we're dealing with a producer-style source of infinite values that we can't
-control, or some sort of infinite loop it can help to override the dispatchers
-with something we can control the scheduling of. For example:
+Consider the following example:
 
 ```kotlin
-private inner class InfiniteFlowMiddleware : ContainerHost<List<Int>, Nothing> {
-    override val container: Container<List<Int>, Nothing> = scope.container(listOf(42))
+class InfiniteFlowMiddleware : ContainerHost<List<Int>, Nothing> {
+    override val container: Container<List<Int>, Nothing> = someScope.container(listOf(42))
 
     fun incrementForever() = intent {
         while (true) {
-            delay(30000)
+            delay(30_000)
             reduce { state + (state.last() + 1) }
         }
     }
 }
+```
 
+### With delay skipping
+
+Testing with delay skipping is the default behaviour. This is the same as any
+coroutine being tested in `runTest`.
+
+```kotlin
 @Test
-fun `infinite flow test`() = runTest {
-        val dispatcher = UnconfinedTestDispatcher()
-        val middleware = InfiniteFlowMiddleware().liveTest {
-            this.dispatcher = dispatcher
+fun delaySkipping() = runTest {
+        InfiniteFlowMiddleware().test(this) {
+            expectInitialState()
+            val job = containerHost.incrementForever()
+
+            // Assert the first three states
+            expectState(listOf(42, 43))
+            expectState(listOf(42, 43, 44))
+            expectState(listOf(42, 43, 44, 45))
+
+            // If the flow is infinite, we must ensure the intent is finished
+            // at the end of the test.
+            job.join
+            // OR
+            cancelAndIgnoreRemainingItems()
         }
+    }
+```
 
-        middleware.testIntent {
-            incrementForever()
-        }
+### Without delay skipping
 
-        dispatcher.scheduler.advanceTimeBy(100000)
+If we wish to control the virtual time, we must create a separate `TestScope`
+and pass it to the container.
 
-        middleware.assert(listOf(42)) {
-            states(
-                { listOf(42, 43) },
-                { listOf(42, 43, 44) },
-                { listOf(42, 43, 44, 45) }
-            )
+```kotlin
+@Test
+fun noDelaySkipping() = runTest {
+        val scope = TestScope()
+
+        InfiniteFlowMiddleware().test(scope) {
+            expectInitialState()
+            val job = containerHost.incrementForever()
+
+            // Assert the first three states
+            scope.advanceTimeBy(30_001)
+            expectState(listOf(42, 43))
+            scope.advanceTimeBy(30_001)
+            expectState(listOf(42, 43, 44))
+            scope.advanceTimeBy(30_001)
+            expectState(listOf(42, 43, 44, 45))
+
+            // If the flow is infinite, we must ensure the intent is finished
+            // at the end of the test.
+            job.join
+            // OR
+            cancelAndIgnoreRemainingItems()
         }
     }
 ```

@@ -29,7 +29,7 @@ internal class CreateTest {
     private val initialState = State(Random.nextInt())
 
     @Test
-    fun `created is not invoked by default`() = runTest {
+    fun created_is_not_invoked_by_default() = runTest {
         val testSubject = GeneralTestMiddleware(this)
 
         testSubject.test(this, initialState = initialState) {
@@ -42,7 +42,7 @@ internal class CreateTest {
     }
 
     @Test
-    fun `created is invoked upon request`() = runTest {
+    fun created_is_invoked_upon_request() = runTest {
         val testSubject = GeneralTestMiddleware(this)
 
         testSubject.test(this, initialState = initialState) {
@@ -57,7 +57,7 @@ internal class CreateTest {
     }
 
     @Test
-    fun `initial state can be omitted from test`() = runTest {
+    fun initial_state_can_be_omitted_from_test() = runTest {
         val testSubject = GeneralTestMiddleware(this)
         testSubject.test(this) {
             expectState(initialState)

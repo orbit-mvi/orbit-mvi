@@ -37,7 +37,7 @@ import kotlin.test.assertEquals
 
 class ViewModelExtensionsKtTest {
     @Test
-    fun `When saved state is present it is read`() {
+    fun when_saved_state_is_present_it_is_read() {
         val initialState = TestState()
         val savedState = TestState()
         val savedStateHandle = SavedStateHandle(mapOf(SAVED_STATE_KEY to savedState))
@@ -48,7 +48,7 @@ class ViewModelExtensionsKtTest {
     }
 
     @Test
-    fun `When saved state is not present the initial state is unchanged`() {
+    fun when_saved_state_is_not_present_the_initial_state_is_unchanged() {
         val initialState = TestState()
         val savedStateHandle = SavedStateHandle()
 
@@ -58,7 +58,7 @@ class ViewModelExtensionsKtTest {
     }
 
     @Test
-    fun `Modified state is saved in the saved state handle for stateFlow`() = runTest {
+    fun modified_state_is_saved_in_the_saved_state_handle_for_state_flow() = runTest {
         val initialState = TestState()
         val something = Random.nextInt()
         val savedStateHandle = SavedStateHandle()
@@ -75,7 +75,7 @@ class ViewModelExtensionsKtTest {
     }
 
     @Test
-    fun `Modified state is saved in the saved state handle for refCountStateFlow`() = runTest {
+    fun modified_state_is_saved_in_the_saved_state_handle_for_ref_count_state_flow() = runTest {
         val initialState = TestState()
         val something = Random.nextInt()
         val savedStateHandle = SavedStateHandle()
@@ -91,7 +91,7 @@ class ViewModelExtensionsKtTest {
     }
 
     @Test
-    fun `When saved state is present calls onCreate with restored state`() = runTest {
+    fun when_saved_state_is_present_calls_on_create_with_restored_state() = runTest {
         val initialState = TestState()
         val savedState = TestState()
         val savedStateHandle = SavedStateHandle(mapOf(SAVED_STATE_KEY to savedState))
@@ -105,7 +105,7 @@ class ViewModelExtensionsKtTest {
     }
 
     @Test
-    fun `When saved state is not present calls onCreate with initial state`() = runTest {
+    fun when_saved_state_is_not_present_calls_on_create_with_initial_state() = runTest {
         val initialState = TestState()
         val savedStateHandle = SavedStateHandle()
 

@@ -33,7 +33,7 @@ import kotlin.test.assertEquals
 internal class RefCountStateTest {
 
     @Test
-    fun `initial state is emitted on connection`() = runTest {
+    fun initial_state_is_emitted_on_connection() = runTest {
         val initialState = TestState()
         val middleware = Middleware(this, initialState)
         middleware.container.refCountStateFlow.test {
@@ -42,7 +42,7 @@ internal class RefCountStateTest {
     }
 
     @Test
-    fun `latest state is emitted on connection`() = runTest {
+    fun latest_state_is_emitted_on_connection() = runTest {
         val initialState = TestState()
         val middleware = Middleware(this, initialState)
         val action = Random.nextInt()
@@ -58,7 +58,7 @@ internal class RefCountStateTest {
     }
 
     @Test
-    fun `current state is set to the initial state after instantiation`() = runTest {
+    fun current_state_is_set_to_the_initial_state_after_instantiation() = runTest {
         val initialState = TestState()
         val middleware = Middleware(this, initialState)
 
@@ -66,7 +66,7 @@ internal class RefCountStateTest {
     }
 
     @Test
-    fun `current state is up to date after modification`() = runTest {
+    fun current_state_is_up_to_date_after_modification() = runTest {
         val initialState = TestState()
         val middleware = Middleware(this, initialState)
         val action = Random.nextInt()

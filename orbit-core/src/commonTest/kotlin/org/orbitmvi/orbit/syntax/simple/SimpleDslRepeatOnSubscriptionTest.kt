@@ -59,7 +59,7 @@ internal class SimpleDslRepeatOnSubscriptionTest {
     }
 
     @Test
-    fun `repeatOnSubscription block called for each subscribed event`() {
+    fun repeat_on_subscription_block_called_for_each_subscribed_event() {
         testScope.launch {
             simpleSyntax.repeatOnSubscription {
                 count.incrementAndGet()
@@ -74,7 +74,7 @@ internal class SimpleDslRepeatOnSubscriptionTest {
     }
 
     @Test
-    fun `repeatOnSubscription cancels running job for unsubscribed event`() {
+    fun repeat_on_subscription_cancels_running_job_for_unsubscribed_event() {
         testScope.launch {
             simpleSyntax.repeatOnSubscription {
                 try {

@@ -37,7 +37,7 @@ import kotlin.test.assertTrue
 internal class RunOnTest {
 
     @Test
-    fun `runOn does not run when state does not match expected`() = runTest {
+    fun run_on_does_not_run_when_state_does_not_match_expected() = runTest {
         val middleware = Middleware(backgroundScope)
 
         middleware.test(this) {
@@ -52,7 +52,7 @@ internal class RunOnTest {
     }
 
     @Test
-    fun `runOn runs when state matches expected`() = runTest {
+    fun run_on_runs_when_state_matches_expected() = runTest {
         val middleware = Middleware(backgroundScope)
 
         middleware.test(this) {
@@ -67,7 +67,7 @@ internal class RunOnTest {
     }
 
     @Test
-    fun `runOn does not run when state matches expected but predicate does not match`() = runTest {
+    fun run_on_does_not_run_when_state_matches_expected_but_predicate_does_not_match() = runTest {
         val middleware = Middleware(backgroundScope)
 
         middleware.test(this) {
@@ -84,7 +84,7 @@ internal class RunOnTest {
     }
 
     @Test
-    fun `runOn runs when state matches expected and predicate matches`() = runTest {
+    fun run_on_runs_when_state_matches_expected_and_predicate_matches() = runTest {
         val middleware = Middleware(backgroundScope)
 
         middleware.test(this) {
@@ -102,7 +102,7 @@ internal class RunOnTest {
     }
 
     @Test
-    fun `runOn cancels when state stops matching expected`() = runTest {
+    fun run_on_cancels_when_state_stops_matching_expected() = runTest {
         val middleware = Middleware(backgroundScope)
 
         middleware.test(this) {
@@ -124,7 +124,7 @@ internal class RunOnTest {
     }
 
     @Test
-    fun `runOn cancels when predicate stops matching`() = runTest {
+    fun run_on_cancels_when_predicate_stops_matching() = runTest {
         val middleware = Middleware(backgroundScope)
 
         middleware.test(this) {
@@ -146,7 +146,7 @@ internal class RunOnTest {
     }
 
     @Test
-    fun `runOn does not cancel when predicate keeps matching on subsequent emissions`() = runTest {
+    fun run_on_does_not_cancel_when_predicate_keeps_matching_on_subsequent_emissions() = runTest {
         val middleware = Middleware(backgroundScope)
 
         middleware.test(this) {

@@ -33,7 +33,7 @@ import kotlin.test.assertEquals
 internal class ContainerThreadingTest {
 
     @Test
-    fun `container can process a second action while the first is suspended`() = runTest {
+    fun container_can_process_a_second_action_while_the_first_is_suspended() = runTest {
         val initState = Random.nextInt()
         val newState = Random.nextInt()
         val container = backgroundScope.container<Int, Nothing>(initState)
@@ -51,7 +51,7 @@ internal class ContainerThreadingTest {
     }
 
     @Test
-    fun `reductions are applied in order if called from single thread`() = runTest {
+    fun reductions_are_applied_in_order_if_called_from_single_thread() = runTest {
         var expectedState = TestState()
         val container = backgroundScope.container<TestState, Nothing>(expectedState)
         container.stateFlow.test {
@@ -74,7 +74,7 @@ internal class ContainerThreadingTest {
     }
 
     @Test
-    fun `reductions run in sequence but in an undefined order when executed from multiple threads`() = runTest {
+    fun reductions_run_in_sequence_but_in_an_undefined_order_when_executed_from_multiple_threads() = runTest {
         val expectedStates = mutableListOf(
             TestState(
                 emptyList()

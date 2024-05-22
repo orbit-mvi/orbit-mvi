@@ -35,7 +35,7 @@ internal class RepeatOnSubscriptionTest {
     private val initialState = State()
 
     @Test
-    fun `block is not executed when there is no subscription to the ref count state flow`() = runTest {
+    fun block_is_not_executed_when_there_is_no_subscription_to_the_ref_count_state_flow() = runTest {
         val testSubject = TestMiddleware(this)
 
         testSubject.container.stateFlow.test(timeout = 500.milliseconds) {
@@ -49,7 +49,7 @@ internal class RepeatOnSubscriptionTest {
     }
 
     @Test
-    fun `block is executed when there is a subscription to the state flow`() = runTest {
+    fun block_is_executed_when_there_is_a_subscription_to_the_state_flow() = runTest {
         val testSubject = TestMiddleware(this)
 
         testSubject.container.refCountStateFlow.test {
@@ -63,7 +63,7 @@ internal class RepeatOnSubscriptionTest {
     }
 
     @Test
-    fun `block is not executed when there is no subscription to the ref count side effect flow`() = runTest {
+    fun block_is_not_executed_when_there_is_no_subscription_to_the_ref_count_side_effect_flow() = runTest {
         val testSubject = TestMiddleware(this)
 
         testSubject.container.sideEffectFlow.test(timeout = 500.milliseconds) {
@@ -75,7 +75,7 @@ internal class RepeatOnSubscriptionTest {
     }
 
     @Test
-    fun `block is executed when there is a subscription to the ref count side effect flow`() = runTest {
+    fun block_is_executed_when_there_is_a_subscription_to_the_ref_count_side_effect_flow() = runTest {
         val testSubject = TestMiddleware(this)
 
         testSubject.container.refCountSideEffectFlow.test {

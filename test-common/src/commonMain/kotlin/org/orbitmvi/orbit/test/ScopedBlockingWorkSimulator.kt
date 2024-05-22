@@ -56,7 +56,8 @@ public class ScopedBlockingWorkSimulator(private val scope: CoroutineScope) {
                 }
             }
         }.let {
-            runBlocking(it!!) { it.join() }
+            while (it?.isActive == true) {
+            }
         }
     }
 }

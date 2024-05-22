@@ -17,8 +17,7 @@ think of it as MVVM+.
 - [Core](Core/overview.md)
 - [Android ViewModel](Android-ViewModel/overview.md)
 - [Compose](Compose/overview.md)
-- [Test](Test/new.md)
-- [Test (deprecated)](Test/overview.md)
+- [Test](Test/overview)
 - [Dokka source code documentation](pathname://dokka/)
 - [Resources](resources.md)
 

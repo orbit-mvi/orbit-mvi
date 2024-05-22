@@ -37,7 +37,7 @@ class IntentJobsTest {
     private val initialState = 0
 
     @Test
-    fun `unfinished intents at the end of the test cause the test to fail`() {
+    fun unfinished_intents_at_the_end_of_the_test_cause_the_test_to_fail() {
         assertFails {
             runTest {
                 IntentJobsMiddleware(this).test(this) {
@@ -50,7 +50,7 @@ class IntentJobsTest {
     }
 
     @Test
-    fun `unfinished intents at the end of the test may be ignored`() = runTest {
+    fun unfinished_intents_at_the_end_of_the_test_may_be_ignored() = runTest {
         IntentJobsMiddleware(this).test(this) {
             expectInitialState()
 
@@ -60,7 +60,7 @@ class IntentJobsTest {
     }
 
     @Test
-    fun `intents may be cancelled`() = runTest {
+    fun intents_may_be_cancelled() = runTest {
         IntentJobsMiddleware(this).test(this) {
             expectInitialState()
 
@@ -71,7 +71,7 @@ class IntentJobsTest {
     }
 
     @Test
-    fun `intents may be joined`() = runTest {
+    fun intents_may_be_joined() = runTest {
         val scope = TestScope()
         IntentJobsMiddleware(this).test(scope) {
             expectInitialState()
@@ -91,7 +91,7 @@ class IntentJobsTest {
     }
 
     @Test
-    fun `onCreate may be joined`() = runTest {
+    fun on_create_may_be_joined() = runTest {
         val scope = TestScope()
         IntentJobsMiddleware(this).test(scope) {
             expectInitialState()
@@ -111,7 +111,7 @@ class IntentJobsTest {
     }
 
     @Test
-    fun `onCreate may be cancelled`() = runTest {
+    fun on_create_may_be_cancelled() = runTest {
         val scope = TestScope()
         IntentJobsMiddleware(this).test(scope) {
             expectInitialState()

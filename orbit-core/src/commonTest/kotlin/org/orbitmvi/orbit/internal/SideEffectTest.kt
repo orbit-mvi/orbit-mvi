@@ -33,7 +33,7 @@ import kotlin.test.assertEquals
 internal class SideEffectTest {
 
     @Test
-    fun `side effects are emitted in order`() = runTest {
+    fun side_effects_are_emitted_in_order() = runTest {
         val container = backgroundScope.container<Unit, Int>(Unit)
 
         container.sideEffectFlow.test {
@@ -48,7 +48,7 @@ internal class SideEffectTest {
     }
 
     @Test
-    fun `side effects are cached when there are no subscribers`() = runTest {
+    fun side_effects_are_cached_when_there_are_no_subscribers() = runTest {
         val action = Random.nextInt()
         val action2 = Random.nextInt()
         val action3 = Random.nextInt()
@@ -69,7 +69,7 @@ internal class SideEffectTest {
     }
 
     @Test
-    fun `consumed side effects are not resent`() = runTest {
+    fun consumed_side_effects_are_not_resent() = runTest {
         val action = Random.nextInt()
         val action2 = Random.nextInt()
         val action3 = Random.nextInt()
@@ -96,7 +96,7 @@ internal class SideEffectTest {
     }
 
     @Test
-    fun `only new side effects are emitted when resubscribing`() = runTest {
+    fun only_new_side_effects_are_emitted_when_resubscribing() = runTest {
         val action = Random.nextInt()
         val container = backgroundScope.container<Unit, Int>(Unit)
 

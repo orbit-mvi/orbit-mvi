@@ -33,7 +33,7 @@ import kotlin.test.assertEquals
 internal class ContainerLifecycleTest {
 
     @Test
-    fun `onCreate is called once after connecting to the container`() = runTest {
+    fun on_create_is_called_once_after_connecting_to_the_container() = runTest {
         val initialState = TestState()
         val middleware = Middleware(this, initialState)
         middleware.container.stateFlow.test {
