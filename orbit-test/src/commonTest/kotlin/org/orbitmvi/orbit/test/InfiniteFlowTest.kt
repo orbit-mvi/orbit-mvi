@@ -34,7 +34,7 @@ import kotlin.test.assertEquals
 internal class InfiniteFlowTest {
 
     @Test
-    fun `infinite flow can be tested with delay skipping`() = runTest {
+    fun infinite_flow_can_be_tested_with_delay_skipping() = runTest {
         InfiniteFlowMiddleware(this).test(this) {
             expectInitialState()
 
@@ -51,7 +51,7 @@ internal class InfiniteFlowTest {
 
     @Test
     @ExperimentalCoroutinesApi
-    fun `infinite flow can be tested without delay skipping`() = runTest {
+    fun infinite_flow_can_be_tested_without_delay_skipping() = runTest {
         val scope = TestScope()
 
         InfiniteFlowMiddleware(this).test(scope) {

@@ -18,7 +18,7 @@ import kotlin.test.assertTrue
 class DelayingSubscribedCounterTest {
 
     @Test
-    fun `initial value is unsubscribed`() = runTest {
+    fun initial_value_is_unsubscribed() = runTest {
         val counter = DelayingSubscribedCounter(backgroundScope, 0)
         counter.subscribed.test {
             assertEquals(Unsubscribed, awaitItem())
@@ -26,7 +26,7 @@ class DelayingSubscribedCounterTest {
     }
 
     @Test
-    fun `incrementing subscribes`() = runTest {
+    fun incrementing_subscribes() = runTest {
         val counter = DelayingSubscribedCounter(backgroundScope, 0)
 
         counter.subscribed.test {
@@ -37,7 +37,7 @@ class DelayingSubscribedCounterTest {
     }
 
     @Test
-    fun `increment decrement unsubscribes`() = runTest {
+    fun increment_decrement_unsubscribes() = runTest {
         val counter = DelayingSubscribedCounter(backgroundScope, 0)
 
         counter.subscribed.test {
@@ -50,7 +50,7 @@ class DelayingSubscribedCounterTest {
     }
 
     @Test
-    fun `values received are distinct`() = runTest {
+    fun values_received_are_distinct() = runTest {
         val counter = DelayingSubscribedCounter(backgroundScope, 0)
 
         counter.subscribed.test {
@@ -66,7 +66,7 @@ class DelayingSubscribedCounterTest {
     }
 
     @Test
-    fun `negative decrements are ignored`() = runTest {
+    fun negative_decrements_are_ignored() = runTest {
         val counter = DelayingSubscribedCounter(backgroundScope, 0)
 
         counter.subscribed.test {
@@ -83,7 +83,7 @@ class DelayingSubscribedCounterTest {
     }
 
     @Test
-    fun `unsubscribed received on launch immediately`() = runTest {
+    fun unsubscribed_received_on_launch_immediately() = runTest {
         val innerScope = TestScope()
         val counter = DelayingSubscribedCounter(innerScope, 500)
         counter.subscribed.mapTimed(innerScope.testScheduler).test {
@@ -96,7 +96,7 @@ class DelayingSubscribedCounterTest {
     }
 
     @Test
-    fun `unsubscribed received immediately on second observation`() = runTest {
+    fun unsubscribed_received_immediately_on_second_observation() = runTest {
         val innerScope = TestScope()
         val counter = DelayingSubscribedCounter(backgroundScope, 500)
 
@@ -116,7 +116,7 @@ class DelayingSubscribedCounterTest {
     }
 
     @Test
-    fun `unsubscribed received after delay`() = runTest {
+    fun unsubscribed_received_after_delay() = runTest {
         val innerScope = TestScope()
         val counter = DelayingSubscribedCounter(innerScope, 500)
 

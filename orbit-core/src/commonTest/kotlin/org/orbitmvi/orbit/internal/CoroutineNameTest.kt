@@ -16,7 +16,7 @@ import kotlin.test.assertEquals
 internal class CoroutineNameTest {
 
     @Test
-    fun `intent coroutines have names that increment`() = runTest {
+    fun intent_coroutines_have_names_that_increment() = runTest {
         val middleware = Middleware(this)
         middleware.container.sideEffectFlow.test {
             assertEquals("orbit-intent-0", awaitItem())

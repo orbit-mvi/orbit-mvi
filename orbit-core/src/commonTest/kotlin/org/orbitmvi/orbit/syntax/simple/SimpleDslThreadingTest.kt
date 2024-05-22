@@ -39,7 +39,7 @@ import kotlin.test.assertFails
 internal class SimpleDslThreadingTest {
 
     @Test
-    fun `blocking intent with context switch does not block the reducer`() = runTest {
+    fun blocking_intent_with_context_switch_does_not_block_the_reducer() = runTest {
         val middleware = BaseDslMiddleware(this)
         val action = Random.nextInt()
         middleware.container.stateFlow.test {
@@ -54,7 +54,7 @@ internal class SimpleDslThreadingTest {
     }
 
     @Test
-    fun `suspending intent does not block the reducer`() = runTest {
+    fun suspending_intent_does_not_block_the_reducer() = runTest {
         val middleware = BaseDslMiddleware(this)
         val action = Random.nextInt()
         middleware.container.stateFlow.test {
@@ -68,7 +68,7 @@ internal class SimpleDslThreadingTest {
     }
 
     @Test
-    fun `blocking intent without context switch blocks the reducer`() = runTest {
+    fun blocking_intent_without_context_switch_blocks_the_reducer() = runTest {
         val middleware = BaseDslMiddleware(this)
         val action = Random.nextInt()
         middleware.container.stateFlow.test {
@@ -84,7 +84,7 @@ internal class SimpleDslThreadingTest {
     }
 
     @Test
-    fun `blocking reducer blocks an intent`() = runTest {
+    fun blocking_reducer_blocks_an_intent() = runTest {
         val middleware = BaseDslMiddleware(this)
         val action = Random.nextInt()
         middleware.container.stateFlow.test {

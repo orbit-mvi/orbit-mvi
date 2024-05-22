@@ -30,7 +30,7 @@ import kotlin.test.assertEquals
 internal class RefCountSideEffectTest {
 
     @Test
-    fun `side effects are emitted in order`() = runTest {
+    fun side_effects_are_emitted_in_order() = runTest {
         val container = backgroundScope.container<Unit, Int>(Unit)
 
         container.refCountSideEffectFlow.test {
@@ -45,7 +45,7 @@ internal class RefCountSideEffectTest {
     }
 
     @Test
-    fun `side effects are cached when there are no subscribers`() = runTest {
+    fun side_effects_are_cached_when_there_are_no_subscribers() = runTest {
         val container = backgroundScope.container<Unit, Int>(Unit)
         val action = Random.nextInt()
         val action2 = Random.nextInt()
@@ -63,7 +63,7 @@ internal class RefCountSideEffectTest {
     }
 
     @Test
-    fun `consumed side effects are not resent`() = runTest {
+    fun consumed_side_effects_are_not_resent() = runTest {
         val container = backgroundScope.container<Unit, Int>(Unit)
         val action = Random.nextInt()
         val action2 = Random.nextInt()
@@ -84,7 +84,7 @@ internal class RefCountSideEffectTest {
     }
 
     @Test
-    fun `only new side effects are emitted when resubscribing`() = runTest {
+    fun only_new_side_effects_are_emitted_when_resubscribing() = runTest {
         val container = backgroundScope.container<Unit, Int>(Unit)
         val action = Random.nextInt()
 

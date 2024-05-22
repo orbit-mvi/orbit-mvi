@@ -31,7 +31,7 @@ class RepeatOnSubscriptionTest {
     private val initialState = State()
 
     @Test
-    fun `test does not hang when using repeatOnSubscription`() = runTest {
+    fun test_does_not_hang_when_using_repeat_on_subscription() = runTest {
         TestMiddleware(this).test(this, initialState = initialState) {
             expectInitialState()
 

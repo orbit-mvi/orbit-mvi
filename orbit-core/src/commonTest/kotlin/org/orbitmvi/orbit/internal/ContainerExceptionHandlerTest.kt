@@ -46,7 +46,7 @@ import kotlin.test.assertTrue
 internal class ContainerExceptionHandlerTest {
 
     @Test
-    fun `by default exceptions are uncaught`() {
+    fun by_default_exceptions_are_uncaught() {
         assertFailsWith<IllegalStateException> {
             runTest {
                 ExceptionTestMiddleware(this).test(this) {
@@ -59,7 +59,7 @@ internal class ContainerExceptionHandlerTest {
     }
 
     @Test
-    fun `with exception handler exceptions are caught`() {
+    fun with_exception_handler_exceptions_are_caught() {
         val initState = Random.nextInt()
         val exceptions = Channel<Throwable>(capacity = Channel.BUFFERED)
         val exceptionHandler = CoroutineExceptionHandler { _, throwable -> exceptions.trySend(throwable) }
@@ -86,7 +86,7 @@ internal class ContainerExceptionHandlerTest {
     }
 
     @Test
-    fun `with exception handler test does not break`() = runTest {
+    fun with_exception_handler_test_does_not_break() = runTest {
         val initState = Random.nextInt()
         val exceptions = Channel<Throwable>(capacity = Channel.BUFFERED)
         val exceptionHandler = CoroutineExceptionHandler { _, throwable -> exceptions.trySend(throwable) }
@@ -104,12 +104,12 @@ internal class ContainerExceptionHandlerTest {
     }
 
     @Test
-    fun `with exception handler cancellation exception is propagated normally`() {
+    fun with_exception_handler_cancellation_exception_is_propagated_normally() {
         checkCancellationPropagation(withExceptionHandler = true)
     }
 
     @Test
-    fun `without exception handler cancellation exception is propagated normally`() {
+    fun without_exception_handler_cancellation_exception_is_propagated_normally() {
         checkCancellationPropagation(withExceptionHandler = false)
     }
 
@@ -151,7 +151,7 @@ internal class ContainerExceptionHandlerTest {
     }
 
     @Test
-    fun `without exception handler test does break`() {
+    fun without_exception_handler_test_does_break() {
         assertFailsWith<IllegalStateException> {
             runTest {
                 ExceptionTestMiddleware(this).test(this) {

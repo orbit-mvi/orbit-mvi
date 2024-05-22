@@ -70,7 +70,7 @@ class ContainerHostExtensionsKtTest {
     }
 
     @Test
-    fun `state subscribes on start`() {
+    fun state_subscribes_on_start() {
         containerHost.observe(mockLifecycleOwner, state = { })
 
         // Ensure there are no subscribers
@@ -82,7 +82,7 @@ class ContainerHostExtensionsKtTest {
     }
 
     @Test
-    fun `state unsubscribes on stop`() {
+    fun state_unsubscribes_on_stop() {
         containerHost.observe(mockLifecycleOwner, state = { })
 
         // Start and ensure there is one subscriber
@@ -95,7 +95,7 @@ class ContainerHostExtensionsKtTest {
     }
 
     @Test
-    fun `state resubscribes when restarted`() {
+    fun state_resubscribes_when_restarted() {
         containerHost.observe(mockLifecycleOwner, state = { })
 
         // Start and ensure there is one subscriber
@@ -112,7 +112,7 @@ class ContainerHostExtensionsKtTest {
     }
 
     @Test
-    fun `state subscribes on custom lifecycle`() {
+    fun state_subscribes_on_custom_lifecycle() {
         containerHost.observe(mockLifecycleOwner, lifecycleState = Lifecycle.State.RESUMED, state = { })
 
         // Ensure there are no subscribers
@@ -124,7 +124,7 @@ class ContainerHostExtensionsKtTest {
     }
 
     @Test
-    fun `state unsubscribes on stop with custom lifecycle`() {
+    fun state_unsubscribes_on_stop_with_custom_lifecycle() {
         containerHost.observe(mockLifecycleOwner, lifecycleState = Lifecycle.State.RESUMED, state = { })
 
         // Start and ensure there is one subscriber
@@ -137,7 +137,7 @@ class ContainerHostExtensionsKtTest {
     }
 
     @Test
-    fun `state resubscribes when restarted on custom lifecycle`() {
+    fun state_resubscribes_when_restarted_on_custom_lifecycle() {
         containerHost.observe(mockLifecycleOwner, lifecycleState = Lifecycle.State.RESUMED, state = { })
 
         // Start and ensure there is one subscriber
@@ -154,7 +154,7 @@ class ContainerHostExtensionsKtTest {
     }
 
     @Test
-    fun `side effect subscribes on start`() {
+    fun side_effect_subscribes_on_start() {
         containerHost.observe(mockLifecycleOwner, sideEffect = { })
 
         // Ensure there are no subscribers
@@ -166,7 +166,7 @@ class ContainerHostExtensionsKtTest {
     }
 
     @Test
-    fun `side effect unsubscribes on stop`() {
+    fun side_effect_unsubscribes_on_stop() {
         containerHost.observe(mockLifecycleOwner, sideEffect = { })
 
         // Start and ensure there is one subscriber
@@ -179,7 +179,7 @@ class ContainerHostExtensionsKtTest {
     }
 
     @Test
-    fun `side effect resubscribes when restarted`() {
+    fun side_effect_resubscribes_when_restarted() {
         containerHost.observe(mockLifecycleOwner, sideEffect = { })
 
         // Start and ensure there is one subscriber
@@ -196,7 +196,7 @@ class ContainerHostExtensionsKtTest {
     }
 
     @Test
-    fun `side effect subscribes on custom lifecycle`() {
+    fun side_effect_subscribes_on_custom_lifecycle() {
         containerHost.observe(mockLifecycleOwner, lifecycleState = Lifecycle.State.RESUMED, sideEffect = { })
 
         // Ensure there are no subscribers
@@ -208,7 +208,7 @@ class ContainerHostExtensionsKtTest {
     }
 
     @Test
-    fun `side effect unsubscribes on stop with custom lifecycle`() {
+    fun side_effect_unsubscribes_on_stop_with_custom_lifecycle() {
         containerHost.observe(mockLifecycleOwner, lifecycleState = Lifecycle.State.RESUMED, sideEffect = { })
 
         // Start and ensure there is one subscriber
@@ -221,7 +221,7 @@ class ContainerHostExtensionsKtTest {
     }
 
     @Test
-    fun `side effect resubscribes when restarted on custom lifecycle`() {
+    fun side_effect_resubscribes_when_restarted_on_custom_lifecycle() {
         containerHost.observe(mockLifecycleOwner, lifecycleState = Lifecycle.State.RESUMED, sideEffect = { })
 
         // Start and ensure there is one subscriber

@@ -80,7 +80,7 @@ class AndroidIdlingResourceTest {
     }
 
     @Test
-    fun `idle when nothing running`() {
+    fun idle_when_nothing_running() {
         scope.createContainerHost()
 
         val idlingResource = IdlingRegistry.getInstance().resources.first()
@@ -89,7 +89,7 @@ class AndroidIdlingResourceTest {
     }
 
     @Test
-    fun `not idle when actively running`() {
+    fun not_idle_when_actively_running() {
         runBlocking {
             val containerHost = scope.createContainerHost()
 
@@ -111,7 +111,7 @@ class AndroidIdlingResourceTest {
     }
 
     @Test
-    fun `idle when actively running with registration disabled`() {
+    fun idle_when_actively_running_with_registration_disabled() {
         runBlocking {
             val containerHost = scope.createContainerHost()
 
@@ -133,7 +133,7 @@ class AndroidIdlingResourceTest {
     }
 
     @Test
-    fun `not idle directly after running`() {
+    fun not_idle_directly_after_running() {
         runBlocking {
             val containerHost = scope.createContainerHost()
 
@@ -154,7 +154,7 @@ class AndroidIdlingResourceTest {
     }
 
     @Test
-    fun `idle shortly after running`() {
+    fun idle_shortly_after_running() {
         runBlocking {
             val containerHost = scope.createContainerHost()
 
@@ -182,7 +182,7 @@ class AndroidIdlingResourceTest {
     }
 
     @Test
-    fun `not idle when two actively running`() {
+    fun not_idle_when_two_actively_running() {
         runBlocking {
             val containerHost = scope.createContainerHost()
 
@@ -212,7 +212,7 @@ class AndroidIdlingResourceTest {
     }
 
     @Test
-    fun `not idle when one of two actively running`() {
+    fun not_idle_when_one_of_two_actively_running() {
         runBlocking {
             val containerHost = scope.createContainerHost()
 
@@ -242,7 +242,7 @@ class AndroidIdlingResourceTest {
     }
 
     @Test
-    fun `not idle directly after two running`() {
+    fun not_idle_directly_after_two_running() {
         runBlocking {
             val containerHost = scope.createContainerHost()
 
@@ -270,7 +270,7 @@ class AndroidIdlingResourceTest {
     }
 
     @Test
-    fun `idle shortly after two running`() {
+    fun idle_shortly_after_two_running() {
         runBlocking {
             val containerHost = scope.createContainerHost()
 
@@ -305,7 +305,7 @@ class AndroidIdlingResourceTest {
     }
 
     @Test
-    fun `cancelling scope removes IdlingResource`() {
+    fun cancelling_scope_removes_idling_resource() {
         runBlocking {
             val host = scope.createContainerHost()
             // Make sure idling resource is lazily initialised

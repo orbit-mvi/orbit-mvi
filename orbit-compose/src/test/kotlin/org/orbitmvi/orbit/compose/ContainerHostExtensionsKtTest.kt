@@ -90,7 +90,7 @@ class ContainerHostExtensionsKtTest {
     }
 
     @Test
-    fun `state subscribes on start`() {
+    fun state_subscribes_on_start() {
         initialiseContainerHost { collectState { } }
 
         // Ensure there are no subscribers
@@ -102,7 +102,7 @@ class ContainerHostExtensionsKtTest {
     }
 
     @Test
-    fun `state unsubscribes on stop`() {
+    fun state_unsubscribes_on_stop() {
         initialiseContainerHost { collectState { } }
 
         // Start and ensure there is one subscriber
@@ -115,7 +115,7 @@ class ContainerHostExtensionsKtTest {
     }
 
     @Test
-    fun `state resubscribes when restarted`() {
+    fun state_resubscribes_when_restarted() {
         initialiseContainerHost { collectState { } }
 
         // Start and ensure there is one subscriber
@@ -132,7 +132,7 @@ class ContainerHostExtensionsKtTest {
     }
 
     @Test
-    fun `state subscribes on custom lifecycle`() {
+    fun state_subscribes_on_custom_lifecycle() {
         initialiseContainerHost { collectState(Lifecycle.State.RESUMED) { } }
 
         // Ensure there are no subscribers
@@ -144,7 +144,7 @@ class ContainerHostExtensionsKtTest {
     }
 
     @Test
-    fun `state unsubscribes on stop with custom lifecycle`() {
+    fun state_unsubscribes_on_stop_with_custom_lifecycle() {
         initialiseContainerHost { collectState(Lifecycle.State.RESUMED) { } }
 
         // Start and ensure there is one subscriber
@@ -157,7 +157,7 @@ class ContainerHostExtensionsKtTest {
     }
 
     @Test
-    fun `state resubscribes when restarted on custom lifecycle`() {
+    fun state_resubscribes_when_restarted_on_custom_lifecycle() {
         initialiseContainerHost { collectState(Lifecycle.State.RESUMED) { } }
 
         // Start and ensure there is one subscriber
@@ -174,7 +174,7 @@ class ContainerHostExtensionsKtTest {
     }
 
     @Test
-    fun `as state subscribes on start`() {
+    fun as_state_subscribes_on_start() {
         initialiseContainerHost { collectAsState() }
 
         // Ensure there are no subscribers
@@ -186,7 +186,7 @@ class ContainerHostExtensionsKtTest {
     }
 
     @Test
-    fun `as state unsubscribes on stop`() {
+    fun as_state_unsubscribes_on_stop() {
         initialiseContainerHost { collectAsState() }
 
         // Start and ensure there is one subscriber
@@ -199,7 +199,7 @@ class ContainerHostExtensionsKtTest {
     }
 
     @Test
-    fun `as state resubscribes when restarted`() {
+    fun as_state_resubscribes_when_restarted() {
         initialiseContainerHost { collectAsState() }
 
         // Start and ensure there is one subscriber
@@ -216,7 +216,7 @@ class ContainerHostExtensionsKtTest {
     }
 
     @Test
-    fun `as state subscribes on custom lifecycle`() {
+    fun as_state_subscribes_on_custom_lifecycle() {
         initialiseContainerHost { collectAsState(Lifecycle.State.RESUMED) }
 
         // Ensure there are no subscribers
@@ -228,7 +228,7 @@ class ContainerHostExtensionsKtTest {
     }
 
     @Test
-    fun `as state unsubscribes on stop with custom lifecycle`() {
+    fun as_state_unsubscribes_on_stop_with_custom_lifecycle() {
         initialiseContainerHost { collectAsState(Lifecycle.State.RESUMED) }
 
         // Start and ensure there is one subscriber
@@ -241,7 +241,7 @@ class ContainerHostExtensionsKtTest {
     }
 
     @Test
-    fun `as state resubscribes when restarted on custom lifecycle`() {
+    fun as_state_resubscribes_when_restarted_on_custom_lifecycle() {
         initialiseContainerHost { collectAsState(Lifecycle.State.RESUMED) }
 
         // Start and ensure there is one subscriber
@@ -258,7 +258,7 @@ class ContainerHostExtensionsKtTest {
     }
 
     @Test
-    fun `side effect subscribes on start`() {
+    fun side_effect_subscribes_on_start() {
         initialiseContainerHost { collectSideEffect { } }
 
         // Ensure there are no subscribers
@@ -270,7 +270,7 @@ class ContainerHostExtensionsKtTest {
     }
 
     @Test
-    fun `side effect unsubscribes on stop`() {
+    fun side_effect_unsubscribes_on_stop() {
         initialiseContainerHost { collectSideEffect { } }
 
         // Start and ensure there is one subscriber
@@ -283,7 +283,7 @@ class ContainerHostExtensionsKtTest {
     }
 
     @Test
-    fun `side effect resubscribes when restarted`() {
+    fun side_effect_resubscribes_when_restarted() {
         initialiseContainerHost { collectSideEffect { } }
 
         // Start and ensure there is one subscriber
@@ -300,7 +300,7 @@ class ContainerHostExtensionsKtTest {
     }
 
     @Test
-    fun `side effect subscribes on custom lifecycle`() {
+    fun side_effect_subscribes_on_custom_lifecycle() {
         initialiseContainerHost { collectSideEffect(Lifecycle.State.RESUMED) { } }
 
         // Ensure there are no subscribers
@@ -312,7 +312,7 @@ class ContainerHostExtensionsKtTest {
     }
 
     @Test
-    fun `side effect unsubscribes on stop with custom lifecycle`() {
+    fun side_effect_unsubscribes_on_stop_with_custom_lifecycle() {
         initialiseContainerHost { collectSideEffect(Lifecycle.State.RESUMED) { } }
 
         // Start and ensure there is one subscriber
@@ -325,7 +325,7 @@ class ContainerHostExtensionsKtTest {
     }
 
     @Test
-    fun `side effect resubscribes when restarted on custom lifecycle`() {
+    fun side_effect_resubscribes_when_restarted_on_custom_lifecycle() {
         initialiseContainerHost { collectSideEffect(Lifecycle.State.RESUMED) { } }
 
         // Start and ensure there is one subscriber

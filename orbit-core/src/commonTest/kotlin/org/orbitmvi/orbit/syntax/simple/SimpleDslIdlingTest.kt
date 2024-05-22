@@ -22,55 +22,48 @@ package org.orbitmvi.orbit.syntax.simple
 
 import kotlinx.atomicfu.atomic
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.cancel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeout
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.container
 import org.orbitmvi.orbit.idling.IdlingResource
 import org.orbitmvi.orbit.test.assertEventually
-import org.orbitmvi.orbit.test.runBlocking
-import kotlin.test.AfterTest
 import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
+@OptIn(ExperimentalCoroutinesApi::class)
 internal class SimpleDslIdlingTest {
 
-    private val scope = CoroutineScope(Job())
     private val testIdlingResource = TestIdlingResource()
 
-    @AfterTest
-    fun after() {
-        scope.cancel()
-    }
-
     @Test
-    fun `idle when nothing running`() {
-        runBlocking {
-            scope.createContainerHost()
-            delay(50)
-        }
+    fun idle_when_nothing_running() = runTest {
+        backgroundScope.createContainerHost()
+        delay(50)
 
         assertTrue(testIdlingResource.isIdle())
     }
 
     @Test
-    fun `not idle when actively running`() {
-        runBlocking {
-            val containerHost = scope.createContainerHost()
+    fun not_idle_when_actively_running() = runTest {
+        val containerHost = backgroundScope.createContainerHost()
 
-            val mutex = Mutex(locked = true)
+        val mutex = Mutex(locked = true)
 
-            containerHost.intent {
-                mutex.unlock()
-                delay(50)
-            }
+        containerHost.intent {
+            mutex.unlock()
+            delay(50)
+        }
 
+        withContext(Dispatchers.Default.limitedParallelism(1)) {
             withTimeout(TIMEOUT) {
                 mutex.withLock {
                     assertFalse(testIdlingResource.isIdle())
@@ -80,17 +73,17 @@ internal class SimpleDslIdlingTest {
     }
 
     @Test
-    fun `idle when actively running with registration disabled`() {
-        runBlocking {
-            val containerHost = scope.createContainerHost()
+    fun idle_when_actively_running_with_registration_disabled() = runTest {
+        val containerHost = backgroundScope.createContainerHost()
 
-            val mutex = Mutex(locked = true)
+        val mutex = Mutex(locked = true)
 
-            containerHost.intent(registerIdling = false) {
-                mutex.unlock()
-                delay(50)
-            }
+        containerHost.intent(registerIdling = false) {
+            mutex.unlock()
+            delay(50)
+        }
 
+        withContext(Dispatchers.Default.limitedParallelism(1)) {
             withTimeout(TIMEOUT) {
                 mutex.withLock {
                     assertTrue(testIdlingResource.isIdle())
@@ -100,20 +93,18 @@ internal class SimpleDslIdlingTest {
     }
 
     @Test
-    fun `idle after running`() {
-        runBlocking {
-            val containerHost = scope.createContainerHost()
+    fun idle_after_running() = runTest {
+        val containerHost = backgroundScope.createContainerHost()
 
-            val mutex = Mutex(locked = true)
+        val mutex = Mutex(locked = true)
 
-            containerHost.intent {
-                mutex.unlock()
-            }
+        containerHost.intent {
+            mutex.unlock()
+        }
 
-            mutex.withLock {
-                assertEventually {
-                    assertTrue { testIdlingResource.isIdle() }
-                }
+        mutex.withLock {
+            assertEventually {
+                assertTrue { testIdlingResource.isIdle() }
             }
         }
     }
