@@ -30,11 +30,11 @@ import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeout
+import kotlinx.coroutines.yield
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.container
 import org.orbitmvi.orbit.idling.IdlingResource
-import org.orbitmvi.orbit.test.assertEventually
 import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -140,5 +140,20 @@ internal class SimpleDslIdlingTest {
 
     companion object {
         private const val TIMEOUT = 5000L
+    }
+
+    private suspend fun assertEventually(timeout: Long = 2000L, block: suspend () -> Unit) {
+        withContext(Dispatchers.Default) {
+            withTimeout(timeout) {
+                while (true) {
+                    try {
+                        block()
+                        break
+                    } catch (ignored: Throwable) {
+                        yield()
+                    }
+                }
+            }
+        }
     }
 }

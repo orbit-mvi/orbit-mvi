@@ -39,7 +39,6 @@ dependencies {
 
     // Testing
     testImplementation(project(":orbit-test"))
-    testImplementation(project(":test-common"))
     testImplementation(libs.androidxEspressoCore)
     testImplementation(libs.robolectric)
 

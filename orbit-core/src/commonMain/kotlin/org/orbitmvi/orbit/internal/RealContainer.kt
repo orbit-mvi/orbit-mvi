@@ -24,6 +24,7 @@ import kotlinx.atomicfu.atomic
 import kotlinx.coroutines.CompletableJob
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
@@ -84,11 +85,13 @@ public class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
         stateFlow = stateFlow,
     )
 
-    override suspend fun orbit(orbitIntent: suspend ContainerContext<STATE, SIDE_EFFECT>.() -> Unit): Job {
+    override fun orbit(orbitIntent: suspend ContainerContext<STATE, SIDE_EFFECT>.() -> Unit): Job {
         initialiseIfNeeded()
 
         val job = Job(intentJob)
-        dispatchChannel.send(job to orbitIntent)
+        scope.launch(start = CoroutineStart.UNDISPATCHED) {
+            dispatchChannel.send(job to orbitIntent)
+        }
         return job
     }
 

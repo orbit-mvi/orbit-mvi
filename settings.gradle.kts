@@ -27,7 +27,6 @@ include(
     "samples:orbit-posts",
     "samples:orbit-stocklist",
     "samples:orbit-text",
-    "test-common"
 )
 
 fun renameBuildFileToModuleName(project: ProjectDescriptor) {

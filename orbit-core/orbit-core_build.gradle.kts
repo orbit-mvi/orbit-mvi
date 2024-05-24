@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
+
 /*
  * Copyright 2021-2024 Mikołaj Leszczyński & Appmattus Limited
  * Copyright 2020 Babylon Partners Limited
@@ -30,6 +32,10 @@ kotlin {
     iosX64()
     iosArm64()
     iosSimulatorArm64()
+    @OptIn(ExperimentalWasmDsl::class)
+    wasmJs {
+        browser()
+    }
     sourceSets {
         all {
             languageSettings.optIn("kotlin.RequiresOptIn")
@@ -40,17 +46,20 @@ kotlin {
             api(libs.kotlinCoroutines)
         }
         commonTest.dependencies {
-            implementation(kotlin("test-common"))
+            implementation(kotlin("test"))
             implementation(kotlin("test-annotations-common"))
-            implementation(project(":test-common"))
             implementation(project(":orbit-test"))
             implementation(libs.kotlinCoroutines)
             implementation(libs.kotlinCoroutinesTest)
             implementation(libs.turbine)
         }
 
-        jvmTest.dependencies {
-            implementation(kotlin("test-junit"))
-        }
+//        jvmTest.dependencies {
+//            implementation(kotlin("test-junit"))
+//        }
+
+//        wasmJsTest.dependencies {
+//            implementation(kotlin("test-wasm-js"))
+//        }
     }
 }

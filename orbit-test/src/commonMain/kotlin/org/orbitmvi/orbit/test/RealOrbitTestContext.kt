@@ -18,7 +18,6 @@ package org.orbitmvi.orbit.test
 
 import app.cash.turbine.ReceiveTurbine
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.runBlocking
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.annotation.OrbitInternal
 import kotlin.test.assertEquals
@@ -35,11 +34,9 @@ public class RealOrbitTestContext<STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST
     private var currentConsumedState: STATE = resolvedInitialState
 
     @OptIn(OrbitInternal::class)
-    override fun runOnCreate(): Job {
+    override suspend fun runOnCreate(): Job {
         val onCreate = containerHost.container.findOnCreate()
-        return runBlocking {
-            containerHost.container.orbit(onCreate)
-        }
+        return containerHost.container.orbit(onCreate)
     }
 
     override suspend fun awaitItem(): Item<STATE, SIDE_EFFECT> {

@@ -25,7 +25,7 @@ safeargs = "2.7.7"
 atomicfu = "0.24.0"
 dokka = "1.9.20"
 
-kotlin = "1.9.24"
+kotlin = "2.0.0-RC3"
 coroutines = "1.8.1"
 
 androidxLifecycles = "2.7.0"
@@ -85,5 +85,5 @@ dokkaPlugin = { id = "org.jetbrains.dokka", version.ref = "dokka" }
 gradleMavenPublishPlugin = { id = "com.vanniktech.maven.publish", version.ref = "gradleMavenPublishPlugin" }
 gradleVersionsPlugin = { id = "com.github.ben-manes.versions", version.ref = "gradleVersionsPlugin" }
 markdownlintGradlePlugin = { id = "com.appmattus.markdown", version.ref = "markdownLintPlugin" }
-kotlin-pluginSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 atomicfu = { id = "kotlinx-atomicfu", version.ref = "atomicfu" }
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }

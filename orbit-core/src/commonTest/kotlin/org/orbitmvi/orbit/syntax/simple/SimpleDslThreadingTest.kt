@@ -21,16 +21,23 @@
 package org.orbitmvi.orbit.syntax.simple
 
 import app.cash.turbine.test
+import kotlinx.atomicfu.atomic
+import kotlinx.atomicfu.updateAndGet
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.channels.produce
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.withContext
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.container
-import org.orbitmvi.orbit.test.ScopedBlockingWorkSimulator
 import kotlin.random.Random
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -135,6 +142,36 @@ internal class SimpleDslThreadingTest {
 
         fun suspendingIntent() = intent {
             delay(Int.MAX_VALUE.toLong())
+        }
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private class ScopedBlockingWorkSimulator(private val scope: CoroutineScope) {
+
+        private val job = atomic<Job?>(null)
+
+        init {
+            scope.produce<Unit>(Dispatchers.Default) {
+                awaitClose {
+                    job.value?.cancel()
+                }
+            }
+        }
+
+        @Suppress("ControlFlowWithEmptyBody", "EmptyWhileBlock")
+        fun simulateWork() {
+            job.updateAndGet {
+                if (it != null) {
+                    error("Can be invoked only once")
+                }
+                scope.launch(Dispatchers.Default) {
+                    while (currentCoroutineContext().isActive) {
+                    }
+                }
+            }.let {
+                while (it?.isActive == true) {
+                }
+            }
         }
     }
 }

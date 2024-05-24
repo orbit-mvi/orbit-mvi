@@ -19,6 +19,7 @@ plugins {
     kotlin("android")
     id(libs.plugins.gradleMavenPublishPlugin.get().pluginId)
     id(libs.plugins.dokkaPlugin.get().pluginId)
+    alias(libs.plugins.compose.compiler)
 }
 
 android {
@@ -33,10 +34,6 @@ android {
     buildFeatures {
         compose = true
     }
-
-    composeOptions {
-        kotlinCompilerExtensionVersion = libs.versions.androidxComposeCompiler.get()
-    }
 }
 
 dependencies {
@@ -50,7 +47,6 @@ dependencies {
     // Testing
     testImplementation(kotlin("test-junit"))
     testImplementation(project(":orbit-test"))
-    testImplementation(project(":test-common"))
     testImplementation(libs.androidxEspressoCore)
     testImplementation(libs.robolectric)
 

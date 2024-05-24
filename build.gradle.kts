@@ -41,18 +41,14 @@ buildscript {
 }
 
 plugins {
-    alias(libs.plugins.kotlin.pluginSerialization)
     alias(libs.plugins.gradleVersionsPlugin)
     alias(libs.plugins.markdownlintGradlePlugin)
     alias(libs.plugins.gradleMavenPublishPlugin) apply false
     alias(libs.plugins.dokkaPlugin)
+    alias(libs.plugins.compose.compiler) apply false
 }
 
 apply(from = "gradle/scripts/detekt.gradle.kts")
-
-tasks.register<Delete>("clean") {
-    delete(rootProject.buildDir)
-}
 
 tasks.withType<DependencyUpdatesTask> {
     resolutionStrategy {
