@@ -28,6 +28,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
+import org.orbitmvi.orbit.ContainerHostWithExtState
+import org.orbitmvi.orbit.ContainerWithExtState
 import org.orbitmvi.orbit.syntax.simple.repeatOnSubscription
 
 /**
@@ -91,4 +93,20 @@ public fun <STATE : Any, SIDE_EFFECT : Any> ContainerHost<STATE, SIDE_EFFECT>.co
     lifecycleState: Lifecycle.State = Lifecycle.State.STARTED
 ): State<STATE> {
     return container.refCountStateFlow.collectAsStateWithLifecycle(minActiveState = lifecycleState)
+}
+
+/**
+ * Observe the [ContainerWithExtState.extStateFlow] as [State].
+ *
+ * @param lifecycleState The minimum lifecycle state at which the state is observed.
+ *
+ * Active subscriptions from this operator count towards [repeatOnSubscription] subscribers.
+ */
+@Composable
+public fun <STATE : Any, SIDE_EFFECT : Any, UI_STATE : Any> ContainerHostWithExtState<
+    STATE,
+    SIDE_EFFECT,
+    UI_STATE,
+    >.collectExtState(lifecycleState: Lifecycle.State = androidx.lifecycle.Lifecycle.State.STARTED): State<UI_STATE> {
+    return container.extStateFlow.collectAsStateWithLifecycle(minActiveState = lifecycleState)
 }

@@ -42,8 +42,7 @@ public fun <STATE : Any, SIDE_EFFECT : Any> CoroutineScope.container(
 ): Container<STATE, SIDE_EFFECT> {
     val realContainer = RealContainer<STATE, SIDE_EFFECT>(
         initialState = initialState,
-        settings = SettingsBuilder().apply { buildSettings() }.settings,
-        parentScope = this
+        settings = SettingsBuilder().apply { buildSettings() }.apply(RealSettings(parentScope = this))
     )
     return if (onCreate == null) {
         TestContainerDecorator(

@@ -17,7 +17,6 @@
 package org.orbitmvi.orbit.internal
 
 import kotlinx.atomicfu.atomic
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
@@ -55,14 +54,13 @@ public class TestContainerDecorator<STATE : Any, SIDE_EFFECT : Any>(
 
     public fun test(
         initialState: STATE? = null,
-        settings: RealSettings,
-        testScope: CoroutineScope
+        settings: RealSettings
     ) {
         val testDelegate = RealContainer<STATE, SIDE_EFFECT>(
             initialState = initialState ?: originalInitialState,
-            parentScope = testScope,
-            settings = settings,
-            subscribedCounterOverride = AlwaysSubscribedCounter
+            settings = settings.copy(
+                subscribedCounter = AlwaysSubscribedCounter
+            ),
         )
 
         val testDelegateSet = delegate.compareAndSet(

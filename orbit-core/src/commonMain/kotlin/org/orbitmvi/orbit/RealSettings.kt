@@ -17,10 +17,15 @@ package org.orbitmvi.orbit
 
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.plus
 import org.orbitmvi.orbit.idling.IdlingResource
 import org.orbitmvi.orbit.idling.NoopIdlingResource
+import org.orbitmvi.orbit.internal.repeatonsubscription.DelayingSubscribedCounter
+import org.orbitmvi.orbit.internal.repeatonsubscription.SubscribedCounter
+import kotlin.time.Duration.Companion.milliseconds
 
 public data class RealSettings(
     public val sideEffectBufferSize: Int = Channel.BUFFERED,
@@ -28,34 +33,31 @@ public data class RealSettings(
     public val eventLoopDispatcher: CoroutineDispatcher = Dispatchers.Default,
     public val intentLaunchingDispatcher: CoroutineDispatcher = Dispatchers.Unconfined,
     public val exceptionHandler: CoroutineExceptionHandler? = null,
-    public val repeatOnSubscribedStopTimeout: Long = 100L,
+    public val repeatOnSubscribedStopTimeout: Long = SettingsBuilder.DEFAULT_SUBSCRIBED_STOP_TIMEOUT,
+    public val parentScope: CoroutineScope,
+    public val scope: CoroutineScope = parentScope + eventLoopDispatcher,
+    public val subscribedCounter: SubscribedCounter = DelayingSubscribedCounter(scope, repeatOnSubscribedStopTimeout)
 )
 
 public class SettingsBuilder {
-    internal var settings = RealSettings()
-        private set
 
-    public var idlingRegistry: IdlingResource
-        get() = settings.idlingRegistry
-        public set(value) {
-            settings = settings.copy(idlingRegistry = value)
-        }
+    public var idlingRegistry: IdlingResource = NoopIdlingResource()
 
-    public var exceptionHandler: CoroutineExceptionHandler?
-        get() = settings.exceptionHandler
-        public set(value) {
-            settings = settings.copy(exceptionHandler = value)
-        }
+    public var exceptionHandler: CoroutineExceptionHandler? = null
 
-    public var repeatOnSubscribedStopTimeout: Long
-        get() = settings.repeatOnSubscribedStopTimeout
-        public set(value) {
-            settings = settings.copy(repeatOnSubscribedStopTimeout = value)
-        }
+    public var repeatOnSubscribedStopTimeout: Long = DEFAULT_SUBSCRIBED_STOP_TIMEOUT
 
-    public var sideEffectBufferSize: Int
-        get() = settings.sideEffectBufferSize
-        public set(value) {
-            settings = settings.copy(sideEffectBufferSize = value)
-        }
+    public var sideEffectBufferSize: Int = Channel.BUFFERED
+
+    public fun apply(settings: RealSettings): RealSettings {
+        return settings.copy(
+            sideEffectBufferSize = sideEffectBufferSize,
+            idlingRegistry = idlingRegistry,
+            exceptionHandler = exceptionHandler,
+            repeatOnSubscribedStopTimeout = repeatOnSubscribedStopTimeout,
+        )
+    }
+    internal companion object {
+        const val DEFAULT_SUBSCRIBED_STOP_TIMEOUT = 100L
+    }
 }

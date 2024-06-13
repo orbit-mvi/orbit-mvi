@@ -45,7 +45,9 @@ internal class SimpleDslRepeatOnSubscriptionTest {
 
     private val simpleSyntax = SimpleSyntax(
         containerContext = ContainerContext<Unit, Unit>(
-            settings = RealSettings(),
+            settings = RealSettings(
+                parentScope = testScope
+            ),
             postSideEffect = {},
             reduce = {},
             subscribedCounter = testSubscribedCounter,
