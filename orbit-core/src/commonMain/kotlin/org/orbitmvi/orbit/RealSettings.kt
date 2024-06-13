@@ -25,7 +25,6 @@ import org.orbitmvi.orbit.idling.IdlingResource
 import org.orbitmvi.orbit.idling.NoopIdlingResource
 import org.orbitmvi.orbit.internal.repeatonsubscription.DelayingSubscribedCounter
 import org.orbitmvi.orbit.internal.repeatonsubscription.SubscribedCounter
-import kotlin.time.Duration.Companion.milliseconds
 
 public data class RealSettings(
     public val sideEffectBufferSize: Int = Channel.BUFFERED,
