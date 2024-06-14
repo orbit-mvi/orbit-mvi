@@ -106,6 +106,45 @@ class ExampleViewModel(
 }
 ```
 
+### ContainerHostWithExtState
+
+A
+[ContainerHostWithExtState](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-container-host-with-ext-state/)
+is used whenever you want to have separation between the internal and external
+states of a ContainerHost.
+
+Let's define an outside consumer as anything that consumes the state of the
+ContainerHost and is external to it - e.g. a UI.
+
+Internal state is the raw ContainerHost's state that is not well suited to
+consumption outside of the ContainerHost. It may contain lots of unnecessary
+information and you may see the complexity bleeding into the UI. Ideally UIs
+should not contain any business logic
+
+External state is the state that is exposed to the outside world. It is a mapped
+representation of the internal state that contains the minimum necessary data
+for outside consumers. The data is mapped in a way that is ready for consumption
+, avoiding the need for any additional processing in the UI.
+
+Creating such a separation is easy:
+
+``` kotlin
+class ExampleViewModel(
+    savedStateHandle: SavedStateHandle
+) : ViewModel(), ContainerHostWithExtState<ExampleState, ExampleSideEffect, ExampleExtState> {
+    // create a container
+    val container = container<ExampleState, ExampleSideEffect>(ExampleState(), savedStateHandle)
+        .withExtState(::mapExternalState)
+
+    …
+    
+    private fun mapExternalState(state: ExampleState): ExampleExtState {
+        // Process the internal state into something the UI can easily consume...
+        return ExampleExtState(...)
+    }
+}
+```
+
 ## Core operators
 
 The Core module contains built-in Orbit operators. Here's how

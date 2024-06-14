@@ -103,10 +103,10 @@ public fun <STATE : Any, SIDE_EFFECT : Any> ContainerHost<STATE, SIDE_EFFECT>.co
  * Active subscriptions from this operator count towards [repeatOnSubscription] subscribers.
  */
 @Composable
-public fun <STATE : Any, SIDE_EFFECT : Any, UI_STATE : Any> ContainerHostWithExtState<
+public fun <STATE : Any, SIDE_EFFECT : Any, EXT_STATE : Any> ContainerHostWithExtState<
     STATE,
     SIDE_EFFECT,
-    UI_STATE,
-    >.collectExtState(lifecycleState: Lifecycle.State = androidx.lifecycle.Lifecycle.State.STARTED): State<UI_STATE> {
+    EXT_STATE,
+    >.collectExtState(lifecycleState: Lifecycle.State = androidx.lifecycle.Lifecycle.State.STARTED): State<EXT_STATE> {
     return container.extStateFlow.collectAsStateWithLifecycle(minActiveState = lifecycleState)
 }
