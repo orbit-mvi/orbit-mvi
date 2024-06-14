@@ -39,3 +39,20 @@ fun SomeScreen(viewModel: SomeViewModel) {
 }
 ```
 
+## Subscribing to a ContainerHost with external state in Compose
+
+If you're using a [ContainerHostWithExtState](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-container-host-with-ext-state/),
+you can use the `collectExtState` extension function to collect the state in the
+UI.
+
+``` kotlin
+@Composable
+fun SomeScreen(viewModel: SomeViewModel) {
+  val state by viewModel.collectExtState()
+  
+  SomeContent(
+    state = state
+  )
+}
+```
+

@@ -41,22 +41,17 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.RealSettings
-import org.orbitmvi.orbit.internal.repeatonsubscription.DelayingSubscribedCounter
-import org.orbitmvi.orbit.internal.repeatonsubscription.SubscribedCounter
 import org.orbitmvi.orbit.internal.repeatonsubscription.refCount
 import org.orbitmvi.orbit.syntax.ContainerContext
 
 public class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
     initialState: STATE,
-    parentScope: CoroutineScope,
     public override val settings: RealSettings,
-    subscribedCounterOverride: SubscribedCounter? = null
 ) : Container<STATE, SIDE_EFFECT> {
-    override val scope: CoroutineScope = parentScope + settings.eventLoopDispatcher
+    override val scope: CoroutineScope = settings.scope
     private val intentJob = Job(scope.coroutineContext[Job])
     private val dispatchChannel = Channel<Pair<CompletableJob, suspend ContainerContext<STATE, SIDE_EFFECT>.() -> Unit>>(Channel.UNLIMITED)
     private val initialised = atomic(false)
-    private val subscribedCounter = subscribedCounterOverride ?: DelayingSubscribedCounter(scope, settings.repeatOnSubscribedStopTimeout)
     private val internalStateFlow = MutableStateFlow(initialState)
     private val sideEffectChannel = Channel<SIDE_EFFECT>(settings.sideEffectBufferSize)
     private val intentCounter = atomic(0)
@@ -64,8 +59,8 @@ public class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
     override val stateFlow: StateFlow<STATE> = internalStateFlow.asStateFlow()
     override val sideEffectFlow: Flow<SIDE_EFFECT> = sideEffectChannel.receiveAsFlow()
 
-    override val refCountStateFlow: StateFlow<STATE> = internalStateFlow.refCount(subscribedCounter)
-    override val refCountSideEffectFlow: Flow<SIDE_EFFECT> = sideEffectFlow.refCount(subscribedCounter)
+    override val refCountStateFlow: StateFlow<STATE> = internalStateFlow.refCount(settings.subscribedCounter)
+    override val refCountSideEffectFlow: Flow<SIDE_EFFECT> = sideEffectFlow.refCount(settings.subscribedCounter)
 
     override suspend fun joinIntents() {
         intentJob.children.toList().joinAll()
@@ -80,7 +75,7 @@ public class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
         settings = settings,
         postSideEffect = { sideEffectChannel.send(it) },
         reduce = { reducer -> internalStateFlow.update(reducer) },
-        subscribedCounter = subscribedCounter,
+        subscribedCounter = settings.subscribedCounter,
         stateFlow = stateFlow,
     )
 

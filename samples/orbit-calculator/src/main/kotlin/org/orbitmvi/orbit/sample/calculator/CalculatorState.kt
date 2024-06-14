@@ -20,6 +20,6 @@
 
 package org.orbitmvi.orbit.sample.calculator
 
-interface CalculatorState {
+data class CalculatorState(
     val digitalDisplay: String
-}
+)

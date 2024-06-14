@@ -19,6 +19,7 @@ package org.orbitmvi.orbit.test
 import app.cash.turbine.test
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -53,13 +54,13 @@ public suspend fun <STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHo
     validate: suspend OrbitTestContext<STATE, SIDE_EFFECT, CONTAINER_HOST>.() -> Unit
 ) {
     val containerHost = this
-    val testDispatcher = settings.dispatcherOverride ?: testScope.backgroundScope.coroutineContext[CoroutineDispatcher.Key]
+    val testDispatcher =
+        settings.dispatcherOverride ?: testScope.backgroundScope.coroutineContext[CoroutineDispatcher.Key] ?: StandardTestDispatcher()
     val testExceptionHandler = settings.exceptionHandlerOverride ?: containerHost.container.settings.exceptionHandler
 
     container.findTestContainer().test(
         initialState = initialState,
-        settings = createRealSettings(testDispatcher, testExceptionHandler),
-        testScope = testScope.backgroundScope
+        settings = createRealSettings(testScope.backgroundScope, testDispatcher, testExceptionHandler),
     )
     mergedFlow().test(timeout = timeout) {
         RealOrbitTestContext(
@@ -75,14 +76,19 @@ public suspend fun <STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHo
     }
 }
 
-private fun createRealSettings(testDispatcher: CoroutineDispatcher?, testExceptionHandler: CoroutineExceptionHandler?): RealSettings {
+private fun createRealSettings(
+    scope: CoroutineScope,
+    testDispatcher: CoroutineDispatcher?,
+    testExceptionHandler: CoroutineExceptionHandler?,
+): RealSettings {
     val dispatcher = testDispatcher ?: StandardTestDispatcher()
 
     return RealSettings(
         eventLoopDispatcher = dispatcher,
         intentLaunchingDispatcher = dispatcher,
         exceptionHandler = testExceptionHandler,
-        repeatOnSubscribedStopTimeout = 0L
+        repeatOnSubscribedStopTimeout = 0L,
+        parentScope = scope
     )
 }
 

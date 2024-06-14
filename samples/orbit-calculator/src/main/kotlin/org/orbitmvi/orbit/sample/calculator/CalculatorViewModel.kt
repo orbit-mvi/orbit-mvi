@@ -26,78 +26,89 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import kotlinx.parcelize.Parcelize
-import org.orbitmvi.orbit.ContainerHost
+import org.orbitmvi.orbit.ContainerHostWithExtState
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.reduce
 import org.orbitmvi.orbit.viewmodel.container
 import java.math.BigDecimal
 import java.math.RoundingMode
 
-class CalculatorViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
+@Suppress("TooManyFunctions")
+class CalculatorViewModel(savedStateHandle: SavedStateHandle) :
+    ViewModel(),
+    ContainerHostWithExtState<CalculatorViewModel.InternalCalculatorState, Nothing, CalculatorState> {
 
-    // private ContainerHost to not expose the caller to the internal implementation of CalculatorState
-    private val host = object : ContainerHost<CalculatorStateImpl, Nothing> {
-        override val container = container<CalculatorStateImpl, Nothing>(CalculatorStateImpl(), savedStateHandle)
+    override val container = container<InternalCalculatorState, Nothing>(InternalCalculatorState(), savedStateHandle)
+        .withExtState(::mapToExtState)
+
+    private fun mapToExtState(internalState: InternalCalculatorState): CalculatorState {
+        return CalculatorState(
+            digitalDisplay = if (internalState.xRegister.isEmpty()) {
+                internalState.yRegister.displayValue
+            } else {
+                internalState.xRegister.displayValue
+            }
+        )
     }
 
-    @Suppress("UNCHECKED_CAST")
-    val state: LiveData<CalculatorState> = host.container.stateFlow.asLiveData() as LiveData<CalculatorState>
+    // Only needed as we're using data binding and not Compose in this example
+    val state: LiveData<CalculatorState> = container.extStateFlow.asLiveData()
 
-    fun clear() = host.intent {
+    fun clear() = intent {
         reduce {
-            CalculatorStateImpl()
+            InternalCalculatorState()
         }
     }
 
     fun digit(digit: Int) {
-        host.intent {
+        intent {
             reduce {
                 state.copy(xRegister = state.xRegister.appendDigit(digit))
             }
         }
     }
 
-    fun period() = host.intent {
+    fun period() = intent {
         reduce {
             state.copy(xRegister = state.xRegister.appendPeriod())
         }
     }
 
-    fun add() = host.intent {
+    fun add() = intent {
         reduce {
             val yRegister = if (state.xRegister.isEmpty()) state.yRegister else state.xRegister
-            state.copy(lastOperator = CalculatorStateImpl.Operator.Add, xRegister = Register(), yRegister = yRegister)
+            state.copy(lastOperator = InternalCalculatorState.Operator.Add, xRegister = Register(), yRegister = yRegister)
         }
     }
 
-    fun subtract() = host.intent {
+    fun subtract() = intent {
         reduce {
             val yRegister = if (state.xRegister.isEmpty()) state.yRegister else state.xRegister
-            state.copy(lastOperator = CalculatorStateImpl.Operator.Subtract, xRegister = Register(), yRegister = yRegister)
+            state.copy(lastOperator = InternalCalculatorState.Operator.Subtract, xRegister = Register(), yRegister = yRegister)
         }
     }
 
-    fun multiply() = host.intent {
+    fun multiply() = intent {
         reduce {
             val yRegister = if (state.xRegister.isEmpty()) state.yRegister else state.xRegister
-            state.copy(lastOperator = CalculatorStateImpl.Operator.Multiply, xRegister = Register(), yRegister = yRegister)
+            state.copy(lastOperator = InternalCalculatorState.Operator.Multiply, xRegister = Register(), yRegister = yRegister)
         }
     }
 
-    fun divide() = host.intent {
+    fun divide() = intent {
         reduce {
             val yRegister = if (state.xRegister.isEmpty()) state.yRegister else state.xRegister
-            state.copy(lastOperator = CalculatorStateImpl.Operator.Divide, xRegister = Register(), yRegister = yRegister)
+            state.copy(lastOperator = InternalCalculatorState.Operator.Divide, xRegister = Register(), yRegister = yRegister)
         }
     }
 
-    fun plusMinus() = host.intent {
+    fun plusMinus() = intent {
         reduce {
             state.copy(xRegister = state.xRegister.plusMinus())
         }
     }
 
-    fun percentage() = host.intent {
+    fun percentage() = intent {
         reduce {
             if (state.xRegister.isEmpty()) {
                 state
@@ -111,15 +122,15 @@ class CalculatorViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
         }
     }
 
-    fun equals() = host.intent {
+    fun equals() = intent {
         reduce {
             try {
                 if (!state.yRegister.isEmpty()) {
                     val newValue = when (state.lastOperator) {
-                        CalculatorStateImpl.Operator.Add -> state.yRegister + state.xRegister
-                        CalculatorStateImpl.Operator.Subtract -> state.yRegister - state.xRegister
-                        CalculatorStateImpl.Operator.Divide -> state.yRegister / state.xRegister
-                        CalculatorStateImpl.Operator.Multiply -> state.yRegister * state.xRegister
+                        InternalCalculatorState.Operator.Add -> state.yRegister + state.xRegister
+                        InternalCalculatorState.Operator.Subtract -> state.yRegister - state.xRegister
+                        InternalCalculatorState.Operator.Divide -> state.yRegister / state.xRegister
+                        InternalCalculatorState.Operator.Multiply -> state.yRegister * state.xRegister
                         null -> state.xRegister
                     }
 
@@ -134,14 +145,11 @@ class CalculatorViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
     }
 
     @Parcelize
-    private data class CalculatorStateImpl(
+    data class InternalCalculatorState(
         val xRegister: Register = Register(),
         val yRegister: Register = Register(),
         val lastOperator: Operator? = null
-    ) : CalculatorState, Parcelable {
-
-        override val digitalDisplay: String
-            get() = if (xRegister.isEmpty()) yRegister.displayValue else xRegister.displayValue
+    ) : Parcelable {
 
         enum class Operator {
             Add,
@@ -152,7 +160,7 @@ class CalculatorViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
     }
 
     @Parcelize
-    private class Register(private val value: String = "") : Parcelable {
+    class Register(private val value: String = "") : Parcelable {
         private val asBigDecimal: BigDecimal
             get() = if (value.isEmpty()) BigDecimal.ZERO else value.toBigDecimal()
 

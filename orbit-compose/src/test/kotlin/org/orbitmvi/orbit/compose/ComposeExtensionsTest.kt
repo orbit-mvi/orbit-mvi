@@ -44,7 +44,7 @@ import kotlin.test.assertEquals
 @Suppress("DEPRECATION")
 @RunWith(RobolectricTestRunner::class)
 @ExperimentalCoroutinesApi
-class ContainerHostExtensionsKtTest {
+class ComposeExtensionsTest {
 
     @get:Rule
     val rule = InstantTaskExecutorRule()
@@ -61,9 +61,10 @@ class ContainerHostExtensionsKtTest {
     private val containerHost = object : ContainerHost<Int, Int> {
         override val container = RealContainer<Int, Int>(
             initialState = Random.nextInt(),
-            parentScope = scope,
-            settings = RealSettings(),
-            subscribedCounterOverride = testSubscribedCounter
+            settings = RealSettings(
+                subscribedCounter = testSubscribedCounter,
+                parentScope = scope,
+            ),
         )
     }
 
@@ -84,7 +85,7 @@ class ContainerHostExtensionsKtTest {
             CompositionLocalProvider(
                 LocalLifecycleOwner provides mockLifecycleOwner
             ) {
-                block(containerHost)
+                containerHost.block()
             }
         }
     }
