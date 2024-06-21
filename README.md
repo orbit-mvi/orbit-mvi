@@ -14,7 +14,7 @@
 
 ## What is Orbit
 
-Orbit promotes unidirectional data flow. It mimics Redux/MVI-like libraries, making it simpler to use. We think of it as MVVM+.
+Orbit's unidirectional data flow, inspired by Redux/MVI, streamlines state management within the MVVM architecture. Think of it as MVVM+.
 
 Main features:
 - Simple, type-safe, coroutine-style, extensible API
