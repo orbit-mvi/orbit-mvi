@@ -18,16 +18,14 @@
  * See: https://github.com/orbit-mvi/orbit-mvi/compare/c5b8b3f2b83b5972ba2ad98f73f75086a89653d3...main
  */
 
-package org.orbitmvi.orbit.syntax.simple
+package org.orbitmvi.orbit.syntax
 
 import org.orbitmvi.orbit.annotation.OrbitDsl
-import org.orbitmvi.orbit.syntax.ContainerContext
 
+/**
+ * Represents the current context in which a simple orbit is executing.
+ *
+ * @property state The current state of the container
+ */
 @OrbitDsl
-public class SimpleSyntax<S : Any, SE : Any>(public val containerContext: ContainerContext<S, SE>) {
-
-    /**
-     * The current state which can change throughout execution of the orbit block
-     */
-    public val state: S get() = containerContext.state
-}
+public data class IntentContext<STATE : Any>(public val state: STATE)

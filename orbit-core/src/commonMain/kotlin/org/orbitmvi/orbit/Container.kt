@@ -25,7 +25,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 import org.orbitmvi.orbit.syntax.ContainerContext
-import org.orbitmvi.orbit.syntax.simple.repeatOnSubscription
+import org.orbitmvi.orbit.syntax.Syntax
 
 /**
  * The heart of the Orbit MVI system. Represents an MVI container with its input and outputs.
@@ -52,7 +52,7 @@ public interface Container<STATE : Any, SIDE_EFFECT : Any> {
 
     /**
      *
-     * A version of [stateFlow] ref-counted for the [repeatOnSubscription] operator. Do not use when subscribing to state updates within
+     * A version of [stateFlow] ref-counted for the [Syntax.repeatOnSubscription] operator. Do not use when subscribing to state updates within
      * your [ContainerHost].
      *
      * A [StateFlow] of state updates. Emits the latest state upon subscription and serves only distinct
@@ -74,8 +74,8 @@ public interface Container<STATE : Any, SIDE_EFFECT : Any> {
     public val sideEffectFlow: Flow<SIDE_EFFECT>
 
     /**
-     * A version of [sideEffectFlow] ref-counted for the [repeatOnSubscription] operator. Do not use when subscribing to state updates within
-     * your [ContainerHost].
+     * A version of [sideEffectFlow] ref-counted for the [Syntax.repeatOnSubscription] operator.
+     * Do not use when subscribing to state updates within your [ContainerHost].
      *
      * [Flow] of one-off side effects posted from [Container]. Caches side effects when there are no collectors.
      * The size of the cache can be controlled via [SettingsBuilder] and determines if and when the orbit thread suspends when you
@@ -86,7 +86,7 @@ public interface Container<STATE : Any, SIDE_EFFECT : Any> {
      * If your particular use case requires multi-casting use `broadcast` on this [Flow], but be aware that caching will not work for the
      * resulting `BroadcastChannel`.
      *
-     *  It's the same as [sideEffectFlow], but it's ref-counted for the [repeatOnSubscription] operator.
+     *  It's the same as [sideEffectFlow], but it's ref-counted for the [Syntax.repeatOnSubscription] operator.
      */
     public val refCountSideEffectFlow: Flow<SIDE_EFFECT>
 

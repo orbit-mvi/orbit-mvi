@@ -27,7 +27,7 @@ import androidx.lifecycle.viewModelScope
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.SettingsBuilder
 import org.orbitmvi.orbit.container
-import org.orbitmvi.orbit.syntax.simple.SimpleSyntax
+import org.orbitmvi.orbit.syntax.Syntax
 
 internal const val SAVED_STATE_KEY = "state"
 
@@ -42,7 +42,7 @@ internal const val SAVED_STATE_KEY = "state"
 public fun <STATE : Any, SIDE_EFFECT : Any> ViewModel.container(
     initialState: STATE,
     buildSettings: SettingsBuilder.() -> Unit = {},
-    onCreate: (suspend SimpleSyntax<STATE, SIDE_EFFECT>.() -> Unit)? = null
+    onCreate: (suspend Syntax<STATE, SIDE_EFFECT>.() -> Unit)? = null
 ): Container<STATE, SIDE_EFFECT> {
     return viewModelScope.container(initialState, buildSettings, onCreate)
 }
@@ -65,7 +65,7 @@ public fun <STATE : Parcelable, SIDE_EFFECT : Any> ViewModel.container(
     initialState: STATE,
     savedStateHandle: SavedStateHandle,
     buildSettings: SettingsBuilder.() -> Unit = {},
-    onCreate: (suspend SimpleSyntax<STATE, SIDE_EFFECT>.() -> Unit)? = null
+    onCreate: (suspend Syntax<STATE, SIDE_EFFECT>.() -> Unit)? = null
 ): Container<STATE, SIDE_EFFECT> {
     val savedState: STATE? = savedStateHandle[SAVED_STATE_KEY]
     val state = savedState ?: initialState

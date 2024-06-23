@@ -28,14 +28,14 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
-import org.orbitmvi.orbit.syntax.simple.repeatOnSubscription
+import org.orbitmvi.orbit.syntax.Syntax
 
 /**
  * Observe [Container.sideEffectFlow] in a Compose [LaunchedEffect].
  *
- * Active subscriptions from this operator count towards [repeatOnSubscription] subscribers.
+ * Active subscriptions from this operator count towards [Syntax.repeatOnSubscription] subscribers.
  *
- * @param lifecycleState [Lifecycle.State] in which [state] block runs.
+ * @param lifecycleState [Lifecycle.State] in which side effects are collected.
  */
 @SuppressLint("ComposableNaming")
 @Composable
@@ -59,7 +59,7 @@ public fun <STATE : Any, SIDE_EFFECT : Any> ContainerHost<STATE, SIDE_EFFECT>.co
  * Observe [Container.stateFlow] in a Compose [LaunchedEffect].
  * @param lifecycleState [Lifecycle.State] in which [state] block runs.
  *
- * Active subscriptions from this operator count towards [repeatOnSubscription] subscribers.
+ * Active subscriptions from this operator count towards [Syntax.repeatOnSubscription] subscribers.
  */
 @SuppressLint("ComposableNaming")
 @Composable
@@ -84,7 +84,7 @@ public fun <STATE : Any, SIDE_EFFECT : Any> ContainerHost<STATE, SIDE_EFFECT>.co
  * Observe [Container.stateFlow] as [State].
  * @param lifecycleState The minimum lifecycle state at which the state is observed.
  *
- * Active subscriptions from this operator count towards [repeatOnSubscription] subscribers.
+ * Active subscriptions from this operator count towards [Syntax.repeatOnSubscription] subscribers.
  */
 @Composable
 public fun <STATE : Any, SIDE_EFFECT : Any> ContainerHost<STATE, SIDE_EFFECT>.collectAsState(

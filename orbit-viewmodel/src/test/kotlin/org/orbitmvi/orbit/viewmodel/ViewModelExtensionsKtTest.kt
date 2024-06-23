@@ -28,9 +28,7 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.parcelize.Parcelize
 import org.junit.Test
 import org.orbitmvi.orbit.ContainerHost
-import org.orbitmvi.orbit.syntax.simple.SimpleSyntax
-import org.orbitmvi.orbit.syntax.simple.intent
-import org.orbitmvi.orbit.syntax.simple.reduce
+import org.orbitmvi.orbit.syntax.Syntax
 import org.orbitmvi.orbit.test.test
 import kotlin.random.Random
 import kotlin.test.assertEquals
@@ -120,7 +118,7 @@ class ViewModelExtensionsKtTest {
     private class Middleware(
         savedStateHandle: SavedStateHandle,
         initialState: TestState,
-        onCreate: (suspend SimpleSyntax<TestState, Int>.() -> Unit)? = null
+        onCreate: (suspend Syntax<TestState, Int>.() -> Unit)? = null
     ) : ContainerHost<TestState, Int>, ViewModel() {
         override val container = container(
             initialState = initialState,

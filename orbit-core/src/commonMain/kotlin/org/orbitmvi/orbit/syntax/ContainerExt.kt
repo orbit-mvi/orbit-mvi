@@ -18,14 +18,28 @@
  * See: https://github.com/orbit-mvi/orbit-mvi/compare/c5b8b3f2b83b5972ba2ad98f73f75086a89653d3...main
  */
 
-package org.orbitmvi.orbit.syntax.simple
+package org.orbitmvi.orbit.syntax
 
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.runBlocking
+import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.annotation.OrbitDsl
+import org.orbitmvi.orbit.idling.withIdling
 
 /**
- * Represents the current context in which a simple orbit is executing.
+ * Build and execute an intent on [Container].
  *
- * @property state The current state of the container
+ * @param registerIdling whether to register an idling resource when executing this intent. Defaults to true.
+ * @param transformer lambda representing the transformer
  */
 @OrbitDsl
-public data class SimpleContext<STATE : Any>(public val state: STATE)
+internal fun <STATE : Any, SIDE_EFFECT : Any> Container<STATE, SIDE_EFFECT>.intent(
+    registerIdling: Boolean = true,
+    transformer: suspend ContainerContext<STATE, SIDE_EFFECT>.() -> Unit
+): Job = runBlocking {
+    orbit {
+        withIdling(registerIdling) {
+            transformer()
+        }
+    }
+}

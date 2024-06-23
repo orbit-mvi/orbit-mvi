@@ -24,7 +24,7 @@ import kotlinx.coroutines.CoroutineScope
 import org.orbitmvi.orbit.internal.LazyCreateContainerDecorator
 import org.orbitmvi.orbit.internal.RealContainer
 import org.orbitmvi.orbit.internal.TestContainerDecorator
-import org.orbitmvi.orbit.syntax.simple.SimpleSyntax
+import org.orbitmvi.orbit.syntax.Syntax
 
 /**
  * Helps create a concrete container in a standard way.
@@ -38,7 +38,7 @@ import org.orbitmvi.orbit.syntax.simple.SimpleSyntax
 public fun <STATE : Any, SIDE_EFFECT : Any> CoroutineScope.container(
     initialState: STATE,
     buildSettings: SettingsBuilder.() -> Unit = {},
-    onCreate: (suspend SimpleSyntax<STATE, SIDE_EFFECT>.() -> Unit)? = null
+    onCreate: (suspend Syntax<STATE, SIDE_EFFECT>.() -> Unit)? = null
 ): Container<STATE, SIDE_EFFECT> {
     val realContainer = RealContainer<STATE, SIDE_EFFECT>(
         initialState = initialState,
@@ -55,7 +55,7 @@ public fun <STATE : Any, SIDE_EFFECT : Any> CoroutineScope.container(
             initialState,
             LazyCreateContainerDecorator(
                 realContainer
-            ) { SimpleSyntax(this).onCreate() }
+            ) { Syntax(this).onCreate() }
         )
     }
 }
