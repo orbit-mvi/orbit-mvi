@@ -51,7 +51,7 @@ jobs:
                 run: ./gradlew lint
 
     unit-tests:
-        runs-on: macos-11
+        runs-on: macos-14
         steps:
             -   uses: actions/checkout@v4
             -   uses: actions/setup-java@v4
