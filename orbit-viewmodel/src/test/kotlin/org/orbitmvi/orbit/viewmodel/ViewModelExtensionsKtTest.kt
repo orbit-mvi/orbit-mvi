@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-2023 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 2021-2024 Mikołaj Leszczyński & Appmattus Limited
  * Copyright 2020 Babylon Partners Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
