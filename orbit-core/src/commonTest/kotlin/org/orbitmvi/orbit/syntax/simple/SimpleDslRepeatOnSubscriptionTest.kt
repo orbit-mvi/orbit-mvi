@@ -31,6 +31,7 @@ import org.orbitmvi.orbit.RealSettings
 import org.orbitmvi.orbit.internal.repeatonsubscription.Subscription
 import org.orbitmvi.orbit.internal.repeatonsubscription.TestSubscribedCounter
 import org.orbitmvi.orbit.syntax.ContainerContext
+import org.orbitmvi.orbit.syntax.Syntax
 import kotlin.test.AfterTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -43,7 +44,7 @@ internal class SimpleDslRepeatOnSubscriptionTest {
 
     private val testSubscribedCounter = TestSubscribedCounter()
 
-    private val simpleSyntax = SimpleSyntax(
+    private val syntax = Syntax(
         containerContext = ContainerContext<Unit, Unit>(
             settings = RealSettings(),
             postSideEffect = {},
@@ -61,7 +62,7 @@ internal class SimpleDslRepeatOnSubscriptionTest {
     @Test
     fun repeat_on_subscription_block_called_for_each_subscribed_event() {
         testScope.launch {
-            simpleSyntax.repeatOnSubscription {
+            syntax.repeatOnSubscription {
                 count.incrementAndGet()
             }
         }
@@ -76,7 +77,7 @@ internal class SimpleDslRepeatOnSubscriptionTest {
     @Test
     fun repeat_on_subscription_cancels_running_job_for_unsubscribed_event() {
         testScope.launch {
-            simpleSyntax.repeatOnSubscription {
+            syntax.repeatOnSubscription {
                 try {
                     delay(5000L)
                 } catch (expected: CancellationException) {

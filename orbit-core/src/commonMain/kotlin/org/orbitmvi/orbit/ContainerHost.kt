@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 2021-2024 Mikołaj Leszczyński & Appmattus Limited
  * Copyright 2020 Babylon Partners Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,6 +20,16 @@
 
 package org.orbitmvi.orbit
 
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
+import org.orbitmvi.orbit.annotation.OrbitDsl
+import org.orbitmvi.orbit.annotation.OrbitExperimental
+import org.orbitmvi.orbit.idling.withIdling
+import org.orbitmvi.orbit.internal.runBlocking
+import org.orbitmvi.orbit.syntax.Syntax
+import org.orbitmvi.orbit.syntax.intent
+
 /**
  * Apply this interface to anything you want to become an orbit container host.
  * Typically this will be an Android ViewModel but it can be applied to simple presenters etc.
@@ -38,4 +48,82 @@ public interface ContainerHost<STATE : Any, SIDE_EFFECT : Any> {
      * ```
      */
     public val container: Container<STATE, SIDE_EFFECT>
+
+    /**
+     * Build and execute an intent on [Container].
+     *
+     * @param registerIdling whether to register an idling resource when executing this intent. Defaults to true.
+     * @param transformer lambda representing the transformer
+     */
+    @OrbitDsl
+    public fun intent(
+        registerIdling: Boolean = true,
+        transformer: suspend Syntax<STATE, SIDE_EFFECT>.() -> Unit
+    ): Job = container.intent(registerIdling) { Syntax(this).transformer() }
+
+    /**
+     * Build and execute an intent on [Container] in a blocking manner, without dispatching.
+     *
+     * This API is reserved for special cases e.g. storing text input in the state.
+     *
+     * @param registerIdling whether to register an idling resource when executing this intent. Defaults to true.
+     * @param transformer lambda representing the transformer
+     */
+    @OrbitDsl
+    public fun blockingIntent(
+        registerIdling: Boolean = true,
+        transformer: suspend Syntax<STATE, SIDE_EFFECT>.() -> Unit
+    ): Unit = runBlocking {
+        container.inlineOrbit {
+            withIdling(registerIdling) {
+                Syntax(this).transformer()
+            }
+        }
+    }
+
+    /**
+     * Used for parallel decomposition or subdivision of a larger intent into smaller parts.
+     *
+     * Should only be used from within an [intent] or [subIntent] block.
+     *
+     * An example use case for sub-intents is to [launch] multiple from a single intent using [coroutineScope].
+     * For example, when listening to multiple flows from the [Container] `onCreate` lambda.
+     *
+     * ```
+     * override val container = scope.container<TestState, String>(initialState) {
+     *             coroutineScope {
+     *                 launch {
+     *                     sendSideEffect1()
+     *                 }
+     *                 launch {
+     *                     sendSideEffect2()
+     *                 }
+     *             }
+     *         }
+     *
+     * @OptIn(OrbitExperimental::class)
+     * private suspend fun sendSideEffect1() = subIntent {
+     *     flow1.collect {
+     *         postSideEffect(it)
+     *     }
+     * }
+     *
+     * @OptIn(OrbitExperimental::class)
+     * private suspend fun sendSideEffect1() = subIntent {
+     *     flow2.collect {
+     *         postSideEffect(it)
+     *     }
+     * }
+     *
+     * ```
+     *
+     * @param transformer lambda representing the transformer
+     */
+    @OrbitDsl
+    @OrbitExperimental
+    public suspend fun subIntent(
+        transformer: suspend Syntax<STATE, SIDE_EFFECT>.() -> Unit,
+    ): Unit = container.inlineOrbit {
+        Syntax(this).transformer()
+    }
 }

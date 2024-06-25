@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 2021-2024 Mikołaj Leszczyński & Appmattus Limited
  * Copyright 2020 Babylon Partners Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,7 +18,7 @@
  * See: https://github.com/orbit-mvi/orbit-mvi/compare/c5b8b3f2b83b5972ba2ad98f73f75086a89653d3...main
  */
 
-package org.orbitmvi.orbit.syntax.simple
+package org.orbitmvi.orbit.syntax
 
 import org.orbitmvi.orbit.annotation.OrbitDsl
 
@@ -28,4 +28,4 @@ import org.orbitmvi.orbit.annotation.OrbitDsl
  * @property state The current state of the container
  */
 @OrbitDsl
-public data class SimpleContext<STATE : Any>(public val state: STATE)
+public data class IntentContext<STATE : Any>(public val state: STATE)

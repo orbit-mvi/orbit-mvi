@@ -26,9 +26,6 @@ import kotlinx.coroutines.test.runTest
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.container
-import org.orbitmvi.orbit.syntax.simple.intent
-import org.orbitmvi.orbit.syntax.simple.reduce
-import org.orbitmvi.orbit.syntax.simple.runOn
 import org.orbitmvi.orbit.test.test
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -187,7 +184,7 @@ internal class RunOnTest {
         }
 
         fun doIfInReadyState(predicate: (TestState.Ready) -> Boolean = { true }) = intent {
-            runOn(TestState.Ready::class, predicate = predicate) {
+            runOn<TestState.Ready>(predicate = predicate) {
                 reduce {
                     state.copy(id = state.id + 1)
                 }
@@ -195,7 +192,7 @@ internal class RunOnTest {
         }
 
         fun collectIfInReadyState(predicate: (TestState.Ready) -> Boolean = { true }) = intent {
-            runOn(TestState.Ready::class, predicate = predicate) {
+            runOn<TestState.Ready>(predicate = predicate) {
                 channel.consumeAsFlow()
                     .collect(collectorChannel::send)
             }

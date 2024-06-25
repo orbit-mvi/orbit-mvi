@@ -27,8 +27,6 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.test.runTest
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.container
-import org.orbitmvi.orbit.syntax.simple.intent
-import org.orbitmvi.orbit.syntax.simple.reduce
 import kotlin.random.Random
 import kotlin.test.AfterTest
 import kotlin.test.Test
