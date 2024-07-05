@@ -14,9 +14,9 @@
 
 ## What is Orbit
 
-Orbit is a Redux/MVI-like library - but without the baggage. It's so simple we
-think of it as MVVM+.
+Orbit's unidirectional data flow, inspired by Redux/MVI, streamlines state management within the MVVM architecture. Think of it as MVVM+.
 
+Main features:
 - Simple, type-safe, coroutine-style, extensible API
 - Multiplatform, targetting Android and iOS (iOS support is in alpha and being
   actively worked on)
