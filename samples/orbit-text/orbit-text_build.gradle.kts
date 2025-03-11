@@ -30,10 +30,10 @@ android {
         targetCompatibility = JavaVersion.VERSION_11
     }
 
-    compileSdk = 34
+    compileSdk = 35
     defaultConfig {
         minSdk = 21
-        targetSdk = 34
+        targetSdk = 35
         applicationId = "org.orbitmvi.orbit.sample.text"
         versionCode = 1
         versionName = "1.0"
