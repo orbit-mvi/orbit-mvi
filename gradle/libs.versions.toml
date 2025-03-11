@@ -1,5 +1,5 @@
 #
-# Copyright 2023-2024 Mikołaj Leszczyński & Appmattus Limited
+# Copyright 2023-2025 Mikołaj Leszczyński & Appmattus Limited
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 [versions]
 
 gradleVersionsPlugin = "0.51.0"
-gradleAndroidPlugin = "8.4.0"
+gradleAndroidPlugin = "8.9.0"
 gradleMavenPublishPlugin = "0.28.0"
 markdownLintPlugin = "0.6.0"
 detektPlugin = "1.23.6"
