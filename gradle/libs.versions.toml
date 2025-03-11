@@ -16,11 +16,11 @@
 
 [versions]
 
-gradleVersionsPlugin = "0.51.0"
+gradleVersionsPlugin = "0.52.0"
 gradleAndroidPlugin = "8.9.0"
-gradleMavenPublishPlugin = "0.28.0"
+gradleMavenPublishPlugin = "0.31.0"
 markdownLintPlugin = "0.6.0"
-detektPlugin = "1.23.6"
+detektPlugin = "1.23.8"
 safeargs = "2.8.8"
 atomicfu = "0.27.0"
 dokka = "2.0.0"
