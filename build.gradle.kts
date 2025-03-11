@@ -123,32 +123,6 @@ subprojects {
             targetCompatibility = JavaVersion.VERSION_11
         }
     }
-    plugins.withType<org.jetbrains.dokka.gradle.DokkaPlugin> {
-        dokka {
-            dokkaSourceSets {
-                configureEach {
-                    if (name.startsWith("ios")) {
-                        displayName.set("ios")
-                    }
-
-                    sourceLink {
-                        localDirectory.set(rootDir)
-                        remoteUrl("https://github.com/orbit-mvi/orbit-mvi/blob/main")
-                        remoteLineSuffix.set("#L")
-                    }
-                }
-            }
-
-            pluginsConfiguration.html {
-                customAssets.from("$rootDir/dokka/logo-icon.svg")
-                footerMessage.set(
-                    provider {
-                        "© 2021-${ZonedDateTime.now().year} Mikołaj Leszczyński & Appmattus Limited"
-                    }
-                )
-            }
-        }
-    }
 
     plugins.withId("com.android.application") {
         apply(from = "$rootDir/gradle/scripts/jacoco-android.gradle.kts")
@@ -228,7 +202,39 @@ markdownlint {
 }
 
 val copyDokkaToWebsite by tasks.registering(Copy::class) {
-    dependsOn("dokkaHtmlMultiModule")
-    from(files("build/dokka/htmlMultiModule"))
+    dependsOn("dokkaGenerate")
+    from(files("build/dokka/html"))
     into(file("website/static/dokka"))
+}
+
+dependencies {
+    dokka(project(":orbit-core:"))
+    dokka(project(":orbit-compose:"))
+    dokka(project(":orbit-viewmodel:"))
+    dokka(project(":orbit-test:"))
+}
+
+dokka {
+    dokkaSourceSets {
+        configureEach {
+            if (name.startsWith("ios")) {
+                displayName.set("ios")
+            }
+
+            sourceLink {
+                localDirectory.set(rootDir)
+                remoteUrl("https://github.com/orbit-mvi/orbit-mvi/blob/main")
+                remoteLineSuffix.set("#L")
+            }
+        }
+    }
+
+    pluginsConfiguration.html {
+        customAssets.from("$rootDir/dokka/logo-icon.svg")
+        footerMessage.set(
+            provider {
+                "© 2021-${ZonedDateTime.now().year} Mikołaj Leszczyński & Appmattus Limited"
+            }
+        )
+    }
 }
