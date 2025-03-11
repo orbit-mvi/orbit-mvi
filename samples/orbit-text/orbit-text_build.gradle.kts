@@ -1,5 +1,5 @@
 /*
- * Copyright 2022-2024 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 2022-2025 Mikołaj Leszczyński & Appmattus Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ plugins {
     kotlin("android")
     id("kotlin-parcelize")
     id("androidx.navigation.safeargs.kotlin")
+    alias(libs.plugins.compose.compiler)
 }
 
 android {
@@ -45,10 +46,6 @@ android {
     buildFeatures {
         viewBinding = true
         compose = true
-    }
-
-    composeOptions {
-        kotlinCompilerExtensionVersion = libs.versions.androidxComposeCompiler.get()
     }
 }
 

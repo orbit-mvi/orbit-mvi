@@ -22,25 +22,24 @@ gradleMavenPublishPlugin = "0.28.0"
 markdownLintPlugin = "0.6.0"
 detektPlugin = "1.23.6"
 safeargs = "2.7.7"
-atomicfu = "0.24.0"
+atomicfu = "0.27.0"
 dokka = "1.9.20"
 
-kotlin = "1.9.24"
-coroutines = "1.8.1"
+kotlin = "2.1.10"
+coroutines = "1.10.1"
 
-androidxLifecycles = "2.7.0"
+androidxLifecycles = "2.8.7"
 androidxEspresso = "3.5.1"
-androidxCompose = "1.6.7"
-androidxComposeCompiler = "1.5.14"
+androidxCompose = "1.7.8"
 androidxCoreTesting = "2.2.0"
 
-desugar = "2.0.4"
+desugar = "2.1.5"
 
 # Testing
-jacoco = "0.8.8"
+jacoco = "0.8.12"
 junit4 = "4.13.2"
-robolectric = "4.12.1"
-turbine = "1.1.0"
+robolectric = "4.14.1"
+turbine = "1.2.0"
 
 
 [libraries]
@@ -86,4 +85,5 @@ gradleMavenPublishPlugin = { id = "com.vanniktech.maven.publish", version.ref = 
 gradleVersionsPlugin = { id = "com.github.ben-manes.versions", version.ref = "gradleVersionsPlugin" }
 markdownlintGradlePlugin = { id = "com.appmattus.markdown", version.ref = "markdownLintPlugin" }
 kotlin-pluginSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
-atomicfu = { id = "kotlinx-atomicfu", version.ref = "atomicfu" }
+atomicfu = { id = "org.jetbrains.kotlinx.atomicfu", version.ref = "atomicfu" }
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }

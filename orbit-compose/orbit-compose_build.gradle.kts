@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-2024 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 2021-2025 Mikołaj Leszczyński & Appmattus Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ plugins {
     kotlin("android")
     id(libs.plugins.gradleMavenPublishPlugin.get().pluginId)
     id(libs.plugins.dokkaPlugin.get().pluginId)
+    alias(libs.plugins.compose.compiler)
 }
 
 android {
@@ -32,10 +33,6 @@ android {
 
     buildFeatures {
         compose = true
-    }
-
-    composeOptions {
-        kotlinCompilerExtensionVersion = libs.versions.androidxComposeCompiler.get()
     }
 }
 

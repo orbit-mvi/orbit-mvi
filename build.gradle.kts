@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-2024 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 2021-2025 Mikołaj Leszczyński & Appmattus Limited
  * Copyright 2020 Babylon Partners Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,6 +23,7 @@ import com.appmattus.markdown.rules.LineLengthRule
 import com.appmattus.markdown.rules.ProperNamesRule
 import com.appmattus.markdown.rules.ProperNamesRule.Companion.DefaultNames
 import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.net.URI
 
@@ -46,6 +47,7 @@ plugins {
     alias(libs.plugins.markdownlintGradlePlugin)
     alias(libs.plugins.gradleMavenPublishPlugin) apply false
     alias(libs.plugins.dokkaPlugin)
+    alias(libs.plugins.compose.compiler) apply false
 }
 
 apply(from = "gradle/scripts/detekt.gradle.kts")
@@ -102,7 +104,6 @@ subprojects {
         ?.replaceFirst("refs/tags/", "") ?: "unspecified"
 
     tasks.withType<Test> {
-        @Suppress("UnstableApiUsage")
         if (project.name !in listOf("orbit-core", "orbit-test", "orbit-viewmodel", "orbit-compose")) {
             useJUnitPlatform {
                 includeEngines(
@@ -115,8 +116,8 @@ subprojects {
         }
     }
     tasks.withType<KotlinCompile>().all {
-        kotlinOptions {
-            jvmTarget = "11"
+        compilerOptions {
+            jvmTarget = JvmTarget.JVM_11
             allWarningsAsErrors = true
         }
     }
