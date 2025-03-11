@@ -88,6 +88,32 @@ allprojects {
             force(libs.junit4)
         }
     }
+    plugins.withType<org.jetbrains.dokka.gradle.DokkaPlugin> {
+        dokka {
+            dokkaSourceSets {
+                configureEach {
+                    if (name.startsWith("ios")) {
+                        displayName.set("ios")
+                    }
+
+                    sourceLink {
+                        localDirectory.set(rootDir)
+                        remoteUrl("https://github.com/orbit-mvi/orbit-mvi/blob/main")
+                        remoteLineSuffix.set("#L")
+                    }
+                }
+            }
+
+            pluginsConfiguration.html {
+                customAssets.from("$rootDir/dokka/logo-icon.svg")
+                footerMessage.set(
+                    provider {
+                        "© 2021-${ZonedDateTime.now().year} Mikołaj Leszczyński & Appmattus Limited"
+                    }
+                )
+            }
+        }
+    }
 }
 
 subprojects {
@@ -123,7 +149,6 @@ subprojects {
             targetCompatibility = JavaVersion.VERSION_11
         }
     }
-
     plugins.withId("com.android.application") {
         apply(from = "$rootDir/gradle/scripts/jacoco-android.gradle.kts")
         configure<com.android.build.gradle.AppExtension> {
@@ -212,29 +237,4 @@ dependencies {
     dokka(project(":orbit-compose:"))
     dokka(project(":orbit-viewmodel:"))
     dokka(project(":orbit-test:"))
-}
-
-dokka {
-    dokkaSourceSets {
-        configureEach {
-            if (name.startsWith("ios")) {
-                displayName.set("ios")
-            }
-
-            sourceLink {
-                localDirectory.set(rootDir)
-                remoteUrl("https://github.com/orbit-mvi/orbit-mvi/blob/main")
-                remoteLineSuffix.set("#L")
-            }
-        }
-    }
-
-    pluginsConfiguration.html {
-        customAssets.from("$rootDir/dokka/logo-icon.svg")
-        footerMessage.set(
-            provider {
-                "© 2021-${ZonedDateTime.now().year} Mikołaj Leszczyński & Appmattus Limited"
-            }
-        )
-    }
 }
