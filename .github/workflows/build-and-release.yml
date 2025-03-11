@@ -26,7 +26,7 @@ jobs:
                     cache: 'gradle'
 
             -   name: Setup Gradle
-                uses: gradle/actions/setup-gradle@v3
+                uses: gradle/actions/setup-gradle@v4
 
             -   name: Detekt
                 run: ./gradlew detekt
@@ -45,7 +45,7 @@ jobs:
                     cache: 'gradle'
 
             -   name: Setup Gradle
-                uses: gradle/actions/setup-gradle@v3
+                uses: gradle/actions/setup-gradle@v4
 
             -   name: Lint
                 run: ./gradlew lint
@@ -67,20 +67,20 @@ jobs:
                     key: ${{ runner.os }}-konan
 
             -   name: Setup Gradle
-                uses: gradle/actions/setup-gradle@v3
+                uses: gradle/actions/setup-gradle@v4
 
             -   name: Unit tests
                 run: ./gradlew check -xlint
 
             -   name: Upload test artifacts
                 if: failure()
-                uses: actions/upload-artifact@master
+                uses: actions/upload-artifact@v4
                 with:
                     name: test-results
                     path: '**/build/reports/tests/**'
 
             -   name: Upload coverage to Codecov
-                uses: codecov/codecov-action@v3
+                uses: codecov/codecov-action@v5
                 with:
                     token: ${{secrets.CODECOV_TOKEN}}
 
@@ -96,7 +96,7 @@ jobs:
                     cache: 'gradle'
 
             -   name: Setup Gradle
-                uses: gradle/actions/setup-gradle@v3
+                uses: gradle/actions/setup-gradle@v4
 
             -   name: konan cache
                 uses: actions/cache@v4
