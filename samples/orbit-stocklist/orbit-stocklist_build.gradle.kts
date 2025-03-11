@@ -91,9 +91,9 @@ dependencies {
     implementation("com.github.lisawray.groupie:groupie-kotlin-android-extensions:2.10.1")
     implementation("com.github.lisawray.groupie:groupie-viewbinding:2.10.1")
     implementation("io.insert-koin:koin-android:3.5.6")
-    implementation("androidx.lifecycle:lifecycle-common-java8:2.7.0")
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.7.0")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
+    implementation("androidx.lifecycle:lifecycle-common-java8:2.8.7")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.8.7")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.7")
 
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:${libs.versions.desugar.get()}")
 }

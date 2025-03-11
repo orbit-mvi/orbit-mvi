@@ -29,7 +29,7 @@ kotlin = "2.1.10"
 coroutines = "1.10.1"
 
 androidxLifecycles = "2.8.7"
-androidxEspresso = "3.5.1"
+androidxEspresso = "3.6.1"
 androidxCompose = "1.7.8"
 androidxCoreTesting = "2.2.0"
 
