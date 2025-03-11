@@ -21,7 +21,7 @@ gradleAndroidPlugin = "8.9.0"
 gradleMavenPublishPlugin = "0.28.0"
 markdownLintPlugin = "0.6.0"
 detektPlugin = "1.23.6"
-safeargs = "2.7.7"
+safeargs = "2.8.8"
 atomicfu = "0.27.0"
 dokka = "1.9.20"
 
