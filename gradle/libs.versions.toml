@@ -23,7 +23,7 @@ markdownLintPlugin = "0.6.0"
 detektPlugin = "1.23.6"
 safeargs = "2.8.8"
 atomicfu = "0.27.0"
-dokka = "1.9.20"
+dokka = "2.0.0"
 
 kotlin = "2.1.10"
 coroutines = "1.10.1"

@@ -25,7 +25,7 @@ import com.appmattus.markdown.rules.ProperNamesRule.Companion.DefaultNames
 import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import java.net.URI
+import java.time.ZonedDateTime
 
 buildscript {
     repositories {
@@ -51,10 +51,6 @@ plugins {
 }
 
 apply(from = "gradle/scripts/detekt.gradle.kts")
-
-tasks.register<Delete>("clean") {
-    delete(rootProject.buildDir)
-}
 
 tasks.withType<DependencyUpdatesTask> {
     resolutionStrategy {
@@ -128,7 +124,7 @@ subprojects {
         }
     }
     plugins.withType<org.jetbrains.dokka.gradle.DokkaPlugin> {
-        tasks.withType<org.jetbrains.dokka.gradle.DokkaTask>().configureEach {
+        dokka {
             dokkaSourceSets {
                 configureEach {
                     if (name.startsWith("ios")) {
@@ -137,13 +133,23 @@ subprojects {
 
                     sourceLink {
                         localDirectory.set(rootDir)
-                        remoteUrl.set(URI("https://github.com/orbit-mvi/orbit-mvi/blob/main").toURL())
+                        remoteUrl("https://github.com/orbit-mvi/orbit-mvi/blob/main")
                         remoteLineSuffix.set("#L")
                     }
                 }
             }
+
+            pluginsConfiguration.html {
+                customAssets.from("$rootDir/dokka/logo-icon.svg")
+                footerMessage.set(
+                    provider {
+                        "© 2021-${ZonedDateTime.now().year} Mikołaj Leszczyński & Appmattus Limited"
+                    }
+                )
+            }
         }
     }
+
     plugins.withId("com.android.application") {
         apply(from = "$rootDir/gradle/scripts/jacoco-android.gradle.kts")
         configure<com.android.build.gradle.AppExtension> {
