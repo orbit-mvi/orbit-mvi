@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 2021-2025 Mikołaj Leszczyński & Appmattus Limited
  * Copyright 2020 Babylon Partners Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -24,7 +24,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -32,7 +31,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.GroupieViewHolder
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import org.orbitmvi.orbit.sample.stocklist.R
 import org.orbitmvi.orbit.sample.stocklist.databinding.ListFragmentBinding
 import org.orbitmvi.orbit.sample.stocklist.list.business.ListSideEffect
 import org.orbitmvi.orbit.sample.stocklist.list.business.ListState
@@ -43,18 +41,25 @@ class ListFragment : Fragment() {
 
     private val listViewModel by viewModel<ListViewModel>()
 
-    private lateinit var binding: ListFragmentBinding
-
     private val groupAdapter = GroupAdapter<GroupieViewHolder>()
+
+    private var _binding: ListFragmentBinding? = null
+    private val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = DataBindingUtil.inflate(inflater, R.layout.list_fragment, container, false)
-        binding.lifecycleOwner = viewLifecycleOwner
+        _binding = ListFragmentBinding.inflate(inflater, container, false).apply {
+            lifecycleOwner = viewLifecycleOwner
+        }
         return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
