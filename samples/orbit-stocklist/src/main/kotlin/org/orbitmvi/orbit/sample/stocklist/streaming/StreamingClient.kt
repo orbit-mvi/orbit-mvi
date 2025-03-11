@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 2021-2025 Mikołaj Leszczyński & Appmattus Limited
  * Copyright 2020 Babylon Partners Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -30,7 +30,7 @@ class StreamingClient : DefaultLifecycleObserver {
     private var connectionWish = false
 
     private val lsClient = LightstreamerClient(
-        "http://push.lightstreamer.com:80",
+        "https://push.lightstreamer.com",
         "DEMO"
     ).apply {
         connect()
