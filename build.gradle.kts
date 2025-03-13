@@ -38,6 +38,7 @@ buildscript {
         classpath(libs.buildscript.kotlin)
         classpath(libs.buildscript.safeargs)
         classpath(libs.buildscript.atomicfu)
+        //classpath(libs.buildscript.androidmultiplatform)
     }
 }
 
@@ -48,6 +49,7 @@ plugins {
     alias(libs.plugins.gradleMavenPublishPlugin) apply false
     alias(libs.plugins.dokkaPlugin)
     alias(libs.plugins.compose.compiler) apply false
+    //alias(libs.plugins.androidKotlinMultiplatformLibrary) apply false
 }
 
 apply(from = "gradle/scripts/detekt.gradle.kts")
@@ -126,7 +128,7 @@ subprojects {
         ?.replaceFirst("refs/tags/", "") ?: "unspecified"
 
     tasks.withType<Test> {
-        if (project.name !in listOf("orbit-core", "orbit-test", "orbit-viewmodel", "orbit-compose")) {
+        if (project.name !in listOf("orbit-core", "orbit-test", "orbit-viewmodel", "orbit-compose", "orbit-compose-multiplatform")) {
             useJUnitPlatform {
                 includeEngines(
                     "junit-jupiter"
@@ -173,7 +175,9 @@ subprojects {
         }
     }
     plugins.withType<org.jetbrains.kotlin.gradle.plugin.KotlinMultiplatformPluginWrapper> {
-        apply(from = "$rootDir/gradle/scripts/jacoco.gradle.kts")
+        if (project.name !in listOf("orbit-compose-multiplatform")) {
+            apply(from = "$rootDir/gradle/scripts/jacoco.gradle.kts")
+        }
         configure<org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension> {
             // for strict mode
             explicitApi()

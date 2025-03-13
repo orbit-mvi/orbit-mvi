@@ -1,5 +1,5 @@
 /*
- * Copyright 2022-2025 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 2025 Mikołaj Leszczyński & Appmattus Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,11 @@
 
 package org.orbitmvi.orbit.compose
 
-import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.ComposeUiTest
+import androidx.compose.ui.test.ExperimentalTestApi
+import androidx.compose.ui.test.runComposeUiTest
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import kotlinx.coroutines.CoroutineScope
@@ -29,28 +30,18 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
-import org.junit.After
-import org.junit.Before
-import org.junit.Rule
-import org.junit.Test
-import org.junit.runner.RunWith
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.RealSettings
 import org.orbitmvi.orbit.internal.RealContainer
-import org.robolectric.RobolectricTestRunner
 import kotlin.random.Random
+import kotlin.test.AfterTest
+import kotlin.test.BeforeTest
+import kotlin.test.Test
 import kotlin.test.assertEquals
 
-@Suppress("DEPRECATION")
-@RunWith(RobolectricTestRunner::class)
+@OptIn(ExperimentalTestApi::class)
 @ExperimentalCoroutinesApi
-class ContainerHostExtensionsKtTest {
-
-    @get:Rule
-    val rule = InstantTaskExecutorRule()
-
-    @get:Rule
-    val composeTestRule = createComposeRule()
+class ContainerHostExtensionsKtTest : UsingContextTest() {
 
     private val mockLifecycleOwner = MockLifecycleOwner()
 
@@ -67,20 +58,20 @@ class ContainerHostExtensionsKtTest {
         )
     }
 
-    @Before
+    @BeforeTest
     fun beforeTest() {
         Dispatchers.setMain(Dispatchers.Unconfined)
         mockLifecycleOwner.dispatchEvent(Lifecycle.Event.ON_STOP)
     }
 
-    @After
+    @AfterTest
     fun afterTest() {
         Dispatchers.resetMain()
         scope.cancel()
     }
 
-    private fun initialiseContainerHost(block: @Composable ContainerHost<Int, Int>.() -> Unit) {
-        composeTestRule.setContent {
+    private fun ComposeUiTest.initialiseContainerHost(block: @Composable ContainerHost<Int, Int>.() -> Unit) {
+        setContent {
             CompositionLocalProvider(
                 LocalLifecycleOwner provides mockLifecycleOwner
             ) {
@@ -90,91 +81,8 @@ class ContainerHostExtensionsKtTest {
     }
 
     @Test
-    fun state_subscribes_on_start() {
-        initialiseContainerHost { collectState { } }
+    fun as_state_subscribes_on_start() = runComposeUiTest {
 
-        // Ensure there are no subscribers
-        assertEquals(0, testSubscribedCounter.counter)
-
-        // Start and ensure there is one subscriber
-        mockLifecycleOwner.dispatchEvent(Lifecycle.Event.ON_START)
-        assertEquals(1, testSubscribedCounter.counter)
-    }
-
-    @Test
-    fun state_unsubscribes_on_stop() {
-        initialiseContainerHost { collectState { } }
-
-        // Start and ensure there is one subscriber
-        mockLifecycleOwner.dispatchEvent(Lifecycle.Event.ON_START)
-        assertEquals(1, testSubscribedCounter.counter)
-
-        // Stop and ensure there are no subscribers
-        mockLifecycleOwner.dispatchEvent(Lifecycle.Event.ON_STOP)
-        assertEquals(0, testSubscribedCounter.counter)
-    }
-
-    @Test
-    fun state_resubscribes_when_restarted() {
-        initialiseContainerHost { collectState { } }
-
-        // Start and ensure there is one subscriber
-        mockLifecycleOwner.dispatchEvent(Lifecycle.Event.ON_START)
-        assertEquals(1, testSubscribedCounter.counter)
-
-        // Stop and ensure there are no subscribers
-        mockLifecycleOwner.dispatchEvent(Lifecycle.Event.ON_STOP)
-        assertEquals(0, testSubscribedCounter.counter)
-
-        // Re-start and ensure there is one subscriber
-        mockLifecycleOwner.dispatchEvent(Lifecycle.Event.ON_START)
-        assertEquals(1, testSubscribedCounter.counter)
-    }
-
-    @Test
-    fun state_subscribes_on_custom_lifecycle() {
-        initialiseContainerHost { collectState(Lifecycle.State.RESUMED) { } }
-
-        // Ensure there are no subscribers
-        assertEquals(0, testSubscribedCounter.counter)
-
-        // Start and ensure there is one subscriber
-        mockLifecycleOwner.dispatchEvent(Lifecycle.Event.ON_RESUME)
-        assertEquals(1, testSubscribedCounter.counter)
-    }
-
-    @Test
-    fun state_unsubscribes_on_stop_with_custom_lifecycle() {
-        initialiseContainerHost { collectState(Lifecycle.State.RESUMED) { } }
-
-        // Start and ensure there is one subscriber
-        mockLifecycleOwner.dispatchEvent(Lifecycle.Event.ON_RESUME)
-        assertEquals(1, testSubscribedCounter.counter)
-
-        // Stop and ensure there are no subscribers
-        mockLifecycleOwner.dispatchEvent(Lifecycle.Event.ON_STOP)
-        assertEquals(0, testSubscribedCounter.counter)
-    }
-
-    @Test
-    fun state_resubscribes_when_restarted_on_custom_lifecycle() {
-        initialiseContainerHost { collectState(Lifecycle.State.RESUMED) { } }
-
-        // Start and ensure there is one subscriber
-        mockLifecycleOwner.dispatchEvent(Lifecycle.Event.ON_RESUME)
-        assertEquals(1, testSubscribedCounter.counter)
-
-        // Stop and ensure there are no subscribers
-        mockLifecycleOwner.dispatchEvent(Lifecycle.Event.ON_STOP)
-        assertEquals(0, testSubscribedCounter.counter)
-
-        // Re-start and ensure there is one subscriber
-        mockLifecycleOwner.dispatchEvent(Lifecycle.Event.ON_RESUME)
-        assertEquals(1, testSubscribedCounter.counter)
-    }
-
-    @Test
-    fun as_state_subscribes_on_start() {
         initialiseContainerHost { collectAsState() }
 
         // Ensure there are no subscribers
@@ -186,7 +94,7 @@ class ContainerHostExtensionsKtTest {
     }
 
     @Test
-    fun as_state_unsubscribes_on_stop() {
+    fun as_state_unsubscribes_on_stop() = runComposeUiTest {
         initialiseContainerHost { collectAsState() }
 
         // Start and ensure there is one subscriber
@@ -199,7 +107,7 @@ class ContainerHostExtensionsKtTest {
     }
 
     @Test
-    fun as_state_resubscribes_when_restarted() {
+    fun as_state_resubscribes_when_restarted() = runComposeUiTest {
         initialiseContainerHost { collectAsState() }
 
         // Start and ensure there is one subscriber
@@ -216,7 +124,7 @@ class ContainerHostExtensionsKtTest {
     }
 
     @Test
-    fun as_state_subscribes_on_custom_lifecycle() {
+    fun as_state_subscribes_on_custom_lifecycle() = runComposeUiTest {
         initialiseContainerHost { collectAsState(Lifecycle.State.RESUMED) }
 
         // Ensure there are no subscribers
@@ -228,7 +136,7 @@ class ContainerHostExtensionsKtTest {
     }
 
     @Test
-    fun as_state_unsubscribes_on_stop_with_custom_lifecycle() {
+    fun as_state_unsubscribes_on_stop_with_custom_lifecycle() = runComposeUiTest {
         initialiseContainerHost { collectAsState(Lifecycle.State.RESUMED) }
 
         // Start and ensure there is one subscriber
@@ -241,7 +149,7 @@ class ContainerHostExtensionsKtTest {
     }
 
     @Test
-    fun as_state_resubscribes_when_restarted_on_custom_lifecycle() {
+    fun as_state_resubscribes_when_restarted_on_custom_lifecycle() = runComposeUiTest {
         initialiseContainerHost { collectAsState(Lifecycle.State.RESUMED) }
 
         // Start and ensure there is one subscriber
@@ -258,7 +166,7 @@ class ContainerHostExtensionsKtTest {
     }
 
     @Test
-    fun side_effect_subscribes_on_start() {
+    fun side_effect_subscribes_on_start() = runComposeUiTest {
         initialiseContainerHost { collectSideEffect { } }
 
         // Ensure there are no subscribers
@@ -270,7 +178,7 @@ class ContainerHostExtensionsKtTest {
     }
 
     @Test
-    fun side_effect_unsubscribes_on_stop() {
+    fun side_effect_unsubscribes_on_stop() = runComposeUiTest {
         initialiseContainerHost { collectSideEffect { } }
 
         // Start and ensure there is one subscriber
@@ -283,7 +191,7 @@ class ContainerHostExtensionsKtTest {
     }
 
     @Test
-    fun side_effect_resubscribes_when_restarted() {
+    fun side_effect_resubscribes_when_restarted() = runComposeUiTest {
         initialiseContainerHost { collectSideEffect { } }
 
         // Start and ensure there is one subscriber
@@ -300,7 +208,7 @@ class ContainerHostExtensionsKtTest {
     }
 
     @Test
-    fun side_effect_subscribes_on_custom_lifecycle() {
+    fun side_effect_subscribes_on_custom_lifecycle() = runComposeUiTest {
         initialiseContainerHost { collectSideEffect(Lifecycle.State.RESUMED) { } }
 
         // Ensure there are no subscribers
@@ -312,7 +220,7 @@ class ContainerHostExtensionsKtTest {
     }
 
     @Test
-    fun side_effect_unsubscribes_on_stop_with_custom_lifecycle() {
+    fun side_effect_unsubscribes_on_stop_with_custom_lifecycle() = runComposeUiTest {
         initialiseContainerHost { collectSideEffect(Lifecycle.State.RESUMED) { } }
 
         // Start and ensure there is one subscriber
@@ -325,7 +233,7 @@ class ContainerHostExtensionsKtTest {
     }
 
     @Test
-    fun side_effect_resubscribes_when_restarted_on_custom_lifecycle() {
+    fun side_effect_resubscribes_when_restarted_on_custom_lifecycle() = runComposeUiTest {
         initialiseContainerHost { collectSideEffect(Lifecycle.State.RESUMED) { } }
 
         // Start and ensure there is one subscriber
