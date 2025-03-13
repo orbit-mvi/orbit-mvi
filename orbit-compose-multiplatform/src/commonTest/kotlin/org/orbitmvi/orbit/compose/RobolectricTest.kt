@@ -17,4 +17,4 @@
 package org.orbitmvi.orbit.compose
 
 @Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
-public expect abstract class UsingContextTest()
+public expect abstract class RobolectricTest()

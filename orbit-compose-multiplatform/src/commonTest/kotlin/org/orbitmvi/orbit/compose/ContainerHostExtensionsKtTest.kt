@@ -41,7 +41,7 @@ import kotlin.test.assertEquals
 
 @OptIn(ExperimentalTestApi::class)
 @ExperimentalCoroutinesApi
-class ContainerHostExtensionsKtTest : UsingContextTest() {
+class ContainerHostExtensionsKtTest : RobolectricTest() {
 
     private val mockLifecycleOwner = MockLifecycleOwner()
 
