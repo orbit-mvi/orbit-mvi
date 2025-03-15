@@ -48,7 +48,6 @@ plugins {
     alias(libs.plugins.gradleMavenPublishPlugin) apply false
     alias(libs.plugins.dokkaPlugin)
     alias(libs.plugins.compose.compiler) apply false
-    //alias(libs.plugins.androidKotlinMultiplatformLibrary) apply false
 }
 
 apply(from = "gradle/scripts/detekt.gradle.kts")
