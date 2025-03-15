@@ -40,10 +40,10 @@ dependencies {
     // Testing
     testImplementation(project(":orbit-test"))
     testImplementation(project(":test-common"))
+    testImplementation(kotlin("test-junit"))
     testImplementation(libs.androidxEspressoCore)
     testImplementation(libs.robolectric)
 
-    testImplementation(libs.kotlinTest)
     testImplementation(libs.kotlinCoroutinesTest)
 
     testImplementation(libs.androidxCoreTesting)

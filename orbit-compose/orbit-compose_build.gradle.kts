@@ -46,14 +46,8 @@ dependencies {
 
     // Testing
     testImplementation(kotlin("test-junit"))
-    testImplementation(project(":orbit-test"))
-    testImplementation(project(":test-common"))
-    testImplementation(libs.androidxEspressoCore)
     testImplementation(libs.robolectric)
-
-    testImplementation(libs.kotlinTest)
     testImplementation(libs.kotlinCoroutinesTest)
-
     testImplementation(libs.androidxCoreTesting)
     testImplementation(libs.androidxComposeUiTestJunit4)
     testImplementation(libs.androidxComposeUiTestManifest)

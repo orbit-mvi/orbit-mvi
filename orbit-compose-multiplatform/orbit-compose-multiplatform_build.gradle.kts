@@ -17,9 +17,10 @@
 import org.jetbrains.compose.ExperimentalComposeLibrary
 
 plugins {
+    // We should really be using the com.android.kotlin.multiplatform.library plugin and an androidLibrary block, however, this has issues with
+    // AGP 8.9.0, and with 8.10.0-alpha08 no way to resolve packaging options such as META-INF conflicts.
     id("com.android.library")
     kotlin("multiplatform")
-    //id("com.android.kotlin.multiplatform.library")
     id(libs.plugins.gradleMavenPublishPlugin.get().pluginId)
     id(libs.plugins.dokkaPlugin.get().pluginId)
     alias(libs.plugins.compose.multiplatform)
@@ -48,8 +49,6 @@ kotlin {
 
     sourceSets {
         val desktopTest by getting
-        //val androidTest by getting
-        //val androidHostTest by getting
 
         commonMain.dependencies {
             implementation(project(":orbit-core"))
@@ -78,16 +77,7 @@ kotlin {
 
         androidUnitTest.dependencies {
             implementation(kotlin("test-junit"))
-
-            implementation(libs.junit4)
-            implementation(libs.androidxCoreTesting)
             implementation(libs.robolectric)
-
-            implementation(libs.robolectric)
-
-            implementation(libs.kotlinTest)
-            implementation(libs.kotlinCoroutinesTest)
-
             implementation(libs.androidxCoreTesting)
             implementation(libs.androidxComposeUiTestJunit4)
             implementation(libs.androidxComposeUiTestManifest)

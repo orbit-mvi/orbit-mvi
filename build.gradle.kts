@@ -38,7 +38,6 @@ buildscript {
         classpath(libs.buildscript.kotlin)
         classpath(libs.buildscript.safeargs)
         classpath(libs.buildscript.atomicfu)
-        //classpath(libs.buildscript.androidmultiplatform)
     }
 }
 
