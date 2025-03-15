@@ -52,7 +52,6 @@ kotlin {
 
         commonMain.dependencies {
             implementation(project(":orbit-core"))
-            implementation(libs.lifecycleViewmodelCompose)
             implementation(libs.lifecycleRuntimeCompose)
         }
 
