@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.orbitmvi.orbit.compose
+package org.orbitmvi.orbit.compose.multiplatform
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect

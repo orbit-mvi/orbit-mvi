@@ -71,10 +71,6 @@ kotlin {
             implementation(compose.desktop.currentOs)
         }
 
-        androidMain.dependencies {
-            implementation(libs.androidxComposeUiTestManifest)
-        }
-
         androidUnitTest.dependencies {
             implementation(kotlin("test-junit"))
             implementation(libs.robolectric)
@@ -90,10 +86,6 @@ android {
     compileSdk = 35
     defaultConfig {
         minSdk = 21
-    }
-
-    dependencies {
-        debugImplementation(libs.androidxComposeUiTestManifest)
     }
 
     testOptions.unitTests.isIncludeAndroidResources = true
