@@ -34,7 +34,7 @@ androidxEspresso = "3.6.1"
 androidxCompose = "1.7.8"
 androidxCoreTesting = "2.2.0"
 
-lifecycleComposeMultiplatform = "2.8.4"
+lifecycleMultiplatform = "2.9.0-alpha04"
 
 desugar = "2.1.5"
 
@@ -61,8 +61,10 @@ androidxEspressoCore = { module = "androidx.test.espresso:espresso-core", versio
 androidxComposeRuntime = { module = "androidx.compose.runtime:runtime", version.ref = "androidxCompose" }
 androidxComposeUi = { module = "androidx.compose.ui:ui", version.ref = "androidxCompose" }
 # Compose Multiplatform
-lifecycleRuntimeCompose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycleComposeMultiplatform" }
-lifecycleViewmodelCompose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycleComposeMultiplatform" }
+lifecycleRuntimeCompose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycleMultiplatform" }
+lifecycleRuntime = { module = "org.jetbrains.androidx.lifecycle:lifecycle-runtime", version.ref = "lifecycleMultiplatform" }
+lifecycleViewmodel = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel", version.ref = "lifecycleMultiplatform" }
+lifecycleViewmodelSavedState = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-savedstate", version.ref = "lifecycleMultiplatform" }
 # Testing
 androidxComposeUiTestJunit4 = { module = "androidx.compose.ui:ui-test-junit4", version.ref = "androidxCompose" }
 androidxComposeUiTestManifest = { module = "androidx.compose.ui:ui-test-manifest", version.ref = "androidxCompose" }
