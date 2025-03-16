@@ -51,7 +51,7 @@ kotlin {
         val desktopTest by getting
 
         commonMain.dependencies {
-            implementation(project(":orbit-core"))
+            api(project(":orbit-core"))
             implementation(libs.lifecycleRuntimeCompose)
         }
 
