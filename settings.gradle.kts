@@ -24,7 +24,6 @@ include(
     "orbit-viewmodel",
     "orbit-viewmodel-multiplatform",
     "orbit-compose",
-    "orbit-compose-multiplatform",
     "samples:orbit-calculator",
     "samples:orbit-posts",
     "samples:orbit-stocklist",
