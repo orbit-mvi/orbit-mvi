@@ -52,7 +52,7 @@ kotlin {
 
         commonMain.dependencies {
             api(project(":orbit-core"))
-            implementation(libs.lifecycleRuntimeCompose)
+            implementation(libs.androidxLifecycleRuntimeCompose)
         }
 
         commonTest.dependencies {

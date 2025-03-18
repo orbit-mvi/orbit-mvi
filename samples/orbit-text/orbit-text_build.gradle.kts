@@ -57,9 +57,9 @@ dependencies {
     implementation(libs.androidxLifecycleRuntimeKtx)
     implementation(libs.androidxComposeUi)
 
-    implementation("androidx.compose.foundation:foundation:1.7.8")
-    implementation("androidx.compose.material:material:1.7.8")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.1")
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.8.7")
-    implementation("androidx.appcompat:appcompat:1.7.0")
+    implementation(libs.androidxComposeFoundation)
+    implementation(libs.androidxComposeMaterial)
+    implementation(libs.kotlinCoroutines)
+    implementation(libs.androidxLifecycleLivedata)
+    implementation(libs.androidxAppcompat)
 }

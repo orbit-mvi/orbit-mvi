@@ -50,13 +50,11 @@ kotlin {
     jvm("desktop")
 
     sourceSets {
-        val desktopTest by getting
-
         commonMain.dependencies {
             api(project(":orbit-core"))
-            api(libs.lifecycleViewmodel)
-            implementation(libs.lifecycleViewmodelSavedState)
-            implementation(libs.lifecycleRuntime)
+            api(libs.androidxLifecycleViewmodel)
+            implementation(libs.androidxLifecycleViewmodelSavedState)
+            implementation(libs.androidxLifecycleRuntime)
         }
 
         commonTest.dependencies {
