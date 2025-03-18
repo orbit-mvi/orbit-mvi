@@ -126,7 +126,7 @@ subprojects {
         ?.replaceFirst("refs/tags/", "") ?: "unspecified"
 
     tasks.withType<Test> {
-        if (project.name !in listOf("orbit-core", "orbit-test", "orbit-viewmodel", "orbit-viewmodel-multiplatform", "orbit-compose")) {
+        if (project.name !in listOf("orbit-core", "orbit-test", "orbit-viewmodel", "orbit-compose")) {
             useJUnitPlatform {
                 includeEngines(
                     "junit-jupiter"
@@ -173,7 +173,7 @@ subprojects {
         }
     }
     plugins.withType<org.jetbrains.kotlin.gradle.plugin.KotlinMultiplatformPluginWrapper> {
-        if (project.name !in listOf("orbit-viewmodel-multiplatform", "orbit-compose")) {
+        if (project.name !in listOf("orbit-viewmodel", "orbit-compose")) {
             apply(from = "$rootDir/gradle/scripts/jacoco.gradle.kts")
         }
         configure<org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension> {
@@ -238,6 +238,5 @@ dependencies {
     dokka(project(":orbit-core:"))
     dokka(project(":orbit-compose:"))
     dokka(project(":orbit-viewmodel:"))
-    dokka(project(":orbit-viewmodel-multiplatform:"))
     dokka(project(":orbit-test:"))
 }

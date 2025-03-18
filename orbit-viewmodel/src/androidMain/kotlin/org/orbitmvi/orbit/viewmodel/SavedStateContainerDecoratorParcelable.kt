@@ -18,23 +18,28 @@
  * See: https://github.com/orbit-mvi/orbit-mvi/compare/c5b8b3f2b83b5972ba2ad98f73f75086a89653d3...main
  */
 
-include(
-    "orbit-core",
-    "orbit-test",
-    "orbit-viewmodel",
-    "orbit-compose",
-    "samples:orbit-calculator",
-    "samples:orbit-posts",
-    "samples:orbit-stocklist",
-    "samples:orbit-text",
-    "test-common"
-)
+package org.orbitmvi.orbit.viewmodel
 
-fun renameBuildFileToModuleName(project: ProjectDescriptor) {
-    project.buildFileName = "${project.name}_build.gradle.kts"
-    project.children.forEach { child -> renameBuildFileToModuleName(child) }
+import androidx.lifecycle.SavedStateHandle
+import kotlinx.coroutines.flow.StateFlow
+import org.orbitmvi.orbit.Container
+import org.orbitmvi.orbit.ContainerDecorator
+
+internal class SavedStateContainerDecoratorParcelable<STATE : Any, SIDE_EFFECT : Any>(
+    override val actual: Container<STATE, SIDE_EFFECT>,
+    private val savedStateHandle: SavedStateHandle,
+    private val savedStateHandleKey: String
+) : ContainerDecorator<STATE, SIDE_EFFECT> {
+
+    override val stateFlow: StateFlow<STATE> by lazy {
+        actual.stateFlow.onEach {
+            savedStateHandle[savedStateHandleKey] = it
+        }
+    }
+
+    override val refCountStateFlow: StateFlow<STATE> by lazy {
+        actual.refCountStateFlow.onEach {
+            savedStateHandle[savedStateHandleKey] = it
+        }
+    }
 }
-// Will rename every module's build.gradle file to use its name instead of `build`.
-// E.g. `app/build.gradle` will become `app/app.gradle`
-// The root build.gradle file will remain untouched
-rootProject.children.forEach { subproject -> renameBuildFileToModuleName(subproject) }
