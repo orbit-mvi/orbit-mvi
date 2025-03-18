@@ -28,13 +28,14 @@ detektPlugin = "1.23.8"
 atomicfu = "0.27.0"
 dokka = "2.0.0"
 compose-multiplatform = "1.7.0"
+hilt = "2.55"
 
 # Androidx
+androidxActivityCompose = "1.10.1"
 androidxAppcompat = "1.7.0"
 androidxCompose = "1.7.8"
 androidxConstraintlayout = "2.2.1"
-androidxCoreTesting = "2.2.0"
-androidxEspresso = "3.6.1"
+androidxHilt = "1.2.0"
 androidxLifecycle = "2.8.7"
 androidxLifecycleMultiplatform = "2.9.0-alpha04"
 androidxNavigation = "2.8.9"
@@ -53,10 +54,12 @@ okhttp = "4.12.0"
 retrofit = "2.11.0"
 
 # Testing
+androidxCoreTesting = "2.2.0"
+androidxEspresso = "3.6.1"
 jacoco = "0.8.12"
 junit4 = "4.13.2"
-junitJupiterEngine = "5.12.0"
-junitPlatformConsole = "1.12.0"
+junitJupiterEngine = "5.12.1"
+junitPlatformConsole = "1.12.1"
 kotlinFixture = "1.2.0"
 mockito = "5.16.1"
 mockitoKotlin = "5.4.0"
@@ -66,25 +69,33 @@ turbine = "1.2.0"
 [libraries]
 
 # Kotlin
+hiltAndroid = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }
+hiltAndroidCompiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hilt" }
 kotlinCoroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
 kotlinCoroutinesTest = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
 
 # AndroidX
+androidxActivityCompose = { module = "androidx.activity:activity-compose", version.ref = "androidxActivityCompose" }
 androidxAppcompat = { module = "androidx.appcompat:appcompat", version.ref = "androidxAppcompat" }
 androidxComposeFoundation = { module = "androidx.compose.foundation:foundation", version.ref = "androidxCompose" }
 androidxComposeMaterial = { module = "androidx.compose.material:material", version.ref = "androidxCompose" }
+androidxComposeMaterialIconsCore = { module = "androidx.compose.material:material-icons-core", version.ref = "androidxCompose" }
 androidxComposeRuntime = { module = "androidx.compose.runtime:runtime", version.ref = "androidxCompose" }
 androidxComposeUi = { module = "androidx.compose.ui:ui", version.ref = "androidxCompose" }
+androidxComposeUiTooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "androidxCompose" }
 androidxConstraintlayout = { module = "androidx.constraintlayout:constraintlayout", version.ref = "androidxConstraintlayout" }
 androidxEspressoCore = { module = "androidx.test.espresso:espresso-core", version.ref = "androidxEspresso" }
 androidxEspressoIdlingResource = { module = "androidx.test.espresso:espresso-idling-resource", version.ref = "androidxEspresso" }
+androidxHiltNavigationCompose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "androidxHilt" }
 androidxLifecycleCommonJava8 = { module = "androidx.lifecycle:lifecycle-common-java8", version.ref = "androidxLifecycle" }
 androidxLifecycleLivedata = { module = "androidx.lifecycle:lifecycle-livedata-ktx", version.ref = "androidxLifecycle" }
-androidxLifecycleRuntime = { module = "androidx.lifecycle:lifecycle-runtime", version.ref = "androidxLifecycleMultiplatform" }
+androidxLifecycleRuntime = { module = "org.jetbrains.androidx.lifecycle:lifecycle-runtime", version.ref = "androidxLifecycleMultiplatform" }
 androidxLifecycleRuntimeCompose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-runtime-compose", version.ref = "androidxLifecycleMultiplatform" }
 androidxLifecycleRuntimeKtx = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "androidxLifecycle" }
-androidxLifecycleViewmodel = { module = "androidx.lifecycle:lifecycle-viewmodel", version.ref = "androidxLifecycleMultiplatform" }
+androidxLifecycleViewmodel = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel", version.ref = "androidxLifecycleMultiplatform" }
+androidxLifecycleViewmodelCompose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "androidxLifecycle" }
 androidxLifecycleViewmodelSavedState = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-savedstate", version.ref = "androidxLifecycleMultiplatform" }
+androidxNavigationCompose = { module = "androidx.navigation:navigation-compose", version.ref = "androidxNavigation" }
 androidxNavigationFragmentKtx = { module = "androidx.navigation:navigation-fragment-ktx", version.ref = "androidxNavigation" }
 androidxNavigationUiKtx = { module = "androidx.navigation:navigation-ui-ktx", version.ref = "androidxNavigation" }
 
@@ -129,6 +140,7 @@ buildscript_kotlin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", ver
 buildscript_detekt = { module = "io.gitlab.arturbosch.detekt:detekt-gradle-plugin", version.ref = "detektPlugin" }
 buildscript_safeargs = { module = "androidx.navigation:navigation-safe-args-gradle-plugin", version.ref = "androidxNavigation" }
 buildscript_atomicfu = { module = "org.jetbrains.kotlinx:atomicfu-gradle-plugin", version.ref = "atomicfu" }
+buildscript_hilt = { module = "com.google.dagger:hilt-android-gradle-plugin", version.ref = "hilt" }
 
 [plugins]
 
