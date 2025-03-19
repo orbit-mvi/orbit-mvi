@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 2021-2025 Mikołaj Leszczyński & Appmattus Limited
  * Copyright 2020 Babylon Partners Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -44,15 +44,15 @@ class StockItem(
     override fun hasSameContentAs(other: Item<*>) = other is StockItem && stock == other.stock
 
     override fun bind(viewBinding: ListItemBinding, position: Int) {
+        viewBinding.root.setOnClickListener {
+            listViewModel.viewMarket(stock.itemName)
+        }
+
         if (viewBinding.name.text == stock.name) {
             animateChange(viewBinding.bid, viewBinding.bidTick, stock.bid, bidRef)
             animateChange(viewBinding.ask, viewBinding.askTick, stock.ask, askRef)
         } else {
             hideTicks(viewBinding)
-
-            viewBinding.root.setOnClickListener {
-                listViewModel.viewMarket(stock.itemName)
-            }
         }
 
         viewBinding.name.text = stock.name

@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright 2021 Mikołaj Leszczyński & Appmattus Limited
   ~ Copyright 2020 Babylon Partners Limited
   ~
@@ -45,7 +44,7 @@
             android:textAlignment="center"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
             app:layout_constraintTop_toTopOf="parent"
-            tools:text="Babylon Partners Limited" />
+            tools:text="Orbit Multiplatform" />
 
         <TextView
             android:id="@+id/bid"
@@ -146,12 +145,13 @@
             app:layout_constraintTop_toBottomOf="@id/ask"
             tools:text="10000" />
 
-        <androidx.constraintlayout.widget.Guideline
+        <androidx.constraintlayout.widget.Barrier
             android:id="@+id/column1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            app:layout_constraintStart_toEndOf="@id/timestamp_label" />
+            app:barrierDirection="end"
+            app:constraint_referenced_ids="change_label,timestamp_label,max_label,low_label" />
 
         <TextView
             android:id="@+id/change_label"
@@ -161,6 +161,8 @@
             android:text="Change %:"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
             android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@id/column1"
+            app:layout_constraintHorizontal_bias="1"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/bid_quantity" />
 
@@ -185,7 +187,8 @@
             android:text="Timestamp:"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
             android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="@id/change_label"
+            app:layout_constraintEnd_toStartOf="@id/column1"
+            app:layout_constraintHorizontal_bias="1"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/change_label" />
 
@@ -196,6 +199,8 @@
             android:text="@{state.stock.timestamp}"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
             app:layout_constraintBottom_toBottomOf="@id/timestamp_label"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0"
             app:layout_constraintStart_toStartOf="@id/column1"
             app:layout_constraintTop_toTopOf="@id/timestamp_label"
             tools:text="12:34:23" />
@@ -208,8 +213,10 @@
             android:text="High:"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
             android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="@id/timestamp_label"
+            app:layout_constraintEnd_toStartOf="@id/column1"
+            app:layout_constraintHorizontal_bias="1"
             app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/timestamp_label" />
 
         <TextView
@@ -219,6 +226,8 @@
             android:text="@{state.stock.max}"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
             app:layout_constraintBottom_toBottomOf="@id/max_label"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0"
             app:layout_constraintStart_toStartOf="@id/column1"
             app:layout_constraintTop_toTopOf="@id/max_label"
             tools:text="12345.67" />
@@ -231,8 +240,9 @@
             android:text="Low:"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
             android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="@id/max_label"
-            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/column1"
+            app:layout_constraintHorizontal_bias="1"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/max_label" />
 
         <TextView
@@ -242,6 +252,8 @@
             android:text="@{state.stock.min}"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
             app:layout_constraintBottom_toBottomOf="@id/low_label"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0"
             app:layout_constraintStart_toStartOf="@id/column1"
             app:layout_constraintTop_toTopOf="@id/low_label"
             tools:text="12345.67" />

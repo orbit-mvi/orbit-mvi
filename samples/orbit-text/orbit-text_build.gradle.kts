@@ -1,5 +1,5 @@
 /*
- * Copyright 2022-2024 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 2022-2025 Mikołaj Leszczyński & Appmattus Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ plugins {
     kotlin("android")
     id("kotlin-parcelize")
     id("androidx.navigation.safeargs.kotlin")
+    alias(libs.plugins.compose.compiler)
 }
 
 android {
@@ -29,10 +30,10 @@ android {
         targetCompatibility = JavaVersion.VERSION_11
     }
 
-    compileSdk = 34
+    compileSdk = 35
     defaultConfig {
         minSdk = 21
-        targetSdk = 34
+        targetSdk = 35
         applicationId = "org.orbitmvi.orbit.sample.text"
         versionCode = 1
         versionName = "1.0"
@@ -46,10 +47,6 @@ android {
         viewBinding = true
         compose = true
     }
-
-    composeOptions {
-        kotlinCompilerExtensionVersion = libs.versions.androidxComposeCompiler.get()
-    }
 }
 
 dependencies {
@@ -60,10 +57,9 @@ dependencies {
     implementation(libs.androidxLifecycleRuntimeKtx)
     implementation(libs.androidxComposeUi)
 
-    implementation("androidx.compose.foundation:foundation:1.6.7")
-    implementation("androidx.compose.material:material:1.6.7")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0")
-    implementation("io.insert-koin:koin-android:3.5.6")
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.7.0")
-    implementation("androidx.appcompat:appcompat:1.6.1")
+    implementation("androidx.compose.foundation:foundation:1.7.8")
+    implementation("androidx.compose.material:material:1.7.8")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.1")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.8.7")
+    implementation("androidx.appcompat:appcompat:1.7.0")
 }

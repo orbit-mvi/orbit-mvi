@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-2024 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 2021-2025 Mikołaj Leszczyński & Appmattus Limited
  * Copyright 2020 Babylon Partners Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,8 +23,9 @@ import com.appmattus.markdown.rules.LineLengthRule
 import com.appmattus.markdown.rules.ProperNamesRule
 import com.appmattus.markdown.rules.ProperNamesRule.Companion.DefaultNames
 import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import java.net.URI
+import java.time.ZonedDateTime
 
 buildscript {
     repositories {
@@ -46,13 +47,10 @@ plugins {
     alias(libs.plugins.markdownlintGradlePlugin)
     alias(libs.plugins.gradleMavenPublishPlugin) apply false
     alias(libs.plugins.dokkaPlugin)
+    alias(libs.plugins.compose.compiler) apply false
 }
 
 apply(from = "gradle/scripts/detekt.gradle.kts")
-
-tasks.register<Delete>("clean") {
-    delete(rootProject.buildDir)
-}
 
 tasks.withType<DependencyUpdatesTask> {
     resolutionStrategy {
@@ -90,6 +88,32 @@ allprojects {
             force(libs.junit4)
         }
     }
+    plugins.withType<org.jetbrains.dokka.gradle.DokkaPlugin> {
+        dokka {
+            dokkaSourceSets {
+                configureEach {
+                    if (name.startsWith("ios")) {
+                        displayName.set("ios")
+                    }
+
+                    sourceLink {
+                        localDirectory.set(rootDir)
+                        remoteUrl("https://github.com/orbit-mvi/orbit-mvi/blob/main")
+                        remoteLineSuffix.set("#L")
+                    }
+                }
+            }
+
+            pluginsConfiguration.html {
+                customAssets.from("$rootDir/dokka/logo-icon.svg")
+                footerMessage.set(
+                    provider {
+                        "© 2021-${ZonedDateTime.now().year} Mikołaj Leszczyński & Appmattus Limited"
+                    }
+                )
+            }
+        }
+    }
 }
 
 subprojects {
@@ -102,7 +126,6 @@ subprojects {
         ?.replaceFirst("refs/tags/", "") ?: "unspecified"
 
     tasks.withType<Test> {
-        @Suppress("UnstableApiUsage")
         if (project.name !in listOf("orbit-core", "orbit-test", "orbit-viewmodel", "orbit-compose")) {
             useJUnitPlatform {
                 includeEngines(
@@ -115,8 +138,8 @@ subprojects {
         }
     }
     tasks.withType<KotlinCompile>().all {
-        kotlinOptions {
-            jvmTarget = "11"
+        compilerOptions {
+            jvmTarget = JvmTarget.JVM_11
             allWarningsAsErrors = true
         }
     }
@@ -124,23 +147,6 @@ subprojects {
         configure<JavaPluginExtension> {
             sourceCompatibility = JavaVersion.VERSION_11
             targetCompatibility = JavaVersion.VERSION_11
-        }
-    }
-    plugins.withType<org.jetbrains.dokka.gradle.DokkaPlugin> {
-        tasks.withType<org.jetbrains.dokka.gradle.DokkaTask>().configureEach {
-            dokkaSourceSets {
-                configureEach {
-                    if (name.startsWith("ios")) {
-                        displayName.set("ios")
-                    }
-
-                    sourceLink {
-                        localDirectory.set(rootDir)
-                        remoteUrl.set(URI("https://github.com/orbit-mvi/orbit-mvi/blob/main").toURL())
-                        remoteLineSuffix.set("#L")
-                    }
-                }
-            }
         }
     }
     plugins.withId("com.android.application") {
@@ -183,7 +189,7 @@ subprojects {
         apply(from = "$rootDir/gradle/scripts/jacoco-android.gradle.kts")
 
         configure<LibraryExtension> {
-            compileSdk = 34
+            compileSdk = 35
             defaultConfig {
                 minSdk = 21
             }
@@ -221,7 +227,14 @@ markdownlint {
 }
 
 val copyDokkaToWebsite by tasks.registering(Copy::class) {
-    dependsOn("dokkaHtmlMultiModule")
-    from(files("build/dokka/htmlMultiModule"))
+    dependsOn("dokkaGenerate")
+    from(files("build/dokka/html"))
     into(file("website/static/dokka"))
+}
+
+dependencies {
+    dokka(project(":orbit-core:"))
+    dokka(project(":orbit-compose:"))
+    dokka(project(":orbit-viewmodel:"))
+    dokka(project(":orbit-test:"))
 }

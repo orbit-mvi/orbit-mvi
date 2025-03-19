@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 2021-2025 Mikołaj Leszczyński & Appmattus Limited
  * Copyright 2020 Babylon Partners Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -56,17 +56,17 @@ class StockRepository(private val client: StreamingClient) {
             requestedSnapshot = "yes"
             addListener(
                 object : SubscriptionListener by EmptySubscriptionListener {
-                    override fun onItemUpdate(p0: ItemUpdate) {
-                        val itemName = p0.itemName
-                        val stockName = p0.getValue("stock_name")
-                        val formattedBid = p0.getValue("bid")?.to2dp()
-                        val formattedAsk = p0.getValue("ask")?.to2dp()
-                        val formattedTimestamp = p0.getValue("timestamp")?.toFormattedTimestamp()
+                    override fun onItemUpdate(update: ItemUpdate) {
+                        val itemName = update.itemName
+                        val stockName = update.getValue("stock_name")
+                        val formattedBid = update.getValue("bid")?.to2dp()
+                        val formattedAsk = update.getValue("ask")?.to2dp()
+                        val formattedTimestamp = update.getValue("timestamp")?.toFormattedTimestamp()
 
                         if (itemName != null && stockName != null && formattedBid != null && formattedAsk != null &&
                             formattedTimestamp != null
                         ) {
-                            stockList[p0.itemPos - 1] = Stock(itemName, stockName, formattedBid, formattedAsk, formattedTimestamp)
+                            stockList[update.itemPos - 1] = Stock(itemName, stockName, formattedBid, formattedAsk, formattedTimestamp)
                             trySend(stockList.filterNotNull())
                         }
                     }
@@ -89,16 +89,16 @@ class StockRepository(private val client: StreamingClient) {
 
             addListener(
                 object : SubscriptionListener by EmptySubscriptionListener {
-                    override fun onItemUpdate(p0: ItemUpdate) {
-                        val stockName = p0.getValue("stock_name")
-                        val pctChange = p0.getValue("pct_change")?.to2dp()
-                        val formattedBid = p0.getValue("bid")?.to2dp()
-                        val bidQuantity = p0.getValue("bid_quantity")
-                        val formattedAsk = p0.getValue("ask")?.to2dp()
-                        val askQuantity = p0.getValue("ask_quantity")
-                        val min = p0.getValue("min")?.to2dp()
-                        val max = p0.getValue("max")?.to2dp()
-                        val formattedTimestamp = p0.getValue("timestamp")?.toFormattedTimestamp()
+                    override fun onItemUpdate(update: ItemUpdate) {
+                        val stockName = update.getValue("stock_name")
+                        val pctChange = update.getValue("pct_change")?.to2dp()
+                        val formattedBid = update.getValue("bid")?.to2dp()
+                        val bidQuantity = update.getValue("bid_quantity")
+                        val formattedAsk = update.getValue("ask")?.to2dp()
+                        val askQuantity = update.getValue("ask_quantity")
+                        val min = update.getValue("min")?.to2dp()
+                        val max = update.getValue("max")?.to2dp()
+                        val formattedTimestamp = update.getValue("timestamp")?.toFormattedTimestamp()
 
                         if (stockName != null &&
                             pctChange != null &&

@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-2024 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 2021-2025 Mikołaj Leszczyński & Appmattus Limited
  * Copyright 2020 Babylon Partners Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -27,10 +27,10 @@ plugins {
 
 android {
     namespace = "org.orbitmvi.orbit.sample.stocklist"
-    compileSdk = 34
+    compileSdk = 35
     defaultConfig {
         minSdk = 23
-        targetSdk = 34
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
         applicationId = "org.orbitmvi.orbit.sample.stocklist"
@@ -82,18 +82,18 @@ dependencies {
     implementation(project(":orbit-core"))
     implementation(project(":orbit-viewmodel"))
 
-    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
+    implementation("androidx.constraintlayout:constraintlayout:2.2.1")
     implementation("com.google.android.material:material:1.12.0")
-    implementation("androidx.navigation:navigation-fragment-ktx:2.7.7")
-    implementation("androidx.navigation:navigation-ui-ktx:2.7.7")
-    implementation("com.lightstreamer:ls-android-client:4.2.6")
+    implementation("androidx.navigation:navigation-fragment-ktx:2.8.8")
+    implementation("androidx.navigation:navigation-ui-ktx:2.8.8")
+    implementation("com.lightstreamer:ls-android-client:5.2.2")
     implementation("com.github.lisawray.groupie:groupie:2.10.1")
     implementation("com.github.lisawray.groupie:groupie-kotlin-android-extensions:2.10.1")
     implementation("com.github.lisawray.groupie:groupie-viewbinding:2.10.1")
-    implementation("io.insert-koin:koin-android:3.5.6")
-    implementation("androidx.lifecycle:lifecycle-common-java8:2.7.0")
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.7.0")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
+    implementation("io.insert-koin:koin-android:4.0.2")
+    implementation("androidx.lifecycle:lifecycle-common-java8:2.8.7")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.8.7")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.7")
 
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:${libs.versions.desugar.get()}")
 }

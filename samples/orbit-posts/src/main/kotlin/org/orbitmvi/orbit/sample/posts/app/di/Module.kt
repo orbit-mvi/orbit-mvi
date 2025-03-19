@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 2021-2025 Mikołaj Leszczyński & Appmattus Limited
  * Copyright 2020 Babylon Partners Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,7 +23,7 @@ package org.orbitmvi.orbit.sample.posts.app.di
 import com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
-import org.koin.androidx.viewmodel.dsl.viewModel
+import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 import org.orbitmvi.orbit.sample.posts.app.features.postdetails.viewmodel.PostDetailsViewModel
 import org.orbitmvi.orbit.sample.posts.app.features.postlist.viewmodel.PostListViewModel

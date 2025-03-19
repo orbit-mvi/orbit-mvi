@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 2023-2025 Mikołaj Leszczyński & Appmattus Limited
  * Copyright 2020 Babylon Partners Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -33,5 +33,5 @@ tasks.withType<Test> {
 }
 
 configure<JacocoPluginExtension> {
-    toolVersion = "0.8.9"
+    toolVersion = "0.8.12"
 }
