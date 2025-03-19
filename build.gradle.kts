@@ -240,8 +240,6 @@ val copyDokkaToWebsite by tasks.registering(Copy::class) {
 dependencies {
     dokka(project(":orbit-core:"))
     dokka(project(":orbit-compose:"))
-    dokka(project(":orbit-compose-multiplatform:"))
     dokka(project(":orbit-viewmodel:"))
-    dokka(project(":orbit-viewmodel-multiplatform:"))
     dokka(project(":orbit-test:"))
 }
