@@ -32,6 +32,7 @@ hilt = "2.56"
 # Androidx
 androidxActivityCompose = "1.10.1"
 androidxAppcompat = "1.7.0"
+androidxCollection = "1.5.0"
 androidxCompose = "1.7.8"
 androidxConstraintlayout = "2.2.1"
 androidxHilt = "1.2.0"
@@ -71,11 +72,13 @@ turbine = "1.2.0"
 hiltAndroid = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }
 hiltAndroidCompiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hilt" }
 kotlinCoroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
+kotlinCoroutinesSwing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-swing", version.ref = "coroutines" }
 kotlinCoroutinesTest = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
 
 # AndroidX
 androidxActivityCompose = { module = "androidx.activity:activity-compose", version.ref = "androidxActivityCompose" }
 androidxAppcompat = { module = "androidx.appcompat:appcompat", version.ref = "androidxAppcompat" }
+androidxCollection = { module = "androidx.collection:collection", version.ref = "androidxCollection" }
 androidxComposeFoundation = { module = "androidx.compose.foundation:foundation", version.ref = "androidxCompose" }
 androidxComposeMaterial = { module = "androidx.compose.material:material", version.ref = "androidxCompose" }
 androidxComposeMaterialIconsCore = { module = "androidx.compose.material:material-icons-core", version.ref = "androidxCompose" }
