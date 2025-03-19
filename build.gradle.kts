@@ -38,6 +38,7 @@ buildscript {
         classpath(libs.buildscript.kotlin)
         classpath(libs.buildscript.safeargs)
         classpath(libs.buildscript.atomicfu)
+        classpath(libs.buildscript.hilt)
     }
 }
 
@@ -126,7 +127,7 @@ subprojects {
         ?.replaceFirst("refs/tags/", "") ?: "unspecified"
 
     tasks.withType<Test> {
-        if (project.name !in listOf("orbit-core", "orbit-test", "orbit-viewmodel", "orbit-viewmodel-multiplatform", "orbit-compose", "orbit-compose-multiplatform")) {
+        if (project.name !in listOf("orbit-core", "orbit-test", "orbit-viewmodel", "orbit-compose")) {
             useJUnitPlatform {
                 includeEngines(
                     "junit-jupiter"
@@ -140,7 +141,9 @@ subprojects {
     tasks.withType<KotlinCompile>().all {
         compilerOptions {
             jvmTarget = JvmTarget.JVM_11
-            allWarningsAsErrors = true
+            if (project.name !in listOf("orbit-stocklist-jetpack-compose")) {
+                allWarningsAsErrors = true
+            }
         }
     }
     plugins.withType<JavaBasePlugin> {
@@ -173,7 +176,7 @@ subprojects {
         }
     }
     plugins.withType<org.jetbrains.kotlin.gradle.plugin.KotlinMultiplatformPluginWrapper> {
-        if (project.name !in listOf("orbit-viewmodel-multiplatform", "orbit-compose-multiplatform")) {
+        if (project.name !in listOf("orbit-viewmodel", "orbit-compose")) {
             apply(from = "$rootDir/gradle/scripts/jacoco.gradle.kts")
         }
         configure<org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension> {

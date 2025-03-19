@@ -19,39 +19,74 @@
  */
 
 plugins {
+    // We should really be using the com.android.kotlin.multiplatform.library plugin and an androidLibrary block, however, this has issues with
+    // AGP 8.9.0, and with 8.10.0-alpha08 no way to resolve packaging options such as META-INF conflicts.
     id("com.android.library")
-    kotlin("android")
-    id("kotlin-parcelize")
+    kotlin("multiplatform")
     id(libs.plugins.gradleMavenPublishPlugin.get().pluginId)
     id(libs.plugins.dokkaPlugin.get().pluginId)
+    kotlin("plugin.serialization")
+    id("kotlin-parcelize")
 }
 
-dependencies {
-    implementation(kotlin("stdlib-jdk8"))
-    implementation(libs.kotlinCoroutines)
+kotlin {
+    androidTarget()
 
-    api(project(":orbit-core"))
+    iosX64()
+    iosArm64()
+    iosSimulatorArm64()
 
-    implementation(libs.androidxLifecycleSavedState)
-    api(libs.androidxLifecycleViewmodelKtx)
-    implementation(libs.androidxLifecycleRuntimeKtx)
-    implementation(libs.androidxEspressoIdlingResource)
+    listOf(
+        iosX64(),
+        iosArm64(),
+        iosSimulatorArm64()
+    ).forEach { iosTarget ->
+        iosTarget.binaries.framework {
+            baseName = "orbit-viewmodel"
+            isStatic = true
+        }
+    }
 
-    // Testing
-    testImplementation(project(":orbit-test"))
-    testImplementation(project(":test-common"))
-    testImplementation(kotlin("test-junit"))
-    testImplementation(libs.androidxEspressoCore)
-    testImplementation(libs.robolectric)
+    jvm("desktop")
 
-    testImplementation(libs.kotlinCoroutinesTest)
+    sourceSets {
+        commonMain.dependencies {
+            api(project(":orbit-core"))
+            api(libs.androidxLifecycleViewmodel)
+            implementation(libs.androidxLifecycleViewmodelSavedState)
+            implementation(libs.androidxLifecycleRuntime)
+        }
 
-    testImplementation(libs.androidxCoreTesting)
-    testImplementation(libs.turbine)
+        commonTest.dependencies {
+            implementation(project(":orbit-test"))
+
+            implementation(kotlin("test"))
+            implementation(kotlin("test-common"))
+            implementation(kotlin("test-annotations-common"))
+            implementation(libs.kotlinCoroutines)
+            implementation(libs.kotlinCoroutinesTest)
+            implementation(libs.turbine)
+        }
+
+        androidMain.dependencies {
+            implementation(libs.androidxEspressoIdlingResource)
+        }
+
+        androidUnitTest.dependencies {
+            implementation(kotlin("test-junit"))
+            implementation(libs.robolectric)
+            implementation(libs.androidxCoreTesting)
+            implementation(libs.androidxEspressoCore)
+        }
+    }
 }
 
 android {
     namespace = "org.orbitmvi.orbit.viewmodel"
+    compileSdk = 35
+    defaultConfig {
+        minSdk = 21
+    }
 
     testOptions.unitTests.isIncludeAndroidResources = true
 }
