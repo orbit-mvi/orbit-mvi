@@ -82,7 +82,6 @@ class ContainerHostExtensionsKtTest : RobolectricTest() {
 
     @Test
     fun as_state_subscribes_on_start() = runComposeUiTest {
-
         initialiseContainerHost { collectAsState() }
 
         // Ensure there are no subscribers
