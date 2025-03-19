@@ -27,9 +27,39 @@ plugins {
 
 kotlin {
     jvm()
-    iosX64()
+
+    // Tier 1
+    // Apple macOS hosts only:
+    macosX64() // Running tests
+    macosArm64() // Running tests
+    iosSimulatorArm64() // Running tests
+    iosX64() // Running tests
+
+    // Tier 2
+    linuxX64() // Running tests
+    linuxArm64()
+    // Apple macOS hosts only:
+    watchosSimulatorArm64() // Running tests
+    watchosX64() // Running tests
+    watchosArm32()
+    watchosArm64()
+    tvosSimulatorArm64() // Running tests
+    tvosX64() // Running tests
+    tvosArm64()
     iosArm64()
-    iosSimulatorArm64()
+
+    // Tier 3
+    androidNativeArm32()
+    androidNativeArm64()
+    androidNativeX86()
+    androidNativeX64()
+    mingwX64() // Running tests
+    // Apple macOS hosts only:
+    watchosDeviceArm64()
+
+    // Apply the default hierarchy again. It'll create, for example, the iosMain source set:
+    applyDefaultHierarchyTemplate()
+
     sourceSets {
         commonMain.dependencies {
             implementation(kotlin("test-common"))
@@ -40,12 +70,13 @@ kotlin {
             api(project(":orbit-core"))
         }
         commonTest.dependencies {
+            implementation(kotlin("test"))
             implementation(project(":test-common"))
             implementation(kotlin("test-common"))
             implementation(kotlin("test-annotations-common"))
         }
 
-        iosMain.dependencies {
+        appleMain.dependencies {
             implementation(libs.kotlinCoroutines)
         }
 
