@@ -1,0 +1,39 @@
+<!--
+  ~ Copyright 2021 Mikołaj Leszczyński & Appmattus Limited
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<vector android:height="24dp" android:viewportHeight="500"
+    android:viewportWidth="1348" android:width="64.704dp" xmlns:android="http://schemas.android.com/apk/res/android">
+    <path android:fillColor="#33DECB" android:fillType="evenOdd"
+        android:pathData="M42,86.57m-21.5,0a21.5,21.5 0,1 1,43 0a21.5,21.5 0,1 1,-43 0"
+        android:strokeColor="#00000000" android:strokeWidth="1"/>
+    <path android:fillColor="#33DECB" android:fillType="evenOdd"
+        android:pathData="M1024,249.57m-21.5,0a21.5,21.5 0,1 1,43 0a21.5,21.5 0,1 1,-43 0"
+        android:strokeColor="#00000000" android:strokeWidth="1"/>
+    <path android:fillColor="#33DECB" android:fillType="evenOdd"
+        android:pathData="M213.5,164.07m-11,0a11,11 0,1 1,22 0a11,11 0,1 1,-22 0"
+        android:strokeColor="#00000000" android:strokeWidth="1"/>
+    <path android:fillColor="#33DECB" android:fillType="evenOdd"
+        android:pathData="M806.5,394.07m-11,0a11,11 0,1 1,22 0a11,11 0,1 1,-22 0"
+        android:strokeColor="#00000000" android:strokeWidth="1"/>
+    <path android:fillColor="#33DECB" android:fillType="evenOdd"
+        android:pathData="M897.5,84.07m-11,0a11,11 0,1 1,22 0a11,11 0,1 1,-22 0"
+        android:strokeColor="#00000000" android:strokeWidth="1"/>
+    <path android:fillColor="#33DECB" android:fillType="evenOdd"
+        android:pathData="M126.5,299.07m-11,0a11,11 0,1 1,22 0a11,11 0,1 1,-22 0"
+        android:strokeColor="#00000000" android:strokeWidth="1"/>
+    <path android:fillColor="#33de84" android:pathData="M572.02,32.17C575.83,30.18 580.05,32.84 581.14,36.7C578.32,57.28 575.05,77.96 571.99,98.57C623.66,105 671.8,134.75 700.41,178.33C703.84,184.1 708.59,189.12 710.93,195.51C684.15,213.19 655.55,227.93 626.72,241.94C583.38,262.61 538.84,280.71 493.63,296.86C453.27,310.57 412.49,324.23 370.29,330.85C368.05,325.14 367.57,319.01 366.69,313.01C358.01,268.4 367.69,220.75 392.28,182.63C396.17,176.11 401.39,170.54 405.38,164.1C389.68,151.91 374.24,139.4 358.62,127.12C354.24,124.46 355.19,116.68 360.35,115.61C364.15,114.64 366.91,118.11 369.67,120.09C384.39,131.77 398.99,143.6 413.87,155.08C451.66,116.46 506.05,95.08 560,97.44C562.04,79.22 565.43,61.19 567.91,43.02C568.49,39.24 568.03,34.23 572.02,32.17M594.16,156.59C589.09,157.62 583.9,160.18 581.69,165.15C575.79,174.41 584.26,187.62 594.81,187.63C603.47,188.08 611.4,179.73 610.39,171.07C610.32,162.74 602.14,156.29 594.16,156.59M436.17,218.63C426.62,220.34 419.9,231.94 425.07,240.65C429.53,251.83 447.16,252.25 452.1,241.25C459.05,230.9 447.93,216.17 436.17,218.63Z"/>
+    <path android:fillColor="#33de84" android:pathData="M685.91,134.71C727.87,124.52 770.59,113.58 814.12,115.5C828.6,116.9 845.38,120.96 852.99,134.71C860.1,146.49 856.22,161.4 848.64,171.94C837.97,187.43 823.09,199.33 808.22,210.57C784.02,228.12 758.32,243.46 732.14,257.85C733.93,279.12 734.56,300.9 729.56,321.8C719.04,373.67 684.69,420.18 638.13,445.39C597.99,467.78 549.29,474.42 504.72,463.07C472.22,455.14 442.02,438.11 418.31,414.53C448.49,405.52 478.81,396.77 508.39,385.85C514.77,383.73 523.05,381.79 525.27,374.47C529.53,365.09 519.71,353.73 509.84,356.19C442.91,379.95 374.35,400.6 303.79,409.91C285.47,411.12 266.45,412.93 248.69,407.09C236.18,403.69 225.18,392.48 224.81,379.09C224.12,361.55 237.18,347.6 248.74,335.99C277.62,309.82 311.33,289.62 345.36,270.91C344.43,284.02 344.06,297.2 345.14,310.31C320.26,325.21 295.2,340.37 273.68,359.99C269.15,364.69 263.91,368.95 260.9,374.86C270.29,377.08 279.97,376.95 289.56,376.51C351.98,370.58 412.34,352.24 471.72,332.82C553.38,304.79 633.44,271.59 709.65,230.89C740.59,213.98 771.3,196.24 798.91,174.18C806.84,167.34 814.99,160.4 820.73,151.53C810.56,149.78 800.19,148.76 789.94,150.44C764.15,151.38 739.09,158.08 713.89,162.81C704.68,153.47 696.11,143.18 685.91,134.71Z"/>
+</vector>

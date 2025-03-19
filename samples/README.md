@@ -23,7 +23,7 @@ for display,
 [Jetpack Navigation](https://developer.android.com/guide/navigation)
 for navigation and [Koin](https://insert-koin.io/) for dependency injection.
 
-## [Stock List - Jetpack Compose](https://github.com/orbit-mvi/orbit-sample-stocklist-jetpack-compose)
+## [Stock List - Jetpack Compose](orbit-stocklist-jetpack-compose)
 
 This sample demonstrates a simple master-detail application with streaming data
 using [Jetpack Compose](https://developer.android.com/jetpack/compose) for
