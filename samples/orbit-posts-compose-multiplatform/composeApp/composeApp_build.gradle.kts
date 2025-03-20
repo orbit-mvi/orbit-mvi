@@ -31,6 +31,54 @@ kotlin {
 
     jvm("desktop")
 
+    sourceSets {
+        val desktopMain by getting
+
+        commonMain.dependencies {
+            implementation(project(":orbit-compose"))
+            implementation(project(":orbit-viewmodel"))
+            implementation(compose.runtime)
+            implementation(compose.foundation)
+            implementation(compose.material)
+            implementation(compose.ui)
+            implementation(compose.components.resources)
+            implementation(compose.components.uiToolingPreview)
+            implementation(libs.androidxLifecycleViewmodel)
+            implementation(libs.androidxLifecycleViewmodelSavedState)
+            implementation(libs.androidxLifecycleRuntimeCompose)
+            implementation(libs.androidxCollection)
+
+            implementation(libs.ktorClientCore)
+            implementation(libs.ktorClientContentNegotiation)
+            implementation(libs.ktorSerializationKotlinxJson)
+            implementation(libs.coilCompose)
+            implementation(libs.coilNetworkKtor3)
+
+            implementation("org.jetbrains.androidx.navigation:navigation-compose:2.9.0-alpha14")
+            implementation(libs.koinCore)
+            implementation(libs.koinCompose)
+            implementation(libs.koinComposeViewmodel)
+            implementation(libs.koinComposeViewmodelNavigation)
+        }
+        androidMain.dependencies {
+            implementation(compose.preview)
+            implementation(libs.androidxActivityCompose)
+            implementation(libs.ktorClientAndroid)
+        }
+        iosMain.dependencies {
+            implementation(libs.ktorClientIos)
+        }
+        desktopMain.dependencies {
+            implementation(compose.desktop.currentOs)
+            implementation("org.jetbrains.skiko:skiko-awt-runtime-${skikoTarget()}:0.9.2")
+            implementation(libs.kotlinCoroutinesSwing)
+            implementation(libs.ktorClientCio)
+            implementation("org.jetbrains.kotlinx:atomicfu:0.27.0")
+        }
+    }
+}
+
+private fun skikoTarget(): String {
     val osName = System.getProperty("os.name")
     val targetOs = when {
         osName == "Mac OS X" -> "macos"
@@ -45,36 +93,7 @@ kotlin {
         else -> error("Unsupported arch: $osArch")
     }
 
-    val version = "0.9.2" // or any more recent version
-    val target = "${targetOs}-${targetArch}"
-
-    sourceSets {
-        val desktopMain by getting
-
-        androidMain.dependencies {
-            implementation(compose.preview)
-            implementation(libs.androidxActivityCompose)
-        }
-        commonMain.dependencies {
-            implementation(project(":orbit-compose"))
-            implementation(project(":orbit-viewmodel"))
-            implementation(compose.runtime)
-            implementation(compose.foundation)
-            implementation(compose.material)
-            implementation(compose.ui)
-            implementation(compose.components.resources)
-            implementation(compose.components.uiToolingPreview)
-            implementation(libs.androidxLifecycleViewmodel)
-            implementation(libs.androidxLifecycleViewmodelSavedState)
-            implementation(libs.androidxLifecycleRuntimeCompose)
-            implementation(libs.androidxCollection)
-        }
-        desktopMain.dependencies {
-            implementation(compose.desktop.currentOs)
-            implementation("org.jetbrains.skiko:skiko-awt-runtime-$target:$version")
-            implementation(libs.kotlinCoroutinesSwing)
-        }
-    }
+    return "$targetOs-$targetArch"
 }
 
 android {

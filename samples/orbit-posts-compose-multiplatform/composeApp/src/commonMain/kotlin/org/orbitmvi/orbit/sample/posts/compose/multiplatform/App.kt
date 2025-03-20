@@ -1,39 +1,66 @@
 package org.orbitmvi.orbit.sample.posts.compose.multiplatform
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material.Button
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import orbit_mvi.samples.orbit_posts_compose_multiplatform.composeapp.generated.resources.Res
-import orbit_mvi.samples.orbit_posts_compose_multiplatform.composeapp.generated.resources.compose_multiplatform
-import org.jetbrains.compose.resources.painterResource
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
+import kotlinx.serialization.Serializable
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.koin.compose.KoinApplication
+import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.parameter.parametersOf
+import org.orbitmvi.orbit.sample.posts.compose.multiplatform.app.commonModule
+import org.orbitmvi.orbit.sample.posts.compose.multiplatform.app.features.postdetails.ui.PostDetailsScreen
+import org.orbitmvi.orbit.sample.posts.compose.multiplatform.app.features.postlist.ui.PostListScreen
+import org.orbitmvi.orbit.sample.posts.compose.multiplatform.domain.repositories.PostOverview
+import org.orbitmvi.orbit.sample.posts.compose.multiplatform.domain.viewmodel.detail.PostDetailsViewModel
+import org.orbitmvi.orbit.sample.posts.compose.multiplatform.domain.viewmodel.list.PostListViewModel
+
+// Define a List route that doesn't take any arguments
+@Serializable
+public object List
+
+// Define a Detail route that takes a PostOverview
+@Serializable
+public class Detail private constructor(
+    private val id: Int,
+    private val avatarUrl: String,
+    private val title: String,
+    private val username: String
+) {
+    public fun toPostOverview(): PostOverview {
+        return PostOverview(id, avatarUrl, title, username)
+    }
+
+    public companion object {
+        public fun of(postOverview: PostOverview): Detail {
+            return Detail(
+                postOverview.id,
+                postOverview.avatarUrl,
+                postOverview.title,
+                postOverview.username
+            )
+        }
+    }
+}
 
 @Composable
 @Preview
 public fun App() {
-    MaterialTheme {
-        var showContent by remember { mutableStateOf(false) }
-        Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-            Button(onClick = { showContent = !showContent }) {
-                Text("Click me!")
+    KoinApplication(application = { modules(commonModule()) }) {
+        val navController = rememberNavController()
+        NavHost(navController, startDestination = List) {
+            composable<List> {
+                val viewModel = koinViewModel<PostListViewModel>()
+                PostListScreen(navController, viewModel)
             }
-            AnimatedVisibility(showContent) {
-                val greeting = remember { Greeting().greet() }
-                Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-                    Image(painterResource(Res.drawable.compose_multiplatform), null)
-                    Text("Compose: $greeting")
-                }
+            composable<Detail> { backStackEntry ->
+                val detail: Detail = backStackEntry.toRoute()
+
+                val viewModel =
+                    koinViewModel<PostDetailsViewModel>(parameters = { parametersOf(detail.toPostOverview()) })
+                PostDetailsScreen(navController, viewModel)
             }
         }
     }

@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package org.orbitmvi.orbit.sample.posts.compose.multiplatform.app.features.postlist.viewmodel
+package org.orbitmvi.orbit.sample.posts.compose.multiplatform.domain.viewmodel.list
 
-import org.orbitmvi.orbit.sample.posts.compose.multiplatform.app.common.NavigationEvent
+import kotlinx.serialization.Serializable
 import org.orbitmvi.orbit.sample.posts.compose.multiplatform.domain.repositories.PostOverview
 
-public data class OpenPostNavigationEvent(
-    val post: PostOverview
-) : NavigationEvent
+@Serializable
+public data class PostListState(
+    val overviews: List<PostOverview> = emptyList()
+)
