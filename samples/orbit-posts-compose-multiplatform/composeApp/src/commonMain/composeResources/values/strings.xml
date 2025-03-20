@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Orbit Posts Multiplatform</string>
+
+    <plurals name="comments">
+        <item quantity="one">%1$d comment</item>
+        <item quantity="other">%1$d comments</item>
+    </plurals>
+</resources>

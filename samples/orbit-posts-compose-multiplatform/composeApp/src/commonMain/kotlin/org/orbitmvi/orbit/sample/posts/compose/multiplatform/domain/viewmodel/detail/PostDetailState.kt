@@ -14,12 +14,20 @@
  * limitations under the License.
  */
 
-package org.orbitmvi.orbit.sample.posts.compose.multiplatform.app.features.postlist.viewmodel
+package org.orbitmvi.orbit.sample.posts.compose.multiplatform.domain.viewmodel.detail
 
 import kotlinx.serialization.Serializable
+import org.orbitmvi.orbit.sample.posts.compose.multiplatform.domain.repositories.PostDetail
 import org.orbitmvi.orbit.sample.posts.compose.multiplatform.domain.repositories.PostOverview
 
 @Serializable
-public data class PostListState(
-    val overviews: List<PostOverview> = emptyList()
-)
+public sealed class PostDetailState {
+
+    public abstract val postOverview: PostOverview
+
+    @Serializable
+    public data class Details(override val postOverview: PostOverview, val post: PostDetail) : PostDetailState()
+
+    @Serializable
+    public data class NoDetailsAvailable(override val postOverview: PostOverview) : PostDetailState()
+}

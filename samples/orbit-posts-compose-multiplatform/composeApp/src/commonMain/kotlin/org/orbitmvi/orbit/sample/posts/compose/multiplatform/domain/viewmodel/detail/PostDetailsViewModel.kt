@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.orbitmvi.orbit.sample.posts.compose.multiplatform.app.features.postdetails.viewmodel
+package org.orbitmvi.orbit.sample.posts.compose.multiplatform.domain.viewmodel.detail
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel

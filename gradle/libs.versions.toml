@@ -16,7 +16,7 @@
 
 [versions]
 
-kotlin = "2.1.10"
+kotlin = "2.1.20-RC3"
 coroutines = "1.10.1"
 
 # Plugins
@@ -27,29 +27,32 @@ markdownLintPlugin = "0.6.0"
 detektPlugin = "1.23.8"
 atomicfu = "0.27.0"
 dokka = "2.0.0"
-compose-multiplatform = "1.7.0"
+compose-multiplatform = "1.8.0-beta01"
 hilt = "2.55"
 
 # Androidx
 androidxActivityCompose = "1.10.1"
 androidxAppcompat = "1.7.0"
 androidxCollection = "1.5.0"
-androidxCompose = "1.7.8"
+androidxCompose = "1.8.0-rc01"
+androidxComposeMaterial = "1.7.8"
 androidxConstraintlayout = "2.2.1"
 androidxHilt = "1.2.0"
 androidxLifecycle = "2.8.7"
-androidxLifecycleMultiplatform = "2.9.0-alpha04"
+androidxLifecycleMultiplatform = "2.9.0-alpha05"
 androidxNavigation = "2.8.9"
 
 # Google
 googleMaterial = "1.12.0"
 
 # Misc
+coil = "3.1.0"
 desugar = "2.1.5"
 glide = "4.16.0"
 groupie = "2.10.1"
 jacksonKotlin = "2.18.3"
-koinAndroid = "4.0.2"
+koin = "4.0.2"
+ktor = "3.1.1"
 lsAndroidClient = "5.2.2"
 okhttp = "4.12.0"
 retrofit = "2.11.0"
@@ -82,7 +85,7 @@ androidxAppcompat = { module = "androidx.appcompat:appcompat", version.ref = "an
 androidxCollection = { module = "androidx.collection:collection", version.ref = "androidxCollection" }
 androidxComposeFoundation = { module = "androidx.compose.foundation:foundation", version.ref = "androidxCompose" }
 androidxComposeMaterial = { module = "androidx.compose.material:material", version.ref = "androidxCompose" }
-androidxComposeMaterialIconsCore = { module = "androidx.compose.material:material-icons-core", version.ref = "androidxCompose" }
+androidxComposeMaterialIconsCore = { module = "androidx.compose.material:material-icons-core", version.ref = "androidxComposeMaterial" }
 androidxComposeRuntime = { module = "androidx.compose.runtime:runtime", version.ref = "androidxCompose" }
 androidxComposeUi = { module = "androidx.compose.ui:ui", version.ref = "androidxCompose" }
 androidxComposeUiTooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "androidxCompose" }
@@ -106,13 +109,25 @@ androidxNavigationUiKtx = { module = "androidx.navigation:navigation-ui-ktx", ve
 googleMaterial = { module = "com.google.android.material:material", version.ref = "googleMaterial" }
 
 # Misc
+coilCompose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil" }
+coilNetworkKtor3 = { module = "io.coil-kt.coil3:coil-network-ktor3", version.ref = "coil" }
 desugar = { module = "com.android.tools:desugar_jdk_libs", version.ref = "desugar" }
 glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
 groupie = { module = "com.github.lisawray.groupie:groupie", version.ref = "groupie" }
 groupieKotlinAndroidExtensions = { module = "com.github.lisawray.groupie:groupie-kotlin-android-extensions", version.ref = "groupie" }
 groupieViewbinding = { module = "com.github.lisawray.groupie:groupie-viewbinding", version.ref = "groupie" }
 jacksonKotlin = { module = "com.fasterxml.jackson.module:jackson-module-kotlin", version.ref = "jacksonKotlin" }
-koinAndroid = { module = "io.insert-koin:koin-android", version.ref = "koinAndroid" }
+koinAndroid = { module = "io.insert-koin:koin-android", version.ref = "koin" }
+koinCore = { module = "io.insert-koin:koin-core", version.ref = "koin" }
+koinCompose = { module = "io.insert-koin:koin-compose", version.ref = "koin" }
+koinComposeViewmodel = { module = "io.insert-koin:koin-compose-viewmodel", version.ref = "koin" }
+koinComposeViewmodelNavigation = { module = "io.insert-koin:koin-compose-viewmodel-navigation", version.ref = "koin" }
+ktorClientAndroid = { module = "io.ktor:ktor-client-android", version.ref = "ktor" }
+ktorClientCio = { module = "io.ktor:ktor-client-cio", version.ref = "ktor" }
+ktorClientContentNegotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
+ktorClientCore = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
+ktorClientIos = { module = "io.ktor:ktor-client-ios", version.ref = "ktor" }
+ktorSerializationKotlinxJson = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
 lsAndroidClient = { module = "com.lightstreamer:ls-android-client", version.ref = "lsAndroidClient" }
 okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }

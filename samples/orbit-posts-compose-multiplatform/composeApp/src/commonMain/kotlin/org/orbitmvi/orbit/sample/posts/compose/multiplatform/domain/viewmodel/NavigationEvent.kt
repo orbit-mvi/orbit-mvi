@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 
-package org.orbitmvi.orbit.sample.posts.compose.multiplatform.app.common
+package org.orbitmvi.orbit.sample.posts.compose.multiplatform.domain.viewmodel
 
 public interface NavigationEvent
