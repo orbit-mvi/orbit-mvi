@@ -37,7 +37,6 @@ buildscript {
         classpath(libs.buildscript.android)
         classpath(libs.buildscript.kotlin)
         classpath(libs.buildscript.safeargs)
-        classpath(libs.buildscript.atomicfu)
         classpath(libs.buildscript.hilt)
     }
 }
@@ -176,7 +175,7 @@ subprojects {
         }
     }
     plugins.withType<org.jetbrains.kotlin.gradle.plugin.KotlinMultiplatformPluginWrapper> {
-        if (project.name !in listOf("orbit-viewmodel", "orbit-compose")) {
+        if (project.name !in listOf("orbit-viewmodel", "orbit-compose", "composeApp")) {
             apply(from = "$rootDir/gradle/scripts/jacoco.gradle.kts")
         }
         configure<org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension> {

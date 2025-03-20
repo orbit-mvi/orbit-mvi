@@ -20,7 +20,6 @@
 
 package org.orbitmvi.orbit.internal
 
-import kotlinx.atomicfu.atomic
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
@@ -30,12 +29,13 @@ import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerDecorator
 import org.orbitmvi.orbit.syntax.ContainerContext
 import org.orbitmvi.orbit.syntax.intent
+import kotlin.concurrent.atomics.AtomicBoolean
 
 public class LazyCreateContainerDecorator<STATE : Any, SIDE_EFFECT : Any>(
     override val actual: Container<STATE, SIDE_EFFECT>,
     public val onCreate: suspend ContainerContext<STATE, SIDE_EFFECT>.() -> Unit
 ) : ContainerDecorator<STATE, SIDE_EFFECT> {
-    private val created = atomic(false)
+    private val created = AtomicBoolean(false)
 
     override val stateFlow: StateFlow<STATE> = actual.stateFlow.onSubscribe { runOnCreate() }
     override val refCountStateFlow: StateFlow<STATE> = actual.refCountStateFlow.onSubscribe { runOnCreate() }
@@ -49,7 +49,7 @@ public class LazyCreateContainerDecorator<STATE : Any, SIDE_EFFECT : Any>(
     }
 
     private fun runOnCreate() {
-        if (created.compareAndSet(expect = false, update = true)) {
+        if (created.compareAndSet(expectedValue = false, newValue = true)) {
             actual.intent(registerIdling = false, transformer = onCreate)
         }
     }

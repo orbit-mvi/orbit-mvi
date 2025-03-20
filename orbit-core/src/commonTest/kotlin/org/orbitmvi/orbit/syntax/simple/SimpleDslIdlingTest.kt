@@ -20,10 +20,8 @@
 
 package org.orbitmvi.orbit.syntax.simple
 
-import kotlinx.atomicfu.atomic
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -35,11 +33,13 @@ import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.container
 import org.orbitmvi.orbit.idling.IdlingResource
 import org.orbitmvi.orbit.test.assertEventually
+import kotlin.concurrent.atomics.AtomicInt
+import kotlin.concurrent.atomics.decrementAndFetch
+import kotlin.concurrent.atomics.incrementAndFetch
 import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-@OptIn(ExperimentalCoroutinesApi::class)
 internal class SimpleDslIdlingTest {
 
     private val testIdlingResource = TestIdlingResource()
@@ -123,19 +123,19 @@ internal class SimpleDslIdlingTest {
     data class TestState(val value: Int)
 
     class TestIdlingResource : IdlingResource {
-        private val counter = atomic(0)
+        private val counter = AtomicInt(0)
 
         override fun increment() {
-            counter.incrementAndGet()
+            counter.incrementAndFetch()
         }
 
         override fun decrement() {
-            counter.decrementAndGet()
+            counter.decrementAndFetch()
         }
 
         override fun close() = Unit
 
-        fun isIdle() = counter.value == 0
+        fun isIdle() = counter.load() == 0
     }
 
     companion object {

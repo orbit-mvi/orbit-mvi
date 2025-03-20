@@ -16,12 +16,12 @@
 
 package org.orbitmvi.orbit.test
 
-import kotlinx.atomicfu.atomic
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.container
+import kotlin.concurrent.atomics.AtomicBoolean
 import kotlin.random.Random
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -36,7 +36,7 @@ internal class InitTest {
             expectInitialState()
         }
 
-        assertEquals(false, mockDependency.createCalled.value)
+        assertEquals(false, mockDependency.createCalled.load())
     }
 
     @Test
@@ -47,7 +47,7 @@ internal class InitTest {
             runOnCreate()
         }
 
-        assertEquals(true, mockDependency.createCalled.value)
+        assertEquals(true, mockDependency.createCalled.load())
     }
 
     @Test
@@ -80,10 +80,10 @@ internal class InitTest {
     }
 
     private class FakeDependency : BogusDependency {
-        val createCalled = atomic(false)
+        val createCalled = AtomicBoolean(false)
 
         override fun create() {
-            createCalled.compareAndSet(expect = false, update = true)
+            createCalled.compareAndSet(expectedValue = false, newValue = true)
         }
     }
 }

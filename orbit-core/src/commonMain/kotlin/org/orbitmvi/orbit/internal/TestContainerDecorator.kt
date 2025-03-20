@@ -16,7 +16,6 @@
 
 package org.orbitmvi.orbit.internal
 
-import kotlinx.atomicfu.atomic
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
@@ -25,32 +24,33 @@ import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerDecorator
 import org.orbitmvi.orbit.RealSettings
 import org.orbitmvi.orbit.syntax.ContainerContext
+import kotlin.concurrent.atomics.AtomicReference
 
 public class TestContainerDecorator<STATE : Any, SIDE_EFFECT : Any>(
     public val originalInitialState: STATE,
     override val actual: Container<STATE, SIDE_EFFECT>
 ) : ContainerDecorator<STATE, SIDE_EFFECT> {
 
-    private val delegate = atomic(actual)
+    private val delegate = AtomicReference(actual)
 
     override val settings: RealSettings
-        get() = delegate.value.settings
+        get() = delegate.load().settings
 
     override val stateFlow: StateFlow<STATE>
-        get() = delegate.value.stateFlow
+        get() = delegate.load().stateFlow
     override val refCountStateFlow: StateFlow<STATE>
-        get() = delegate.value.refCountStateFlow
+        get() = delegate.load().refCountStateFlow
     override val sideEffectFlow: Flow<SIDE_EFFECT>
-        get() = delegate.value.sideEffectFlow
+        get() = delegate.load().sideEffectFlow
     override val refCountSideEffectFlow: Flow<SIDE_EFFECT>
-        get() = delegate.value.refCountSideEffectFlow
+        get() = delegate.load().refCountSideEffectFlow
 
     override suspend fun orbit(orbitIntent: suspend ContainerContext<STATE, SIDE_EFFECT>.() -> Unit): Job {
-        return delegate.value.orbit(orbitIntent)
+        return delegate.load().orbit(orbitIntent)
     }
 
     override suspend fun inlineOrbit(orbitIntent: suspend ContainerContext<STATE, SIDE_EFFECT>.() -> Unit) {
-        delegate.value.inlineOrbit(orbitIntent)
+        delegate.load().inlineOrbit(orbitIntent)
     }
 
     public fun test(
@@ -66,8 +66,8 @@ public class TestContainerDecorator<STATE : Any, SIDE_EFFECT : Any>(
         )
 
         val testDelegateSet = delegate.compareAndSet(
-            expect = actual,
-            update = testDelegate
+            expectedValue = actual,
+            newValue = testDelegate
         )
 
         if (!testDelegateSet) {
@@ -76,10 +76,10 @@ public class TestContainerDecorator<STATE : Any, SIDE_EFFECT : Any>(
     }
 
     public override suspend fun joinIntents() {
-        delegate.value.joinIntents()
+        delegate.load().joinIntents()
     }
 
     public override fun cancel() {
-        delegate.value.cancel()
+        delegate.load().cancel()
     }
 }

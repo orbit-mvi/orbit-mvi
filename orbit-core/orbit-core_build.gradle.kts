@@ -22,7 +22,6 @@ plugins {
     kotlin("multiplatform")
     id(libs.plugins.gradleMavenPublishPlugin.get().pluginId)
     id(libs.plugins.dokkaPlugin.get().pluginId)
-    id(libs.plugins.atomicfu.get().pluginId)
 }
 
 kotlin {
@@ -64,6 +63,7 @@ kotlin {
         all {
             languageSettings.optIn("kotlin.RequiresOptIn")
             languageSettings.optIn("org.orbitmvi.orbit.annotation.OrbitInternal")
+            languageSettings.optIn("kotlin.concurrent.atomics.ExperimentalAtomicApi")
         }
 
         commonMain.dependencies {
