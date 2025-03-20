@@ -20,7 +20,6 @@
 
 package org.orbitmvi.orbit.internal
 
-import kotlinx.atomicfu.atomic
 import kotlinx.coroutines.CompletableJob
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
@@ -45,6 +44,9 @@ import org.orbitmvi.orbit.internal.repeatonsubscription.DelayingSubscribedCounte
 import org.orbitmvi.orbit.internal.repeatonsubscription.SubscribedCounter
 import org.orbitmvi.orbit.internal.repeatonsubscription.refCount
 import org.orbitmvi.orbit.syntax.ContainerContext
+import kotlin.concurrent.atomics.AtomicBoolean
+import kotlin.concurrent.atomics.AtomicInt
+import kotlin.concurrent.atomics.fetchAndIncrement
 
 public class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
     initialState: STATE,
@@ -55,11 +57,11 @@ public class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
     override val scope: CoroutineScope = parentScope + settings.eventLoopDispatcher
     private val intentJob = Job(scope.coroutineContext[Job])
     private val dispatchChannel = Channel<Pair<CompletableJob, suspend ContainerContext<STATE, SIDE_EFFECT>.() -> Unit>>(Channel.UNLIMITED)
-    private val initialised = atomic(false)
+    private val initialised = AtomicBoolean(false)
     private val subscribedCounter = subscribedCounterOverride ?: DelayingSubscribedCounter(scope, settings.repeatOnSubscribedStopTimeout)
     private val internalStateFlow = MutableStateFlow(initialState)
     private val sideEffectChannel = Channel<SIDE_EFFECT>(settings.sideEffectBufferSize)
-    private val intentCounter = atomic(0)
+    private val intentCounter = AtomicInt(0)
 
     override val stateFlow: StateFlow<STATE> = internalStateFlow.asStateFlow()
     override val sideEffectFlow: Flow<SIDE_EFFECT> = sideEffectChannel.receiveAsFlow()
@@ -99,7 +101,7 @@ public class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
 
     @OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
     private fun initialiseIfNeeded() {
-        if (initialised.compareAndSet(expect = false, update = true)) {
+        if (initialised.compareAndSet(expectedValue = false, newValue = true)) {
             scope.produce<Unit>(Dispatchers.Unconfined) {
                 awaitClose {
                     settings.idlingRegistry.close()
@@ -109,9 +111,9 @@ public class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
             scope.launch(CoroutineName(COROUTINE_NAME_EVENT_LOOP)) {
                 for ((job, intent) in dispatchChannel) {
                     val exceptionHandlerContext =
-                        CoroutineName("$COROUTINE_NAME_INTENT${intentCounter.getAndIncrement()}") +
-                            job +
-                            settings.intentLaunchingDispatcher
+                        CoroutineName("$COROUTINE_NAME_INTENT${intentCounter.fetchAndIncrement()}") +
+                                job +
+                                settings.intentLaunchingDispatcher
                     launch(exceptionHandlerContext) {
                         runCatching { pluginContext.intent() }.onFailure { e ->
                             settings.exceptionHandler?.handleException(

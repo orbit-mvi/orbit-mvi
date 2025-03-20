@@ -20,7 +20,6 @@
 
 plugins {
     kotlin("multiplatform")
-    id(libs.plugins.atomicfu.get().pluginId)
 }
 
 kotlin {
@@ -59,6 +58,10 @@ kotlin {
     applyDefaultHierarchyTemplate()
 
     sourceSets {
+        all {
+            languageSettings.optIn("kotlin.concurrent.atomics.ExperimentalAtomicApi")
+        }
+
         commonMain.dependencies {
             implementation(libs.kotlinCoroutines)
             implementation(kotlin("stdlib"))
