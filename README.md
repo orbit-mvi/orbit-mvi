@@ -1,6 +1,6 @@
 # Orbit Multiplatform
 
-[![CI status](https://github.com/orbit-mvi/orbit-mvi/workflows/Android%20CI/badge.svg)](https://github.com/orbit-mvi/orbit-mvi/actions)
+[![CI status](https://github.com/orbit-mvi/orbit-mvi/actions/workflows/build-and-release.yml/badge.svg)](https://github.com/orbit-mvi/orbit-mvi/actions)
 [![codecov](https://codecov.io/gh/orbit-mvi/orbit-mvi/branch/main/graph/badge.svg)](https://codecov.io/gh/orbit-mvi/orbit-mvi)
 [![Download](https://img.shields.io/maven-central/v/org.orbit-mvi/orbit-core)](https://search.maven.org/artifact/org.orbit-mvi/orbit-core)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE.md)
@@ -42,7 +42,8 @@ think of it as MVVM+.
 ### Articles & Talks
 
 - [How to write your own MVI library and why you shouldn't](https://www.youtube.com/watch?v=E6obYmkkdko)
-- [Top Android MVI libraries in 2021](https://appmattus.medium.com/top-android-mvi-libraries-in-2021-de1afe890f27)
+- [Top Android MVI libraries in 2021](https://appmattus.medium.com/de1afe890f27)
+- [Orbit Multiplatform wins Kotlin Foundation Grant: A Journey and a Look Ahead](https://appmattus.medium.com/6b949cf8133e)
 
 ## Getting started
 
