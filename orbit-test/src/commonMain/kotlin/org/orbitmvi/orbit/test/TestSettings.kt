@@ -29,4 +29,6 @@ public data class TestSettings(
      * Set this to override the [Container]'s [CoroutineExceptionHandler]s for this test
      */
     val exceptionHandlerOverride: CoroutineExceptionHandler? = null,
+
+    val implicitInitialState: Boolean = true
 )

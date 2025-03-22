@@ -67,6 +67,9 @@ public suspend fun <STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHo
             initialState,
             this
         ).apply {
+            if (settings.implicitInitialState) {
+                expectInitialState()
+            }
             validate(this)
             withAppropriateTimeout(timeout ?: 1.seconds) {
                 container.findTestContainer().joinIntents()

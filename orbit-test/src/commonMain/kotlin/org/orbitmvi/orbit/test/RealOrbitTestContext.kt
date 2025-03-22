@@ -21,6 +21,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.runBlocking
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.annotation.OrbitInternal
+import kotlin.concurrent.atomics.AtomicBoolean
 import kotlin.test.assertEquals
 import kotlin.test.fail
 
@@ -63,8 +64,14 @@ public class RealOrbitTestContext<STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST
         containerHost.container.cancel()
     }
 
+    private val checkedInitialState = AtomicBoolean(false)
+
     override suspend fun expectInitialState() {
-        assertEquals(resolvedInitialState, awaitState())
+        if (checkedInitialState.compareAndSet(false, true)) {
+            assertEquals(resolvedInitialState, awaitState())
+        } else {
+            println("Initial state already checked!")
+        }
     }
 
     override suspend fun expectState(expected: STATE) {
