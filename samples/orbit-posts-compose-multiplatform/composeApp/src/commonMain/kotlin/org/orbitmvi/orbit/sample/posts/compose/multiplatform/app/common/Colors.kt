@@ -2,6 +2,7 @@ package org.orbitmvi.orbit.sample.posts.compose.multiplatform.app.common
 
 import androidx.compose.ui.graphics.Color
 
+@Suppress("MagicNumber")
 public object Colors {
     public val colorPrimary: Color = Color(0x008577)
     public val colorPrimaryDark: Color = Color(0x00574B)

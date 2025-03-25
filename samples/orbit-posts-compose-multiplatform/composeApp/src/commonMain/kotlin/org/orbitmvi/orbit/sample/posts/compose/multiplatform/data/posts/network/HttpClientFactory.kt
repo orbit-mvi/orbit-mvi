@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 2021-2025 Mikołaj Leszczyński & Appmattus Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,11 +27,6 @@ public fun httpClientFactory(): HttpClient = HttpClient {
     defaultRequest {
         host = "jsonplaceholder.typicode.com"
         url.protocol = URLProtocol.HTTPS
-
-//        if (url.host == "localhost") {
-//            url.host = "jsonplaceholder.typicode.com"
-//            url.protocol = URLProtocol.HTTPS
-//        }
     }
     install(ContentNegotiation) {
         json(Json { ignoreUnknownKeys = true })
