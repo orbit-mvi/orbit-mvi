@@ -73,7 +73,6 @@ kotlin {
             implementation("org.jetbrains.skiko:skiko-awt-runtime-${skikoTarget()}:0.9.2")
             implementation(libs.kotlinCoroutinesSwing)
             implementation(libs.ktorClientCio)
-            implementation("org.jetbrains.kotlinx:atomicfu:0.27.0")
         }
     }
 }
