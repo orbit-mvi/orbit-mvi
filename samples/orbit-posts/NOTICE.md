@@ -11,7 +11,7 @@ This software uses the following open source works:
 
 - [Kotlin](https://github.com/JetBrains/kotlin/)
 - [Android](https://developer.android.com/)
-- [Orbit MVI](https://github.com/orbit-mvi/orbit-mvi/)
+- [Orbit Multiplatform](https://github.com/orbit-mvi/orbit-mvi/)
 - [Koin](https://insert-koin.io/)
 - [OkHttp](https://square.github.io/okhttp/)
 - [Retrofit](https://square.github.io/retrofit/)

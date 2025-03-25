@@ -54,16 +54,6 @@ public fun PostListScreen(navController: NavController, viewModel: PostListViewM
 
     Column {
         AppBar(stringResource(Res.string.app_name), elevation = lazyListState.elevation)
-
-//        Column {
-//            state.overviews.forEachIndexed { index, post ->
-//                if (index != 0) Divider(color = Colors.separator, modifier = Modifier.padding(horizontal = 16.dp))
-//
-//                PostListItem(post) {
-//                    viewModel.onPostClicked(it)
-//                }
-//            }
-//        }
         LazyColumn(state = lazyListState) {
             itemsIndexed(state.overviews) { index, post ->
                 if (index != 0) Divider(color = Colors.separator, modifier = Modifier.padding(horizontal = 16.dp))

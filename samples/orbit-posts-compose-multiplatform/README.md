@@ -1,14 +1,26 @@
-This is a Kotlin Multiplatform project targeting Android, iOS, Desktop.
+# Orbit Sample - Posts Compose Multiplatform
 
-* `/composeApp` is for code that will be shared across your Compose Multiplatform applications.
-  It contains several subfolders:
-  - `commonMain` is for code that’s common for all targets.
-  - Other folders are for Kotlin code that will be compiled for only the platform indicated in the folder name.
-    For example, if you want to use Apple’s CoreCrypto for the iOS part of your Kotlin app,
-    `iosMain` would be the right folder for such calls.
+This sample implements a simple master-detail application using
+[Orbit Multiplatform](https://github.com/orbit-mvi/orbit-mvi).
 
-* `/iosApp` contains iOS applications. Even if you’re sharing your UI with Compose Multiplatform, 
-  you need this entry point for your iOS app. This is also where you should add SwiftUI code for your project.
+- The application uses Koin for dependency injection which is initialised in
+  [App](composeApp/src/commonMain/kotlin/org/orbitmvi/orbit/sample/posts/compose/multiplatform/App.kt).
 
+- [PostListViewModel](composeApp/src/commonMain/kotlin/org/orbitmvi/orbit/sample/posts/compose/multiplatform/domain/viewmodel/list/PostListViewModel.kt)
+  loads a list of posts. Upon clicking a post it navigates to the
+  [PostDetailsScreen](composeApp/src/commonMain/kotlin/org/orbitmvi/orbit/sample/posts/compose/multiplatform/app/features/postdetails/ui/PostDetailsScreen.kt)
+  which displays the details of the clicked post.
 
-Learn more about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html)…
+- Navigation between the list and the detail view uses Jetpack's
+  [Navigation with Compose](https://developer.android.com/develop/ui/compose/navigation).
+  [PostListViewModel](composeApp/src/commonMain/kotlin/org/orbitmvi/orbit/sample/posts/compose/multiplatform/domain/viewmodel/list/PostListViewModel.kt)
+  posts a side effect which
+  [PostListScreen](composeApp/src/commonMain/kotlin/org/orbitmvi/orbit/sample/posts/compose/multiplatform/app/features/postlist/ui/PostListScreen.kt)
+  observes and sends to the `NavController`.
+
+- The state is accessed in the screens through `Flow`.
+
+- [PostListViewModel](composeApp/src/commonMain/kotlin/org/orbitmvi/orbit/sample/posts/compose/multiplatform/domain/viewmodel/list/PostListViewModel.kt)
+  and
+  [PostDetailsViewModel](composeApp/src/commonMain/kotlin/org/orbitmvi/orbit/sample/posts/compose/multiplatform/domain/viewmodel/detail/PostDetailsViewModel.kt)
+  use a `SavedStateHandle` for retaining the current state.
