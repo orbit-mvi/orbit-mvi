@@ -33,7 +33,7 @@ exposes flows that emit updates to the container state and side effects.
 - State emissions are conflated
 - Side effects are cached by default if no observers are listening. This
   can be changed via
-  [Container Settings](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-container/-settings/)
+  [Settings Builder](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-settings-builder/)
 
 ``` kotlin
 data class ExampleState(val seen: List<String> = emptyList())
@@ -433,7 +433,7 @@ It is good practice to handle all of your errors within your intents.
 By default Orbit doesn't handle or process any exceptions because it cannot
 make assumptions about how you respond to errors. However you could install
 default exception handler via
-[Container Settings](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-container/-settings/)
-property `orbitExceptionHandler` -> if defined exceptions are caught here so
+[Settings Builder](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-settings-builder/)
+property `exceptionHandler` -> if defined exceptions are caught here so
 parent scope is not affected and Orbit container
 would continue to operate normally.
