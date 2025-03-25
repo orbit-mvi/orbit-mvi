@@ -42,7 +42,6 @@ import org.orbitmvi.orbit.sample.posts.compose.multiplatform.domain.viewmodel.li
 
 @Composable
 public fun PostListScreen(navController: NavController, viewModel: PostListViewModel) {
-
     val state = viewModel.collectAsState().value
 
     LaunchedEffect(viewModel) {

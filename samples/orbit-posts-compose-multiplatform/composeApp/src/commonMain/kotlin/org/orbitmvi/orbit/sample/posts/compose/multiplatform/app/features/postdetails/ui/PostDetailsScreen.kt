@@ -42,7 +42,6 @@ import org.orbitmvi.orbit.sample.posts.compose.multiplatform.domain.viewmodel.de
 
 @Composable
 public fun PostDetailsScreen(navController: NavController, viewModel: PostDetailsViewModel) {
-
     val state = viewModel.collectAsState().value
 
     val lazyListState = rememberLazyListState()
@@ -81,7 +80,9 @@ public fun PostDetailsScreen(navController: NavController, viewModel: PostDetail
 
                     Text(
                         text = pluralStringResource(
-                            Res.plurals.comments, state.post.comments.size, state.post.comments.size
+                            Res.plurals.comments,
+                            state.post.comments.size,
+                            state.post.comments.size
                         ),
                         style = MaterialTheme.typography.subtitle1,
                         modifier = Modifier

@@ -16,6 +16,8 @@
 
 package org.orbitmvi.orbit.sample.posts.compose.multiplatform.data.posts
 
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import org.orbitmvi.orbit.sample.posts.compose.multiplatform.data.posts.network.AvatarUrlGenerator
 import org.orbitmvi.orbit.sample.posts.compose.multiplatform.data.posts.network.PostNetworkDataSource
 import org.orbitmvi.orbit.sample.posts.compose.multiplatform.domain.repositories.PostComment
@@ -23,8 +25,6 @@ import org.orbitmvi.orbit.sample.posts.compose.multiplatform.domain.repositories
 import org.orbitmvi.orbit.sample.posts.compose.multiplatform.domain.repositories.PostOverview
 import org.orbitmvi.orbit.sample.posts.compose.multiplatform.domain.repositories.PostRepository
 import org.orbitmvi.orbit.sample.posts.compose.multiplatform.domain.repositories.Status
-import kotlinx.coroutines.async
-import kotlinx.coroutines.coroutineScope
 
 public class PostDataRepository(
     private val networkDataSource: PostNetworkDataSource,

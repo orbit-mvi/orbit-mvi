@@ -22,9 +22,9 @@ import kotlinx.coroutines.Job
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.annotation.OrbitExperimental
-import org.orbitmvi.orbit.sample.posts.compose.multiplatform.domain.viewmodel.NavigationEvent
 import org.orbitmvi.orbit.sample.posts.compose.multiplatform.domain.repositories.PostOverview
 import org.orbitmvi.orbit.sample.posts.compose.multiplatform.domain.repositories.PostRepository
+import org.orbitmvi.orbit.sample.posts.compose.multiplatform.domain.viewmodel.NavigationEvent
 import org.orbitmvi.orbit.viewmodel.container
 
 public class PostListViewModel(

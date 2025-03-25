@@ -16,8 +16,8 @@
 
 package org.orbitmvi.orbit.sample.posts.compose.multiplatform.domain.viewmodel.list
 
-import org.orbitmvi.orbit.sample.posts.compose.multiplatform.domain.viewmodel.NavigationEvent
 import org.orbitmvi.orbit.sample.posts.compose.multiplatform.domain.repositories.PostOverview
+import org.orbitmvi.orbit.sample.posts.compose.multiplatform.domain.viewmodel.NavigationEvent
 
 public data class OpenPostNavigationEvent(
     val post: PostOverview
