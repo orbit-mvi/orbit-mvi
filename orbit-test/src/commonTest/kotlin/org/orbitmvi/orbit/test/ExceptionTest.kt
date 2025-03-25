@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 2023-2025 Mikołaj Leszczyński & Appmattus Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,8 +33,6 @@ class ExceptionTest {
         assertFails {
             runTest {
                 ExceptionTestMiddleware(this).test(this) {
-                    expectInitialState()
-
                     val job = containerHost.boom()
 
                     job.join()

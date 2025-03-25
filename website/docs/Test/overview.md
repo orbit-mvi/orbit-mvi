@@ -25,13 +25,12 @@ testImplementation("org.orbit-mvi:orbit-test:<latest-version>")
    provide them with the initial state to seed the container with. This helps
    avoid having to call several intents just to get the container in the right
    state for the test.
-2. Assert the initial state using `expectInitialState()`.
-3. (Optional) Run `runOnCreate()` within the test block to run the container
+2. (Optional) Run `runOnCreate()` within the test block to run the container
    create lambda.
-4. (Optional) Run `containerHost.foo()` to run the
+3. (Optional) Run `containerHost.foo()` to run the
    [ContainerHost](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-container-host/)
    intent of your choice.
-5. Await for side effects and states using `awaitSideEffect()`
+4. Await for side effects and states using `awaitSideEffect()`
    and `awaitState()`.
    `testContainerHost.assert { ... }`.
 
@@ -41,12 +40,11 @@ into test mode. We pass in the test scope and initial state to seed the
 container with (you may omit it entirely to use the initial state from the real
 container).
 
-Next, it is suggested to assert the initial state. This is a sanity check to
-ensure that the container is in the correct state before we start testing.
+The initial state is automatically verified, however, auto-check can be disabled with 
+`settings = TestSettings(autoCheckInitialState = false)` and the state verified using `awaitState`
+or `expectState`.
 
-We provide a convenience function `expectInitialState()` for this purpose.
-
-After that, we can invoke intents on the container to continue testing.
+Next, we can invoke intents on the container to continue testing.
 
 ```kotlin
 data class State(val count: Int = 0)
@@ -54,7 +52,6 @@ data class State(val count: Int = 0)
 @Test
 fun exampleTest() = runTest {
     ExampleViewModel().test(this, State()) {
-        expectInitialState()
         containerHost.countToFour()
 
         // await states and side effects, perform assertions
@@ -87,7 +84,6 @@ set a correct initial state instead.
 fun exampleTest() = runTest {
         ExampleViewModel().test(this) {
             runOnCreate()
-            expectInitialState()
             containerHost.countToFour()
         }
     }
@@ -102,7 +98,6 @@ explicitly asserted first, as a sanity check.
 @Test
 fun exampleTest() = runTest {
         ExampleViewModel().test(this) {
-            expectInitialState()
             containerHost.countToFour()
 
             expectState { copy(count = 1) }
@@ -124,7 +119,6 @@ ensure no unwanted extra states or side effects are emitted.
 @Test
 fun exampleTest() = runTest {
         ExampleViewModel().test(this) {
-            expectInitialState()
             containerHost.countToFour()
 
             expectSideEffect(Toast(1))
@@ -143,7 +137,6 @@ Here's what it looks like once we put it together.
 @Test
 fun exampleTest() = runTest {
         ExampleViewModel().test(this) {
-            expectInitialState()
             runOnCreate()
             containerHost.countToFour()
 
@@ -176,8 +169,6 @@ fun exampleTest() = runTest {
         val dependency = SomeDependency()
         
         ExampleViewModel(dependency).test(this) {
-            expectInitialState()
-            
             val job = runOnCreate()
             // OR
             val job = containerHost.doSomeWorkOnDependency()
@@ -218,7 +209,6 @@ Typically, `cancelAndIgnoreRemainingItems` would be used as a last resort.
 @Test
 fun exampleTest() = runTest {
         ExampleViewModel().test(this) {
-            expectInitialState()
             runOnCreate()
             containerHost.countToFour()
 
@@ -254,8 +244,6 @@ See below example for options to deal with this. Typically,
 @Test
 fun exampleTest() = runTest {
         ExampleViewModel().test(this) {
-            expectInitialState()
-            
             val job = runOnCreate()
             // OR
             val job = containerHost.doSomeWork()
@@ -311,7 +299,6 @@ fun exampleTest() = runTest {
         val fakeLocationService = FakeLocationService()
 
         ExampleViewModel(fakeLocationService).test(this) {
-            expectInitialState()
             val job = runOnCreate()
 
             expectState { copy(lng = 1, lat = 1) }
@@ -358,7 +345,6 @@ coroutine being tested in `runTest`.
 @Test
 fun delaySkipping() = runTest {
         InfiniteFlowMiddleware().test(this) {
-            expectInitialState()
             val job = containerHost.incrementForever()
 
             // Assert the first three states
@@ -386,7 +372,6 @@ fun noDelaySkipping() = runTest {
         val scope = TestScope()
 
         InfiniteFlowMiddleware().test(scope) {
-            expectInitialState()
             val job = containerHost.incrementForever()
 
             // Assert the first three states

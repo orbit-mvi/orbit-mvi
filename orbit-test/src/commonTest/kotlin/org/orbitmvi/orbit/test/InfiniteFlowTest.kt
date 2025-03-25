@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 2023-2025 Mikołaj Leszczyński & Appmattus Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,8 +34,6 @@ internal class InfiniteFlowTest {
     @Test
     fun infinite_flow_can_be_tested_with_delay_skipping() = runTest {
         InfiniteFlowMiddleware(this).test(this) {
-            expectInitialState()
-
             containerHost.incrementForever()
 
             // Assert the first three states
@@ -53,8 +51,6 @@ internal class InfiniteFlowTest {
         val scope = TestScope()
 
         InfiniteFlowMiddleware(this).test(scope) {
-            expectInitialState()
-
             val job = containerHost.incrementForever()
 
             // Assert the first three states

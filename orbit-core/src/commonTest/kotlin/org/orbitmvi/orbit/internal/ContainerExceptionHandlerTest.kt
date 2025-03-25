@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-2023 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 2021-2025 Mikołaj Leszczyński & Appmattus Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,8 +49,6 @@ internal class ContainerExceptionHandlerTest {
         assertFailsWith<IllegalStateException> {
             runTest {
                 ExceptionTestMiddleware(this).test(this) {
-                    expectInitialState()
-
                     containerHost.exceptionIntent().join()
                 }
             }
@@ -90,8 +88,6 @@ internal class ContainerExceptionHandlerTest {
         val exceptions = Channel<Throwable>(capacity = Channel.BUFFERED)
         val exceptionHandler = CoroutineExceptionHandler { _, throwable -> exceptions.trySend(throwable) }
         ExceptionTestMiddleware(this, exceptionHandler).test(this, initState) {
-            expectInitialState()
-
             containerHost.exceptionIntent()
 
             exceptions.consumeAsFlow().test {
@@ -154,8 +150,6 @@ internal class ContainerExceptionHandlerTest {
         assertFailsWith<IllegalStateException> {
             runTest {
                 ExceptionTestMiddleware(this).test(this) {
-                    expectInitialState()
-
                     containerHost.exceptionIntent().join()
                 }
             }

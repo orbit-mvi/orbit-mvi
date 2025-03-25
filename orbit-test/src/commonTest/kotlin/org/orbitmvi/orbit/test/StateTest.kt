@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 2023-2025 Mikołaj Leszczyński & Appmattus Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,8 +31,16 @@ class StateTest {
     private val initialState = State()
 
     @Test
-    fun succeeds_if_initial_state_matches_expected_state() = runTest {
-        StateTestMiddleware(this).test(this) {
+    fun succeeds_if_initial_state_matches_expected_state_with_expectState() = runTest {
+        StateTestMiddleware(this).test(this, settings = TestSettings(autoCheckInitialState = false)) {
+            expectState { initialState }
+        }
+    }
+
+    @Test
+    fun succeeds_if_initial_state_matches_expected_state_with_expectInitialState() = runTest {
+        StateTestMiddleware(this).test(this, settings = TestSettings(autoCheckInitialState = false)) {
+            @Suppress("DEPRECATION")
             expectInitialState()
         }
     }
@@ -42,7 +50,7 @@ class StateTest {
         val someRandomState = State()
 
         assertFailsWith<AssertionError> {
-            StateTestMiddleware(this).test(this) {
+            StateTestMiddleware(this).test(this, settings = TestSettings(autoCheckInitialState = false)) {
                 assertEquals(someRandomState, awaitState())
             }
         }.also {
@@ -56,7 +64,6 @@ class StateTest {
         val action2 = Random.nextInt()
 
         StateTestMiddleware(this).test(this) {
-            expectInitialState()
             containerHost.newCount(action)
             containerHost.newCount(action2)
             assertEquals(State(count = action), awaitState())
@@ -72,7 +79,6 @@ class StateTest {
 
         assertFailsWith<AssertionError> {
             StateTestMiddleware(this).test(this) {
-                expectInitialState()
                 containerHost.newCount(action)
                 containerHost.newCount(action2)
                 containerHost.newCount(action3)
@@ -92,7 +98,6 @@ class StateTest {
 
         assertFailsWith<AssertionError> {
             StateTestMiddleware(this).test(this) {
-                expectInitialState()
                 containerHost.newCount(action)
                 containerHost.newCount(action2)
                 assertEquals(State(count = action), awaitState())
@@ -112,7 +117,6 @@ class StateTest {
 
         assertFailsWith<AssertionError> {
             StateTestMiddleware(this).test(this) {
-                expectInitialState()
                 containerHost.newCount(action)
                 containerHost.newCount(action2)
                 assertEquals(State(count = action2), awaitState())
@@ -131,7 +135,6 @@ class StateTest {
 
         assertFailsWith<AssertionError> {
             StateTestMiddleware(this).test(this) {
-                expectInitialState()
                 containerHost.newCount(action)
                 containerHost.newCount(action2)
                 assertEquals(State(count = action), awaitState())
@@ -150,7 +153,6 @@ class StateTest {
 
         assertFailsWith<AssertionError> {
             StateTestMiddleware(this).test(this) {
-                expectInitialState()
                 containerHost.newCount(action)
                 containerHost.newCount(action2)
                 containerHost.newCount(action3)
@@ -172,7 +174,6 @@ class StateTest {
                 containerHost.newSideEffect(sideEffect)
                 containerHost.newCount(sideEffect)
 
-                expectInitialState()
                 awaitState()
                 awaitSideEffect()
             }
@@ -188,7 +189,6 @@ class StateTest {
         val action3 = Random.nextInt()
 
         StateTestMiddleware(this).test(this) {
-            expectInitialState()
             containerHost.newList(action)
             containerHost.newList(action2)
             containerHost.newList(action3)
@@ -205,7 +205,6 @@ class StateTest {
         val action3 = Random.nextInt()
 
         StateTestMiddleware(this).test(this) {
-            expectInitialState()
             containerHost.newList(action)
             containerHost.newList(action2)
             containerHost.newList(action3)
@@ -223,7 +222,6 @@ class StateTest {
 
         assertFailsWith<AssertionError> {
             StateTestMiddleware(this).test(this) {
-                expectInitialState()
                 containerHost.newList(action)
                 containerHost.newList(action2)
                 containerHost.newList(action3)
@@ -242,7 +240,6 @@ class StateTest {
 
         assertFailsWith<AssertionError> {
             StateTestMiddleware(this).test(this) {
-                expectInitialState()
                 containerHost.newList(action)
                 containerHost.newList(action2)
                 containerHost.newList(action3)

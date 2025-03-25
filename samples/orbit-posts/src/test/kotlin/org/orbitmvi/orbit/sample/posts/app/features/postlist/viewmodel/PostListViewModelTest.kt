@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 2021-2025 Mikołaj Leszczyński & Appmattus Limited
  * Copyright 2020 Babylon Partners Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -52,8 +52,6 @@ class PostListViewModelTest {
             this,
             initialState = initialState,
         ) {
-            expectInitialState()
-
             runOnCreate().join()
 
             // then the view model loads the overviews
@@ -75,8 +73,6 @@ class PostListViewModelTest {
             this,
             initialState = initialState,
         ) {
-            expectInitialState()
-
             runOnCreate()
 
             expectNoItems()
@@ -94,8 +90,6 @@ class PostListViewModelTest {
             this,
             initialState = initialState,
         ) {
-            expectInitialState()
-
             // when we click a post
             containerHost.onPostClicked(detailTarget)
 

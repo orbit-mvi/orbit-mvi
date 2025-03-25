@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 2021-2025 Mikołaj Leszczyński & Appmattus Limited
  * Copyright 2020 Babylon Partners Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -37,8 +37,6 @@ internal class SimpleDslBehaviourTest {
     fun reducer_produces_new_states() = runTest {
         val action = Random.nextInt()
         BaseDslMiddleware(this).test(this, initialState) {
-            expectInitialState()
-
             containerHost.reducer(action)
 
             expectState { TestState(action) }
@@ -49,8 +47,6 @@ internal class SimpleDslBehaviourTest {
     fun transformer_maps_values() = runTest {
         val action = Random.nextInt()
         BaseDslMiddleware(this).test(this, initialState) {
-            expectInitialState()
-
             containerHost.transformer(action)
 
             expectState { TestState(action + 5) }
@@ -61,8 +57,6 @@ internal class SimpleDslBehaviourTest {
     fun posting_side_effects_emit_side_effects() = runTest {
         val action = Random.nextInt()
         BaseDslMiddleware(this).test(this, initialState) {
-            expectInitialState()
-
             containerHost.postingSideEffect(action)
 
             expectSideEffect(action.toString())

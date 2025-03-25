@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-2023 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 2021-2025 Mikołaj Leszczyński & Appmattus Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,8 +33,6 @@ internal class CreateTest {
         val testSubject = GeneralTestMiddleware(this)
 
         testSubject.test(this, initialState = initialState) {
-            expectInitialState()
-
             testSubject.container.joinIntents()
 
             assertEquals(false, testSubject.createCalled)
@@ -46,8 +44,6 @@ internal class CreateTest {
         val testSubject = GeneralTestMiddleware(this)
 
         testSubject.test(this, initialState = initialState) {
-            expectInitialState()
-
             val job = runOnCreate()
 
             job.join()
@@ -59,7 +55,7 @@ internal class CreateTest {
     @Test
     fun initial_state_can_be_omitted_from_test() = runTest {
         val testSubject = GeneralTestMiddleware(this)
-        testSubject.test(this) {
+        testSubject.test(this, settings = TestSettings(autoCheckInitialState = false)) {
             expectState(initialState)
         }
     }
