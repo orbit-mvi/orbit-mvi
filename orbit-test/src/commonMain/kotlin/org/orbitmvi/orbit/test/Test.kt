@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 2023-2025 Mikołaj Leszczyński & Appmattus Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,6 +27,7 @@ import kotlinx.coroutines.test.runTest
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.RealSettings
+import kotlin.test.assertEquals
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
@@ -61,14 +62,18 @@ public suspend fun <STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHo
         settings = createRealSettings(testDispatcher, testExceptionHandler),
         testScope = testScope.backgroundScope
     )
+
+    val resolvedInitialState: STATE = initialState ?: containerHost.container.findTestContainer().originalInitialState
+
     mergedFlow().test(timeout = timeout) {
         RealOrbitTestContext(
             containerHost,
-            initialState,
-            this
+            resolvedInitialState,
+            this,
+            settings
         ).apply {
-            if (settings.implicitInitialState) {
-                expectInitialState()
+            if (settings.autoCheckInitialState) {
+                assertEquals(resolvedInitialState, awaitState())
             }
             validate(this)
             withAppropriateTimeout(timeout ?: 1.seconds) {

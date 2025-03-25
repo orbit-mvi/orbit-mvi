@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 2021-2025 Mikołaj Leszczyński & Appmattus Limited
  * Copyright 2020 Babylon Partners Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -81,7 +81,7 @@ class PostDetailsViewModelTest {
         PostDetailsViewModel(SavedStateHandle(), repository, overview).test(
             this,
             initialState = initialState,
-            settings = TestSettings(implicitInitialState = false)
+            settings = TestSettings(autoCheckInitialState = false)
         ) {
             runOnCreate()
 
@@ -106,7 +106,7 @@ class PostDetailsViewModelTest {
         PostDetailsViewModel(SavedStateHandle(), repository, overview).test(
             this,
             initialState = initialState,
-            settings = TestSettings(implicitInitialState = false)
+            settings = TestSettings(autoCheckInitialState = false)
         ) {
             runOnCreate().join()
 
