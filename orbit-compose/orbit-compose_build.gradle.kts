@@ -14,47 +14,78 @@
  * limitations under the License.
  */
 
+import org.jetbrains.compose.ExperimentalComposeLibrary
+
 plugins {
+    // We should really be using the com.android.kotlin.multiplatform.library plugin and an androidLibrary block, however, this has issues with
+    // AGP 8.9.0, and with 8.10.0-alpha08 no way to resolve packaging options such as META-INF conflicts.
     id("com.android.library")
-    kotlin("android")
+    kotlin("multiplatform")
     id(libs.plugins.gradleMavenPublishPlugin.get().pluginId)
     id(libs.plugins.dokkaPlugin.get().pluginId)
+    alias(libs.plugins.compose.multiplatform)
     alias(libs.plugins.compose.compiler)
+}
+
+kotlin {
+    androidTarget()
+
+    iosX64()
+    iosArm64()
+    iosSimulatorArm64()
+
+    listOf(
+        iosX64(),
+        iosArm64(),
+        iosSimulatorArm64()
+    ).forEach { iosTarget ->
+        iosTarget.binaries.framework {
+            baseName = "orbit-compose"
+            isStatic = true
+        }
+    }
+
+    jvm("desktop")
+
+    sourceSets {
+        val desktopTest by getting
+
+        commonMain.dependencies {
+            api(project(":orbit-core"))
+            implementation(libs.androidxLifecycleRuntimeCompose)
+        }
+
+        commonTest.dependencies {
+            implementation(kotlin("test"))
+            implementation(kotlin("test-common"))
+            implementation(kotlin("test-annotations-common"))
+            implementation(libs.kotlinCoroutines)
+            implementation(libs.kotlinCoroutinesTest)
+
+            @OptIn(ExperimentalComposeLibrary::class)
+            implementation(compose.uiTest)
+        }
+
+        desktopTest.dependencies {
+            implementation(compose.desktop.currentOs)
+        }
+
+        androidUnitTest.dependencies {
+            implementation(kotlin("test-junit"))
+            implementation(libs.robolectric)
+            implementation(libs.androidxCoreTesting)
+            implementation(libs.androidxComposeUiTestJunit4)
+            implementation(libs.androidxComposeUiTestManifest)
+        }
+    }
 }
 
 android {
     namespace = "org.orbitmvi.orbit.compose"
-
-    testOptions {
-        unitTests {
-            isIncludeAndroidResources = true
-        }
+    compileSdk = 35
+    defaultConfig {
+        minSdk = 21
     }
 
-    buildFeatures {
-        compose = true
-    }
-}
-
-dependencies {
-    api(project(":orbit-core"))
-
-    implementation(libs.androidxComposeRuntime)
-    implementation(libs.androidxLifecycleRuntimeCompose)
-    implementation(libs.androidxLifecycleRuntimeKtx)
-    implementation(libs.androidxComposeUi)
-
-    // Testing
-    testImplementation(kotlin("test-junit"))
-    testImplementation(project(":orbit-test"))
-    testImplementation(project(":test-common"))
-    testImplementation(libs.androidxEspressoCore)
-    testImplementation(libs.robolectric)
-
-    testImplementation(libs.kotlinTest)
-    testImplementation(libs.kotlinCoroutinesTest)
-
-    testImplementation(libs.androidxCoreTesting)
-    testImplementation(libs.androidxComposeUiTestJunit4)
-    testImplementation(libs.androidxComposeUiTestManifest)
+    testOptions.unitTests.isIncludeAndroidResources = true
 }

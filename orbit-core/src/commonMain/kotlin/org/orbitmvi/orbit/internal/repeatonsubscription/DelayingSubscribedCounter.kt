@@ -16,8 +16,6 @@
 
 package org.orbitmvi.orbit.internal.repeatonsubscription
 
-import kotlinx.atomicfu.atomic
-import kotlinx.atomicfu.updateAndGet
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.channels.Channel
@@ -28,6 +26,8 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import org.orbitmvi.orbit.internal.repeatonsubscription.Subscription.Subscribed
 import org.orbitmvi.orbit.internal.repeatonsubscription.Subscription.Unsubscribed
+import kotlin.concurrent.atomics.AtomicInt
+import kotlin.concurrent.atomics.incrementAndFetch
 
 internal class DelayingSubscribedCounter(
     scope: CoroutineScope,
@@ -42,10 +42,10 @@ internal class DelayingSubscribedCounter(
         .debounce { if (it == Unsubscribed) repeatOnSubscribedStopTimeout else 0 }
         .stateIn(scope, started = SharingStarted.Eagerly, initialValue = Unsubscribed)
 
-    private val counter = atomic(0)
+    private val counter = AtomicInt(0)
 
     override suspend fun increment() {
-        counter.incrementAndGet()
+        counter.incrementAndFetch()
         _subscribed.send(Subscribed)
     }
 
@@ -53,5 +53,13 @@ internal class DelayingSubscribedCounter(
         if (counter.updateAndGet { if (it > 0) it - 1 else 0 } == 0) {
             _subscribed.send(Unsubscribed)
         }
+    }
+}
+
+private inline fun AtomicInt.updateAndGet(function: (Int) -> Int): Int {
+    while (true) {
+        val cur = load()
+        val upd = function(cur)
+        if (compareAndSet(cur, upd)) return upd
     }
 }

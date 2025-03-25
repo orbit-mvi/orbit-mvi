@@ -37,7 +37,7 @@ buildscript {
         classpath(libs.buildscript.android)
         classpath(libs.buildscript.kotlin)
         classpath(libs.buildscript.safeargs)
-        classpath(libs.buildscript.atomicfu)
+        classpath(libs.buildscript.hilt)
     }
 }
 
@@ -140,7 +140,9 @@ subprojects {
     tasks.withType<KotlinCompile>().all {
         compilerOptions {
             jvmTarget = JvmTarget.JVM_11
-            allWarningsAsErrors = true
+            if (project.name !in listOf("orbit-stocklist-jetpack-compose")) {
+                allWarningsAsErrors = true
+            }
         }
     }
     plugins.withType<JavaBasePlugin> {
@@ -173,7 +175,9 @@ subprojects {
         }
     }
     plugins.withType<org.jetbrains.kotlin.gradle.plugin.KotlinMultiplatformPluginWrapper> {
-        apply(from = "$rootDir/gradle/scripts/jacoco.gradle.kts")
+        if (project.name !in listOf("orbit-viewmodel", "orbit-compose")) {
+            apply(from = "$rootDir/gradle/scripts/jacoco.gradle.kts")
+        }
         configure<org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension> {
             // for strict mode
             explicitApi()

@@ -22,7 +22,6 @@ plugins {
     kotlin("multiplatform")
     id(libs.plugins.gradleMavenPublishPlugin.get().pluginId)
     id(libs.plugins.dokkaPlugin.get().pluginId)
-    id(libs.plugins.atomicfu.get().pluginId)
 }
 
 kotlin {
@@ -61,6 +60,10 @@ kotlin {
     applyDefaultHierarchyTemplate()
 
     sourceSets {
+        all {
+            languageSettings.optIn("kotlin.concurrent.atomics.ExperimentalAtomicApi")
+        }
+
         commonMain.dependencies {
             implementation(kotlin("test-common"))
             api(libs.kotlinCoroutines)

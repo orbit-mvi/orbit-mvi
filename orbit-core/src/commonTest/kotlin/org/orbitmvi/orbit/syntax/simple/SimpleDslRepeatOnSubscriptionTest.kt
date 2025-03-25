@@ -19,7 +19,6 @@
 
 package org.orbitmvi.orbit.syntax.simple
 
-import kotlinx.atomicfu.atomic
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -32,6 +31,8 @@ import org.orbitmvi.orbit.internal.repeatonsubscription.Subscription
 import org.orbitmvi.orbit.internal.repeatonsubscription.TestSubscribedCounter
 import org.orbitmvi.orbit.syntax.ContainerContext
 import org.orbitmvi.orbit.syntax.Syntax
+import kotlin.concurrent.atomics.AtomicInt
+import kotlin.concurrent.atomics.incrementAndFetch
 import kotlin.test.AfterTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -40,7 +41,7 @@ internal class SimpleDslRepeatOnSubscriptionTest {
 
     private val testScope = CoroutineScope(Dispatchers.Unconfined)
 
-    private val count = atomic(0)
+    private val count = AtomicInt(0)
 
     private val testSubscribedCounter = TestSubscribedCounter()
 
@@ -63,7 +64,7 @@ internal class SimpleDslRepeatOnSubscriptionTest {
     fun repeat_on_subscription_block_called_for_each_subscribed_event() {
         testScope.launch {
             syntax.repeatOnSubscription {
-                count.incrementAndGet()
+                count.incrementAndFetch()
             }
         }
 
@@ -71,7 +72,7 @@ internal class SimpleDslRepeatOnSubscriptionTest {
         testSubscribedCounter.flow.value = Subscription.Unsubscribed
         testSubscribedCounter.flow.value = Subscription.Subscribed
 
-        assertEquals(2, count.value)
+        assertEquals(2, count.load())
     }
 
     @Test
@@ -81,7 +82,7 @@ internal class SimpleDslRepeatOnSubscriptionTest {
                 try {
                     delay(5000L)
                 } catch (expected: CancellationException) {
-                    count.incrementAndGet()
+                    count.incrementAndFetch()
                     throw expected
                 }
             }
@@ -90,6 +91,6 @@ internal class SimpleDslRepeatOnSubscriptionTest {
         testSubscribedCounter.flow.value = Subscription.Subscribed
         testSubscribedCounter.flow.value = Subscription.Unsubscribed
 
-        assertEquals(1, count.value)
+        assertEquals(1, count.load())
     }
 }

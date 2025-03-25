@@ -20,8 +20,6 @@
 
 package org.orbitmvi.orbit.test
 
-import kotlinx.atomicfu.atomic
-import kotlinx.atomicfu.updateAndGet
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -31,16 +29,17 @@ import kotlinx.coroutines.channels.produce
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import kotlin.concurrent.atomics.AtomicReference
 
 @OptIn(ExperimentalCoroutinesApi::class)
 public class ScopedBlockingWorkSimulator(private val scope: CoroutineScope) {
 
-    private val job = atomic<Job?>(null)
+    private val job = AtomicReference<Job?>(null)
 
     init {
         scope.produce<Unit>(Dispatchers.Default) {
             awaitClose {
-                job.value?.cancel()
+                job.load()?.cancel()
             }
         }
     }
@@ -59,5 +58,13 @@ public class ScopedBlockingWorkSimulator(private val scope: CoroutineScope) {
             while (it?.isActive == true) {
             }
         }
+    }
+}
+
+private inline fun <T> AtomicReference<T>.updateAndGet(function: (T) -> T): T {
+    while (true) {
+        val cur = load()
+        val upd = function(cur)
+        if (compareAndSet(cur, upd)) return upd
     }
 }
