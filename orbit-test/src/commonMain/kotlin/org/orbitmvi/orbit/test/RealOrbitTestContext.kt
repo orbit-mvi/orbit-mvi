@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 2023-2025 Mikołaj Leszczyński & Appmattus Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,12 +26,11 @@ import kotlin.test.fail
 
 public class RealOrbitTestContext<STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHost<STATE, SIDE_EFFECT>>(
     override val containerHost: CONTAINER_HOST,
-    initialState: STATE?,
-    private val emissions: ReceiveTurbine<Item<STATE, SIDE_EFFECT>>
+    private val resolvedInitialState: STATE,
+    private val emissions: ReceiveTurbine<Item<STATE, SIDE_EFFECT>>,
+    private val settings: TestSettings
 ) : OrbitTestContext<STATE, SIDE_EFFECT, CONTAINER_HOST> {
-    private val resolvedInitialState: STATE by lazy {
-        initialState ?: containerHost.container.findTestContainer().originalInitialState
-    }
+
     private var currentConsumedState: STATE = resolvedInitialState
 
     @OptIn(OrbitInternal::class)
@@ -63,8 +62,19 @@ public class RealOrbitTestContext<STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST
         containerHost.container.cancel()
     }
 
+    @Deprecated(
+        "Initial state is now checked automatically. If you wish to manually verify the initial state, use " +
+            "`autoCheckInitialState=false` in test settings and use `expectState` or `awaitState`"
+    )
     override suspend fun expectInitialState() {
-        assertEquals(resolvedInitialState, awaitState())
+        if (settings.autoCheckInitialState) {
+            println(
+                "Initial state is now checked automatically. If you wish to manually verify the initial state, use " +
+                    "`autoCheckInitialState=false` in test settings and use `expectState` or `awaitState`"
+            )
+        } else {
+            assertEquals(resolvedInitialState, awaitState())
+        }
     }
 
     override suspend fun expectState(expected: STATE) {

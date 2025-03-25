@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 2023-2025 Mikołaj Leszczyński & Appmattus Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,8 +30,6 @@ class RepeatOnSubscriptionTest {
     @Test
     fun test_does_not_hang_when_using_repeat_on_subscription() = runTest {
         TestMiddleware(this).test(this, initialState = initialState) {
-            expectInitialState()
-
             containerHost.callOnSubscription { 42 }
 
             assertEquals(State(42), awaitState())

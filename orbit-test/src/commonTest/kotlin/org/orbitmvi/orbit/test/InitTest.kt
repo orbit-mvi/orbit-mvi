@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 2023-2025 Mikołaj Leszczyński & Appmattus Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,8 +32,8 @@ internal class InitTest {
     @Test
     fun created_is_not_invoked_by_default() = runTest {
         val mockDependency = FakeDependency()
-        createMiddleware(mockDependency).test(this, initialState) {
-            expectInitialState()
+        createMiddleware(mockDependency).test(this, initialState, settings = TestSettings(autoCheckInitialState = false)) {
+            expectState { initialState }
         }
 
         assertEquals(false, mockDependency.createCalled.load())
@@ -42,8 +42,8 @@ internal class InitTest {
     @Test
     fun created_is_invoked_upon_request() = runTest {
         val mockDependency = FakeDependency()
-        createMiddleware(mockDependency).test(this, initialState = initialState) {
-            expectInitialState()
+        createMiddleware(mockDependency).test(this, initialState = initialState, settings = TestSettings(autoCheckInitialState = false)) {
+            expectState { initialState }
             runOnCreate()
         }
 
@@ -51,9 +51,30 @@ internal class InitTest {
     }
 
     @Test
+    fun initial_state_can_be_explicitly_checked_in_test_with_awaitState() = runTest {
+        createMiddleware().test(this, settings = TestSettings(autoCheckInitialState = false)) {
+            assertEquals(initialState, awaitState())
+        }
+    }
+
+    @Test
+    fun initial_state_can_be_explicitly_checked_in_test_with_expectInitialState() = runTest {
+        createMiddleware().test(this, settings = TestSettings(autoCheckInitialState = false)) {
+            @Suppress("DEPRECATION")
+            expectInitialState()
+        }
+    }
+
+    @Test
+    fun initial_state_can_be_explicitly_checked_in_test_with_expectState() = runTest {
+        createMiddleware().test(this, settings = TestSettings(autoCheckInitialState = false)) {
+            expectState { initialState }
+        }
+    }
+
+    @Test
     fun initial_state_can_be_omitted_from_test() = runTest {
         createMiddleware().test(this) {
-            assertEquals(initialState, awaitState())
         }
     }
 

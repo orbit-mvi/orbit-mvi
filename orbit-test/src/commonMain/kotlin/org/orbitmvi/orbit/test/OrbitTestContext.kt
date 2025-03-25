@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 2023-2025 Mikołaj Leszczyński & Appmattus Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,6 +35,10 @@ public interface OrbitTestContext<STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST
      *
      * @throws AssertionError if initial state does not match.
      */
+    @Deprecated(
+        "Initial state is now checked automatically. If you wish to manually verify the initial state, use " +
+            "`autoCheckInitialState=false` in test settings and use `expectState` or `awaitState`"
+    )
     public suspend fun expectInitialState()
 
     /**

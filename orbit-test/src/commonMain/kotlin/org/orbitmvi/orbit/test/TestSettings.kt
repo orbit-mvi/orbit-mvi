@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 2023-2025 Mikołaj Leszczyński & Appmattus Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,8 +25,14 @@ public data class TestSettings(
      * Set this to override the [Container]'s [CoroutineDispatcher]s for this test
      */
     val dispatcherOverride: CoroutineDispatcher? = null,
+
     /**
      * Set this to override the [Container]'s [CoroutineExceptionHandler]s for this test
      */
     val exceptionHandlerOverride: CoroutineExceptionHandler? = null,
+
+    /**
+     * Set this to override the explicit initial state check for this test
+     */
+    val autoCheckInitialState: Boolean = true
 )

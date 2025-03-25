@@ -102,7 +102,6 @@ class ViewModelExtensionsKtKmpTest : RobolectricTest() {
         Middleware(savedStateHandle, initialState) {
             assertEquals(savedState, state)
         }.test(this) {
-            expectInitialState()
             runOnCreate()
         }
     }
@@ -115,7 +114,6 @@ class ViewModelExtensionsKtKmpTest : RobolectricTest() {
         Middleware(savedStateHandle, initialState) {
             assertEquals(initialState, state)
         }.test(this) {
-            expectInitialState()
             runOnCreate()
         }
     }

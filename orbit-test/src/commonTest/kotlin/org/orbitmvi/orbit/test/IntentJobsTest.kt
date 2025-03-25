@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 2023-2025 Mikołaj Leszczyński & Appmattus Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,8 +39,6 @@ class IntentJobsTest {
         assertFails {
             runTest {
                 IntentJobsMiddleware(this).test(this) {
-                    expectInitialState()
-
                     containerHost.infiniteIntent()
                 }
             }
@@ -50,8 +48,6 @@ class IntentJobsTest {
     @Test
     fun unfinished_intents_at_the_end_of_the_test_may_be_ignored() = runTest {
         IntentJobsMiddleware(this).test(this) {
-            expectInitialState()
-
             containerHost.infiniteIntent()
             cancelAndIgnoreRemainingItems()
         }
@@ -60,8 +56,6 @@ class IntentJobsTest {
     @Test
     fun intents_may_be_cancelled() = runTest {
         IntentJobsMiddleware(this).test(this) {
-            expectInitialState()
-
             val job = containerHost.infiniteIntent()
 
             job.cancel()
@@ -72,8 +66,6 @@ class IntentJobsTest {
     fun intents_may_be_joined() = runTest {
         val scope = TestScope()
         IntentJobsMiddleware(this).test(scope) {
-            expectInitialState()
-
             val job = containerHost.longIntent()
 
             scope.testScheduler.advanceTimeBy(300)
@@ -92,8 +84,6 @@ class IntentJobsTest {
     fun on_create_may_be_joined() = runTest {
         val scope = TestScope()
         IntentJobsMiddleware(this).test(scope) {
-            expectInitialState()
-
             val job = runOnCreate()
 
             scope.testScheduler.advanceTimeBy(300)
@@ -112,8 +102,6 @@ class IntentJobsTest {
     fun on_create_may_be_cancelled() = runTest {
         val scope = TestScope()
         IntentJobsMiddleware(this).test(scope) {
-            expectInitialState()
-
             val job = runOnCreate()
 
             scope.testScheduler.advanceTimeBy(200)

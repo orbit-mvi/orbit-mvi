@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 2023-2025 Mikołaj Leszczyński & Appmattus Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,7 +37,6 @@ class ItemsTest {
         val sideEffect2 = 4
 
         ItemTestMiddleware(this).test(this) {
-            expectInitialState()
             containerHost.newState(state1)
             containerHost.newSideEffect(sideEffect1)
             containerHost.newState(state2)
@@ -56,7 +55,6 @@ class ItemsTest {
         val sideEffect2 = 4
 
         ItemTestMiddleware(this).test(this) {
-            expectInitialState()
             containerHost.newState(state1)
             containerHost.newSideEffect(sideEffect1)
             containerHost.newState(state2)
@@ -72,14 +70,13 @@ class ItemsTest {
     @Test
     fun correctly_expects_no_items() = runTest {
         ItemTestMiddleware(this).test(this) {
-            expectInitialState()
             expectNoItems()
         }
     }
 
     @Test
     fun expects_no_items_fails_when_there_are_unconsumed_items() = runTest {
-        ItemTestMiddleware(this).test(this) {
+        ItemTestMiddleware(this).test(this, settings = TestSettings(autoCheckInitialState = false)) {
             assertFails { expectNoItems() }
         }
     }

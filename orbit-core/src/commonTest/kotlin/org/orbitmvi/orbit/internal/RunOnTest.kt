@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 2024-2025 Mikołaj Leszczyński & Appmattus Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@ import kotlinx.coroutines.test.runTest
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.container
+import org.orbitmvi.orbit.test.TestSettings
 import org.orbitmvi.orbit.test.test
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -37,7 +38,7 @@ internal class RunOnTest {
     fun run_on_does_not_run_when_state_does_not_match_expected() = runTest {
         val middleware = Middleware(backgroundScope)
 
-        middleware.test(this) {
+        middleware.test(this, settings = TestSettings(autoCheckInitialState = false)) {
             expectState { TestState.Loading }
 
             val job = middleware.doIfInReadyState()
@@ -52,7 +53,7 @@ internal class RunOnTest {
     fun run_on_runs_when_state_matches_expected() = runTest {
         val middleware = Middleware(backgroundScope)
 
-        middleware.test(this) {
+        middleware.test(this, settings = TestSettings(autoCheckInitialState = false)) {
             expectState { TestState.Loading }
 
             middleware.changeToState(TestState.Ready(42))
@@ -67,7 +68,7 @@ internal class RunOnTest {
     fun run_on_does_not_run_when_state_matches_expected_but_predicate_does_not_match() = runTest {
         val middleware = Middleware(backgroundScope)
 
-        middleware.test(this) {
+        middleware.test(this, settings = TestSettings(autoCheckInitialState = false)) {
             expectState { TestState.Loading }
 
             middleware.changeToState(TestState.Ready(42))
@@ -84,7 +85,7 @@ internal class RunOnTest {
     fun run_on_runs_when_state_matches_expected_and_predicate_matches() = runTest {
         val middleware = Middleware(backgroundScope)
 
-        middleware.test(this) {
+        middleware.test(this, settings = TestSettings(autoCheckInitialState = false)) {
             expectState { TestState.Loading }
 
             middleware.changeToState(TestState.Ready(42))
@@ -102,7 +103,7 @@ internal class RunOnTest {
     fun run_on_cancels_when_state_stops_matching_expected() = runTest {
         val middleware = Middleware(backgroundScope)
 
-        middleware.test(this) {
+        middleware.test(this, settings = TestSettings(autoCheckInitialState = false)) {
             expectState { TestState.Loading }
 
             middleware.changeToState(TestState.Ready(42))
@@ -124,7 +125,7 @@ internal class RunOnTest {
     fun run_on_cancels_when_predicate_stops_matching() = runTest {
         val middleware = Middleware(backgroundScope)
 
-        middleware.test(this) {
+        middleware.test(this, settings = TestSettings(autoCheckInitialState = false)) {
             expectState { TestState.Loading }
 
             middleware.changeToState(TestState.Ready(42))
@@ -146,7 +147,7 @@ internal class RunOnTest {
     fun run_on_does_not_cancel_when_predicate_keeps_matching_on_subsequent_emissions() = runTest {
         val middleware = Middleware(backgroundScope)
 
-        middleware.test(this) {
+        middleware.test(this, settings = TestSettings(autoCheckInitialState = false)) {
             expectState { TestState.Loading }
 
             middleware.changeToState(TestState.Ready(42))

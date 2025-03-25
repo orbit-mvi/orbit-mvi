@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 2021-2025 Mikołaj Leszczyński & Appmattus Limited
  * Copyright 2020 Babylon Partners Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -32,6 +32,7 @@ import org.orbitmvi.orbit.sample.posts.domain.repositories.PostDetail
 import org.orbitmvi.orbit.sample.posts.domain.repositories.PostOverview
 import org.orbitmvi.orbit.sample.posts.domain.repositories.PostRepository
 import org.orbitmvi.orbit.sample.posts.domain.repositories.Status
+import org.orbitmvi.orbit.test.TestSettings
 import org.orbitmvi.orbit.test.test
 import java.io.IOException
 
@@ -58,8 +59,6 @@ class PostDetailsViewModelTest {
             this,
             initialState = initialState,
         ) {
-            expectInitialState()
-
             runOnCreate()
 
             // then the view model loads the details
@@ -82,6 +81,7 @@ class PostDetailsViewModelTest {
         PostDetailsViewModel(SavedStateHandle(), repository, overview).test(
             this,
             initialState = initialState,
+            settings = TestSettings(autoCheckInitialState = false)
         ) {
             runOnCreate()
 
@@ -106,6 +106,7 @@ class PostDetailsViewModelTest {
         PostDetailsViewModel(SavedStateHandle(), repository, overview).test(
             this,
             initialState = initialState,
+            settings = TestSettings(autoCheckInitialState = false)
         ) {
             runOnCreate().join()
 
