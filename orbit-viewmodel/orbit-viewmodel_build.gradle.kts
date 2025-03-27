@@ -53,8 +53,8 @@ kotlin {
         commonMain.dependencies {
             api(project(":orbit-core"))
             api(libs.androidxLifecycleViewmodel)
-            implementation(libs.androidxLifecycleViewmodelSavedState)
-            implementation(libs.androidxLifecycleRuntime)
+            api(libs.androidxLifecycleViewmodelSavedState)
+            api(libs.androidxLifecycleRuntime)
         }
 
         commonTest.dependencies {
