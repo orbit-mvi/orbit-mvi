@@ -8,6 +8,6 @@ This software uses the following open source works:
 
 - [Kotlin](https://github.com/JetBrains/kotlin)
 - [Android](https://developer.android.com)
-- [Orbit MVI](https://github.com/orbit-mvi/orbit-mvi)
+- [Orbit Multiplatform](https://github.com/orbit-mvi/orbit-mvi)
 - [Lightstreamer](https://lightstreamer.com)
 - [Dagger](https://dagger.dev)

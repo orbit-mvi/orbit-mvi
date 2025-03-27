@@ -1,7 +1,7 @@
 # Orbit Sample - Posts
 
 This sample implements a simple master-detail application using
-[Orbit MVI](https://github.com/orbit-mvi/orbit-mvi).
+[Orbit Multiplatform](https://github.com/orbit-mvi/orbit-mvi).
 
 - The application uses Koin for dependency injection which is initialised in
   [PostsApplication](src/main/kotlin/org/orbitmvi/orbit/sample/posts/app//PostsApplication.kt).
