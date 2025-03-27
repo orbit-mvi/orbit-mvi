@@ -66,7 +66,7 @@ public suspend fun <STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHo
     val resolvedInitialState: STATE = initialState ?: containerHost.container.findTestContainer().originalInitialState
 
     mergedFlow().test(timeout = timeout) {
-        RealOrbitTestContext(
+        OrbitTestContext(
             containerHost,
             resolvedInitialState,
             this,
