@@ -55,13 +55,13 @@ public class OrbitTestContext<STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : C
      */
     @Deprecated(
         "Initial state is now checked automatically. If you wish to manually verify the initial state, use " +
-                "`autoCheckInitialState=false` in test settings and use `expectState` or `awaitState`"
+            "`autoCheckInitialState=false` in test settings and use `expectState` or `awaitState`"
     )
     public suspend fun expectInitialState() {
         if (settings.autoCheckInitialState) {
             println(
                 "Initial state is now checked automatically. If you wish to manually verify the initial state, use " +
-                        "`autoCheckInitialState=false` in test settings and use `expectState` or `awaitState`"
+                    "`autoCheckInitialState=false` in test settings and use `expectState` or `awaitState`"
             )
         } else {
             assertEquals(resolvedInitialState, awaitState())
