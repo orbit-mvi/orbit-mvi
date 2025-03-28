@@ -126,7 +126,7 @@ subprojects {
         ?.replaceFirst("refs/tags/", "") ?: "unspecified"
 
     tasks.withType<Test> {
-        if (project.name !in listOf("orbit-core", "orbit-test", "orbit-viewmodel", "orbit-compose", "orbit-stocklist-jetpack-compose")) {
+        if (project.name !in listOf("orbit-core", "orbit-test", "orbit-viewmodel", "orbit-compose")) {
             useJUnitPlatform {
                 includeEngines(
                     "junit-jupiter"
