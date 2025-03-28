@@ -108,7 +108,7 @@ allprojects {
                 customAssets.from("$rootDir/dokka/logo-icon.svg")
                 footerMessage.set(
                     provider {
-                        "© 2021-${ZonedDateTime.now().year} Mikołaj Leszczyński & Appmattus Limited"
+                        "Copyright © 2021-${ZonedDateTime.now().year} Mikołaj Leszczyński & Appmattus Limited"
                     }
                 )
             }
