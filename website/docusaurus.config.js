@@ -52,7 +52,7 @@ module.exports = {
                     ],
                 },
             ],
-            copyright: `Copyright © ${new Date().getFullYear()} Appmattus Limited & Mikołaj Leszczyński. Built with Docusaurus.`,
+            copyright: `Copyright © 2021-${new Date().getFullYear()} Mikołaj Leszczyński & Appmattus Limited`,
         },
         prism: {
             theme: lightCodeTheme,

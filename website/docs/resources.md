@@ -2,7 +2,8 @@
 
 ## Articles
 
-- [Top Android MVI libraries in 2021](https://appmattus.medium.com/top-android-mvi-libraries-in-2021-de1afe890f27)
+- [Top Android MVI libraries in 2021](https://appmattus.medium.com/de1afe890f27)
+- [Orbit Multiplatform wins Kotlin Foundation Grant: A Journey and a Look Ahead](https://appmattus.medium.com/6b949cf8133e)
 
 ## Talks
 

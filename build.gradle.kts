@@ -108,7 +108,7 @@ allprojects {
                 customAssets.from("$rootDir/dokka/logo-icon.svg")
                 footerMessage.set(
                     provider {
-                        "© 2021-${ZonedDateTime.now().year} Mikołaj Leszczyński & Appmattus Limited"
+                        "Copyright © 2021-${ZonedDateTime.now().year} Mikołaj Leszczyński & Appmattus Limited"
                     }
                 )
             }
@@ -126,7 +126,7 @@ subprojects {
         ?.replaceFirst("refs/tags/", "") ?: "unspecified"
 
     tasks.withType<Test> {
-        if (project.name !in listOf("orbit-core", "orbit-test", "orbit-viewmodel", "orbit-compose")) {
+        if (project.name !in listOf("orbit-core", "orbit-test", "orbit-viewmodel", "orbit-compose", "orbit-stocklist-jetpack-compose")) {
             useJUnitPlatform {
                 includeEngines(
                     "junit-jupiter"
