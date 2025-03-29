@@ -59,7 +59,7 @@ objects.
 ### Create the ViewModel
 
 1. Implement the
-   [ContainerHost](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-container/)
+   [ContainerHost](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-container-host/)
    interface
 1. Override the `container` field and use the `ViewModel.container` factory
    function to build an Orbit
@@ -114,10 +114,10 @@ class CalculatorActivity: AppCompatActivity() {
         lifecycleScope.launch {
             lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
-                    viewModel.container.stateFlow.collect { render(it) }
+                    viewModel.container.refCountStateFlow.collect { render(it) }
                 }
                 launch {
-                    viewModel.container.sideEffectFlow.collect { handleSideEffect(it) }
+                    viewModel.container.refCountSideEffectFlow.collect { handleSideEffect(it) }
                 }
             }
         }
