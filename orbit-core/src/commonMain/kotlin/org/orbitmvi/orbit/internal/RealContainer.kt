@@ -86,11 +86,11 @@ public class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
         stateFlow = stateFlow,
     )
 
-    override suspend fun orbit(orbitIntent: suspend ContainerContext<STATE, SIDE_EFFECT>.() -> Unit): Job {
+    override fun orbit(orbitIntent: suspend ContainerContext<STATE, SIDE_EFFECT>.() -> Unit): Job {
         initialiseIfNeeded()
 
         val job = Job(intentJob)
-        dispatchChannel.send(job to orbitIntent)
+        dispatchChannel.trySend(job to orbitIntent)
         return job
     }
 

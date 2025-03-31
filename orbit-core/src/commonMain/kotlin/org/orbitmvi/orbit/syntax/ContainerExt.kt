@@ -21,7 +21,6 @@
 package org.orbitmvi.orbit.syntax
 
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.runBlocking
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.annotation.OrbitDsl
 import org.orbitmvi.orbit.idling.withIdling
@@ -36,10 +35,8 @@ import org.orbitmvi.orbit.idling.withIdling
 internal fun <STATE : Any, SIDE_EFFECT : Any> Container<STATE, SIDE_EFFECT>.intent(
     registerIdling: Boolean = true,
     transformer: suspend ContainerContext<STATE, SIDE_EFFECT>.() -> Unit
-): Job = runBlocking {
-    orbit {
-        withIdling(registerIdling) {
-            transformer()
-        }
+): Job = orbit {
+    withIdling(registerIdling) {
+        transformer()
     }
 }
