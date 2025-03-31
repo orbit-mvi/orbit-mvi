@@ -2,6 +2,9 @@
 sidebar_label: Core
 ---
 
+import CodeBlock from "@theme/CodeBlock";
+import latestRelease from "@site/src/plugins/github-latest-release/generated/data.json";
+
 # Core
 
 This is the core module for the Orbit framework.
@@ -9,9 +12,7 @@ It provides all the basic parts of Orbit.
 
 You will need this module (or modules that include it) to get started!
 
-```kotlin
-implementation("org.orbit-mvi:orbit-core:<latest-version>")
-```
+<CodeBlock language="kotlin">implementation("org.orbit-mvi:orbit-core:{latestRelease.tag_name}")</CodeBlock>
 
 See [architecture](architecture.md) if you're interested in learning more about
 MVI and how its concepts map onto Orbit's components.

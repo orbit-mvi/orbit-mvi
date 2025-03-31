@@ -2,6 +2,9 @@
 sidebar_label: 'Compose (Multiplatform)'
 ---
 
+import CodeBlock from "@theme/CodeBlock";
+import latestRelease from "@site/src/plugins/github-latest-release/generated/data.json";
+
 # Jetpack Compose and Compose Multiplatform
 
 The module provides [ContainerHost](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-container-host/)
@@ -15,9 +18,7 @@ Compose Multiplatform support added in Orbit v10.0.0.
 
 ## Including the module
 
-```kotlin
-implementation("org.orbit-mvi:orbit-compose:<latest-version>")
-```
+<CodeBlock language="kotlin">implementation("org.orbit-mvi:orbit-compose:{latestRelease.tag_name}")</CodeBlock>
 
 ## Subscribing to a ContainerHost in Compose
 

@@ -2,6 +2,9 @@
 sidebar_label: 'Getting started'
 ---
 
+import CodeBlock from "@theme/CodeBlock";
+import latestRelease from "@site/src/plugins/github-latest-release/generated/data.json";
+
 # Orbit Multiplatform
 
 ![Logo](images/logo.png)
@@ -24,21 +27,14 @@ Key features:
 
 ## Getting started
 
-[![Download](https://img.shields.io/maven-central/v/org.orbit-mvi/orbit-viewmodel)](https://search.maven.org/artifact/org.orbit-mvi/orbit-viewmodel)
-
-```kotlin
-// Core of Orbit, providing state management and unidirectional data flow (multiplatform)
-implementation("org.orbit-mvi:orbit-core:<latest-version>")
-
+<CodeBlock language="kotlin">// Core of Orbit, providing state management and unidirectional data flow (multiplatform)
+implementation("org.orbit-mvi:orbit-core:{latestRelease.tag_name}")
 // Integrates Orbit with Android and Common ViewModel for lifecycle-aware state handling (Android, iOS, desktop)
-implementation("org.orbit-mvi:orbit-viewmodel:<latest-version>")
-
+implementation("org.orbit-mvi:orbit-viewmodel:{latestRelease.tag_name}")
 // Enables Orbit support for Jetpack Compose and Compose Multiplatform (Android, iOS, desktop)
-implementation("org.orbit-mvi:orbit-compose:<latest-version>")
-
+implementation("org.orbit-mvi:orbit-compose:{latestRelease.tag_name}")
 // Simplifies testing with utilities for verifying state and event flows (multiplatform)
-testImplementation("org.orbit-mvi:orbit-test:<latest-version>")
-```
+testImplementation("org.orbit-mvi:orbit-test:{latestRelease.tag_name}")</CodeBlock>
 
 ### Define the contract
 

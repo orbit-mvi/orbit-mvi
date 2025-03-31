@@ -2,6 +2,10 @@
 sidebar_label: 'Test'
 ---
 
+import CodeBlock from "@theme/CodeBlock";
+import latestRelease from "@site/src/plugins/github-latest-release/generated/data.json";
+
+
 # Test
 
 The framework is based on the [Turbine](https://github.com/cashapp/turbine)
@@ -11,9 +15,7 @@ Orbit's framework offers a subset of the Turbine APIs and
 ensures predictable coroutine scoping and context through use of the
 [coroutine testing APIs](https://kotlinlang.org/api/kotlinx.coroutines/kotlinx-coroutines-test/kotlinx.coroutines.test/run-test.html).
 
-```kotlin
-testImplementation("org.orbit-mvi:orbit-test:<latest-version>")
-```
+<CodeBlock language="kotlin">testImplementation("org.orbit-mvi:orbit-test:{latestRelease.tag_name}")</CodeBlock>
 
 ## Testing process
 
