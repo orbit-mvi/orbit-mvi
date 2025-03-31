@@ -2,6 +2,9 @@
 sidebar_label: 'ViewModel (Multiplatform)'
 ---
 
+import CodeBlock from "@theme/CodeBlock";
+import latestRelease from "@site/src/plugins/github-latest-release/generated/data.json";
+
 # Android and Common ViewModel
 
 The module provides [Container](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-container/)
@@ -26,9 +29,7 @@ Common ViewModel (Multiplatform) support added in Orbit v10.0.0.
 
 ## Including the module
 
-```kotlin
-implementation("org.orbit-mvi:orbit-viewmodel:<latest-version>")
-```
+<CodeBlock language="kotlin">implementation("org.orbit-mvi:orbit-viewmodel:{latestRelease.tag_name}")</CodeBlock>
 
 ## Creating a container in a ViewModel
 

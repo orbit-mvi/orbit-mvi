@@ -108,6 +108,7 @@ const config = {
         mermaid: true,
     },
     themes: ['@docusaurus/theme-mermaid'],
+    plugins: ['./src/plugins/github-latest-release'],
 };
 
 export default config;
