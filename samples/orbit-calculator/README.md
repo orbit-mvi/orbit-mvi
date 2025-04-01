@@ -1,6 +1,6 @@
 # Orbit Sample - Calculator
 
-This sample implements a simple calculator using [Orbit MVI](https://github.com/orbit-mvi/orbit-mvi).
+This sample implements a simple calculator using [Orbit Multiplatform](https://github.com/orbit-mvi/orbit-mvi).
 
 - The application uses Koin for dependency injection which is initialised in
   [CalculatorApplication](src/main/kotlin/org/orbitmvi/orbit/sample/calculator/CalculatorApplication.kt).

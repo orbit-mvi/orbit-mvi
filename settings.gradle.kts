@@ -25,6 +25,7 @@ include(
     "orbit-compose",
     "samples:orbit-calculator",
     "samples:orbit-posts",
+    "samples:orbit-posts-compose-multiplatform:composeApp",
     "samples:orbit-stocklist",
     "samples:orbit-stocklist-jetpack-compose",
     "samples:orbit-text",
