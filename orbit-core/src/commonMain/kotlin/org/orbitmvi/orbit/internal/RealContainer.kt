@@ -39,7 +39,10 @@ import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
 import org.orbitmvi.orbit.Container
+import org.orbitmvi.orbit.OrbitGlobalSettings
 import org.orbitmvi.orbit.RealSettings
+import org.orbitmvi.orbit.Send
+import org.orbitmvi.orbit.TrySend
 import org.orbitmvi.orbit.internal.repeatonsubscription.DelayingSubscribedCounter
 import org.orbitmvi.orbit.internal.repeatonsubscription.SubscribedCounter
 import org.orbitmvi.orbit.internal.repeatonsubscription.refCount
@@ -90,7 +93,20 @@ public class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
         initialiseIfNeeded()
 
         val job = Job(intentJob)
-        dispatchChannel.send(job to orbitIntent)
+        when (val orbitDispatch = OrbitGlobalSettings.orbitDispatch) {
+            is Send -> dispatchChannel.send(job to orbitIntent)
+            is TrySend -> {
+                val result = dispatchChannel.trySend(job to orbitIntent)
+                if (result.isFailure) {
+                    val message = when {
+                        result.isClosed && result.exceptionOrNull() != null -> "Dispatch channel is closed. ${result.exceptionOrNull()}"
+                        result.isClosed -> "Dispatch channel is closed."
+                        else -> "Dispatch channel failed to receive the value."
+                    }
+                    orbitDispatch.onFailure(message)
+                }
+            }
+        }
         return job
     }
 
