@@ -95,7 +95,7 @@ public interface Container<STATE : Any, SIDE_EFFECT : Any> {
      *
      * @param orbitIntent lambda returning the suspend function representing the intent
      */
-    public suspend fun orbit(orbitIntent: suspend ContainerContext<STATE, SIDE_EFFECT>.() -> Unit): Job
+    public fun orbit(orbitIntent: suspend ContainerContext<STATE, SIDE_EFFECT>.() -> Unit): Job
 
     /**
      * Executes an orbit intent inline, circumventing orbit's dispatching. The intents are built in the [ContainerHost] using your chosen syntax.

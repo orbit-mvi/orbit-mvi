@@ -18,7 +18,6 @@ package org.orbitmvi.orbit.test
 
 import app.cash.turbine.ReceiveTurbine
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.runBlocking
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.annotation.OrbitInternal
 import kotlin.test.assertEquals
@@ -40,10 +39,8 @@ public class OrbitTestContext<STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : C
     public fun runOnCreate(): Job {
         @OptIn(OrbitInternal::class)
         val onCreate = containerHost.container.findOnCreate()
-        return runBlocking {
-            @OptIn(OrbitInternal::class)
-            containerHost.container.orbit(onCreate)
-        }
+        @OptIn(OrbitInternal::class)
+        return containerHost.container.orbit(onCreate)
     }
 
     /**

@@ -45,7 +45,7 @@ public class TestContainerDecorator<STATE : Any, SIDE_EFFECT : Any>(
     override val refCountSideEffectFlow: Flow<SIDE_EFFECT>
         get() = delegate.load().refCountSideEffectFlow
 
-    override suspend fun orbit(orbitIntent: suspend ContainerContext<STATE, SIDE_EFFECT>.() -> Unit): Job {
+    override fun orbit(orbitIntent: suspend ContainerContext<STATE, SIDE_EFFECT>.() -> Unit): Job {
         return delegate.load().orbit(orbitIntent)
     }
 

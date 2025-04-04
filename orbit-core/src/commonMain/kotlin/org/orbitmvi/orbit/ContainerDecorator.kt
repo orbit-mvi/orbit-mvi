@@ -53,7 +53,7 @@ public interface ContainerDecorator<STATE : Any, SIDE_EFFECT : Any> : Container<
     override val refCountSideEffectFlow: Flow<SIDE_EFFECT>
         get() = actual.refCountSideEffectFlow
 
-    override suspend fun orbit(orbitIntent: suspend ContainerContext<STATE, SIDE_EFFECT>.() -> Unit): Job {
+    override fun orbit(orbitIntent: suspend ContainerContext<STATE, SIDE_EFFECT>.() -> Unit): Job {
         return actual.orbit(orbitIntent)
     }
 
