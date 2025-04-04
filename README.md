@@ -14,28 +14,30 @@
 
 ## What is Orbit
 
-Orbit is a Redux/MVI-like library - but without the baggage. It's so simple we
-think of it as MVVM+.
+Orbit is a simple, type-safe MVI framework for Kotlin Multiplatform, enabling
+shared business logic across Android, iOS and desktop. With a Redux/MVI-inspired
+unidirectional data flow, it streamlines state management within MVVM—think of
+it as MVVM+.
 
-- Simple, type-safe, coroutine-style, extensible API
-- Multiplatform, targetting Android and iOS (iOS support is in alpha and being
-  actively worked on)
-- Full support for Kotlin Coroutines (it's built on top of them after all)
-- Lifecycle-safe collection of infinite flows
-- ViewModel support, along with SavedState
-- Optional, simple unit test library
-- Built-in espresso idling resource support
-- Compatible with [RxJava](https://orbit-mvi.org/Core/rxjava), [LiveData](https://orbit-mvi.org/Core/livedata.md)
-  etc. through coroutine wrappers
-- And more...
+Key features:
+
+- **Multiplatform Support:** Share code seamlessly across Android, iOS and
+  desktop.
+- **Lifecycle-Safe Flows:** Collect infinite flows safely, preventing memory
+  leaks.
+- **Multiplatform ViewModel & SavedState:** Manage UI state efficiently across
+  platforms including being able to save state.
+- **Compose Multiplatform:** Build declarative UIs with shared code.
+- **Testing and Tooling:** Includes unit tests and Espresso idling resource
+  support.
 
 ## Documentation
 
 - [Getting Started](https://orbit-mvi.org)
-- [Core](https://orbit-mvi.org/Core/overview)
-- [Android ViewModel](https://orbit-mvi.org/Android-ViewModel/overview)
-- [Compose](https://orbit-mvi.org/Compose/overview)
-- [Test](https://orbit-mvi.org/Test/overview)
+- [Core](https://orbit-mvi.org/Core/)
+- [Android and Common ViewModel](https://orbit-mvi.org/ViewModel/)
+- [Jetpack Compose and Compose Multiplatform](https://orbit-mvi.org/Compose/)
+- [Test](https://orbit-mvi.org/Test/)
 - [Dokka source code documentation](https://orbit-mvi.org/dokka/)
 - [Resources](https://orbit-mvi.org/resources)
 
@@ -50,19 +52,22 @@ think of it as MVVM+.
 [![Download](https://img.shields.io/maven-central/v/org.orbit-mvi/orbit-viewmodel)](https://search.maven.org/artifact/org.orbit-mvi/orbit-viewmodel)
 
 ```kotlin
+// Core of Orbit, providing state management and unidirectional data flow (multiplatform)
 implementation("org.orbit-mvi:orbit-core:<latest-version>")
-// or, if on Android:
+
+// Integrates Orbit with Android and Common ViewModel for lifecycle-aware state handling (Android, iOS, desktop)
 implementation("org.orbit-mvi:orbit-viewmodel:<latest-version>")
-// If using Jetpack Compose include
+
+// Enables Orbit support for Jetpack Compose and Compose Multiplatform (Android, iOS, desktop)
 implementation("org.orbit-mvi:orbit-compose:<latest-version>")
 
-// Tests
+// Simplifies testing with utilities for verifying state and event flows (multiplatform)
 testImplementation("org.orbit-mvi:orbit-test:<latest-version>")
 ```
 
 ### Define the contract
 
-``` kotlin
+```kotlin
 data class CalculatorState(
     val total: Int = 0
 )
@@ -83,7 +88,7 @@ sealed class CalculatorSideEffect {
    in your
    [ContainerHost](orbit-core/src/commonMain/kotlin/org/orbitmvi/orbit/ContainerHost.kt)
 
-``` kotlin
+```kotlin
 class CalculatorViewModel: ContainerHost<CalculatorState, CalculatorSideEffect>, ViewModel() {
 
     // Include `orbit-viewmodel` for the factory function
@@ -104,7 +109,7 @@ requirement to do so.
 
 ### Connect to the ViewModel in your Activity or Fragment
 
-``` kotlin
+```kotlin
 class CalculatorActivity: AppCompatActivity() {
 
     // Example of injection using koin, your DI system might differ
@@ -160,7 +165,8 @@ requests to us.
 ## Versioning
 
 We use [SemVer](http://semver.org/) for versioning. For the versions
-available, see the [tags on this repository](https://github.com/orbit-mvi/orbit-mvi/tags).
+available, see the
+[tags on this repository](https://github.com/orbit-mvi/orbit-mvi/tags).
 
 ## License
 
