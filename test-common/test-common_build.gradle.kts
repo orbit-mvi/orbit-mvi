@@ -65,8 +65,7 @@ kotlin {
         commonMain.dependencies {
             implementation(libs.kotlinCoroutines)
             implementation(kotlin("stdlib"))
-            implementation(kotlin("test-common"))
-            implementation(kotlin("test-annotations-common"))
+            implementation(kotlin("test"))
         }
 
         jvmMain.dependencies {
