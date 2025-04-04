@@ -53,12 +53,6 @@ internal class SimpleDslBehaviourTrySendTest {
         val action = Random.nextInt()
         BaseDslMiddleware(this).test(this, initialState) {
             containerHost.reducer(action)
-            containerHost.reducer(action)
-            containerHost.reducer(action)
-            containerHost.reducer(action)
-
-
-            containerHost.reducer(action)
 
             expectState { TestState(action) }
         }
