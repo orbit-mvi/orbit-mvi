@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-2024 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 2021-2025 Mikołaj Leszczyński & Appmattus Limited
  * Copyright 2020 Babylon Partners Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -65,7 +65,7 @@ kotlin {
         }
 
         commonMain.dependencies {
-            implementation(kotlin("test-common"))
+            implementation(kotlin("test"))
             api(libs.kotlinCoroutines)
             api(libs.kotlinCoroutinesTest)
             implementation(libs.turbine)
@@ -73,10 +73,7 @@ kotlin {
             api(project(":orbit-core"))
         }
         commonTest.dependencies {
-            implementation(kotlin("test"))
             implementation(project(":test-common"))
-            implementation(kotlin("test-common"))
-            implementation(kotlin("test-annotations-common"))
         }
 
         appleMain.dependencies {

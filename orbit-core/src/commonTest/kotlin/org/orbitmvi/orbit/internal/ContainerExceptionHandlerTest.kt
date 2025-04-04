@@ -40,45 +40,42 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertFalse
+import kotlin.test.assertIs
 import kotlin.test.assertTrue
 
 internal class ContainerExceptionHandlerTest {
 
     @Test
-    fun by_default_exceptions_are_uncaught() {
+    fun by_default_exceptions_are_uncaught() = runTest {
         assertFailsWith<IllegalStateException> {
-            runTest {
-                ExceptionTestMiddleware(this).test(this) {
-                    containerHost.exceptionIntent().join()
-                }
+            ExceptionTestMiddleware(this).test(this) {
+                containerHost.exceptionIntent().join()
             }
         }
     }
 
     @Test
-    fun with_exception_handler_exceptions_are_caught() {
+    fun with_exception_handler_exceptions_are_caught() = runTest {
         val initState = Random.nextInt()
         val exceptions = Channel<Throwable>(capacity = Channel.BUFFERED)
         val exceptionHandler = CoroutineExceptionHandler { _, throwable -> exceptions.trySend(throwable) }
 
-        runTest {
-            val container = backgroundScope.container<Int, Nothing>(
-                initialState = initState,
-                buildSettings = {
-                    this.exceptionHandler = exceptionHandler
-                }
-            )
-            container.stateFlow.test {
-                assertEquals(initState, awaitItem())
+        val container = backgroundScope.container<Int, Nothing>(
+            initialState = initState,
+            buildSettings = {
+                this.exceptionHandler = exceptionHandler
+            }
+        )
+        container.stateFlow.test {
+            assertEquals(initState, awaitItem())
 
-                container.orbit {
-                    throw IllegalStateException()
-                }
+            container.orbit {
+                throw IllegalStateException()
             }
-            exceptions.consumeAsFlow().test {
-                assertEquals(IllegalStateException::class, awaitItem()::class)
-                cancel()
-            }
+        }
+        exceptions.consumeAsFlow().test {
+            assertIs<IllegalStateException>(awaitItem())
+            cancel()
         }
     }
 
@@ -91,7 +88,7 @@ internal class ContainerExceptionHandlerTest {
             containerHost.exceptionIntent()
 
             exceptions.consumeAsFlow().test {
-                assertEquals(IllegalStateException::class, awaitItem()::class)
+                assertIs<IllegalStateException>(awaitItem())
                 cancel()
             }
             cancelAndIgnoreRemainingItems()
@@ -108,7 +105,7 @@ internal class ContainerExceptionHandlerTest {
         checkCancellationPropagation(withExceptionHandler = false)
     }
 
-    private fun checkCancellationPropagation(withExceptionHandler: Boolean) {
+    private fun checkCancellationPropagation(withExceptionHandler: Boolean) = runTest {
         val scopeJob = SupervisorJob()
         val containerScope = CoroutineScope(scopeJob)
         val exceptionHandler =
@@ -125,33 +122,28 @@ internal class ContainerExceptionHandlerTest {
             }
         )
         val mutex = Mutex(locked = true)
-        runTest {
-            lateinit var job: Job
-            container.orbit {
-                coroutineScope {
-                    job = launch {
-                        mutex.unlock()
-                        delay(Long.MAX_VALUE)
-                    }
+        lateinit var job: Job
+        container.orbit {
+            coroutineScope {
+                job = launch {
+                    mutex.unlock()
+                    delay(Long.MAX_VALUE)
                 }
             }
-            mutex.withLock {
-                scopeJob.cancelAndJoin()
-                assertFalse { containerScope.isActive }
-                println(job)
-                assertTrue { job.isCancelled }
-                assertFalse { job.isActive }
-            }
+        }
+        mutex.withLock {
+            scopeJob.cancelAndJoin()
+            assertFalse { containerScope.isActive }
+            assertTrue { job.isCancelled }
+            assertFalse { job.isActive }
         }
     }
 
     @Test
-    fun without_exception_handler_test_does_break() {
+    fun without_exception_handler_test_does_break() = runTest {
         assertFailsWith<IllegalStateException> {
-            runTest {
-                ExceptionTestMiddleware(this).test(this) {
-                    containerHost.exceptionIntent().join()
-                }
+            ExceptionTestMiddleware(this).test(this) {
+                containerHost.exceptionIntent().join()
             }
         }
     }

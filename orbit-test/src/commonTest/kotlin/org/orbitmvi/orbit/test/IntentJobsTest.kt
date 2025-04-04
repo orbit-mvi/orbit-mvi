@@ -35,12 +35,10 @@ class IntentJobsTest {
     private val initialState = 0
 
     @Test
-    fun unfinished_intents_at_the_end_of_the_test_cause_the_test_to_fail() {
+    fun unfinished_intents_at_the_end_of_the_test_cause_the_test_to_fail() = runTest {
         assertFails {
-            runTest {
-                IntentJobsMiddleware(this).test(this) {
-                    containerHost.infiniteIntent()
-                }
+            IntentJobsMiddleware(this).test(this) {
+                containerHost.infiniteIntent()
             }
         }
     }

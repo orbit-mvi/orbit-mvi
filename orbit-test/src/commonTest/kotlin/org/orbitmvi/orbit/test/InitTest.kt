@@ -90,7 +90,6 @@ internal class InitTest {
 
         fun created() {
             dependency.create()
-            println("created!")
         }
     }
 
