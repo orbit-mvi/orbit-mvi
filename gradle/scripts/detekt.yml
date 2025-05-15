@@ -27,6 +27,8 @@ style:
         maxLineLength: 145 # increased from 120
     MagicNumber:
         excludes: "**/test/**,**/androidTest/**,**Test.kt,**Spec.kt,**Spek.kt,**.kts"
+    UnusedPrivateMember:
+        ignoreAnnotated: [ 'Preview' ]
 
 complexity:
     LongMethod:
