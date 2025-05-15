@@ -98,7 +98,7 @@ dependencies {
     // Material Design
     implementation(libs.androidxComposeMaterial)
     // Material design icons
-    implementation(libs.androidxComposeMaterialIconsCore)
+    implementation(libs.androidxComposeMaterialIconsCoreMultiplafrom)
     // Navigation
     implementation(libs.androidxNavigationCompose)
     implementation(libs.androidxHiltNavigationCompose)

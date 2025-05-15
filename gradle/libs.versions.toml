@@ -34,11 +34,11 @@ androidxActivityCompose = "1.10.1"
 androidxAppcompat = "1.7.0"
 androidxCollection = "1.5.0"
 androidxCompose = "1.8.1"
+androidxComposeMaterialIconsMultiplatform = "1.7.3"
 androidxConstraintlayout = "2.2.1"
 androidxHilt = "1.2.0"
 androidxLifecycle = "2.9.0"
 androidxLifecycleMultiplatform = "2.9.0-beta01"
-androidxMaterialIcons = "1.7.8"
 androidxNavigation = "2.9.0"
 androidxNavigationMultiplatform = "2.9.0-beta01"
 
@@ -85,7 +85,7 @@ androidxAppcompat = { module = "androidx.appcompat:appcompat", version.ref = "an
 androidxCollection = { module = "androidx.collection:collection", version.ref = "androidxCollection" }
 androidxComposeFoundation = { module = "androidx.compose.foundation:foundation", version.ref = "androidxCompose" }
 androidxComposeMaterial = { module = "androidx.compose.material:material", version.ref = "androidxCompose" }
-androidxComposeMaterialIconsCore = { module = "androidx.compose.material:material-icons-core", version.ref = "androidxMaterialIcons" }
+androidxComposeMaterialIconsCoreMultiplafrom = { module = "org.jetbrains.compose.material:material-icons-core", version.ref = "androidxComposeMaterialIconsMultiplatform" }
 androidxComposeRuntime = { module = "androidx.compose.runtime:runtime", version.ref = "androidxCompose" }
 androidxComposeUi = { module = "androidx.compose.ui:ui", version.ref = "androidxCompose" }
 androidxComposeUiTooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "androidxCompose" }

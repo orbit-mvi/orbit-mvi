@@ -47,7 +47,7 @@ kotlin {
             implementation(libs.androidxLifecycleViewmodelSavedState)
             implementation(libs.androidxLifecycleRuntimeCompose)
             implementation(libs.androidxCollection)
-            implementation(libs.androidxComposeMaterialIconsCore)
+            implementation(libs.androidxComposeMaterialIconsCoreMultiplafrom)
             implementation(libs.androidxNavigationComposeMultiplatform)
 
             implementation(libs.ktorClientCore)
