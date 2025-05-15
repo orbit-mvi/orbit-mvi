@@ -47,6 +47,8 @@ kotlin {
             implementation(libs.androidxLifecycleViewmodelSavedState)
             implementation(libs.androidxLifecycleRuntimeCompose)
             implementation(libs.androidxCollection)
+            implementation(libs.androidxComposeMaterialIconsCore)
+            implementation(libs.androidxNavigationComposeMultiplatform)
 
             implementation(libs.ktorClientCore)
             implementation(libs.ktorClientContentNegotiation)
@@ -54,7 +56,6 @@ kotlin {
             implementation(libs.coilCompose)
             implementation(libs.coilNetworkKtor3)
 
-            implementation("org.jetbrains.androidx.navigation:navigation-compose:2.9.0-alpha14")
             implementation(libs.koinCore)
             implementation(libs.koinCompose)
             implementation(libs.koinComposeViewmodel)
