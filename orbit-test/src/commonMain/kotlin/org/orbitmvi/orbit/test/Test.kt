@@ -17,6 +17,7 @@
 package org.orbitmvi.orbit.test
 
 import app.cash.turbine.test
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.map
@@ -55,7 +56,16 @@ public suspend fun <STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHo
 ) {
     val containerHost = this
     val testDispatcher = settings.dispatcherOverride ?: testScope.backgroundScope.coroutineContext[CoroutineDispatcher.Key]
-    val testExceptionHandler = settings.exceptionHandlerOverride ?: containerHost.container.settings.exceptionHandler
+
+    var caughtException: Throwable? = null
+
+    val testExceptionHandler = settings.exceptionHandlerOverride
+        ?: containerHost.container.settings.exceptionHandler
+        ?: CoroutineExceptionHandler { _, exception ->
+            if (exception !is CancellationException) {
+                caughtException = exception
+            }
+        }
 
     container.findTestContainer().test(
         initialState = initialState,
@@ -76,6 +86,7 @@ public suspend fun <STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHo
                 assertEquals(resolvedInitialState, awaitState())
             }
             validate(this)
+            caughtException?.let { throw it }
             withAppropriateTimeout(timeout ?: 1.seconds) {
                 container.findTestContainer().joinIntents()
             }
