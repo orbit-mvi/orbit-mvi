@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-2024 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 2021-2025 Mikołaj Leszczyński & Appmattus Limited
  * Copyright 2020 Babylon Partners Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -116,11 +116,7 @@ public class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
                             settings.intentLaunchingDispatcher
                     launch(exceptionHandlerContext) {
                         runCatching { pluginContext.intent() }.onFailure { e ->
-                            settings.exceptionHandler?.handleException(
-                                coroutineContext,
-                                e
-                            )
-                                ?: throw e
+                            settings.exceptionHandler?.handleException(coroutineContext, e) ?: throw e
                         }
                     }.invokeOnCompletion { job.complete() }
                 }

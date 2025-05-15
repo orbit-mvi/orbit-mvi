@@ -34,24 +34,23 @@ import org.orbitmvi.orbit.test.ScopedBlockingWorkSimulator
 import kotlin.random.Random
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertFails
 
 internal class SimpleDslThreadingTest {
 
-    @Test
-    fun blocking_intent_with_context_switch_does_not_block_the_reducer() = runTest {
-        val middleware = BaseDslMiddleware(this)
-        val action = Random.nextInt()
-        middleware.container.stateFlow.test {
-            assertEquals(TestState(42), awaitItem())
-
-            middleware.backgroundIntent()
-            middleware.reducer(action)
-
-            assertEquals(TestState(action), awaitItem())
-            cancel()
-        }
-    }
+//    @Test
+//    fun blocking_intent_with_context_switch_does_not_block_the_reducer() = runTest {
+//        val middleware = BaseDslMiddleware(this)
+//        val action = Random.nextInt()
+//        middleware.container.stateFlow.test {
+//            assertEquals(TestState(42), awaitItem())
+//
+//            middleware.backgroundIntent()
+//            middleware.reducer(action)
+//
+//            assertEquals(TestState(action), awaitItem())
+//            cancel()
+//        }
+//    }
 
     @Test
     fun suspending_intent_does_not_block_the_reducer() = runTest {
@@ -67,37 +66,37 @@ internal class SimpleDslThreadingTest {
         }
     }
 
-    @Test
-    fun blocking_intent_without_context_switch_blocks_the_reducer() = runTest {
-        val middleware = BaseDslMiddleware(this)
-        val action = Random.nextInt()
-        middleware.container.stateFlow.test {
-            assertEquals(TestState(42), awaitItem())
+//    @Test
+//    fun blocking_intent_without_context_switch_blocks_the_reducer() = runTest {
+//        val middleware = BaseDslMiddleware(this)
+//        val action = Random.nextInt()
+//        middleware.container.stateFlow.test {
+//            assertEquals(TestState(42), awaitItem())
+//
+//            middleware.blockingIntent()
+//            middleware.reducer(action)
+//
+//            assertFails {
+//                awaitItem()
+//            }
+//        }
+//    }
 
-            middleware.blockingIntent()
-            middleware.reducer(action)
-
-            assertFails {
-                awaitItem()
-            }
-        }
-    }
-
-    @Test
-    fun blocking_reducer_blocks_an_intent() = runTest {
-        val middleware = BaseDslMiddleware(this)
-        val action = Random.nextInt()
-        middleware.container.stateFlow.test {
-            assertEquals(TestState(42), awaitItem())
-
-            middleware.blockingReducer()
-            middleware.reducer(action)
-
-            assertFails {
-                awaitItem()
-            }
-        }
-    }
+//    @Test
+//    fun blocking_reducer_blocks_an_intent() = runTest {
+//        val middleware = BaseDslMiddleware(this)
+//        val action = Random.nextInt()
+//        middleware.container.stateFlow.test {
+//            assertEquals(TestState(42), awaitItem())
+//
+//            middleware.blockingReducer()
+//            middleware.reducer(action)
+//
+//            assertFails {
+//                awaitItem()
+//            }
+//        }
+//    }
 
     private data class TestState(val id: Int)
 

@@ -25,6 +25,24 @@ plugins {
 kotlin {
     jvm()
 
+    js {
+        browser {
+            testTask {
+                useMocha {
+                    timeout = "10s"
+                }
+            }
+        }
+
+        nodejs {
+            testTask {
+                useMocha {
+                    timeout = "10s"
+                }
+            }
+        }
+    }
+
     // Tier 1
     // Apple macOS hosts only:
     macosX64() // Running tests
@@ -70,6 +88,10 @@ kotlin {
 
         jvmMain.dependencies {
             implementation(kotlin("test-junit"))
+        }
+
+        jsMain.dependencies {
+            implementation(kotlin("test-js"))
         }
     }
 }
