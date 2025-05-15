@@ -1,6 +1,11 @@
 # MVI and Orbit
 
-![Orbit overview 1](images/orbit-overview-1.svg)
+```mermaid
+graph LR
+	A[UI] -->|actions| B(Business Component)
+	B -->|events| C(Reducer)
+	C -->|state updates| A
+```
 
 This diagram shows a simple representation of how an Orbit system (or similar
 systems like MVI/Redux/Cycle) works in simple principles.
@@ -18,7 +23,14 @@ by itself. It should know only how to render itself based on the input state.
 
 ## Orbit components
 
-![Orbit overview 2](images/orbit-overview-2.svg)
+```mermaid
+graph LR
+	A[UI] -->|calls| B(ContainerHost)
+	B --> C(Container)
+	C --> D(Transformer)
+	D -->|events| E(Reducer)
+	E -->|state updates| A
+```
 
 We can map the above logic onto real components.
 
@@ -49,7 +61,16 @@ etc that do not alter the state of the Orbit
 [Container](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-container/).
 As such there's a third Orbit operator that can deal with side effects.
 
-![Orbit overview 3](images/orbit-overview-3.svg)
+```mermaid
+graph LR
+	A[UI] -->|calls| B(ContainerHost)
+	B --> C(Container)
+	C --> D(Transformer)
+	C --> D2(Side Effect)
+	D2 -->|side effects| A
+	D -->|events| E(Reducer)
+	E -->|state updates| A
+```
 
 The UI does not have to be aware of all side effects (e.g. why should the UI
 care if you send analytics events?). As such you can have side effects that do

@@ -16,30 +16,30 @@
 
 [versions]
 
-kotlin = "2.1.20"
-coroutines = "1.10.1"
+kotlin = "2.1.21"
+coroutines = "1.10.2"
 
 # Plugins
 gradleVersionsPlugin = "0.52.0"
-gradleAndroidPlugin = "8.9.1"
-gradleMavenPublishPlugin = "0.31.0"
+gradleAndroidPlugin = "8.10.0"
+gradleMavenPublishPlugin = "0.32.0"
 markdownLintPlugin = "0.6.0"
 detektPlugin = "1.23.8"
 dokka = "2.0.0"
-compose-multiplatform = "1.8.0-beta01"
-hilt = "2.56"
+compose-multiplatform = "1.8.0"
+hilt = "2.56.2"
 
 # Androidx
 androidxActivityCompose = "1.10.1"
 androidxAppcompat = "1.7.0"
 androidxCollection = "1.5.0"
-androidxCompose = "1.8.0-rc01"
-androidxComposeMaterial = "1.7.8"
+androidxCompose = "1.8.1"
 androidxConstraintlayout = "2.2.1"
 androidxHilt = "1.2.0"
-androidxLifecycle = "2.8.7"
-androidxLifecycleMultiplatform = "2.9.0-alpha05"
-androidxNavigation = "2.8.9"
+androidxLifecycle = "2.9.0"
+androidxLifecycleMultiplatform = "2.9.0-beta01"
+androidxMaterialIcons = "1.7.8"
+androidxNavigation = "2.9.0"
 
 # Google
 googleMaterial = "1.12.0"
@@ -49,8 +49,8 @@ coil = "3.1.0"
 desugar = "2.1.5"
 glide = "4.16.0"
 groupie = "2.10.1"
-jacksonKotlin = "2.18.3"
-koin = "4.0.2"
+jacksonKotlin = "2.19.0"
+koinAndroid = "4.0.4"
 ktor = "3.1.1"
 lsAndroidClient = "5.2.2"
 okhttp = "4.12.0"
@@ -61,10 +61,10 @@ androidxCoreTesting = "2.2.0"
 androidxEspresso = "3.6.1"
 jacoco = "0.8.12"
 junit4 = "4.13.2"
-junitJupiterEngine = "5.12.1"
-junitPlatformConsole = "1.12.1"
+junitJupiterEngine = "5.12.2"
+junitPlatformConsole = "1.12.2"
 kotlinFixture = "1.2.0"
-mockito = "5.16.1"
+mockito = "5.17.0"
 mockitoKotlin = "5.4.0"
 robolectric = "4.14.1"
 turbine = "1.2.0"
@@ -84,7 +84,7 @@ androidxAppcompat = { module = "androidx.appcompat:appcompat", version.ref = "an
 androidxCollection = { module = "androidx.collection:collection", version.ref = "androidxCollection" }
 androidxComposeFoundation = { module = "androidx.compose.foundation:foundation", version.ref = "androidxCompose" }
 androidxComposeMaterial = { module = "androidx.compose.material:material", version.ref = "androidxCompose" }
-androidxComposeMaterialIconsCore = { module = "androidx.compose.material:material-icons-core", version.ref = "androidxComposeMaterial" }
+androidxComposeMaterialIconsCore = { module = "androidx.compose.material:material-icons-core", version.ref = "androidxMaterialIcons" }
 androidxComposeRuntime = { module = "androidx.compose.runtime:runtime", version.ref = "androidxCompose" }
 androidxComposeUi = { module = "androidx.compose.ui:ui", version.ref = "androidxCompose" }
 androidxComposeUiTooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "androidxCompose" }

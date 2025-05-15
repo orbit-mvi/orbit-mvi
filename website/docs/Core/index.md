@@ -1,7 +1,9 @@
 ---
-sidebar_position: 1
-sidebar_label: Overview
+sidebar_label: Core
 ---
+
+import CodeBlock from "@theme/CodeBlock";
+import latestRelease from "@site/src/plugins/github-latest-release/generated/data.json";
 
 # Core
 
@@ -10,9 +12,7 @@ It provides all the basic parts of Orbit.
 
 You will need this module (or modules that include it) to get started!
 
-```kotlin
-implementation("org.orbit-mvi:orbit-core:<latest-version>")
-```
+<CodeBlock language="kotlin">implementation("org.orbit-mvi:orbit-core:{latestRelease.tag_name}")</CodeBlock>
 
 See [architecture](architecture.md) if you're interested in learning more about
 MVI and how its concepts map onto Orbit's components.
@@ -35,14 +35,14 @@ exposes flows that emit updates to the container state and side effects.
   can be changed via
   [Settings Builder](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-settings-builder/)
 
-``` kotlin
+```kotlin
 data class ExampleState(val seen: List<String> = emptyList())
 
 sealed class ExampleSideEffect {
-   data class Toast(val text: String)
+    data class Toast(val text: String)
 }
 
-class ExampleContainerHost(scope: CoroutineScope): ContainerHost<ExampleState, ExampleSideEffect> {
+class ExampleContainerHost(scope: CoroutineScope) : ContainerHost<ExampleState, ExampleSideEffect> {
     
     // create a container
     override val container = scope.container<ExampleState, ExampleSideEffect>(ExampleState())
@@ -95,7 +95,7 @@ implement
 [ContainerHost](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-container-host/)
 in order to create an Orbit-enabled Android `ViewModel`.
 
-``` kotlin
+```kotlin
 class ExampleViewModel(
     savedStateHandle: SavedStateHandle
 ) : ViewModel(), ContainerHost<ExampleState, ExampleSideEffect> {
@@ -128,7 +128,7 @@ For more information about which threads these operators run on please see
 
 ### Transformation
 
-``` kotlin
+```kotlin
 class Example : ContainerHost<ExampleState, ExampleSideEffect> {
     ...
 
@@ -157,7 +157,7 @@ of new intents until that code completes.
 
 ### Reduction
 
-``` kotlin
+```kotlin
 class Example : ContainerHost<ExampleState, ExampleSideEffect> {
     ...
 
@@ -172,7 +172,7 @@ Reducers take incoming events and the current state to produce a new state.
 
 ### Side effect
 
-``` kotlin
+```kotlin
 class Example : ContainerHost<ExampleState, ExampleSideEffect> {
     ...
 
@@ -200,17 +200,15 @@ events such as navigation are delivered after re-subscription.
 
 :::caution
 
-`Container.sideEffectFlow` is designed to be collected by only one
-observer. This ensures that side effect caching works in a predictable
-way. If your particular use case requires multi-casting use `broadcast`
-on the side effect flow, but be aware that caching will not work for the
-resulting `BroadcastChannel`.
+`Container.sideEffectFlow` is designed for a single observer to ensure
+predictable side effect caching. If you need multiple observers, use `shareIn`,
+but note that caching may not apply to the resulting `SharedFlow`.
 
 :::
 
 ### Repeat on subscription
 
-``` kotlin
+```kotlin
 class Example : ContainerHost<ExampleState, ExampleSideEffect> {
     ...
 
@@ -242,7 +240,7 @@ is no longer the case.
 
 ### Sub-intent
 
-``` kotlin
+```kotlin
 class Example : ContainerHost<ExampleState, ExampleSideEffect> {
     ...
     
@@ -301,7 +299,7 @@ collecting several flows or performing several parallel operations on creation.
 
 ### RunOn
 
-``` kotlin
+```kotlin
 class Example : ContainerHost<ExampleSealedClassState, ExampleSideEffect> {
     ...
     
@@ -341,7 +339,7 @@ of the
 [Container](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-container/)
 as `state`
 
-``` kotlin
+```kotlin
 perform("Toast the current state")
 class Example : ContainerHost<ExampleState, ExampleSideEffect> {
     ...
@@ -364,7 +362,7 @@ not to change.
 
 ## Container factories
 
-``` kotlin
+```kotlin
 perform("Toast the current state")
 class Example : ContainerHost<ExampleState, ExampleSideEffect> {
     override val container = container<ExampleState, ExampleSideEffect>(ExampleState()) {
@@ -384,7 +382,7 @@ state or live longer than the UI).
 A typical use case for this is to collect `Flow`s that we need to start
 observing right after the container is created.
 
-``` kotlin
+```kotlin
 perform("Toast the current state")
 class Example(
     private val flow1: Flow<Int>,

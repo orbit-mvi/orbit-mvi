@@ -29,14 +29,12 @@ class ExceptionTest {
     private val initialState = State()
 
     @Test
-    fun exceptions_thrown_during_test_can_be_asserted_on() {
+    fun exceptions_thrown_during_test_can_be_asserted_on() = runTest {
         assertFails {
-            runTest {
-                ExceptionTestMiddleware(this).test(this) {
-                    val job = containerHost.boom()
+            ExceptionTestMiddleware(this).test(this) {
+                val job = containerHost.boom()
 
-                    job.join()
-                }
+                job.join()
             }
         }
     }

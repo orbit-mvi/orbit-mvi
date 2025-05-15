@@ -1,7 +1,10 @@
 ---
-sidebar_position: 2
 sidebar_label: 'Test'
 ---
+
+import CodeBlock from "@theme/CodeBlock";
+import latestRelease from "@site/src/plugins/github-latest-release/generated/data.json";
+
 
 # Test
 
@@ -9,13 +12,10 @@ The framework is based on the [Turbine](https://github.com/cashapp/turbine)
 library. Turbine is a library for testing coroutines and flows.
 
 Orbit's framework offers a subset of the Turbine APIs and
-ensures predictable coroutine scoping and context through use of the new
-[coroutine testing APIs](https://kotlinlang.org/api/kotlinx.coroutines/kotlinx-coroutines-test/kotlinx.coroutines.test/run-test.html)
-.
+ensures predictable coroutine scoping and context through use of the
+[coroutine testing APIs](https://kotlinlang.org/api/kotlinx.coroutines/kotlinx-coroutines-test/kotlinx.coroutines.test/run-test.html).
 
-```kotlin
-testImplementation("org.orbit-mvi:orbit-test:<latest-version>")
-```
+<CodeBlock language="kotlin">testImplementation("org.orbit-mvi:orbit-test:{latestRelease.tag_name}")</CodeBlock>
 
 ## Testing process
 
@@ -91,8 +91,7 @@ fun exampleTest() = runTest {
 
 ### Asserting states
 
-Having done the above, we can move to assertions. The initial state has to be
-explicitly asserted first, as a sanity check.
+Having done the above, we can move to assertions.
 
 ```kotlin
 @Test
@@ -112,6 +111,30 @@ fun exampleTest() = runTest {
 If any unconsumed items (states or side effects) are left at the end of the
 test, it will fail. All items must be consumed before the test ends. This is to
 ensure no unwanted extra states or side effects are emitted.
+
+#### Sealed class/interface states
+
+If you model state as a sealed class/interface, you can use the `expectStateOn`
+function to avoid type-casting when asserting changes.
+
+```kotlin
+sealed interface State {
+    data object Loading : State
+    data class Ready(val count: Int): State
+}
+
+@Test
+fun exampleTest() = runTest {
+    ExampleViewModel().test(this) {
+        containerHost.countToTwo()
+
+        expectState { State.Ready(count = 1) }
+        // Use expectStateOn to avoid type-casting, this is equivalent to
+        //   expectState { (this as State.Ready).copy(count = 2) }
+        expectStateOn<State.Ready> { copy(count = 2) }
+    }
+}
+```
 
 ### Asserting posted side effects
 
@@ -390,3 +413,7 @@ fun noDelaySkipping() = runTest {
         }
     }
 ```
+
+## Compose UI Testing
+
+See [Compose UI Testing](../Compose/#compose-ui-testing) for more details.

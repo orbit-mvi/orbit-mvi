@@ -1,44 +1,44 @@
 ---
-sidebar_position: 1
 sidebar_label: 'Getting started'
-slug: /
 ---
 
+import CodeBlock from "@theme/CodeBlock";
+import latestRelease from "@site/src/plugins/github-latest-release/generated/data.json";
 
 # Orbit Multiplatform
 
 ![Logo](images/logo.png)
 
-Orbit is a Redux/MVI-like library - but without the baggage. It's so simple we
-think of it as MVVM+.
+Orbit is a simple, type-safe MVI framework for Kotlin Multiplatform, enabling
+shared business logic across Android, iOS and desktop. With a Redux/MVI-inspired
+unidirectional data flow, it streamlines state management within MVVM—think of
+it as MVVM+.
 
-## Documentation
-
-- [Core](Core/overview.md)
-- [Android ViewModel](Android-ViewModel/overview.md)
-- [Compose](Compose/overview.md)
-- [Test](Test/overview)
-- [Dokka source code documentation](pathname://dokka/)
-- [Resources](resources.md)
+Key features:
+- **Multiplatform Support:** Share code seamlessly across Android, iOS and
+  desktop.
+- **Lifecycle-Safe Flows:** Collect infinite flows safely, preventing memory
+  leaks.
+- **Multiplatform ViewModel & SavedState:** Manage UI state efficiently across
+  platforms including being able to save state.
+- **Compose Multiplatform:** Build declarative UIs with shared code.
+- **Testing and Tooling:** Includes unit tests and Espresso idling resource
+  support.
 
 ## Getting started
 
-[![Download](https://img.shields.io/maven-central/v/org.orbit-mvi/orbit-viewmodel)](https://search.maven.org/artifact/org.orbit-mvi/orbit-viewmodel)
-
-```kotlin
-implementation("org.orbit-mvi:orbit-core:<latest-version>")
-// or, if on Android:
-implementation("org.orbit-mvi:orbit-viewmodel:<latest-version>")
-// If using Jetpack Compose include
-implementation("org.orbit-mvi:orbit-compose:<latest-version>")
-
-// Tests
-testImplementation("org.orbit-mvi:orbit-test:<latest-version>")
-```
+<CodeBlock language="kotlin">// Core of Orbit, providing state management and unidirectional data flow (multiplatform)
+implementation("org.orbit-mvi:orbit-core:{latestRelease.tag_name}")
+// Integrates Orbit with Android and Common ViewModel for lifecycle-aware state handling (Android, iOS, desktop)
+implementation("org.orbit-mvi:orbit-viewmodel:{latestRelease.tag_name}")
+// Enables Orbit support for Jetpack Compose and Compose Multiplatform (Android, iOS, desktop)
+implementation("org.orbit-mvi:orbit-compose:{latestRelease.tag_name}")
+// Simplifies testing with utilities for verifying state and event flows (multiplatform)
+testImplementation("org.orbit-mvi:orbit-test:{latestRelease.tag_name}")</CodeBlock>
 
 ### Define the contract
 
-``` kotlin
+```kotlin
 data class CalculatorState(
     val total: Int = 0
 )
@@ -55,7 +55,7 @@ objects.
 ### Create the ViewModel
 
 1. Implement the
-   [ContainerHost](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-container/)
+   [ContainerHost](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-container-host/)
    interface
 1. Override the `container` field and use the `ViewModel.container` factory
    function to build an Orbit
@@ -63,7 +63,7 @@ objects.
    in your
    [ContainerHost](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-container-host/)
 
-``` kotlin
+```kotlin
 class CalculatorViewModel: ContainerHost<CalculatorState, CalculatorSideEffect>, ViewModel() {
 
     // Include `orbit-viewmodel` for the factory function
@@ -92,7 +92,7 @@ ViewModel. Alternatively, you can use the
 [Container](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-container/)'s
 `Flow`s directly.
 
-``` kotlin
+```kotlin
 class CalculatorActivity: AppCompatActivity() {
 
     // Example of injection using koin, your DI system might differ
@@ -110,10 +110,10 @@ class CalculatorActivity: AppCompatActivity() {
         lifecycleScope.launch {
             lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
-                    viewModel.container.stateFlow.collect { render(it) }
+                    viewModel.container.refCountStateFlow.collect { render(it) }
                 }
                 launch {
-                    viewModel.container.sideEffectFlow.collect { handleSideEffect(it) }
+                    viewModel.container.refCountSideEffectFlow.collect { handleSideEffect(it) }
                 }
             }
         }
@@ -129,5 +129,4 @@ class CalculatorActivity: AppCompatActivity() {
         }
     }
 }
-
 ```
