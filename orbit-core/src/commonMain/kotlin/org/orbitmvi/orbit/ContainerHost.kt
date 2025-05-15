@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-2024 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 2021-2025 Mikołaj Leszczyński & Appmattus Limited
  * Copyright 2020 Babylon Partners Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,8 +25,6 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.annotation.OrbitDsl
 import org.orbitmvi.orbit.annotation.OrbitExperimental
-import org.orbitmvi.orbit.idling.withIdling
-import org.orbitmvi.orbit.internal.runBlocking
 import org.orbitmvi.orbit.syntax.Syntax
 import org.orbitmvi.orbit.syntax.intent
 
@@ -60,26 +58,6 @@ public interface ContainerHost<STATE : Any, SIDE_EFFECT : Any> {
         registerIdling: Boolean = true,
         transformer: suspend Syntax<STATE, SIDE_EFFECT>.() -> Unit
     ): Job = container.intent(registerIdling) { Syntax(this).transformer() }
-
-    /**
-     * Build and execute an intent on [Container] in a blocking manner, without dispatching.
-     *
-     * This API is reserved for special cases e.g. storing text input in the state.
-     *
-     * @param registerIdling whether to register an idling resource when executing this intent. Defaults to true.
-     * @param transformer lambda representing the transformer
-     */
-    @OrbitDsl
-    public fun blockingIntent(
-        registerIdling: Boolean = true,
-        transformer: suspend Syntax<STATE, SIDE_EFFECT>.() -> Unit
-    ): Unit = runBlocking {
-        container.inlineOrbit {
-            withIdling(registerIdling) {
-                Syntax(this).transformer()
-            }
-        }
-    }
 
     /**
      * Used for parallel decomposition or subdivision of a larger intent into smaller parts.

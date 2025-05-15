@@ -27,6 +27,24 @@ plugins {
 kotlin {
     jvm()
 
+    js {
+        browser {
+            testTask {
+                useMocha {
+                    timeout = "10s"
+                }
+            }
+        }
+
+        nodejs {
+            testTask {
+                useMocha {
+                    timeout = "10s"
+                }
+            }
+        }
+    }
+
     // Tier 1
     // Apple macOS hosts only:
     macosX64() // Running tests
@@ -60,6 +78,18 @@ kotlin {
     applyDefaultHierarchyTemplate()
 
     sourceSets {
+        val jvmAndNativeMain by creating {
+            dependsOn(commonMain.get())
+        }
+        val jvmAndNativeTest by creating {
+            dependsOn(commonTest.get())
+        }
+
+        nativeMain.get().dependsOn(jvmAndNativeMain)
+        jvmMain.get().dependsOn(jvmAndNativeMain)
+        nativeTest.get().dependsOn(jvmAndNativeTest)
+        jvmTest.get().dependsOn(jvmAndNativeTest)
+
         all {
             languageSettings.optIn("kotlin.RequiresOptIn")
             languageSettings.optIn("org.orbitmvi.orbit.annotation.OrbitInternal")
@@ -80,6 +110,10 @@ kotlin {
 
         jvmTest.dependencies {
             implementation(kotlin("test-junit"))
+        }
+
+        jsMain.dependencies {
+            implementation(kotlin("test-js"))
         }
     }
 }
