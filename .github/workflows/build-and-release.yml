@@ -116,4 +116,4 @@ jobs:
 
             -   name: Upload tag
                 if: startsWith(github.ref, 'refs/tags/')
-                run: ./gradlew publishAllPublicationsToMavenCentral -Psigning.secretKeyRingFile=$(echo ~/.gradle/sonatype-orbitmvi-keys.gpg)
+                run: ./gradlew publishAndReleaseToMavenCentral -Psigning.secretKeyRingFile=$(echo ~/.gradle/sonatype-orbitmvi-keys.gpg)
