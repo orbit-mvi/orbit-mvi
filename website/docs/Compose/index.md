@@ -45,6 +45,45 @@ fun SomeScreen(viewModel: SomeViewModel) {
 }
 ```
 
+## TextField state hoisting
+
+When dealing with `TextField` in Compose we often want the `ViewModel` to be the
+owner of the state so we can handle validation and/or other logic such as
+autocomplete suggestions.
+
+It may seem natural to use `TextField.onChangeValue` to process the input
+through an `intent`, with state emitting an updated value to
+`TextField.value`, however, threading in `TextField` means user input is
+partially lost.
+
+Alternatively, `TextField` can be provided a `TextFieldState` which we can
+provide and observer in our the `ViewModel`:
+
+```kotlin
+class TextViewModel : ViewModel(), ContainerHost<TextViewModel.State, Nothing> {
+    override val container: Container<State, Nothing> = container(State()) {
+        coroutineScope {
+            launch {
+                snapshotFlow { state.textFieldState.text }.collectLatest { text ->
+                    reduce { state.copy(isValid = text.isValid()) }
+                }
+            }
+        }
+    }
+
+    data class State(
+        val textFieldState: TextFieldState = TextFieldState(""),
+        val isValid: Boolean = false,
+    )
+
+    companion object {
+        fun CharSequence.isValid(): Boolean {
+            return this.isNotBlank() && this.length <= 10
+        }
+    }
+}
+```
+
 ## Compose UI Testing
 
 For better testability, separate the `ViewModel` from your UI. As shown above,
