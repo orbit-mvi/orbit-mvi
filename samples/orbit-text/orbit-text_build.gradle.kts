@@ -52,7 +52,6 @@ android {
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
     implementation(project(":orbit-compose"))
-    implementation(project(":orbit-viewmodel"))
 
     implementation(libs.androidxComposeRuntime)
     implementation(libs.androidxLifecycleRuntimeKtx)
