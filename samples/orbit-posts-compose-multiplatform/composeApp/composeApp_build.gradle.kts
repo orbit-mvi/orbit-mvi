@@ -8,6 +8,13 @@ plugins {
     alias(libs.plugins.compose.multiplatform)
     alias(libs.plugins.compose.compiler)
     kotlin("plugin.serialization")
+    id("co.touchlab.skie") version "0.10.2-preview.2.1.20"
+}
+
+skie {
+    features {
+        enableSwiftUIObservingPreview = true
+    }
 }
 
 kotlin {
