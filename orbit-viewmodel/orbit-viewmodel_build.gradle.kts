@@ -61,28 +61,6 @@ kotlin {
 
     jvm("desktop")
 
-    js {
-        browser {
-            testTask {
-                useMocha {
-                    timeout = "10s"
-                }
-            }
-        }
-
-        nodejs {
-            testTask {
-                useMocha {
-                    timeout = "10s"
-                }
-            }
-        }
-    }
-
-    wasmJs {
-        browser()
-    }
-
     sourceSets {
         commonMain.dependencies {
             api(project(":orbit-core"))
