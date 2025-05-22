@@ -57,7 +57,7 @@ through an `intent`, with state emitting an updated value to
 partially lost.
 
 Alternatively, `TextField` can be provided a `TextFieldState` which we can
-provide and observer in our the `ViewModel`:
+provide and observe in our `ViewModel`:
 
 ```kotlin
 class TextViewModel : ViewModel(), ContainerHost<TextViewModel.State, Nothing> {
