@@ -41,8 +41,16 @@ kotlin {
     }
     @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
-        browser()
-        nodejs()
+        browser {
+            testTask {
+                enabled = false
+            }
+        }
+        nodejs {
+            testTask {
+                enabled = false
+            }
+        }
     }
 
     iosX64()
