@@ -45,6 +45,10 @@ kotlin {
         }
     }
 
+    wasmJs {
+        browser()
+    }
+
     // Tier 1
     // Apple macOS hosts only:
     macosX64() // Running tests
