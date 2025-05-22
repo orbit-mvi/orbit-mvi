@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+
 /*
  * Copyright 2021-2025 Mikołaj Leszczyński & Appmattus Limited
  * Copyright 2020 Babylon Partners Limited
@@ -26,6 +28,20 @@ plugins {
 
 kotlin {
     jvm()
+
+    js {
+        browser()
+        nodejs()
+    }
+    @OptIn(ExperimentalWasmDsl::class)
+    wasmJs {
+        browser()
+        nodejs()
+    }
+    @OptIn(ExperimentalWasmDsl::class)
+    wasmWasi {
+        nodejs()
+    }
 
     // Tier 1
     // Apple macOS hosts only:
@@ -60,6 +76,18 @@ kotlin {
     applyDefaultHierarchyTemplate()
 
     sourceSets {
+        val jvmAndNativeMain by creating {
+            dependsOn(commonMain.get())
+        }
+        val jvmAndNativeTest by creating {
+            dependsOn(commonTest.get())
+        }
+
+        nativeMain.get().dependsOn(jvmAndNativeMain)
+        jvmMain.get().dependsOn(jvmAndNativeMain)
+        nativeTest.get().dependsOn(jvmAndNativeTest)
+        jvmTest.get().dependsOn(jvmAndNativeTest)
+
         all {
             languageSettings.optIn("kotlin.RequiresOptIn")
             languageSettings.optIn("org.orbitmvi.orbit.annotation.OrbitInternal")
@@ -76,10 +104,6 @@ kotlin {
             implementation(libs.kotlinCoroutines)
             implementation(libs.kotlinCoroutinesTest)
             implementation(libs.turbine)
-        }
-
-        jvmTest.dependencies {
-            implementation(kotlin("test-junit"))
         }
     }
 }

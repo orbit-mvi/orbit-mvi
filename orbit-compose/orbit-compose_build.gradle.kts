@@ -15,6 +15,7 @@
  */
 
 import org.jetbrains.compose.ExperimentalComposeLibrary
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 
 plugins {
     // We should really be using the com.android.kotlin.multiplatform.library plugin and an androidLibrary block, however, this has issues with
@@ -29,6 +30,28 @@ plugins {
 
 kotlin {
     androidTarget()
+
+    js {
+        browser {
+            testTask {
+                // JS tests disabled due to https://youtrack.jetbrains.com/issue/CMP-4906
+                enabled = false
+            }
+        }
+    }
+    @OptIn(ExperimentalWasmDsl::class)
+    wasmJs {
+        browser {
+            testTask {
+                enabled = false
+            }
+        }
+        nodejs {
+            testTask {
+                enabled = false
+            }
+        }
+    }
 
     iosX64()
     iosArm64()
@@ -76,6 +99,10 @@ kotlin {
             implementation(libs.androidxCoreTesting)
             implementation(libs.androidxComposeUiTestJunit4)
             implementation(libs.androidxComposeUiTestManifest)
+        }
+
+        wasmJsTest.dependencies {
+            implementation(compose.ui)
         }
     }
 }

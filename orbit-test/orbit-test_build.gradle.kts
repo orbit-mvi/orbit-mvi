@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+
 /*
  * Copyright 2021-2025 Mikołaj Leszczyński & Appmattus Limited
  * Copyright 2020 Babylon Partners Limited
@@ -26,6 +28,20 @@ plugins {
 
 kotlin {
     jvm()
+
+    js {
+        browser()
+        nodejs()
+    }
+    @OptIn(ExperimentalWasmDsl::class)
+    wasmJs {
+        browser()
+        nodejs()
+    }
+    @OptIn(ExperimentalWasmDsl::class)
+    wasmWasi {
+        nodejs()
+    }
 
     // Tier 1
     // Apple macOS hosts only:
@@ -81,7 +97,6 @@ kotlin {
         }
 
         jvmMain.dependencies {
-            implementation(kotlin("test-junit"))
             implementation(libs.kotlinCoroutines)
             implementation(libs.junit4)
         }

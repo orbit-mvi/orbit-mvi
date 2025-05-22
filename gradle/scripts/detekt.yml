@@ -18,7 +18,7 @@ formatting:
 
 naming:
     MatchingDeclarationName:
-        multiplatformTargets: [ 'ios', 'android', 'js', 'jvm', 'native', 'iosArm64', 'iosX64', 'macosX64', 'mingwX64', 'linuxX64', 'desktop' ]
+        multiplatformTargets: [ 'ios', 'android', 'js', 'jvm', 'native', 'iosArm64', 'iosX64', 'macosX64', 'mingwX64', 'linuxX64', 'desktop', 'nonAndroid' ]
     FunctionNaming:
         ignoreAnnotated: [ 'Composable' ]
 

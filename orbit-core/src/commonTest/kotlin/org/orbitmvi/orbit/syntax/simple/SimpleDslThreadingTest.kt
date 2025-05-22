@@ -29,6 +29,7 @@ import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.withContext
 import org.orbitmvi.orbit.ContainerHost
+import org.orbitmvi.orbit.IgnoreJs
 import org.orbitmvi.orbit.container
 import org.orbitmvi.orbit.test.ScopedBlockingWorkSimulator
 import kotlin.random.Random
@@ -39,6 +40,7 @@ import kotlin.test.assertFails
 internal class SimpleDslThreadingTest {
 
     @Test
+    @IgnoreJs
     fun blocking_intent_with_context_switch_does_not_block_the_reducer() = runTest {
         val middleware = BaseDslMiddleware(this)
         val action = Random.nextInt()
@@ -68,6 +70,7 @@ internal class SimpleDslThreadingTest {
     }
 
     @Test
+    @IgnoreJs
     fun blocking_intent_without_context_switch_blocks_the_reducer() = runTest {
         val middleware = BaseDslMiddleware(this)
         val action = Random.nextInt()
@@ -84,6 +87,7 @@ internal class SimpleDslThreadingTest {
     }
 
     @Test
+    @IgnoreJs
     fun blocking_reducer_blocks_an_intent() = runTest {
         val middleware = BaseDslMiddleware(this)
         val action = Random.nextInt()
