@@ -73,15 +73,6 @@ kotlin {
     sourceSets {
         val desktopTest by getting
 
-        val nonAndroidTest by creating {
-            dependsOn(commonTest.get())
-        }
-
-        nativeTest.get().dependsOn(nonAndroidTest)
-        jsTest.get().dependsOn(nonAndroidTest)
-        wasmJsTest.get().dependsOn(nonAndroidTest)
-        desktopTest.dependsOn(nonAndroidTest)
-
         commonMain.dependencies {
             api(project(":orbit-core"))
             api(libs.androidxLifecycleRuntimeCompose)
