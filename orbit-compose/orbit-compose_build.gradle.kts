@@ -88,6 +88,10 @@ kotlin {
             implementation(libs.androidxComposeUiTestJunit4)
             implementation(libs.androidxComposeUiTestManifest)
         }
+
+        wasmJsTest.dependencies {
+            implementation(compose.ui)
+        }
     }
 }
 
