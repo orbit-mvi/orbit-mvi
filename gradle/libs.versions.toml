@@ -38,9 +38,9 @@ androidxComposeMaterialIconsMultiplatform = "1.7.3"
 androidxConstraintlayout = "2.2.1"
 androidxHilt = "1.2.0"
 androidxLifecycle = "2.9.0"
-androidxLifecycleMultiplatform = "2.9.0-beta01"
+androidxLifecycleMultiplatform = "2.9.0"
 androidxNavigation = "2.9.0"
-androidxNavigationMultiplatform = "2.9.0-beta01"
+androidxNavigationMultiplatform = "2.9.0"
 
 # Google
 googleMaterial = "1.12.0"
