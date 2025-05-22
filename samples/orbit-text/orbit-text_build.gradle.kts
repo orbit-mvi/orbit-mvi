@@ -56,7 +56,7 @@ dependencies {
     implementation(libs.androidxComposeRuntime)
     implementation(libs.androidxLifecycleRuntimeKtx)
     implementation(libs.androidxComposeUi)
-
+    implementation(libs.androidxActivityCompose)
     implementation(libs.androidxComposeFoundation)
     implementation(libs.androidxComposeMaterial)
     implementation(libs.kotlinCoroutines)

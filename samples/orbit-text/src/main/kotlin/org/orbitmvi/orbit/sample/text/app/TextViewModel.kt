@@ -16,9 +16,14 @@
 
 package org.orbitmvi.orbit.sample.text.app
 
+import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.runtime.snapshotFlow
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.blockingIntent
@@ -28,7 +33,15 @@ import kotlin.random.Random
 @Suppress("MagicNumber")
 class TextViewModel : ContainerHost<TextViewModel.State, Nothing> {
     private val scope = CoroutineScope(Dispatchers.Main)
-    override val container: Container<State, Nothing> = scope.container(State())
+    override val container: Container<State, Nothing> = scope.container(State()) {
+        coroutineScope {
+            launch {
+                snapshotFlow { state.textFieldState.text }.collectLatest { text ->
+                    reduce { state.copy(isTextFieldStateInError = !text.isValid()) }
+                }
+            }
+        }
+    }
 
     fun updateTextBad(text: String) = intent {
         // simulate considerable load on the device
@@ -42,8 +55,24 @@ class TextViewModel : ContainerHost<TextViewModel.State, Nothing> {
         reduce { state.copy(goodField = text) }
     }
 
+    fun submit() = intent {
+        reduce {
+            val text = state.textFieldState.text
+            state.copy(result = "Result: \"$text\" isValid=${text.isValid()}")
+        }
+    }
+
     data class State(
         val badField: String = "",
         val goodField: String = "",
+        val textFieldState: TextFieldState = TextFieldState(""),
+        val isTextFieldStateInError: Boolean = false,
+        val result: String = ""
     )
+
+    companion object {
+        fun CharSequence.isValid(): Boolean {
+            return this.isNotBlank() && this.length <= 10
+        }
+    }
 }

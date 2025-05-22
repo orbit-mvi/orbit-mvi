@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+
 /*
  * Copyright 2021-2025 Mikołaj Leszczyński & Appmattus Limited
  * Copyright 2020 Babylon Partners Limited
@@ -26,25 +28,17 @@ kotlin {
     jvm()
 
     js {
-        browser {
-            testTask {
-                useMocha {
-                    timeout = "10s"
-                }
-            }
-        }
-
-        nodejs {
-            testTask {
-                useMocha {
-                    timeout = "10s"
-                }
-            }
-        }
+        browser()
+        nodejs()
     }
-
+    @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
         browser()
+        nodejs()
+    }
+    @OptIn(ExperimentalWasmDsl::class)
+    wasmWasi {
+        nodejs()
     }
 
     // Tier 1
@@ -88,14 +82,6 @@ kotlin {
             implementation(libs.kotlinCoroutines)
             implementation(kotlin("stdlib"))
             implementation(kotlin("test"))
-        }
-
-        jvmMain.dependencies {
-//            implementation(kotlin("test-junit"))
-        }
-
-        jsMain.dependencies {
-            implementation(kotlin("test-js"))
         }
     }
 }

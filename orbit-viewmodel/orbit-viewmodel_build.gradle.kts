@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+
 /*
  * Copyright 2021-2025 Mikołaj Leszczyński & Appmattus Limited
  * Copyright 2020 Babylon Partners Limited
@@ -31,6 +33,16 @@ plugins {
 
 kotlin {
     androidTarget()
+
+    js {
+        browser()
+        nodejs()
+    }
+    @OptIn(ExperimentalWasmDsl::class)
+    wasmJs {
+        browser()
+        nodejs()
+    }
 
     iosX64()
     iosArm64()
@@ -95,7 +107,6 @@ kotlin {
         }
 
         androidUnitTest.dependencies {
-            implementation(kotlin("test-junit"))
             implementation(libs.robolectric)
             implementation(libs.androidxCoreTesting)
             implementation(libs.androidxEspressoCore)

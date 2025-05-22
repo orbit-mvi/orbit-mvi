@@ -24,6 +24,7 @@ import kotlin.random.Random
 import kotlin.test.Test
 import kotlin.test.assertFailsWith
 import kotlin.test.assertTrue
+import kotlin.time.Duration.Companion.milliseconds
 
 class ExpectStateOnTest {
 
@@ -99,7 +100,7 @@ class ExpectStateOnTest {
         val action3 = Random.nextInt()
 
         assertFailsWith<AssertionError> {
-            StateTestMiddleware(this).test(this) {
+            StateTestMiddleware(this).test(this, timeout = 1000.milliseconds) {
                 containerHost.newCount(action)
                 containerHost.newCount(action2)
                 expectStateOn<State.Loading> { State.Ready(count = action) }
