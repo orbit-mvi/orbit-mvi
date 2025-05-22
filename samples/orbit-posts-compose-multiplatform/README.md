@@ -25,9 +25,17 @@ This sample implements a simple master-detail application using
   [PostDetailsViewModel](composeApp/src/commonMain/kotlin/org/orbitmvi/orbit/sample/posts/compose/multiplatform/domain/viewmodel/detail/PostDetailsViewModel.kt)
   use a `SavedStateHandle` for retaining the current state.
 
-Run with:
-- Web - `./gradlew samples:orbit-posts-compose-multiplatform:composeApp:wasmJsBrowserDevelopmentRun`
-- Desktop - `./gradlew samples:orbit-posts-compose-multiplatform:composeApp:run`
-- Android - Run from IDE
-- iOS - Run from Xcode
-- 
+## Running the app
+
+*Web*  
+`./gradlew
+samples:orbit-posts-compose-multiplatform:composeApp:wasmJsBrowserDevelopmentRun`
+
+*Desktop*  
+`./gradlew samples:orbit-posts-compose-multiplatform:composeApp:run`
+
+*Android*  
+Run from IDE
+
+*iOS*  
+Run from Xcode
