@@ -103,8 +103,5 @@ kotlin {
         jvmTest.dependencies {
             implementation(libs.kotlinCoroutinesTest)
         }
-        jsTest.dependencies {
-            implementation(kotlin("test-js"))
-        }
     }
 }
