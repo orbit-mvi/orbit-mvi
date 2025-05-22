@@ -1,3 +1,5 @@
+@file:Suppress("Filename")
+
 package org.orbitmvi.orbit.sample.posts.compose.multiplatform
 
 import androidx.compose.ui.ExperimentalComposeUiApi
