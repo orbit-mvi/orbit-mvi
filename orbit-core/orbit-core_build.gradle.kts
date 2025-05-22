@@ -28,21 +28,8 @@ kotlin {
     jvm()
 
     js {
-        browser {
-            testTask {
-                useMocha {
-                    timeout = "10s"
-                }
-            }
-        }
-
-        nodejs {
-            testTask {
-                useMocha {
-                    timeout = "10s"
-                }
-            }
-        }
+        browser()
+        nodejs()
     }
 
     // Tier 1
