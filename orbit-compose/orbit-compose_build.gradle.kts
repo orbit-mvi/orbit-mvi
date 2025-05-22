@@ -15,6 +15,7 @@
  */
 
 import org.jetbrains.compose.ExperimentalComposeLibrary
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 
 plugins {
     // We should really be using the com.android.kotlin.multiplatform.library plugin and an androidLibrary block, however, this has issues with
@@ -29,6 +30,16 @@ plugins {
 
 kotlin {
     androidTarget()
+
+    js {
+        browser()
+        nodejs()
+    }
+    @OptIn(ExperimentalWasmDsl::class)
+    wasmJs {
+        browser()
+        nodejs()
+    }
 
     iosX64()
     iosArm64()
