@@ -35,6 +35,7 @@ import org.orbitmvi.orbit.test.ScopedBlockingWorkSimulator
 import kotlin.random.Random
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFails
 
 internal class SimpleDslThreadingTest {
 
