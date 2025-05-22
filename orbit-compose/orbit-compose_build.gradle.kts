@@ -32,8 +32,12 @@ kotlin {
     androidTarget()
 
     js {
-        browser()
-        nodejs()
+        browser {
+            testTask {
+                // JS tests disabled due to https://youtrack.jetbrains.com/issue/CMP-4906
+                enabled = false
+            }
+        }
     }
     @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
