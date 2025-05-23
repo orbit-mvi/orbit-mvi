@@ -72,6 +72,9 @@ jobs:
             -   name: Unit tests
                 run: ./gradlew check -xlint
 
+            -   name: Re-generate jacoco reports
+                run: ./gradlew jacocoTestReport
+
             -   name: Upload test artifacts
                 if: failure()
                 uses: actions/upload-artifact@v4
