@@ -72,6 +72,12 @@ jobs:
             -   name: Unit tests
                 run: ./gradlew check -xlint
 
+            -   name: Upload jacoco
+                uses: actions/upload-artifact@v4
+                with:
+                    name: jacoco
+                    path: '**/jacocoTestReport.xml'
+
             -   name: Upload test artifacts
                 if: failure()
                 uses: actions/upload-artifact@v4
