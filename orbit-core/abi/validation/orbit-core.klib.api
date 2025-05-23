@@ -1,0 +1,181 @@
+// Klib ABI Dump
+// Targets: [androidNativeArm32, androidNativeArm64, androidNativeX64, androidNativeX86, iosArm64, iosSimulatorArm64, iosX64, js, linuxArm64, linuxX64, macosArm64, macosX64, mingwX64, tvosArm64, tvosSimulatorArm64, tvosX64, wasmJs, wasmWasi, watchosArm32, watchosArm64, watchosDeviceArm64, watchosSimulatorArm64, watchosX64]
+// Alias: native => [androidNativeArm32, androidNativeArm64, androidNativeX64, androidNativeX86, iosArm64, iosSimulatorArm64, iosX64, linuxArm64, linuxX64, macosArm64, macosX64, mingwX64, tvosArm64, tvosSimulatorArm64, tvosX64, watchosArm32, watchosArm64, watchosDeviceArm64, watchosSimulatorArm64, watchosX64]
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: true
+// - Show declarations: true
+
+// Library unique name: <orbit-mvi:orbit-core>
+open annotation class org.orbitmvi.orbit.annotation/OrbitDsl : kotlin/Annotation { // org.orbitmvi.orbit.annotation/OrbitDsl|null[0]
+    constructor <init>() // org.orbitmvi.orbit.annotation/OrbitDsl.<init>|<init>(){}[0]
+}
+
+open annotation class org.orbitmvi.orbit.annotation/OrbitExperimental : kotlin/Annotation { // org.orbitmvi.orbit.annotation/OrbitExperimental|null[0]
+    constructor <init>() // org.orbitmvi.orbit.annotation/OrbitExperimental.<init>|<init>(){}[0]
+}
+
+open annotation class org.orbitmvi.orbit.annotation/OrbitInternal : kotlin/Annotation { // org.orbitmvi.orbit.annotation/OrbitInternal|null[0]
+    constructor <init>() // org.orbitmvi.orbit.annotation/OrbitInternal.<init>|<init>(){}[0]
+}
+
+abstract interface <#A: kotlin/Any, #B: kotlin/Any> org.orbitmvi.orbit/Container { // org.orbitmvi.orbit/Container|null[0]
+    abstract val refCountSideEffectFlow // org.orbitmvi.orbit/Container.refCountSideEffectFlow|{}refCountSideEffectFlow[0]
+        abstract fun <get-refCountSideEffectFlow>(): kotlinx.coroutines.flow/Flow<#B> // org.orbitmvi.orbit/Container.refCountSideEffectFlow.<get-refCountSideEffectFlow>|<get-refCountSideEffectFlow>(){}[0]
+    abstract val refCountStateFlow // org.orbitmvi.orbit/Container.refCountStateFlow|{}refCountStateFlow[0]
+        abstract fun <get-refCountStateFlow>(): kotlinx.coroutines.flow/StateFlow<#A> // org.orbitmvi.orbit/Container.refCountStateFlow.<get-refCountStateFlow>|<get-refCountStateFlow>(){}[0]
+    abstract val scope // org.orbitmvi.orbit/Container.scope|{}scope[0]
+        abstract fun <get-scope>(): kotlinx.coroutines/CoroutineScope // org.orbitmvi.orbit/Container.scope.<get-scope>|<get-scope>(){}[0]
+    abstract val settings // org.orbitmvi.orbit/Container.settings|{}settings[0]
+        abstract fun <get-settings>(): org.orbitmvi.orbit/RealSettings // org.orbitmvi.orbit/Container.settings.<get-settings>|<get-settings>(){}[0]
+    abstract val sideEffectFlow // org.orbitmvi.orbit/Container.sideEffectFlow|{}sideEffectFlow[0]
+        abstract fun <get-sideEffectFlow>(): kotlinx.coroutines.flow/Flow<#B> // org.orbitmvi.orbit/Container.sideEffectFlow.<get-sideEffectFlow>|<get-sideEffectFlow>(){}[0]
+    abstract val stateFlow // org.orbitmvi.orbit/Container.stateFlow|{}stateFlow[0]
+        abstract fun <get-stateFlow>(): kotlinx.coroutines.flow/StateFlow<#A> // org.orbitmvi.orbit/Container.stateFlow.<get-stateFlow>|<get-stateFlow>(){}[0]
+
+    abstract fun cancel() // org.orbitmvi.orbit/Container.cancel|cancel(){}[0]
+    abstract fun orbit(kotlin.coroutines/SuspendFunction1<org.orbitmvi.orbit.syntax/ContainerContext<#A, #B>, kotlin/Unit>): kotlinx.coroutines/Job // org.orbitmvi.orbit/Container.orbit|orbit(kotlin.coroutines.SuspendFunction1<org.orbitmvi.orbit.syntax.ContainerContext<1:0,1:1>,kotlin.Unit>){}[0]
+    abstract suspend fun inlineOrbit(kotlin.coroutines/SuspendFunction1<org.orbitmvi.orbit.syntax/ContainerContext<#A, #B>, kotlin/Unit>) // org.orbitmvi.orbit/Container.inlineOrbit|inlineOrbit(kotlin.coroutines.SuspendFunction1<org.orbitmvi.orbit.syntax.ContainerContext<1:0,1:1>,kotlin.Unit>){}[0]
+    abstract suspend fun joinIntents() // org.orbitmvi.orbit/Container.joinIntents|joinIntents(){}[0]
+}
+
+abstract interface <#A: kotlin/Any, #B: kotlin/Any> org.orbitmvi.orbit/ContainerDecorator : org.orbitmvi.orbit/Container<#A, #B> { // org.orbitmvi.orbit/ContainerDecorator|null[0]
+    abstract val actual // org.orbitmvi.orbit/ContainerDecorator.actual|{}actual[0]
+        abstract fun <get-actual>(): org.orbitmvi.orbit/Container<#A, #B> // org.orbitmvi.orbit/ContainerDecorator.actual.<get-actual>|<get-actual>(){}[0]
+    open val refCountSideEffectFlow // org.orbitmvi.orbit/ContainerDecorator.refCountSideEffectFlow|{}refCountSideEffectFlow[0]
+        open fun <get-refCountSideEffectFlow>(): kotlinx.coroutines.flow/Flow<#B> // org.orbitmvi.orbit/ContainerDecorator.refCountSideEffectFlow.<get-refCountSideEffectFlow>|<get-refCountSideEffectFlow>(){}[0]
+    open val refCountStateFlow // org.orbitmvi.orbit/ContainerDecorator.refCountStateFlow|{}refCountStateFlow[0]
+        open fun <get-refCountStateFlow>(): kotlinx.coroutines.flow/StateFlow<#A> // org.orbitmvi.orbit/ContainerDecorator.refCountStateFlow.<get-refCountStateFlow>|<get-refCountStateFlow>(){}[0]
+    open val scope // org.orbitmvi.orbit/ContainerDecorator.scope|{}scope[0]
+        open fun <get-scope>(): kotlinx.coroutines/CoroutineScope // org.orbitmvi.orbit/ContainerDecorator.scope.<get-scope>|<get-scope>(){}[0]
+    open val settings // org.orbitmvi.orbit/ContainerDecorator.settings|{}settings[0]
+        open fun <get-settings>(): org.orbitmvi.orbit/RealSettings // org.orbitmvi.orbit/ContainerDecorator.settings.<get-settings>|<get-settings>(){}[0]
+    open val sideEffectFlow // org.orbitmvi.orbit/ContainerDecorator.sideEffectFlow|{}sideEffectFlow[0]
+        open fun <get-sideEffectFlow>(): kotlinx.coroutines.flow/Flow<#B> // org.orbitmvi.orbit/ContainerDecorator.sideEffectFlow.<get-sideEffectFlow>|<get-sideEffectFlow>(){}[0]
+    open val stateFlow // org.orbitmvi.orbit/ContainerDecorator.stateFlow|{}stateFlow[0]
+        open fun <get-stateFlow>(): kotlinx.coroutines.flow/StateFlow<#A> // org.orbitmvi.orbit/ContainerDecorator.stateFlow.<get-stateFlow>|<get-stateFlow>(){}[0]
+
+    open fun cancel() // org.orbitmvi.orbit/ContainerDecorator.cancel|cancel(){}[0]
+    open fun orbit(kotlin.coroutines/SuspendFunction1<org.orbitmvi.orbit.syntax/ContainerContext<#A, #B>, kotlin/Unit>): kotlinx.coroutines/Job // org.orbitmvi.orbit/ContainerDecorator.orbit|orbit(kotlin.coroutines.SuspendFunction1<org.orbitmvi.orbit.syntax.ContainerContext<1:0,1:1>,kotlin.Unit>){}[0]
+    open suspend fun inlineOrbit(kotlin.coroutines/SuspendFunction1<org.orbitmvi.orbit.syntax/ContainerContext<#A, #B>, kotlin/Unit>) // org.orbitmvi.orbit/ContainerDecorator.inlineOrbit|inlineOrbit(kotlin.coroutines.SuspendFunction1<org.orbitmvi.orbit.syntax.ContainerContext<1:0,1:1>,kotlin.Unit>){}[0]
+    open suspend fun joinIntents() // org.orbitmvi.orbit/ContainerDecorator.joinIntents|joinIntents(){}[0]
+}
+
+abstract interface <#A: kotlin/Any, #B: kotlin/Any> org.orbitmvi.orbit/ContainerHost { // org.orbitmvi.orbit/ContainerHost|null[0]
+    abstract val container // org.orbitmvi.orbit/ContainerHost.container|{}container[0]
+        abstract fun <get-container>(): org.orbitmvi.orbit/Container<#A, #B> // org.orbitmvi.orbit/ContainerHost.container.<get-container>|<get-container>(){}[0]
+
+    open fun intent(kotlin/Boolean = ..., kotlin.coroutines/SuspendFunction1<org.orbitmvi.orbit.syntax/Syntax<#A, #B>, kotlin/Unit>): kotlinx.coroutines/Job // org.orbitmvi.orbit/ContainerHost.intent|intent(kotlin.Boolean;kotlin.coroutines.SuspendFunction1<org.orbitmvi.orbit.syntax.Syntax<1:0,1:1>,kotlin.Unit>){}[0]
+    open suspend fun subIntent(kotlin.coroutines/SuspendFunction1<org.orbitmvi.orbit.syntax/Syntax<#A, #B>, kotlin/Unit>) // org.orbitmvi.orbit/ContainerHost.subIntent|subIntent(kotlin.coroutines.SuspendFunction1<org.orbitmvi.orbit.syntax.Syntax<1:0,1:1>,kotlin.Unit>){}[0]
+}
+
+abstract interface <#A: kotlin/Any, #B: kotlin/Any?> org.orbitmvi.orbit.syntax/Operator { // org.orbitmvi.orbit.syntax/Operator|null[0]
+    abstract val registerIdling // org.orbitmvi.orbit.syntax/Operator.registerIdling|{}registerIdling[0]
+        abstract fun <get-registerIdling>(): kotlin/Boolean // org.orbitmvi.orbit.syntax/Operator.registerIdling.<get-registerIdling>|<get-registerIdling>(){}[0]
+}
+
+abstract interface org.orbitmvi.orbit.idling/IdlingResource { // org.orbitmvi.orbit.idling/IdlingResource|null[0]
+    abstract fun close() // org.orbitmvi.orbit.idling/IdlingResource.close|close(){}[0]
+    abstract fun decrement() // org.orbitmvi.orbit.idling/IdlingResource.decrement|decrement(){}[0]
+    abstract fun increment() // org.orbitmvi.orbit.idling/IdlingResource.increment|increment(){}[0]
+}
+
+final class <#A: kotlin/Any, #B: kotlin/Any, #C: #A> org.orbitmvi.orbit.syntax/SubStateSyntax { // org.orbitmvi.orbit.syntax/SubStateSyntax|null[0]
+    constructor <init>(org.orbitmvi.orbit.syntax/SubStateContainerContext<#A, #B, #C>) // org.orbitmvi.orbit.syntax/SubStateSyntax.<init>|<init>(org.orbitmvi.orbit.syntax.SubStateContainerContext<1:0,1:1,1:2>){}[0]
+
+    final val state // org.orbitmvi.orbit.syntax/SubStateSyntax.state|{}state[0]
+        final fun <get-state>(): #C // org.orbitmvi.orbit.syntax/SubStateSyntax.state.<get-state>|<get-state>(){}[0]
+
+    final suspend fun postSideEffect(#B) // org.orbitmvi.orbit.syntax/SubStateSyntax.postSideEffect|postSideEffect(1:1){}[0]
+    final suspend fun reduce(kotlin/Function1<org.orbitmvi.orbit.syntax/IntentContext<#C>, #A>) // org.orbitmvi.orbit.syntax/SubStateSyntax.reduce|reduce(kotlin.Function1<org.orbitmvi.orbit.syntax.IntentContext<1:2>,1:0>){}[0]
+    final suspend fun repeatOnSubscription(kotlin.coroutines/SuspendFunction1<kotlinx.coroutines/CoroutineScope, kotlin/Unit>) // org.orbitmvi.orbit.syntax/SubStateSyntax.repeatOnSubscription|repeatOnSubscription(kotlin.coroutines.SuspendFunction1<kotlinx.coroutines.CoroutineScope,kotlin.Unit>){}[0]
+}
+
+final class <#A: kotlin/Any, #B: kotlin/Any> org.orbitmvi.orbit.syntax/Syntax { // org.orbitmvi.orbit.syntax/Syntax|null[0]
+    constructor <init>(org.orbitmvi.orbit.syntax/ContainerContext<#A, #B>) // org.orbitmvi.orbit.syntax/Syntax.<init>|<init>(org.orbitmvi.orbit.syntax.ContainerContext<1:0,1:1>){}[0]
+
+    final val containerContext // org.orbitmvi.orbit.syntax/Syntax.containerContext|{}containerContext[0]
+        final fun <get-containerContext>(): org.orbitmvi.orbit.syntax/ContainerContext<#A, #B> // org.orbitmvi.orbit.syntax/Syntax.containerContext.<get-containerContext>|<get-containerContext>(){}[0]
+    final val state // org.orbitmvi.orbit.syntax/Syntax.state|{}state[0]
+        final fun <get-state>(): #A // org.orbitmvi.orbit.syntax/Syntax.state.<get-state>|<get-state>(){}[0]
+
+    final suspend fun postSideEffect(#B) // org.orbitmvi.orbit.syntax/Syntax.postSideEffect|postSideEffect(1:1){}[0]
+    final suspend fun reduce(kotlin/Function1<org.orbitmvi.orbit.syntax/IntentContext<#A>, #A>) // org.orbitmvi.orbit.syntax/Syntax.reduce|reduce(kotlin.Function1<org.orbitmvi.orbit.syntax.IntentContext<1:0>,1:0>){}[0]
+    final suspend fun repeatOnSubscription(kotlin.coroutines/SuspendFunction1<kotlinx.coroutines/CoroutineScope, kotlin/Unit>) // org.orbitmvi.orbit.syntax/Syntax.repeatOnSubscription|repeatOnSubscription(kotlin.coroutines.SuspendFunction1<kotlinx.coroutines.CoroutineScope,kotlin.Unit>){}[0]
+    final suspend inline fun <#A1: reified #A> runOn(crossinline kotlin/Function1<#A1, kotlin/Boolean> = ..., crossinline kotlin.coroutines/SuspendFunction1<org.orbitmvi.orbit.syntax/SubStateSyntax<#A, #B, #A1>, kotlin/Unit>) // org.orbitmvi.orbit.syntax/Syntax.runOn|runOn(kotlin.Function1<0:0,kotlin.Boolean>;kotlin.coroutines.SuspendFunction1<org.orbitmvi.orbit.syntax.SubStateSyntax<1:0,1:1,0:0>,kotlin.Unit>){0§<1:0>}[0]
+}
+
+final class <#A: kotlin/Any> org.orbitmvi.orbit.syntax/IntentContext { // org.orbitmvi.orbit.syntax/IntentContext|null[0]
+    constructor <init>(#A) // org.orbitmvi.orbit.syntax/IntentContext.<init>|<init>(1:0){}[0]
+
+    final val state // org.orbitmvi.orbit.syntax/IntentContext.state|{}state[0]
+        final fun <get-state>(): #A // org.orbitmvi.orbit.syntax/IntentContext.state.<get-state>|<get-state>(){}[0]
+
+    final fun component1(): #A // org.orbitmvi.orbit.syntax/IntentContext.component1|component1(){}[0]
+    final fun copy(#A = ...): org.orbitmvi.orbit.syntax/IntentContext<#A> // org.orbitmvi.orbit.syntax/IntentContext.copy|copy(1:0){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // org.orbitmvi.orbit.syntax/IntentContext.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // org.orbitmvi.orbit.syntax/IntentContext.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // org.orbitmvi.orbit.syntax/IntentContext.toString|toString(){}[0]
+}
+
+final class org.orbitmvi.orbit.idling/NoopIdlingResource : org.orbitmvi.orbit.idling/IdlingResource { // org.orbitmvi.orbit.idling/NoopIdlingResource|null[0]
+    constructor <init>() // org.orbitmvi.orbit.idling/NoopIdlingResource.<init>|<init>(){}[0]
+
+    final fun close() // org.orbitmvi.orbit.idling/NoopIdlingResource.close|close(){}[0]
+    final fun decrement() // org.orbitmvi.orbit.idling/NoopIdlingResource.decrement|decrement(){}[0]
+    final fun increment() // org.orbitmvi.orbit.idling/NoopIdlingResource.increment|increment(){}[0]
+}
+
+final class org.orbitmvi.orbit/RealSettings { // org.orbitmvi.orbit/RealSettings|null[0]
+    constructor <init>(kotlin/Int = ..., org.orbitmvi.orbit.idling/IdlingResource = ..., kotlinx.coroutines/CoroutineDispatcher = ..., kotlinx.coroutines/CoroutineDispatcher = ..., kotlinx.coroutines/CoroutineExceptionHandler? = ..., kotlin/Long = ...) // org.orbitmvi.orbit/RealSettings.<init>|<init>(kotlin.Int;org.orbitmvi.orbit.idling.IdlingResource;kotlinx.coroutines.CoroutineDispatcher;kotlinx.coroutines.CoroutineDispatcher;kotlinx.coroutines.CoroutineExceptionHandler?;kotlin.Long){}[0]
+
+    final val eventLoopDispatcher // org.orbitmvi.orbit/RealSettings.eventLoopDispatcher|{}eventLoopDispatcher[0]
+        final fun <get-eventLoopDispatcher>(): kotlinx.coroutines/CoroutineDispatcher // org.orbitmvi.orbit/RealSettings.eventLoopDispatcher.<get-eventLoopDispatcher>|<get-eventLoopDispatcher>(){}[0]
+    final val exceptionHandler // org.orbitmvi.orbit/RealSettings.exceptionHandler|{}exceptionHandler[0]
+        final fun <get-exceptionHandler>(): kotlinx.coroutines/CoroutineExceptionHandler? // org.orbitmvi.orbit/RealSettings.exceptionHandler.<get-exceptionHandler>|<get-exceptionHandler>(){}[0]
+    final val idlingRegistry // org.orbitmvi.orbit/RealSettings.idlingRegistry|{}idlingRegistry[0]
+        final fun <get-idlingRegistry>(): org.orbitmvi.orbit.idling/IdlingResource // org.orbitmvi.orbit/RealSettings.idlingRegistry.<get-idlingRegistry>|<get-idlingRegistry>(){}[0]
+    final val intentLaunchingDispatcher // org.orbitmvi.orbit/RealSettings.intentLaunchingDispatcher|{}intentLaunchingDispatcher[0]
+        final fun <get-intentLaunchingDispatcher>(): kotlinx.coroutines/CoroutineDispatcher // org.orbitmvi.orbit/RealSettings.intentLaunchingDispatcher.<get-intentLaunchingDispatcher>|<get-intentLaunchingDispatcher>(){}[0]
+    final val repeatOnSubscribedStopTimeout // org.orbitmvi.orbit/RealSettings.repeatOnSubscribedStopTimeout|{}repeatOnSubscribedStopTimeout[0]
+        final fun <get-repeatOnSubscribedStopTimeout>(): kotlin/Long // org.orbitmvi.orbit/RealSettings.repeatOnSubscribedStopTimeout.<get-repeatOnSubscribedStopTimeout>|<get-repeatOnSubscribedStopTimeout>(){}[0]
+    final val sideEffectBufferSize // org.orbitmvi.orbit/RealSettings.sideEffectBufferSize|{}sideEffectBufferSize[0]
+        final fun <get-sideEffectBufferSize>(): kotlin/Int // org.orbitmvi.orbit/RealSettings.sideEffectBufferSize.<get-sideEffectBufferSize>|<get-sideEffectBufferSize>(){}[0]
+
+    final fun component1(): kotlin/Int // org.orbitmvi.orbit/RealSettings.component1|component1(){}[0]
+    final fun component2(): org.orbitmvi.orbit.idling/IdlingResource // org.orbitmvi.orbit/RealSettings.component2|component2(){}[0]
+    final fun component3(): kotlinx.coroutines/CoroutineDispatcher // org.orbitmvi.orbit/RealSettings.component3|component3(){}[0]
+    final fun component4(): kotlinx.coroutines/CoroutineDispatcher // org.orbitmvi.orbit/RealSettings.component4|component4(){}[0]
+    final fun component5(): kotlinx.coroutines/CoroutineExceptionHandler? // org.orbitmvi.orbit/RealSettings.component5|component5(){}[0]
+    final fun component6(): kotlin/Long // org.orbitmvi.orbit/RealSettings.component6|component6(){}[0]
+    final fun copy(kotlin/Int = ..., org.orbitmvi.orbit.idling/IdlingResource = ..., kotlinx.coroutines/CoroutineDispatcher = ..., kotlinx.coroutines/CoroutineDispatcher = ..., kotlinx.coroutines/CoroutineExceptionHandler? = ..., kotlin/Long = ...): org.orbitmvi.orbit/RealSettings // org.orbitmvi.orbit/RealSettings.copy|copy(kotlin.Int;org.orbitmvi.orbit.idling.IdlingResource;kotlinx.coroutines.CoroutineDispatcher;kotlinx.coroutines.CoroutineDispatcher;kotlinx.coroutines.CoroutineExceptionHandler?;kotlin.Long){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // org.orbitmvi.orbit/RealSettings.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // org.orbitmvi.orbit/RealSettings.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // org.orbitmvi.orbit/RealSettings.toString|toString(){}[0]
+}
+
+final class org.orbitmvi.orbit/SettingsBuilder { // org.orbitmvi.orbit/SettingsBuilder|null[0]
+    constructor <init>() // org.orbitmvi.orbit/SettingsBuilder.<init>|<init>(){}[0]
+
+    final var exceptionHandler // org.orbitmvi.orbit/SettingsBuilder.exceptionHandler|{}exceptionHandler[0]
+        final fun <get-exceptionHandler>(): kotlinx.coroutines/CoroutineExceptionHandler? // org.orbitmvi.orbit/SettingsBuilder.exceptionHandler.<get-exceptionHandler>|<get-exceptionHandler>(){}[0]
+        final fun <set-exceptionHandler>(kotlinx.coroutines/CoroutineExceptionHandler?) // org.orbitmvi.orbit/SettingsBuilder.exceptionHandler.<set-exceptionHandler>|<set-exceptionHandler>(kotlinx.coroutines.CoroutineExceptionHandler?){}[0]
+    final var idlingRegistry // org.orbitmvi.orbit/SettingsBuilder.idlingRegistry|{}idlingRegistry[0]
+        final fun <get-idlingRegistry>(): org.orbitmvi.orbit.idling/IdlingResource // org.orbitmvi.orbit/SettingsBuilder.idlingRegistry.<get-idlingRegistry>|<get-idlingRegistry>(){}[0]
+        final fun <set-idlingRegistry>(org.orbitmvi.orbit.idling/IdlingResource) // org.orbitmvi.orbit/SettingsBuilder.idlingRegistry.<set-idlingRegistry>|<set-idlingRegistry>(org.orbitmvi.orbit.idling.IdlingResource){}[0]
+    final var repeatOnSubscribedStopTimeout // org.orbitmvi.orbit/SettingsBuilder.repeatOnSubscribedStopTimeout|{}repeatOnSubscribedStopTimeout[0]
+        final fun <get-repeatOnSubscribedStopTimeout>(): kotlin/Long // org.orbitmvi.orbit/SettingsBuilder.repeatOnSubscribedStopTimeout.<get-repeatOnSubscribedStopTimeout>|<get-repeatOnSubscribedStopTimeout>(){}[0]
+        final fun <set-repeatOnSubscribedStopTimeout>(kotlin/Long) // org.orbitmvi.orbit/SettingsBuilder.repeatOnSubscribedStopTimeout.<set-repeatOnSubscribedStopTimeout>|<set-repeatOnSubscribedStopTimeout>(kotlin.Long){}[0]
+    final var sideEffectBufferSize // org.orbitmvi.orbit/SettingsBuilder.sideEffectBufferSize|{}sideEffectBufferSize[0]
+        final fun <get-sideEffectBufferSize>(): kotlin/Int // org.orbitmvi.orbit/SettingsBuilder.sideEffectBufferSize.<get-sideEffectBufferSize>|<get-sideEffectBufferSize>(){}[0]
+        final fun <set-sideEffectBufferSize>(kotlin/Int) // org.orbitmvi.orbit/SettingsBuilder.sideEffectBufferSize.<set-sideEffectBufferSize>|<set-sideEffectBufferSize>(kotlin.Int){}[0]
+}
+
+final fun <#A: kotlin/Any, #B: kotlin/Any> (kotlinx.coroutines/CoroutineScope).org.orbitmvi.orbit/container(#A, kotlin/Function1<org.orbitmvi.orbit/SettingsBuilder, kotlin/Unit> = ..., kotlin.coroutines/SuspendFunction1<org.orbitmvi.orbit.syntax/Syntax<#A, #B>, kotlin/Unit>? = ...): org.orbitmvi.orbit/Container<#A, #B> // org.orbitmvi.orbit/container|container@kotlinx.coroutines.CoroutineScope(0:0;kotlin.Function1<org.orbitmvi.orbit.SettingsBuilder,kotlin.Unit>;kotlin.coroutines.SuspendFunction1<org.orbitmvi.orbit.syntax.Syntax<0:0,0:1>,kotlin.Unit>?){0§<kotlin.Any>;1§<kotlin.Any>}[0]
+final suspend fun <#A: kotlin/Any, #B: kotlin/Any> (org.orbitmvi.orbit.syntax/ContainerContext<#A, #B>).org.orbitmvi.orbit.idling/withIdling(kotlin/Boolean, kotlin.coroutines/SuspendFunction1<org.orbitmvi.orbit.syntax/ContainerContext<#A, #B>, kotlin/Unit>) // org.orbitmvi.orbit.idling/withIdling|withIdling@org.orbitmvi.orbit.syntax.ContainerContext<0:0,0:1>(kotlin.Boolean;kotlin.coroutines.SuspendFunction1<org.orbitmvi.orbit.syntax.ContainerContext<0:0,0:1>,kotlin.Unit>){0§<kotlin.Any>;1§<kotlin.Any>}[0]
+final suspend fun <#A: org.orbitmvi.orbit.syntax/Operator<*, *>, #B: kotlin/Any?> (org.orbitmvi.orbit.syntax/ContainerContext<*, *>).org.orbitmvi.orbit.idling/withIdling(#A, kotlin.coroutines/SuspendFunction1<#A, #B>): #B // org.orbitmvi.orbit.idling/withIdling|withIdling@org.orbitmvi.orbit.syntax.ContainerContext<*,*>(0:0;kotlin.coroutines.SuspendFunction1<0:0,0:1>){0§<org.orbitmvi.orbit.syntax.Operator<*,*>>;1§<kotlin.Any?>}[0]
+final suspend fun <#A: org.orbitmvi.orbit.syntax/Operator<*, *>, #B: kotlin/Any?> (org.orbitmvi.orbit.syntax/ContainerContext<*, *>).org.orbitmvi.orbit.idling/withIdlingFlow(#A, kotlin.coroutines/SuspendFunction1<#A, kotlinx.coroutines.flow/Flow<#B>>): kotlinx.coroutines.flow/Flow<#B> // org.orbitmvi.orbit.idling/withIdlingFlow|withIdlingFlow@org.orbitmvi.orbit.syntax.ContainerContext<*,*>(0:0;kotlin.coroutines.SuspendFunction1<0:0,kotlinx.coroutines.flow.Flow<0:1>>){0§<org.orbitmvi.orbit.syntax.Operator<*,*>>;1§<kotlin.Any?>}[0]
+final suspend inline fun <#A: kotlin/Any, #B: reified #A> (kotlinx.coroutines.flow/Flow<#A>).org.orbitmvi.orbit.syntax/runOn(crossinline kotlin/Function1<#B, kotlin/Boolean> = ..., crossinline kotlin.coroutines/SuspendFunction1<#B, kotlin/Unit>) // org.orbitmvi.orbit.syntax/runOn|runOn@kotlinx.coroutines.flow.Flow<0:0>(kotlin.Function1<0:1,kotlin.Boolean>;kotlin.coroutines.SuspendFunction1<0:1,kotlin.Unit>){0§<kotlin.Any>;1§<0:0>}[0]
+
+// Targets: [native]
+final fun <#A: kotlin/Any, #B: kotlin/Any> (org.orbitmvi.orbit/ContainerHost<#A, #B>).org.orbitmvi.orbit/blockingIntent(kotlin/Boolean = ..., kotlin.coroutines/SuspendFunction1<org.orbitmvi.orbit.syntax/Syntax<#A, #B>, kotlin/Unit>) // org.orbitmvi.orbit/blockingIntent|blockingIntent@org.orbitmvi.orbit.ContainerHost<0:0,0:1>(kotlin.Boolean;kotlin.coroutines.SuspendFunction1<org.orbitmvi.orbit.syntax.Syntax<0:0,0:1>,kotlin.Unit>){0§<kotlin.Any>;1§<kotlin.Any>}[0]

@@ -48,6 +48,7 @@ plugins {
     alias(libs.plugins.gradleMavenPublishPlugin) apply false
     alias(libs.plugins.dokkaPlugin)
     alias(libs.plugins.compose.compiler) apply false
+    alias(libs.plugins.binaryCompatibilityValidator)
 }
 
 apply(from = "gradle/scripts/detekt.gradle.kts")
@@ -78,16 +79,6 @@ tasks.withType<DependencyUpdatesTask> {
 
 // Force Kotlin versions to ensure transitive dependencies don't break our build
 allprojects {
-    configurations.all {
-        resolutionStrategy {
-            force("org.jetbrains.kotlin:kotlin-stdlib:${libs.versions.kotlin.get()}")
-            force("org.jetbrains.kotlin:kotlin-stdlib-jdk8:${libs.versions.kotlin.get()}")
-            force("org.jetbrains.kotlin:kotlin-reflect:${libs.versions.kotlin.get()}")
-            force("org.jetbrains.kotlinx:kotlinx-coroutines-core:${libs.versions.coroutines.get()}")
-            // Force Junit version due to security issues with Junit 4.12
-            force(libs.junit4)
-        }
-    }
     plugins.withType<org.jetbrains.dokka.gradle.DokkaPlugin> {
         dokka {
             dokkaSourceSets {
@@ -241,4 +232,27 @@ dependencies {
     dokka(project(":orbit-compose:"))
     dokka(project(":orbit-viewmodel:"))
     dokka(project(":orbit-test:"))
+}
+
+apiValidation {
+    @OptIn(kotlinx.validation.ExperimentalBCVApi::class)
+    klib {
+        enabled = true
+    }
+    ignoredPackages.add("org.orbitmvi.orbit.internal")
+    ignoredProjects.addAll(
+        listOf(
+            "test-common",
+            "samples",
+            "orbit-calculator",
+            "orbit-posts",
+            "composeApp",
+            "orbit-stocklist",
+            "orbit-stocklist-jetpack-compose",
+            "orbit-text",
+        )
+    )
+    nonPublicMarkers.add("org.orbitmvi.orbit.annotation.OrbitInternal")
+    validationDisabled = false
+    apiDumpDirectory = "abi/validation"
 }

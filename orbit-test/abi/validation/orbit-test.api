@@ -1,0 +1,65 @@
+public abstract class org/orbitmvi/orbit/test/Item {
+}
+
+public final class org/orbitmvi/orbit/test/Item$SideEffectItem : org/orbitmvi/orbit/test/Item {
+	public fun <init> (Ljava/lang/Object;)V
+	public final fun component1 ()Ljava/lang/Object;
+	public final fun copy (Ljava/lang/Object;)Lorg/orbitmvi/orbit/test/Item$SideEffectItem;
+	public static synthetic fun copy$default (Lorg/orbitmvi/orbit/test/Item$SideEffectItem;Ljava/lang/Object;ILjava/lang/Object;)Lorg/orbitmvi/orbit/test/Item$SideEffectItem;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getValue ()Ljava/lang/Object;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/orbitmvi/orbit/test/Item$StateItem : org/orbitmvi/orbit/test/Item {
+	public fun <init> (Ljava/lang/Object;)V
+	public final fun component1 ()Ljava/lang/Object;
+	public final fun copy (Ljava/lang/Object;)Lorg/orbitmvi/orbit/test/Item$StateItem;
+	public static synthetic fun copy$default (Lorg/orbitmvi/orbit/test/Item$StateItem;Ljava/lang/Object;ILjava/lang/Object;)Lorg/orbitmvi/orbit/test/Item$StateItem;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getValue ()Ljava/lang/Object;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/orbitmvi/orbit/test/OrbitTestContext {
+	public fun <init> (Lorg/orbitmvi/orbit/ContainerHost;Ljava/lang/Object;Lapp/cash/turbine/ReceiveTurbine;Lorg/orbitmvi/orbit/test/TestSettings;)V
+	public final fun awaitItem (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun awaitSideEffect (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun awaitState (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun cancelAndIgnoreRemainingItems (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun expectInitialState (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun expectNoItems (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun expectSideEffect (Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun expectState (Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun expectState (Lkotlin/jvm/functions/Function1;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun getContainerHost ()Lorg/orbitmvi/orbit/ContainerHost;
+	public final fun getCurrentConsumedState ()Ljava/lang/Object;
+	public final fun runOnCreate ()Lkotlinx/coroutines/Job;
+	public final fun setCurrentConsumedState (Ljava/lang/Object;)V
+	public final fun skipItems (ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class org/orbitmvi/orbit/test/TestKt {
+	public static final fun test-Tnuy9kA (Lorg/orbitmvi/orbit/ContainerHost;Lkotlinx/coroutines/test/TestScope;Ljava/lang/Object;Lkotlin/time/Duration;Lorg/orbitmvi/orbit/test/TestSettings;Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun test-Tnuy9kA$default (Lorg/orbitmvi/orbit/ContainerHost;Lkotlinx/coroutines/test/TestScope;Ljava/lang/Object;Lkotlin/time/Duration;Lorg/orbitmvi/orbit/test/TestSettings;Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+}
+
+public final class org/orbitmvi/orbit/test/TestSettings {
+	public fun <init> ()V
+	public fun <init> (Lkotlinx/coroutines/CoroutineDispatcher;Lkotlinx/coroutines/CoroutineExceptionHandler;Z)V
+	public synthetic fun <init> (Lkotlinx/coroutines/CoroutineDispatcher;Lkotlinx/coroutines/CoroutineExceptionHandler;ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Lkotlinx/coroutines/CoroutineDispatcher;
+	public final fun component2 ()Lkotlinx/coroutines/CoroutineExceptionHandler;
+	public final fun component3 ()Z
+	public final fun copy (Lkotlinx/coroutines/CoroutineDispatcher;Lkotlinx/coroutines/CoroutineExceptionHandler;Z)Lorg/orbitmvi/orbit/test/TestSettings;
+	public static synthetic fun copy$default (Lorg/orbitmvi/orbit/test/TestSettings;Lkotlinx/coroutines/CoroutineDispatcher;Lkotlinx/coroutines/CoroutineExceptionHandler;ZILjava/lang/Object;)Lorg/orbitmvi/orbit/test/TestSettings;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAutoCheckInitialState ()Z
+	public final fun getDispatcherOverride ()Lkotlinx/coroutines/CoroutineDispatcher;
+	public final fun getExceptionHandlerOverride ()Lkotlinx/coroutines/CoroutineExceptionHandler;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+

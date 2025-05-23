@@ -1,0 +1,11 @@
+// Klib ABI Dump
+// Targets: [iosArm64, iosSimulatorArm64, iosX64, js, wasmJs]
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: true
+// - Show declarations: true
+
+// Library unique name: <orbit-mvi:orbit-viewmodel>
+final fun <#A: kotlin/Any, #B: kotlin/Any> (androidx.lifecycle/ViewModel).org.orbitmvi.orbit.viewmodel/container(#A, androidx.lifecycle/SavedStateHandle, kotlinx.serialization/KSerializer<#A>, kotlin/Function1<org.orbitmvi.orbit/SettingsBuilder, kotlin/Unit> = ..., kotlin.coroutines/SuspendFunction1<org.orbitmvi.orbit.syntax/Syntax<#A, #B>, kotlin/Unit>? = ...): org.orbitmvi.orbit/Container<#A, #B> // org.orbitmvi.orbit.viewmodel/container|container@androidx.lifecycle.ViewModel(0:0;androidx.lifecycle.SavedStateHandle;kotlinx.serialization.KSerializer<0:0>;kotlin.Function1<org.orbitmvi.orbit.SettingsBuilder,kotlin.Unit>;kotlin.coroutines.SuspendFunction1<org.orbitmvi.orbit.syntax.Syntax<0:0,0:1>,kotlin.Unit>?){0§<kotlin.Any>;1§<kotlin.Any>}[0]
+final fun <#A: kotlin/Any, #B: kotlin/Any> (androidx.lifecycle/ViewModel).org.orbitmvi.orbit.viewmodel/container(#A, kotlin/Function1<org.orbitmvi.orbit/SettingsBuilder, kotlin/Unit> = ..., kotlin.coroutines/SuspendFunction1<org.orbitmvi.orbit.syntax/Syntax<#A, #B>, kotlin/Unit>? = ...): org.orbitmvi.orbit/Container<#A, #B> // org.orbitmvi.orbit.viewmodel/container|container@androidx.lifecycle.ViewModel(0:0;kotlin.Function1<org.orbitmvi.orbit.SettingsBuilder,kotlin.Unit>;kotlin.coroutines.SuspendFunction1<org.orbitmvi.orbit.syntax.Syntax<0:0,0:1>,kotlin.Unit>?){0§<kotlin.Any>;1§<kotlin.Any>}[0]
+final fun <#A: kotlin/Any, #B: kotlin/Any> (org.orbitmvi.orbit/ContainerHost<#A, #B>).org.orbitmvi.orbit.viewmodel/observe(androidx.lifecycle/LifecycleOwner, androidx.lifecycle/Lifecycle.State = ..., kotlin.coroutines/SuspendFunction1<#A, kotlin/Unit>? = ..., kotlin.coroutines/SuspendFunction1<#B, kotlin/Unit>? = ...) // org.orbitmvi.orbit.viewmodel/observe|observe@org.orbitmvi.orbit.ContainerHost<0:0,0:1>(androidx.lifecycle.LifecycleOwner;androidx.lifecycle.Lifecycle.State;kotlin.coroutines.SuspendFunction1<0:0,kotlin.Unit>?;kotlin.coroutines.SuspendFunction1<0:1,kotlin.Unit>?){0§<kotlin.Any>;1§<kotlin.Any>}[0]
