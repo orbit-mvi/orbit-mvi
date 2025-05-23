@@ -28,18 +28,12 @@ val jacocoTask = tasks.register("jacocoTestReport", JacocoReport::class) {
         "src/jvmMain"
     )
 
-    // Include all compiled classes.
     val classFiles = layout.buildDirectory.dir("classes/kotlin/jvm").get().asFile.walkBottomUp().toSet()
 
-    // This helps with test coverage accuracy.
     classDirectories.setFrom(classFiles)
     sourceDirectories.setFrom(files(coverageSourceDirs))
 
-    // The resulting test report in binary format.
-    // It serves as the basis for human-readable reports.
-    layout.buildDirectory.files("jacoco/jvmTest.exec").let {
-        executionData.setFrom(it)
-    }
+    executionData.setFrom(layout.buildDirectory.files("jacoco/jvmTest.exec"))
 
     reports {
         html.required.set(true)
