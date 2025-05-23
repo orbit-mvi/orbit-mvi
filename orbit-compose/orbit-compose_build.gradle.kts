@@ -34,7 +34,7 @@ kotlin {
     js {
         browser {
             testTask {
-                // JS tests disabled due to https://youtrack.jetbrains.com/issue/CMP-4906
+                // Disabled due to https://youtrack.jetbrains.com/issue/CMP-8235/
                 enabled = false
             }
         }
@@ -43,30 +43,49 @@ kotlin {
     wasmJs {
         browser {
             testTask {
-                enabled = false
-            }
-        }
-        nodejs {
-            testTask {
+                // Disabled due to https://youtrack.jetbrains.com/issue/CMP-8235/
                 enabled = false
             }
         }
     }
 
+    macosX64()
+    macosArm64()
     iosX64()
     iosArm64()
     iosSimulatorArm64()
+    watchosSimulatorArm64()
+    watchosX64()
+    watchosArm32()
+    watchosArm64()
+    tvosSimulatorArm64()
+    tvosX64()
+    tvosArm64()
 
     listOf(
         iosX64(),
         iosArm64(),
-        iosSimulatorArm64()
+        iosSimulatorArm64(),
+        macosX64(),
+        macosArm64(),
+        watchosSimulatorArm64(),
+        watchosX64(),
+        watchosArm32(),
+        watchosArm64(),
+        tvosSimulatorArm64(),
+        tvosX64(),
+        tvosArm64()
     ).forEach { iosTarget ->
         iosTarget.binaries.framework {
             baseName = "orbit-compose"
             isStatic = true
         }
     }
+
+    linuxX64()
+    linuxArm64()
+
+    mingwX64()
 
     jvm("desktop")
 
