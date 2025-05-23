@@ -60,7 +60,7 @@ retrofit = "2.11.0"
 # Testing
 androidxCoreTesting = "2.2.0"
 androidxEspresso = "3.6.1"
-jacoco = "0.8.12"
+jacoco = "0.8.13"
 junit4 = "4.13.2"
 junitJupiterEngine = "5.12.2"
 junitPlatformConsole = "1.12.2"

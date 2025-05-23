@@ -20,7 +20,27 @@
 
 apply<JacocoPlugin>()
 
-val jacocoTask = tasks.withType<JacocoReport> {
+val jacocoTask = tasks.register("jacocoTestReport", JacocoReport::class) {
+    dependsOn(tasks.withType(Test::class))
+
+    val coverageSourceDirs = arrayOf(
+        "src/commonMain",
+        "src/jvmMain"
+    )
+
+    // Include all compiled classes.
+    val classFiles = layout.buildDirectory.dir("classes/kotlin/jvm").get().asFile.walkBottomUp().toSet()
+
+    // This helps with test coverage accuracy.
+    classDirectories.setFrom(classFiles)
+    sourceDirectories.setFrom(files(coverageSourceDirs))
+
+    // The resulting test report in binary format.
+    // It serves as the basis for human-readable reports.
+    layout.buildDirectory.files("jacoco/jvmTest.exec").let {
+        executionData.setFrom(it)
+    }
+
     reports {
         html.required.set(true)
         xml.required.set(true)
@@ -33,5 +53,5 @@ tasks.withType<Test> {
 }
 
 configure<JacocoPluginExtension> {
-    toolVersion = "0.8.12"
+    toolVersion = "0.8.13"
 }
