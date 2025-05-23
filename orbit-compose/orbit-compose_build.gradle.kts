@@ -83,14 +83,32 @@ kotlin {
     }
 
     linuxX64()
-    linuxArm64()
+
+    // org.jetbrains.androidx.lifecycle:lifecycle-common:2.9.0 missing
+    // linuxArm64()
 
     mingwX64()
 
     jvm("desktop")
 
+    // Apply the default hierarchy again. It'll create, for example, the iosMain source set:
+    applyDefaultHierarchyTemplate()
+
     sourceSets {
         val desktopTest by getting
+
+        // compose-ui-test does not target all our supported platforms
+        val composeUiTest by creating {
+            dependsOn(commonTest.get())
+        }
+        androidUnitTest.get().dependsOn(composeUiTest)
+        jsTest.get().dependsOn(composeUiTest)
+        wasmJsTest.get().dependsOn(composeUiTest)
+        macosX64Test.get().dependsOn(composeUiTest)
+        macosArm64Test.get().dependsOn(composeUiTest)
+        iosX64Test.get().dependsOn(composeUiTest)
+        iosArm64Test.get().dependsOn(composeUiTest)
+        iosSimulatorArm64Test.get().dependsOn(composeUiTest)
 
         commonMain.dependencies {
             api(project(":orbit-core"))
@@ -103,7 +121,9 @@ kotlin {
             implementation(kotlin("test-annotations-common"))
             implementation(libs.kotlinCoroutines)
             implementation(libs.kotlinCoroutinesTest)
+        }
 
+        composeUiTest.dependencies {
             @OptIn(ExperimentalComposeLibrary::class)
             implementation(compose.uiTest)
         }
