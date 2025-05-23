@@ -91,7 +91,7 @@ kotlin {
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
-            implementation("org.jetbrains.skiko:skiko-awt-runtime-${skikoTarget()}:0.9.2")
+            implementation("org.jetbrains.skiko:skiko-awt-runtime-${skikoTarget()}:0.9.4.2")
             implementation(libs.kotlinCoroutinesSwing)
             implementation(libs.ktorClientCio)
         }
