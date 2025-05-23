@@ -1,0 +1,80 @@
+// Klib ABI Dump
+// Targets: [androidNativeArm32, androidNativeArm64, androidNativeX64, androidNativeX86, iosArm64, iosSimulatorArm64, iosX64, js, linuxArm64, linuxX64, macosArm64, macosX64, mingwX64, tvosArm64, tvosSimulatorArm64, tvosX64, wasmJs, wasmWasi, watchosArm32, watchosArm64, watchosDeviceArm64, watchosSimulatorArm64, watchosX64]
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: true
+// - Show declarations: true
+
+// Library unique name: <orbit-mvi:orbit-test>
+final class <#A: kotlin/Any, #B: kotlin/Any, #C: org.orbitmvi.orbit/ContainerHost<#A, #B>> org.orbitmvi.orbit.test/OrbitTestContext { // org.orbitmvi.orbit.test/OrbitTestContext|null[0]
+    constructor <init>(#C, #A, app.cash.turbine/ReceiveTurbine<org.orbitmvi.orbit.test/Item<#A, #B>>, org.orbitmvi.orbit.test/TestSettings) // org.orbitmvi.orbit.test/OrbitTestContext.<init>|<init>(1:2;1:0;app.cash.turbine.ReceiveTurbine<org.orbitmvi.orbit.test.Item<1:0,1:1>>;org.orbitmvi.orbit.test.TestSettings){}[0]
+
+    final val containerHost // org.orbitmvi.orbit.test/OrbitTestContext.containerHost|{}containerHost[0]
+        final fun <get-containerHost>(): #C // org.orbitmvi.orbit.test/OrbitTestContext.containerHost.<get-containerHost>|<get-containerHost>(){}[0]
+
+    final var currentConsumedState // org.orbitmvi.orbit.test/OrbitTestContext.currentConsumedState|{}currentConsumedState[0]
+        final fun <get-currentConsumedState>(): #A // org.orbitmvi.orbit.test/OrbitTestContext.currentConsumedState.<get-currentConsumedState>|<get-currentConsumedState>(){}[0]
+        final fun <set-currentConsumedState>(#A) // org.orbitmvi.orbit.test/OrbitTestContext.currentConsumedState.<set-currentConsumedState>|<set-currentConsumedState>(1:0){}[0]
+
+    final fun runOnCreate(): kotlinx.coroutines/Job // org.orbitmvi.orbit.test/OrbitTestContext.runOnCreate|runOnCreate(){}[0]
+    final suspend fun awaitItem(): org.orbitmvi.orbit.test/Item<#A, #B> // org.orbitmvi.orbit.test/OrbitTestContext.awaitItem|awaitItem(){}[0]
+    final suspend fun awaitSideEffect(): #B // org.orbitmvi.orbit.test/OrbitTestContext.awaitSideEffect|awaitSideEffect(){}[0]
+    final suspend fun awaitState(): #A // org.orbitmvi.orbit.test/OrbitTestContext.awaitState|awaitState(){}[0]
+    final suspend fun cancelAndIgnoreRemainingItems() // org.orbitmvi.orbit.test/OrbitTestContext.cancelAndIgnoreRemainingItems|cancelAndIgnoreRemainingItems(){}[0]
+    final suspend fun expectInitialState() // org.orbitmvi.orbit.test/OrbitTestContext.expectInitialState|expectInitialState(){}[0]
+    final suspend fun expectNoItems() // org.orbitmvi.orbit.test/OrbitTestContext.expectNoItems|expectNoItems(){}[0]
+    final suspend fun expectSideEffect(#B) // org.orbitmvi.orbit.test/OrbitTestContext.expectSideEffect|expectSideEffect(1:1){}[0]
+    final suspend fun expectState(#A) // org.orbitmvi.orbit.test/OrbitTestContext.expectState|expectState(1:0){}[0]
+    final suspend fun expectState(kotlin/Function1<#A, #A>) // org.orbitmvi.orbit.test/OrbitTestContext.expectState|expectState(kotlin.Function1<1:0,1:0>){}[0]
+    final suspend fun skipItems(kotlin/Int) // org.orbitmvi.orbit.test/OrbitTestContext.skipItems|skipItems(kotlin.Int){}[0]
+    final suspend inline fun <#A1: reified #A> expectStateOn(kotlin/Function1<#A1, #A>) // org.orbitmvi.orbit.test/OrbitTestContext.expectStateOn|expectStateOn(kotlin.Function1<0:0,1:0>){0§<1:0>}[0]
+}
+
+final class org.orbitmvi.orbit.test/TestSettings { // org.orbitmvi.orbit.test/TestSettings|null[0]
+    constructor <init>(kotlinx.coroutines/CoroutineDispatcher? = ..., kotlinx.coroutines/CoroutineExceptionHandler? = ..., kotlin/Boolean = ...) // org.orbitmvi.orbit.test/TestSettings.<init>|<init>(kotlinx.coroutines.CoroutineDispatcher?;kotlinx.coroutines.CoroutineExceptionHandler?;kotlin.Boolean){}[0]
+
+    final val autoCheckInitialState // org.orbitmvi.orbit.test/TestSettings.autoCheckInitialState|{}autoCheckInitialState[0]
+        final fun <get-autoCheckInitialState>(): kotlin/Boolean // org.orbitmvi.orbit.test/TestSettings.autoCheckInitialState.<get-autoCheckInitialState>|<get-autoCheckInitialState>(){}[0]
+    final val dispatcherOverride // org.orbitmvi.orbit.test/TestSettings.dispatcherOverride|{}dispatcherOverride[0]
+        final fun <get-dispatcherOverride>(): kotlinx.coroutines/CoroutineDispatcher? // org.orbitmvi.orbit.test/TestSettings.dispatcherOverride.<get-dispatcherOverride>|<get-dispatcherOverride>(){}[0]
+    final val exceptionHandlerOverride // org.orbitmvi.orbit.test/TestSettings.exceptionHandlerOverride|{}exceptionHandlerOverride[0]
+        final fun <get-exceptionHandlerOverride>(): kotlinx.coroutines/CoroutineExceptionHandler? // org.orbitmvi.orbit.test/TestSettings.exceptionHandlerOverride.<get-exceptionHandlerOverride>|<get-exceptionHandlerOverride>(){}[0]
+
+    final fun component1(): kotlinx.coroutines/CoroutineDispatcher? // org.orbitmvi.orbit.test/TestSettings.component1|component1(){}[0]
+    final fun component2(): kotlinx.coroutines/CoroutineExceptionHandler? // org.orbitmvi.orbit.test/TestSettings.component2|component2(){}[0]
+    final fun component3(): kotlin/Boolean // org.orbitmvi.orbit.test/TestSettings.component3|component3(){}[0]
+    final fun copy(kotlinx.coroutines/CoroutineDispatcher? = ..., kotlinx.coroutines/CoroutineExceptionHandler? = ..., kotlin/Boolean = ...): org.orbitmvi.orbit.test/TestSettings // org.orbitmvi.orbit.test/TestSettings.copy|copy(kotlinx.coroutines.CoroutineDispatcher?;kotlinx.coroutines.CoroutineExceptionHandler?;kotlin.Boolean){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // org.orbitmvi.orbit.test/TestSettings.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // org.orbitmvi.orbit.test/TestSettings.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // org.orbitmvi.orbit.test/TestSettings.toString|toString(){}[0]
+}
+
+sealed class <#A: kotlin/Any, #B: kotlin/Any> org.orbitmvi.orbit.test/Item { // org.orbitmvi.orbit.test/Item|null[0]
+    final class <#A1: kotlin/Any, #B1: kotlin/Any> SideEffectItem : org.orbitmvi.orbit.test/Item<#A1, #B1> { // org.orbitmvi.orbit.test/Item.SideEffectItem|null[0]
+        constructor <init>(#B1) // org.orbitmvi.orbit.test/Item.SideEffectItem.<init>|<init>(1:1){}[0]
+
+        final val value // org.orbitmvi.orbit.test/Item.SideEffectItem.value|{}value[0]
+            final fun <get-value>(): #B1 // org.orbitmvi.orbit.test/Item.SideEffectItem.value.<get-value>|<get-value>(){}[0]
+
+        final fun component1(): #B1 // org.orbitmvi.orbit.test/Item.SideEffectItem.component1|component1(){}[0]
+        final fun copy(#B1 = ...): org.orbitmvi.orbit.test/Item.SideEffectItem<#A1, #B1> // org.orbitmvi.orbit.test/Item.SideEffectItem.copy|copy(1:1){}[0]
+        final fun equals(kotlin/Any?): kotlin/Boolean // org.orbitmvi.orbit.test/Item.SideEffectItem.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // org.orbitmvi.orbit.test/Item.SideEffectItem.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // org.orbitmvi.orbit.test/Item.SideEffectItem.toString|toString(){}[0]
+    }
+
+    final class <#A1: kotlin/Any, #B1: kotlin/Any> StateItem : org.orbitmvi.orbit.test/Item<#A1, #B1> { // org.orbitmvi.orbit.test/Item.StateItem|null[0]
+        constructor <init>(#A1) // org.orbitmvi.orbit.test/Item.StateItem.<init>|<init>(1:0){}[0]
+
+        final val value // org.orbitmvi.orbit.test/Item.StateItem.value|{}value[0]
+            final fun <get-value>(): #A1 // org.orbitmvi.orbit.test/Item.StateItem.value.<get-value>|<get-value>(){}[0]
+
+        final fun component1(): #A1 // org.orbitmvi.orbit.test/Item.StateItem.component1|component1(){}[0]
+        final fun copy(#A1 = ...): org.orbitmvi.orbit.test/Item.StateItem<#A1, #B1> // org.orbitmvi.orbit.test/Item.StateItem.copy|copy(1:0){}[0]
+        final fun equals(kotlin/Any?): kotlin/Boolean // org.orbitmvi.orbit.test/Item.StateItem.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // org.orbitmvi.orbit.test/Item.StateItem.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // org.orbitmvi.orbit.test/Item.StateItem.toString|toString(){}[0]
+    }
+}
+
+final suspend fun <#A: kotlin/Any, #B: kotlin/Any, #C: org.orbitmvi.orbit/ContainerHost<#A, #B>> (#C).org.orbitmvi.orbit.test/test(kotlinx.coroutines.test/TestScope, #A? = ..., kotlin.time/Duration? = ..., org.orbitmvi.orbit.test/TestSettings = ..., kotlin.coroutines/SuspendFunction1<org.orbitmvi.orbit.test/OrbitTestContext<#A, #B, #C>, kotlin/Unit>) // org.orbitmvi.orbit.test/test|test@0:2(kotlinx.coroutines.test.TestScope;0:0?;kotlin.time.Duration?;org.orbitmvi.orbit.test.TestSettings;kotlin.coroutines.SuspendFunction1<org.orbitmvi.orbit.test.OrbitTestContext<0:0,0:1,0:2>,kotlin.Unit>){0§<kotlin.Any>;1§<kotlin.Any>;2§<org.orbitmvi.orbit.ContainerHost<0:0,0:1>>}[0]

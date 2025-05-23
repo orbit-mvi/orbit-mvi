@@ -1,0 +1,10 @@
+// Klib ABI Dump
+// Targets: [iosArm64, iosSimulatorArm64, iosX64, js, wasmJs]
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: true
+// - Show declarations: true
+
+// Library unique name: <orbit-mvi:orbit-compose>
+final fun <#A: kotlin/Any, #B: kotlin/Any> (org.orbitmvi.orbit/ContainerHost<#A, #B>).org.orbitmvi.orbit.compose/collectAsState(androidx.lifecycle/Lifecycle.State?, androidx.compose.runtime/Composer?, kotlin/Int, kotlin/Int): androidx.compose.runtime/State<#A> // org.orbitmvi.orbit.compose/collectAsState|collectAsState@org.orbitmvi.orbit.ContainerHost<0:0,0:1>(androidx.lifecycle.Lifecycle.State?;androidx.compose.runtime.Composer?;kotlin.Int;kotlin.Int){0§<kotlin.Any>;1§<kotlin.Any>}[0]
+final fun <#A: kotlin/Any, #B: kotlin/Any> (org.orbitmvi.orbit/ContainerHost<#A, #B>).org.orbitmvi.orbit.compose/collectSideEffect(androidx.lifecycle/Lifecycle.State?, kotlin.coroutines/SuspendFunction1<#B, kotlin/Unit>, androidx.compose.runtime/Composer?, kotlin/Int, kotlin/Int) // org.orbitmvi.orbit.compose/collectSideEffect|collectSideEffect@org.orbitmvi.orbit.ContainerHost<0:0,0:1>(androidx.lifecycle.Lifecycle.State?;kotlin.coroutines.SuspendFunction1<0:1,kotlin.Unit>;androidx.compose.runtime.Composer?;kotlin.Int;kotlin.Int){0§<kotlin.Any>;1§<kotlin.Any>}[0]

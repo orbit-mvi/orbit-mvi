@@ -1,0 +1,160 @@
+public abstract interface class org/orbitmvi/orbit/Container {
+	public abstract fun cancel ()V
+	public abstract fun getRefCountSideEffectFlow ()Lkotlinx/coroutines/flow/Flow;
+	public abstract fun getRefCountStateFlow ()Lkotlinx/coroutines/flow/StateFlow;
+	public abstract fun getScope ()Lkotlinx/coroutines/CoroutineScope;
+	public abstract fun getSettings ()Lorg/orbitmvi/orbit/RealSettings;
+	public abstract fun getSideEffectFlow ()Lkotlinx/coroutines/flow/Flow;
+	public abstract fun getStateFlow ()Lkotlinx/coroutines/flow/StateFlow;
+	public abstract fun inlineOrbit (Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun joinIntents (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun orbit (Lkotlin/jvm/functions/Function2;)Lkotlinx/coroutines/Job;
+}
+
+public abstract interface class org/orbitmvi/orbit/ContainerDecorator : org/orbitmvi/orbit/Container {
+	public abstract fun cancel ()V
+	public abstract fun getActual ()Lorg/orbitmvi/orbit/Container;
+	public abstract fun getRefCountSideEffectFlow ()Lkotlinx/coroutines/flow/Flow;
+	public abstract fun getRefCountStateFlow ()Lkotlinx/coroutines/flow/StateFlow;
+	public abstract fun getScope ()Lkotlinx/coroutines/CoroutineScope;
+	public abstract fun getSettings ()Lorg/orbitmvi/orbit/RealSettings;
+	public abstract fun getSideEffectFlow ()Lkotlinx/coroutines/flow/Flow;
+	public abstract fun getStateFlow ()Lkotlinx/coroutines/flow/StateFlow;
+	public abstract fun inlineOrbit (Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun joinIntents (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun orbit (Lkotlin/jvm/functions/Function2;)Lkotlinx/coroutines/Job;
+}
+
+public final class org/orbitmvi/orbit/ContainerDecorator$DefaultImpls {
+	public static fun cancel (Lorg/orbitmvi/orbit/ContainerDecorator;)V
+	public static fun getRefCountSideEffectFlow (Lorg/orbitmvi/orbit/ContainerDecorator;)Lkotlinx/coroutines/flow/Flow;
+	public static fun getRefCountStateFlow (Lorg/orbitmvi/orbit/ContainerDecorator;)Lkotlinx/coroutines/flow/StateFlow;
+	public static fun getScope (Lorg/orbitmvi/orbit/ContainerDecorator;)Lkotlinx/coroutines/CoroutineScope;
+	public static fun getSettings (Lorg/orbitmvi/orbit/ContainerDecorator;)Lorg/orbitmvi/orbit/RealSettings;
+	public static fun getSideEffectFlow (Lorg/orbitmvi/orbit/ContainerDecorator;)Lkotlinx/coroutines/flow/Flow;
+	public static fun getStateFlow (Lorg/orbitmvi/orbit/ContainerDecorator;)Lkotlinx/coroutines/flow/StateFlow;
+	public static fun inlineOrbit (Lorg/orbitmvi/orbit/ContainerDecorator;Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static fun joinIntents (Lorg/orbitmvi/orbit/ContainerDecorator;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static fun orbit (Lorg/orbitmvi/orbit/ContainerDecorator;Lkotlin/jvm/functions/Function2;)Lkotlinx/coroutines/Job;
+}
+
+public abstract interface class org/orbitmvi/orbit/ContainerHost {
+	public abstract fun getContainer ()Lorg/orbitmvi/orbit/Container;
+	public abstract fun intent (ZLkotlin/jvm/functions/Function2;)Lkotlinx/coroutines/Job;
+	public abstract fun subIntent (Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class org/orbitmvi/orbit/ContainerHost$DefaultImpls {
+	public static fun intent (Lorg/orbitmvi/orbit/ContainerHost;ZLkotlin/jvm/functions/Function2;)Lkotlinx/coroutines/Job;
+	public static synthetic fun intent$default (Lorg/orbitmvi/orbit/ContainerHost;ZLkotlin/jvm/functions/Function2;ILjava/lang/Object;)Lkotlinx/coroutines/Job;
+	public static fun subIntent (Lorg/orbitmvi/orbit/ContainerHost;Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class org/orbitmvi/orbit/ContainerHostExtKt {
+	public static final fun blockingIntent (Lorg/orbitmvi/orbit/ContainerHost;ZLkotlin/jvm/functions/Function2;)V
+	public static synthetic fun blockingIntent$default (Lorg/orbitmvi/orbit/ContainerHost;ZLkotlin/jvm/functions/Function2;ILjava/lang/Object;)V
+}
+
+public final class org/orbitmvi/orbit/CoroutineScopeExtensionsKt {
+	public static final fun container (Lkotlinx/coroutines/CoroutineScope;Ljava/lang/Object;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;)Lorg/orbitmvi/orbit/Container;
+	public static synthetic fun container$default (Lkotlinx/coroutines/CoroutineScope;Ljava/lang/Object;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;ILjava/lang/Object;)Lorg/orbitmvi/orbit/Container;
+}
+
+public final class org/orbitmvi/orbit/RealSettings {
+	public fun <init> ()V
+	public fun <init> (ILorg/orbitmvi/orbit/idling/IdlingResource;Lkotlinx/coroutines/CoroutineDispatcher;Lkotlinx/coroutines/CoroutineDispatcher;Lkotlinx/coroutines/CoroutineExceptionHandler;J)V
+	public synthetic fun <init> (ILorg/orbitmvi/orbit/idling/IdlingResource;Lkotlinx/coroutines/CoroutineDispatcher;Lkotlinx/coroutines/CoroutineDispatcher;Lkotlinx/coroutines/CoroutineExceptionHandler;JILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()I
+	public final fun component2 ()Lorg/orbitmvi/orbit/idling/IdlingResource;
+	public final fun component3 ()Lkotlinx/coroutines/CoroutineDispatcher;
+	public final fun component4 ()Lkotlinx/coroutines/CoroutineDispatcher;
+	public final fun component5 ()Lkotlinx/coroutines/CoroutineExceptionHandler;
+	public final fun component6 ()J
+	public final fun copy (ILorg/orbitmvi/orbit/idling/IdlingResource;Lkotlinx/coroutines/CoroutineDispatcher;Lkotlinx/coroutines/CoroutineDispatcher;Lkotlinx/coroutines/CoroutineExceptionHandler;J)Lorg/orbitmvi/orbit/RealSettings;
+	public static synthetic fun copy$default (Lorg/orbitmvi/orbit/RealSettings;ILorg/orbitmvi/orbit/idling/IdlingResource;Lkotlinx/coroutines/CoroutineDispatcher;Lkotlinx/coroutines/CoroutineDispatcher;Lkotlinx/coroutines/CoroutineExceptionHandler;JILjava/lang/Object;)Lorg/orbitmvi/orbit/RealSettings;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getEventLoopDispatcher ()Lkotlinx/coroutines/CoroutineDispatcher;
+	public final fun getExceptionHandler ()Lkotlinx/coroutines/CoroutineExceptionHandler;
+	public final fun getIdlingRegistry ()Lorg/orbitmvi/orbit/idling/IdlingResource;
+	public final fun getIntentLaunchingDispatcher ()Lkotlinx/coroutines/CoroutineDispatcher;
+	public final fun getRepeatOnSubscribedStopTimeout ()J
+	public final fun getSideEffectBufferSize ()I
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/orbitmvi/orbit/SettingsBuilder {
+	public fun <init> ()V
+	public final fun getExceptionHandler ()Lkotlinx/coroutines/CoroutineExceptionHandler;
+	public final fun getIdlingRegistry ()Lorg/orbitmvi/orbit/idling/IdlingResource;
+	public final fun getRepeatOnSubscribedStopTimeout ()J
+	public final fun getSideEffectBufferSize ()I
+	public final fun setExceptionHandler (Lkotlinx/coroutines/CoroutineExceptionHandler;)V
+	public final fun setIdlingRegistry (Lorg/orbitmvi/orbit/idling/IdlingResource;)V
+	public final fun setRepeatOnSubscribedStopTimeout (J)V
+	public final fun setSideEffectBufferSize (I)V
+}
+
+public abstract interface annotation class org/orbitmvi/orbit/annotation/OrbitDsl : java/lang/annotation/Annotation {
+}
+
+public abstract interface annotation class org/orbitmvi/orbit/annotation/OrbitExperimental : java/lang/annotation/Annotation {
+}
+
+public abstract interface annotation class org/orbitmvi/orbit/annotation/OrbitInternal : java/lang/annotation/Annotation {
+}
+
+public abstract interface class org/orbitmvi/orbit/idling/IdlingResource {
+	public abstract fun close ()V
+	public abstract fun decrement ()V
+	public abstract fun increment ()V
+}
+
+public final class org/orbitmvi/orbit/idling/NoopIdlingResource : org/orbitmvi/orbit/idling/IdlingResource {
+	public fun <init> ()V
+	public fun close ()V
+	public fun decrement ()V
+	public fun increment ()V
+}
+
+public final class org/orbitmvi/orbit/idling/OperatorIdlingExtensionsKt {
+	public static final fun withIdling (Lorg/orbitmvi/orbit/syntax/ContainerContext;Lorg/orbitmvi/orbit/syntax/Operator;Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static final fun withIdlingFlow (Lorg/orbitmvi/orbit/syntax/ContainerContext;Lorg/orbitmvi/orbit/syntax/Operator;Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class org/orbitmvi/orbit/idling/SimpleIdlingExtensionsKt {
+	public static final fun withIdling (Lorg/orbitmvi/orbit/syntax/ContainerContext;ZLkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class org/orbitmvi/orbit/syntax/IntentContext {
+	public fun <init> (Ljava/lang/Object;)V
+	public final fun component1 ()Ljava/lang/Object;
+	public final fun copy (Ljava/lang/Object;)Lorg/orbitmvi/orbit/syntax/IntentContext;
+	public static synthetic fun copy$default (Lorg/orbitmvi/orbit/syntax/IntentContext;Ljava/lang/Object;ILjava/lang/Object;)Lorg/orbitmvi/orbit/syntax/IntentContext;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getState ()Ljava/lang/Object;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract interface class org/orbitmvi/orbit/syntax/Operator {
+	public abstract fun getRegisterIdling ()Z
+}
+
+public final class org/orbitmvi/orbit/syntax/SubStateSyntax {
+	public fun <init> (Lorg/orbitmvi/orbit/syntax/SubStateContainerContext;)V
+	public final fun getState ()Ljava/lang/Object;
+	public final fun postSideEffect (Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun reduce (Lkotlin/jvm/functions/Function1;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun repeatOnSubscription (Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class org/orbitmvi/orbit/syntax/Syntax {
+	public fun <init> (Lorg/orbitmvi/orbit/syntax/ContainerContext;)V
+	public final fun getContainerContext ()Lorg/orbitmvi/orbit/syntax/ContainerContext;
+	public final fun getState ()Ljava/lang/Object;
+	public final fun postSideEffect (Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun reduce (Lkotlin/jvm/functions/Function1;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun repeatOnSubscription (Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+

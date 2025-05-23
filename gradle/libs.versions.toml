@@ -20,6 +20,7 @@ kotlin = "2.1.21"
 coroutines = "1.10.2"
 
 # Plugins
+binaryCompatibilityValidator = "0.17.0"
 gradleVersionsPlugin = "0.52.0"
 gradleAndroidPlugin = "8.10.0"
 gradleMavenPublishPlugin = "0.32.0"
@@ -60,7 +61,6 @@ retrofit = "3.0.0"
 # Testing
 androidxCoreTesting = "2.2.0"
 androidxEspresso = "3.6.1"
-jacoco = "0.8.13"
 junit4 = "4.13.2"
 junitJupiterEngine = "5.12.2"
 junitPlatformConsole = "1.12.2"
@@ -162,10 +162,11 @@ buildscript_hilt = { module = "com.google.dagger:hilt-android-gradle-plugin", ve
 
 [plugins]
 
+binaryCompatibilityValidator = { id = "org.jetbrains.kotlinx.binary-compatibility-validator", version.ref = "binaryCompatibilityValidator" }
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+compose-multiplatform = { id = "org.jetbrains.compose", version.ref = "compose-multiplatform" }
 dokkaPlugin = { id = "org.jetbrains.dokka", version.ref = "dokka" }
 gradleMavenPublishPlugin = { id = "com.vanniktech.maven.publish", version.ref = "gradleMavenPublishPlugin" }
 gradleVersionsPlugin = { id = "com.github.ben-manes.versions", version.ref = "gradleVersionsPlugin" }
-markdownlintGradlePlugin = { id = "com.appmattus.markdown", version.ref = "markdownLintPlugin" }
 kotlin-pluginSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
-compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
-compose-multiplatform = { id = "org.jetbrains.compose", version.ref = "compose-multiplatform" }
+markdownlintGradlePlugin = { id = "com.appmattus.markdown", version.ref = "markdownLintPlugin" }
