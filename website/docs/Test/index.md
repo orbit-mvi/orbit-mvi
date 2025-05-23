@@ -40,9 +40,13 @@ into test mode. We pass in the test scope and initial state to seed the
 container with (you may omit it entirely to use the initial state from the real
 container).
 
+:::note
+
 The initial state is automatically verified, however, auto-check can be disabled with 
 `settings = TestSettings(autoCheckInitialState = false)` and the state verified using `awaitState`
 or `expectState`.
+
+:::
 
 Next, we can invoke intents on the container to continue testing.
 
