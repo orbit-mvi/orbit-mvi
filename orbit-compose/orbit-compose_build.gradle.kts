@@ -34,7 +34,7 @@ kotlin {
     js {
         browser {
             testTask {
-                // JS tests disabled due to https://youtrack.jetbrains.com/issue/CMP-4906
+                // Disabled due to https://youtrack.jetbrains.com/issue/CMP-8235/
                 enabled = false
             }
         }
@@ -43,24 +43,38 @@ kotlin {
     wasmJs {
         browser {
             testTask {
-                enabled = false
-            }
-        }
-        nodejs {
-            testTask {
+                // Disabled due to https://youtrack.jetbrains.com/issue/CMP-8235/
                 enabled = false
             }
         }
     }
 
+    macosX64()
+    macosArm64()
     iosX64()
     iosArm64()
     iosSimulatorArm64()
+    watchosSimulatorArm64()
+    watchosX64()
+    watchosArm32()
+    watchosArm64()
+    tvosSimulatorArm64()
+    tvosX64()
+    tvosArm64()
 
     listOf(
         iosX64(),
         iosArm64(),
-        iosSimulatorArm64()
+        iosSimulatorArm64(),
+        macosX64(),
+        macosArm64(),
+        watchosSimulatorArm64(),
+        watchosX64(),
+        watchosArm32(),
+        watchosArm64(),
+        tvosSimulatorArm64(),
+        tvosX64(),
+        tvosArm64()
     ).forEach { iosTarget ->
         iosTarget.binaries.framework {
             baseName = "orbit-compose"
@@ -68,10 +82,33 @@ kotlin {
         }
     }
 
+    linuxX64()
+
+    // org.jetbrains.androidx.lifecycle:lifecycle-common:2.9.0 missing
+    // linuxArm64()
+
+    mingwX64()
+
     jvm("desktop")
+
+    // Apply the default hierarchy again. It'll create, for example, the iosMain source set:
+    applyDefaultHierarchyTemplate()
 
     sourceSets {
         val desktopTest by getting
+
+        // compose-ui-test does not target all our supported platforms
+        val composeUiTest by creating {
+            dependsOn(commonTest.get())
+        }
+        androidUnitTest.get().dependsOn(composeUiTest)
+        jsTest.get().dependsOn(composeUiTest)
+        wasmJsTest.get().dependsOn(composeUiTest)
+        macosX64Test.get().dependsOn(composeUiTest)
+        macosArm64Test.get().dependsOn(composeUiTest)
+        iosX64Test.get().dependsOn(composeUiTest)
+        iosArm64Test.get().dependsOn(composeUiTest)
+        iosSimulatorArm64Test.get().dependsOn(composeUiTest)
 
         commonMain.dependencies {
             api(project(":orbit-core"))
@@ -84,7 +121,9 @@ kotlin {
             implementation(kotlin("test-annotations-common"))
             implementation(libs.kotlinCoroutines)
             implementation(libs.kotlinCoroutinesTest)
+        }
 
+        composeUiTest.dependencies {
             @OptIn(ExperimentalComposeLibrary::class)
             implementation(compose.uiTest)
         }
