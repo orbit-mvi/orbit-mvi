@@ -32,6 +32,8 @@ plugins {
 }
 
 kotlin {
+    // Note no mingw support in lifecycle-viewmodel
+
     androidTarget()
 
     js {
@@ -44,20 +46,41 @@ kotlin {
         nodejs()
     }
 
+    macosX64()
+    macosArm64()
     iosX64()
     iosArm64()
     iosSimulatorArm64()
+    watchosSimulatorArm64()
+    watchosX64()
+    watchosArm32()
+    watchosArm64()
+    tvosSimulatorArm64()
+    tvosX64()
+    tvosArm64()
 
     listOf(
         iosX64(),
         iosArm64(),
-        iosSimulatorArm64()
+        iosSimulatorArm64(),
+        macosX64(),
+        macosArm64(),
+        watchosSimulatorArm64(),
+        watchosX64(),
+        watchosArm32(),
+        watchosArm64(),
+        tvosSimulatorArm64(),
+        tvosX64(),
+        tvosArm64()
     ).forEach { iosTarget ->
         iosTarget.binaries.framework {
             baseName = "orbit-viewmodel"
             isStatic = true
         }
     }
+
+    linuxX64()
+    linuxArm64()
 
     jvm("desktop")
 
