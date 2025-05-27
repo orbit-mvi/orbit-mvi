@@ -16,6 +16,7 @@
 
 package org.orbitmvi.orbit.test
 
+import app.cash.turbine.ReceiveTurbine
 import app.cash.turbine.test
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineDispatcher
@@ -27,7 +28,12 @@ import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
+import org.orbitmvi.orbit.ContainerHostWithExternalState
 import org.orbitmvi.orbit.RealSettings
+import org.orbitmvi.orbit.externalStateFlow
+import org.orbitmvi.orbit.test.ItemWithExternalState.ExternalStateItem
+import org.orbitmvi.orbit.test.ItemWithExternalState.InternalStateItem
+import org.orbitmvi.orbit.test.ItemWithExternalState.SideEffectItem
 import kotlin.test.assertEquals
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
@@ -75,7 +81,10 @@ public suspend fun <STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHo
 
     val resolvedInitialState: STATE = initialState ?: containerHost.container.findTestContainer().originalInitialState
 
-    mergedFlow().test(timeout = timeout) {
+    merge(
+        container.stateFlow.map<STATE, Item<STATE, SIDE_EFFECT>> { Item.StateItem(it) },
+        container.sideEffectFlow.map<SIDE_EFFECT, Item<STATE, SIDE_EFFECT>> { Item.SideEffectItem(it) }
+    ).test(timeout = timeout) {
         OrbitTestContext(
             containerHost,
             resolvedInitialState,
@@ -84,6 +93,92 @@ public suspend fun <STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHo
         ).apply {
             if (settings.autoCheckInitialState) {
                 assertEquals(resolvedInitialState, awaitState())
+            }
+            validate(this)
+            caughtException?.let { throw it }
+            withAppropriateTimeout(timeout ?: 1.seconds) {
+                container.findTestContainer().joinIntents()
+            }
+        }
+    }
+}
+
+/**
+ *  Run tests on your [ContainerHost]. This mode uses a real Orbit container, but the container's [CoroutineDispatcher] is set to the
+ *  [TestScope]'s background dispatcher.
+ *
+ *  Typically this is the scope defined by kotlin's [runTest], but you are free to provide your own [TestScope].
+ *  This is useful if you wish to e.g. control virtual time to avoid delay skipping.
+ *
+ *  During a test, all of the emitted states and side effects must be consumed - otherwise the test fails. See [OrbitTestContext].
+ *
+ * @param testScope The scope in which the [Container] will run.
+ * @param initialState The state to initialize the test container with. Omit this parameter to use the real initial state of the container.
+ * @param settings Use this to set overrides for some of the container's [RealSettings] for this test.
+ * @param validate Perform your test within this block. See [OrbitTestContext].
+ */
+@OptIn(ExperimentalStdlibApi::class)
+public suspend fun <INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHostWithExternalState<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>> CONTAINER_HOST.test(
+    testScope: TestScope,
+    initialState: INTERNAL_STATE? = null,
+    timeout: Duration? = null,
+    settings: TestSettings = TestSettings(),
+    validate: suspend OrbitTestContextWithExternalState<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT, CONTAINER_HOST>.() -> Unit
+) {
+    val containerHost = this
+    val testDispatcher = settings.dispatcherOverride ?: testScope.backgroundScope.coroutineContext[CoroutineDispatcher.Key]
+
+    var caughtException: Throwable? = null
+
+    val testExceptionHandler = settings.exceptionHandlerOverride
+        ?: containerHost.container.settings.exceptionHandler
+        ?: CoroutineExceptionHandler { _, exception ->
+            if (exception !is CancellationException) {
+                caughtException = exception
+            }
+        }
+
+    container.findTestContainer().test(
+        initialState = initialState,
+        settings = createRealSettings(testDispatcher, testExceptionHandler),
+        testScope = testScope.backgroundScope
+    )
+
+    val resolvedInitialState: INTERNAL_STATE =
+        initialState ?: containerHost.container.findTestContainer().originalInitialState
+
+    buildList {
+        if (settings.awaitState != AwaitState.EXTERNAL_ONLY) {
+            add(
+                container.stateFlow
+                    .map<INTERNAL_STATE, ItemWithExternalState<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>> { InternalStateItem(it) }
+            )
+        }
+        if (settings.awaitState != AwaitState.INTERNAL_ONLY) {
+            add(
+                container.externalStateFlow
+                    .map<EXTERNAL_STATE, ItemWithExternalState<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>> { ExternalStateItem(it) }
+            )
+        }
+
+        add(
+            container.sideEffectFlow
+                .map<SIDE_EFFECT, ItemWithExternalState<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>> { SideEffectItem(it) }
+        )
+    }.merge().test(timeout = timeout) {
+        OrbitTestContextWithExternalState(
+            containerHost,
+            resolvedInitialState,
+            this as ReceiveTurbine<ItemWithExternalState<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>>,
+            settings
+        ).apply {
+            if (settings.autoCheckInitialState) {
+                if (settings.awaitState != AwaitState.EXTERNAL_ONLY) {
+                    assertEquals(resolvedInitialState, awaitInternalState())
+                }
+                if (settings.awaitState != AwaitState.INTERNAL_ONLY) {
+                    assertEquals(mapToExternalState(resolvedInitialState), awaitExternalState())
+                }
             }
             validate(this)
             caughtException?.let { throw it }
@@ -104,11 +199,3 @@ private fun createRealSettings(testDispatcher: CoroutineDispatcher?, testExcepti
         repeatOnSubscribedStopTimeout = 0L
     )
 }
-
-private fun <STATE : Any, SIDE_EFFECT : Any> ContainerHost<STATE, SIDE_EFFECT>.mergedFlow() =
-    merge(
-        container.stateFlow
-            .map<STATE, Item<STATE, SIDE_EFFECT>> { Item.StateItem(it) },
-        container.sideEffectFlow
-            .map<SIDE_EFFECT, Item<STATE, SIDE_EFFECT>> { Item.SideEffectItem(it) }
-    )

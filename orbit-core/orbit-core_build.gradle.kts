@@ -106,4 +106,8 @@ kotlin {
             implementation(libs.turbine)
         }
     }
+
+    compilerOptions {
+        freeCompilerArgs.add("-Xcontext-parameters")
+    }
 }

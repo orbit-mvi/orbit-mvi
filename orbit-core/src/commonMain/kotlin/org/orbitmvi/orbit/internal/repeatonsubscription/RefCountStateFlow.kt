@@ -22,20 +22,20 @@ import kotlinx.coroutines.flow.StateFlow
 
 @OptIn(ExperimentalForInheritanceCoroutinesApi::class)
 private class RefCountStateFlow<T>(
-    private val subscribedCounter: SubscribedCounter,
-    private val upStream: StateFlow<T>
+    private val upstream: StateFlow<T>,
+    private val subscribedCounter: SubscribedCounter
 ) : StateFlow<T> {
 
     override val replayCache: List<T>
-        get() = upStream.replayCache
+        get() = upstream.replayCache
 
     override val value: T
-        get() = upStream.value
+        get() = upstream.value
 
     override suspend fun collect(collector: FlowCollector<T>): Nothing {
         try {
             subscribedCounter.increment()
-            upStream.collect(collector)
+            upstream.collect(collector)
         } finally {
             subscribedCounter.decrement()
         }
@@ -43,4 +43,4 @@ private class RefCountStateFlow<T>(
 }
 
 internal fun <T> StateFlow<T>.refCount(subscribedCounter: SubscribedCounter): StateFlow<T> =
-    RefCountStateFlow(subscribedCounter, this)
+    RefCountStateFlow(this, subscribedCounter)
