@@ -14,6 +14,11 @@ public final class org/orbitmvi/orbit/viewmodel/ContainerHostExtensionsKt {
 	public static synthetic fun observe$default (Lorg/orbitmvi/orbit/ContainerHost;Landroidx/lifecycle/LifecycleOwner;Landroidx/lifecycle/Lifecycle$State;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;ILjava/lang/Object;)V
 }
 
+public final class org/orbitmvi/orbit/viewmodel/ContainerHostWithExternalStateExtensionsKt {
+	public static final fun observe (Lorg/orbitmvi/orbit/ContainerHostWithExternalState;Landroidx/lifecycle/LifecycleOwner;Landroidx/lifecycle/Lifecycle$State;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;)V
+	public static synthetic fun observe$default (Lorg/orbitmvi/orbit/ContainerHostWithExternalState;Landroidx/lifecycle/LifecycleOwner;Landroidx/lifecycle/Lifecycle$State;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;ILjava/lang/Object;)V
+}
+
 public final class org/orbitmvi/orbit/viewmodel/ViewModelExtensionsKt {
 	public static final fun container (Landroidx/lifecycle/ViewModel;Ljava/lang/Object;Landroidx/lifecycle/SavedStateHandle;Lkotlinx/serialization/KSerializer;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;)Lorg/orbitmvi/orbit/Container;
 	public static final fun container (Landroidx/lifecycle/ViewModel;Ljava/lang/Object;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;)Lorg/orbitmvi/orbit/Container;
