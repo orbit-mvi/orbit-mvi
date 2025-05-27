@@ -14,24 +14,34 @@
  * limitations under the License.
  */
 
-package org.orbitmvi.orbit
+package org.orbitmvi.orbit.internal
 
 import kotlinx.coroutines.ExperimentalForInheritanceCoroutinesApi
 import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.StateFlow
-
-context(containerHost: ContainerHostWithExternalState<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>)
-public val <INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : Any> Container<INTERNAL_STATE, SIDE_EFFECT>.externalStateFlow: StateFlow<EXTERNAL_STATE>
-    get() = stateFlow.stateMap(containerHost::mapToExternalState)
-
-context(containerHost: ContainerHostWithExternalState<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>)
-public val <INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : Any> Container<INTERNAL_STATE, SIDE_EFFECT>.externalRefCountStateFlow: StateFlow<EXTERNAL_STATE>
-    get() = refCountStateFlow.stateMap(containerHost::mapToExternalState)
+import org.orbitmvi.orbit.Container
+import org.orbitmvi.orbit.ContainerWithExternalState
 
 /**
- * A state flow that maps values using the [transform] function.
- * Note: Neither the value being mapped or the mapped value can be null.
+ * The heart of the Orbit MVI system. Represents an MVI container with its input and outputs.
+ * You can manipulate the container through the [org.orbitmvi.orbit.ContainerDecorator.orbit] function
+ *
+ * @param INTERNAL_STATE The container's state type.
+ * @param SIDE_EFFECT The type of side effects posted by this container. Can be [Nothing] if this
+ * container never posts side effects.
  */
+public class RealContainerWithExternalState<INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : Any> internal constructor(
+    public override val actual: Container<INTERNAL_STATE, SIDE_EFFECT>,
+    public override val mapToExternalState: (INTERNAL_STATE) -> EXTERNAL_STATE
+) : ContainerWithExternalState<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT> {
+
+    public override val externalStateFlow: StateFlow<EXTERNAL_STATE>
+        get() = stateFlow.stateMap { mapToExternalState(it) }
+
+    public override val externalRefCountStateFlow: StateFlow<EXTERNAL_STATE>
+        get() = refCountStateFlow.stateMap { mapToExternalState(it) }
+}
+
 @OptIn(ExperimentalForInheritanceCoroutinesApi::class)
 private class MappedStateFlow<T : Any, U : Any>(
     private val upstream: StateFlow<T>,

@@ -41,9 +41,7 @@ public interface ContainerHostWithExternalState<INTERNAL_STATE : Any, EXTERNAL_S
      * override val container = scope.container<MyState, MySideEffect>(initialState)
      * ```
      */
-    public val container: Container<INTERNAL_STATE, SIDE_EFFECT>
-
-    public fun mapToExternalState(internalState: INTERNAL_STATE): EXTERNAL_STATE
+    public val container: ContainerWithExternalState<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>
 
     /**
      * Build and execute an intent on [Container].

@@ -40,7 +40,6 @@ import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.Arguments.arguments
 import org.junit.jupiter.params.provider.ArgumentsProvider
 import org.junit.jupiter.params.provider.ArgumentsSource
-import org.orbitmvi.orbit.externalStateFlow
 import org.orbitmvi.orbit.sample.calculator.CalculatorViewModel.InternalCalculatorState
 import org.orbitmvi.orbit.sample.calculator.livedata.InstantTaskExecutorExtension
 import org.orbitmvi.orbit.sample.calculator.livedata.MockLifecycleOwner
@@ -197,7 +196,7 @@ class CalculatorViewModelTest {
     }
 
     private suspend fun OrbitTestContextWithExternalState<InternalCalculatorState, CalculatorState, Nothing, *>.awaitEntry(value: Number) {
-        val currentValue = with(containerHost) { container.externalStateFlow.value }.digitalDisplay
+        val currentValue = containerHost.container.externalStateFlow.value.digitalDisplay
 
         // If the value to enter is a single digit and the current value is the same digit then the digital display will not update
         if (value.toString().length == 1 && value.toString() == currentValue) {

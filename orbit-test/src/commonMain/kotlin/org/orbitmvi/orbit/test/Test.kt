@@ -30,7 +30,6 @@ import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.ContainerHostWithExternalState
 import org.orbitmvi.orbit.RealSettings
-import org.orbitmvi.orbit.externalStateFlow
 import org.orbitmvi.orbit.test.ItemWithExternalState.ExternalStateItem
 import org.orbitmvi.orbit.test.ItemWithExternalState.InternalStateItem
 import org.orbitmvi.orbit.test.ItemWithExternalState.SideEffectItem
@@ -177,7 +176,7 @@ public suspend fun <INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : An
                     assertEquals(resolvedInitialState, awaitInternalState())
                 }
                 if (settings.awaitState != AwaitState.INTERNAL_ONLY) {
-                    assertEquals(mapToExternalState(resolvedInitialState), awaitExternalState())
+                    assertEquals(container.mapToExternalState(resolvedInitialState), awaitExternalState())
                 }
             }
             validate(this)

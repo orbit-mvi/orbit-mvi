@@ -21,14 +21,12 @@
 package org.orbitmvi.orbit.sample.calculator
 
 import android.os.Parcelable
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.asLiveData
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.parcelize.Parcelize
 import org.orbitmvi.orbit.ContainerHostWithExternalState
-import org.orbitmvi.orbit.externalStateFlow
+import org.orbitmvi.orbit.mapToExternalState
 import org.orbitmvi.orbit.sample.calculator.CalculatorViewModel.InternalCalculatorState
 import org.orbitmvi.orbit.viewmodel.container
 import java.math.BigDecimal
@@ -38,8 +36,9 @@ class CalculatorViewModel(savedStateHandle: SavedStateHandle) : ViewModel(),
     ContainerHostWithExternalState<InternalCalculatorState, CalculatorState, Nothing> {
 
     override val container = container<InternalCalculatorState, Nothing>(InternalCalculatorState(), savedStateHandle)
+        .mapToExternalState(::mapToExternalState)
 
-    override fun mapToExternalState(internalState: InternalCalculatorState): CalculatorState {
+    private fun mapToExternalState(internalState: InternalCalculatorState): CalculatorState {
         return CalculatorState(
             digitalDisplay = if (internalState.xRegister.isEmpty()) {
                 internalState.yRegister.displayValue
@@ -52,7 +51,6 @@ class CalculatorViewModel(savedStateHandle: SavedStateHandle) : ViewModel(),
     // Only needed as we're using data binding and not Compose in this example
     val state: StateFlow<CalculatorState>
         get() = container.externalStateFlow
-            // LiveData<CalculatorState> = container.externalStateFlow.asLiveData()
 
     fun clear() = intent {
         reduce {

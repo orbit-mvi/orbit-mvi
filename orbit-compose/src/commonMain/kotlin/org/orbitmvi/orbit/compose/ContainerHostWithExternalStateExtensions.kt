@@ -27,8 +27,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHostWithExternalState
-import org.orbitmvi.orbit.externalRefCountStateFlow
-import org.orbitmvi.orbit.externalStateFlow
 import org.orbitmvi.orbit.syntax.Syntax
 
 /**

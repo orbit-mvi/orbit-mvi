@@ -20,6 +20,7 @@ import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
 import org.orbitmvi.orbit.ContainerHostWithExternalState
 import org.orbitmvi.orbit.container
+import org.orbitmvi.orbit.mapToExternalState
 import kotlin.random.Random
 import kotlin.test.Test
 import kotlin.test.assertFailsWith
@@ -413,9 +414,9 @@ class ExpectStateOnWithExternalStateTest {
     }
 
     private inner class StateTestMiddleware(scope: TestScope) : ContainerHostWithExternalState<InternalState, ExternalState, Int> {
-        override val container = scope.backgroundScope.container<InternalState, Int>(initialState)
+        override val container = scope.backgroundScope.container<InternalState, Int>(initialState).mapToExternalState(::mapToExternalState)
 
-        override fun mapToExternalState(internalState: InternalState): ExternalState {
+        private fun mapToExternalState(internalState: InternalState): ExternalState {
             return when (internalState) {
                 InternalState.Loading -> ExternalState.Loading
                 is InternalState.Ready -> ExternalState.Ready(count = internalState.count.toString())
