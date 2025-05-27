@@ -24,7 +24,6 @@ import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.ContainerHostWithExternalState
-import org.orbitmvi.orbit.externalRefCountStateFlow
 
 /**
  * Observe [Container.stateFlow] and [Container.sideEffectFlow] correctly on Android in one-line of code.
@@ -42,6 +41,7 @@ import org.orbitmvi.orbit.externalRefCountStateFlow
  * viewModel.observe(viewLifecycleOwner, state = ::state, sideEffect = ::sideEffect)
  * ```
  */
+@Suppress("MaxLineLength")
 public fun <INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : Any> ContainerHostWithExternalState<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>.observe(
     lifecycleOwner: LifecycleOwner,
     lifecycleState: Lifecycle.State = Lifecycle.State.STARTED,

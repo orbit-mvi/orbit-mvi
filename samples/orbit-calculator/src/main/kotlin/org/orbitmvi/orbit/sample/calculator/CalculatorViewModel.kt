@@ -32,7 +32,9 @@ import org.orbitmvi.orbit.viewmodel.container
 import java.math.BigDecimal
 import java.math.RoundingMode
 
-class CalculatorViewModel(savedStateHandle: SavedStateHandle) : ViewModel(),
+@Suppress("TooManyFunctions")
+class CalculatorViewModel(savedStateHandle: SavedStateHandle) :
+    ViewModel(),
     ContainerHostWithExternalState<InternalCalculatorState, CalculatorState, Nothing> {
 
     override val container = container<InternalCalculatorState, Nothing>(InternalCalculatorState(), savedStateHandle)

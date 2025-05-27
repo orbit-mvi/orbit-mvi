@@ -117,6 +117,7 @@ public suspend fun <STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHo
  * @param validate Perform your test within this block. See [OrbitTestContext].
  */
 @OptIn(ExperimentalStdlibApi::class)
+@Suppress("MaxLineLength")
 public suspend fun <INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHostWithExternalState<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>> CONTAINER_HOST.test(
     testScope: TestScope,
     initialState: INTERNAL_STATE? = null,

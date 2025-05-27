@@ -368,7 +368,6 @@ class StateWithExternalStateTest {
                 containerHost.newCount(action)
                 containerHost.newCount(action2)
                 assertEquals(InternalState(count = action2), awaitInternalState())
-                //assertEquals(ExternalState(count = action2.toString()), awaitExternalState())
             }
         }.also {
             assertTrue { it.message?.startsWith(prefix = "expected", ignoreCase = true) == true }
@@ -652,7 +651,6 @@ class StateWithExternalStateTest {
                 containerHost.newList(action3)
                 expectInternalState(InternalState(count = initialState.count, list = listOf(action)))
                 expectInternalState(InternalState(count = initialState.count, list = listOf(action, action2, action3)))
-                //expectInternalState(InternalState(count = initialState.count, list = listOf(action, action2)))
             }
         }
     }

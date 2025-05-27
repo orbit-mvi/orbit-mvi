@@ -203,8 +203,8 @@ class CalculatorViewModelTest {
             return
         }
 
-        @Suppress("ControlFlowWithEmptyBody")
         while (value.toString() != awaitExternalState().digitalDisplay) {
+            // Wait until digital display matches the input value
         }
     }
 
@@ -347,8 +347,8 @@ class CalculatorViewModelTest {
             viewModel.digit(9)
             viewModel.digit(9)
 
-            @Suppress("ControlFlowWithEmptyBody")
             while (awaitExternalState().digitalDisplay != "999") {
+                // Repeat until the result is 999
             }
 
             viewModel.clear()

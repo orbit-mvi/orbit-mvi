@@ -37,6 +37,7 @@ import org.orbitmvi.orbit.syntax.Syntax
  * @param lifecycleState [Lifecycle.State] in which side effects are collected.
  */
 @Composable
+@Suppress("MaxLineLength")
 public fun <INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : Any> ContainerHostWithExternalState<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>.collectSideEffect(
     lifecycleState: Lifecycle.State = Lifecycle.State.STARTED,
     sideEffect: (suspend (sideEffect: SIDE_EFFECT) -> Unit)
@@ -60,6 +61,7 @@ public fun <INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : Any> Conta
  * Active subscriptions from this operator count towards [Syntax.repeatOnSubscription] subscribers.
  */
 @Composable
+@Suppress("MaxLineLength")
 public fun <INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : Any> ContainerHostWithExternalState<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>.collectAsState(
     lifecycleState: Lifecycle.State = Lifecycle.State.STARTED
 ): State<EXTERNAL_STATE> {

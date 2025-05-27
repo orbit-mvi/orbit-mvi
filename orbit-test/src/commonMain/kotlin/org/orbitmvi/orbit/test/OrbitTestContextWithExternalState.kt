@@ -25,7 +25,12 @@ import kotlin.test.assertEquals
 import kotlin.test.assertIs
 import kotlin.test.fail
 
-public class OrbitTestContextWithExternalState<INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHostWithExternalState<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>>(
+public class OrbitTestContextWithExternalState<
+    INTERNAL_STATE : Any,
+    EXTERNAL_STATE : Any,
+    SIDE_EFFECT : Any,
+    CONTAINER_HOST : ContainerHostWithExternalState<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>
+    >(
     public val containerHost: CONTAINER_HOST,
     private val resolvedInitialState: INTERNAL_STATE,
     private val emissions: ReceiveTurbine<ItemWithExternalState<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>>,
