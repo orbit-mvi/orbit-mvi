@@ -55,6 +55,41 @@ public final class org/orbitmvi/orbit/ContainerHostExtKt {
 	public static synthetic fun blockingIntent$default (Lorg/orbitmvi/orbit/ContainerHost;ZLkotlin/jvm/functions/Function2;ILjava/lang/Object;)V
 }
 
+public abstract interface class org/orbitmvi/orbit/ContainerHostWithExternalState {
+	public abstract fun getContainer ()Lorg/orbitmvi/orbit/ContainerWithExternalState;
+	public abstract fun intent (ZLkotlin/jvm/functions/Function2;)Lkotlinx/coroutines/Job;
+	public abstract fun subIntent (Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class org/orbitmvi/orbit/ContainerHostWithExternalState$DefaultImpls {
+	public static fun intent (Lorg/orbitmvi/orbit/ContainerHostWithExternalState;ZLkotlin/jvm/functions/Function2;)Lkotlinx/coroutines/Job;
+	public static synthetic fun intent$default (Lorg/orbitmvi/orbit/ContainerHostWithExternalState;ZLkotlin/jvm/functions/Function2;ILjava/lang/Object;)Lkotlinx/coroutines/Job;
+	public static fun subIntent (Lorg/orbitmvi/orbit/ContainerHostWithExternalState;Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public abstract interface class org/orbitmvi/orbit/ContainerWithExternalState : org/orbitmvi/orbit/ContainerDecorator {
+	public abstract fun getExternalRefCountStateFlow ()Lkotlinx/coroutines/flow/StateFlow;
+	public abstract fun getExternalStateFlow ()Lkotlinx/coroutines/flow/StateFlow;
+	public abstract fun getMapToExternalState ()Lkotlin/jvm/functions/Function1;
+}
+
+public final class org/orbitmvi/orbit/ContainerWithExternalState$DefaultImpls {
+	public static fun cancel (Lorg/orbitmvi/orbit/ContainerWithExternalState;)V
+	public static fun getRefCountSideEffectFlow (Lorg/orbitmvi/orbit/ContainerWithExternalState;)Lkotlinx/coroutines/flow/Flow;
+	public static fun getRefCountStateFlow (Lorg/orbitmvi/orbit/ContainerWithExternalState;)Lkotlinx/coroutines/flow/StateFlow;
+	public static fun getScope (Lorg/orbitmvi/orbit/ContainerWithExternalState;)Lkotlinx/coroutines/CoroutineScope;
+	public static fun getSettings (Lorg/orbitmvi/orbit/ContainerWithExternalState;)Lorg/orbitmvi/orbit/RealSettings;
+	public static fun getSideEffectFlow (Lorg/orbitmvi/orbit/ContainerWithExternalState;)Lkotlinx/coroutines/flow/Flow;
+	public static fun getStateFlow (Lorg/orbitmvi/orbit/ContainerWithExternalState;)Lkotlinx/coroutines/flow/StateFlow;
+	public static fun inlineOrbit (Lorg/orbitmvi/orbit/ContainerWithExternalState;Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static fun joinIntents (Lorg/orbitmvi/orbit/ContainerWithExternalState;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static fun orbit (Lorg/orbitmvi/orbit/ContainerWithExternalState;Lkotlin/jvm/functions/Function2;)Lkotlinx/coroutines/Job;
+}
+
+public final class org/orbitmvi/orbit/ContainerWithExternalStateKt {
+	public static final fun mapToExternalState (Lorg/orbitmvi/orbit/Container;Lkotlin/jvm/functions/Function1;)Lorg/orbitmvi/orbit/ContainerWithExternalState;
+}
+
 public final class org/orbitmvi/orbit/CoroutineScopeExtensionsKt {
 	public static final fun container (Lkotlinx/coroutines/CoroutineScope;Ljava/lang/Object;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;)Lorg/orbitmvi/orbit/Container;
 	public static synthetic fun container$default (Lkotlinx/coroutines/CoroutineScope;Ljava/lang/Object;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;ILjava/lang/Object;)Lorg/orbitmvi/orbit/Container;

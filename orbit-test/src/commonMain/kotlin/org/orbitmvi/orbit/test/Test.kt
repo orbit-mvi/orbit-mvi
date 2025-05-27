@@ -123,7 +123,8 @@ public suspend fun <INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : An
     initialState: INTERNAL_STATE? = null,
     timeout: Duration? = null,
     settings: TestSettings = TestSettings(),
-    validate: suspend OrbitTestContextWithExternalState<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT, CONTAINER_HOST>.() -> Unit
+    validate:
+    suspend OrbitTestContextWithExternalState<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT, CONTAINER_HOST>.() -> Unit
 ) {
     val containerHost = this
     val testDispatcher = settings.dispatcherOverride ?: testScope.backgroundScope.coroutineContext[CoroutineDispatcher.Key]
