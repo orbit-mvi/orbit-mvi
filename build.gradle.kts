@@ -131,7 +131,9 @@ subprojects {
     tasks.withType<KotlinCompile>().all {
         compilerOptions {
             jvmTarget = JvmTarget.JVM_11
-            freeCompilerArgs.add("-Xcontext-parameters")
+            if (project.name !in listOf("orbit-stocklist-jetpack-compose")) {
+                allWarningsAsErrors = true
+            }
         }
     }
     plugins.withType<JavaBasePlugin> {

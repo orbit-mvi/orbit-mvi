@@ -26,7 +26,6 @@ import kotlin.random.Random
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-@OptIn(ExperimentalStdlibApi::class)
 class ContainerHostWithExternalStateTest {
 
     private sealed interface Item {
@@ -42,13 +41,13 @@ class ContainerHostWithExternalStateTest {
                 container.externalStateFlow.map(Item::External)
             ).test {
                 assertEquals(Item.Internal(0), awaitItem())
-                assertEquals(Item.External("00000000"), awaitItem())
+                assertEquals(Item.External("0"), awaitItem())
 
                 val value = Random.nextInt(1, 65535)
                 newState(value)
 
                 assertEquals(Item.Internal(value), awaitItem())
-                assertEquals(Item.External(value.toHexString()), awaitItem())
+                assertEquals(Item.External(value.toString()), awaitItem())
             }
         }
     }
@@ -61,13 +60,13 @@ class ContainerHostWithExternalStateTest {
                 container.externalRefCountStateFlow.map(Item::External)
             ).test {
                 assertEquals(Item.Internal(0), awaitItem())
-                assertEquals(Item.External("00000000"), awaitItem())
+                assertEquals(Item.External("0"), awaitItem())
 
                 val value = Random.nextInt(1, 65535)
                 newState(value)
 
                 assertEquals(Item.Internal(value), awaitItem())
-                assertEquals(Item.External(value.toHexString()), awaitItem())
+                assertEquals(Item.External(value.toString()), awaitItem())
             }
         }
     }
@@ -80,7 +79,7 @@ class ContainerHostWithExternalStateTest {
                 container.externalStateFlow.map(Item::External)
             ).test {
                 assertEquals(Item.Internal(0), awaitItem())
-                assertEquals(Item.External("00000000"), awaitItem())
+                assertEquals(Item.External("0"), awaitItem())
 
                 newState(65536)
 
@@ -98,7 +97,7 @@ class ContainerHostWithExternalStateTest {
                 container.externalRefCountStateFlow.map(Item::External)
             ).test {
                 assertEquals(Item.Internal(0), awaitItem())
-                assertEquals(Item.External("00000000"), awaitItem())
+                assertEquals(Item.External("0"), awaitItem())
 
                 newState(65536)
 
@@ -131,7 +130,7 @@ class ContainerHostWithExternalStateTest {
         private suspend fun subIntent(action: Int) = subIntent { reduce { action } }
 
         private fun mapToExternalState(internalState: Int): String {
-            return internalState.mod(65536).toHexString()
+            return internalState.mod(65536).toString()
         }
     }
 }

@@ -104,8 +104,4 @@ kotlin {
             implementation(libs.kotlinCoroutinesTest)
         }
     }
-
-    compilerOptions {
-        freeCompilerArgs.add("-Xcontext-parameters")
-    }
 }

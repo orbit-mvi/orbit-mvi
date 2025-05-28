@@ -48,12 +48,7 @@ class ContainerHostWithExternalStateExtensionsKtTest : RobolectricTest() {
             parentScope = scope,
             settings = RealSettings(),
             subscribedCounterOverride = testSubscribedCounter
-        ).mapToExternalState(::mapToExternalState)
-
-        private fun mapToExternalState(internalState: Int): String {
-            @OptIn(ExperimentalStdlibApi::class)
-            return internalState.toHexString()
-        }
+        ).mapToExternalState(Int::toString)
     }
 
     @BeforeTest

@@ -75,7 +75,7 @@ class ContainerHostExtensionsKtTest : RobolectricTest() {
             CompositionLocalProvider(
                 LocalLifecycleOwner provides mockLifecycleOwner
             ) {
-                block(containerHost)
+                containerHost.block()
             }
         }
     }
