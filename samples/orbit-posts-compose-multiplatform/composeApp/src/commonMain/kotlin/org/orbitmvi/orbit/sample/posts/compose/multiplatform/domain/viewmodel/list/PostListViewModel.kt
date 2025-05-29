@@ -33,24 +33,30 @@ public class PostListViewModel(
 ) : ViewModel(), ContainerHost<PostListState, NavigationEvent> {
 
     override val container: Container<PostListState, NavigationEvent> = container(
-        initialState = PostListState(),
+        initialState = PostListState.Loading,
         savedStateHandle = savedStateHandle,
         serializer = PostListState.serializer()
     ) {
-        if (state.overviews.isEmpty()) {
-            loadOverviews()
+        when (state) {
+            is PostListState.Error -> reduce { PostListState.Error(::onRetry) }
+            is PostListState.Loading -> loadOverviews()
+            is PostListState.Ready -> Unit
         }
     }
 
     @OptIn(OrbitExperimental::class)
     private suspend fun loadOverviews() = subIntent {
         runCatching {
-            val overviews = postRepository.getOverviews()
-
-            reduce {
-                state.copy(overviews = overviews)
-            }
+            postRepository.getOverviews()
+        }.onSuccess { overviews ->
+            reduce { PostListState.Ready(overviews) }
+        }.onFailure {
+            reduce { PostListState.Error(::onRetry) }
         }
+    }
+
+    private fun onRetry(): Job = intent {
+        loadOverviews()
     }
 
     public fun onPostClicked(post: PostOverview): Job = intent {

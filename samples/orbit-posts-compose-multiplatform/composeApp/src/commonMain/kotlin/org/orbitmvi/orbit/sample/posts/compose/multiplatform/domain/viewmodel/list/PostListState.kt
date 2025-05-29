@@ -17,9 +17,23 @@
 package org.orbitmvi.orbit.sample.posts.compose.multiplatform.domain.viewmodel.list
 
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 import org.orbitmvi.orbit.sample.posts.compose.multiplatform.domain.repositories.PostOverview
 
 @Serializable
-public data class PostListState(
-    val overviews: List<PostOverview> = emptyList()
-)
+public sealed interface PostListState {
+
+    @Serializable
+    public object Loading : PostListState
+
+    @Serializable
+    public data class Error(
+        @Transient
+        val onRetry: () -> Unit = {}
+    ) : PostListState
+
+    @Serializable
+    public data class Ready(
+        val overviews: List<PostOverview> = emptyList()
+    ) : PostListState
+}

@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 2021-2025 Mikołaj Leszczyński & Appmattus Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,13 +17,12 @@
 package org.orbitmvi.orbit.sample.posts.compose.multiplatform.app.common
 
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.material.AppBarDefaults
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
 public val LazyListState.elevation: Dp
     get() = if (firstVisibleItemIndex == 0) {
-        minOf(firstVisibleItemScrollOffset.toFloat().dp, AppBarDefaults.TopAppBarElevation)
+        minOf(firstVisibleItemScrollOffset.toFloat().dp, topAppBarElevation)
     } else {
-        AppBarDefaults.TopAppBarElevation
+        topAppBarElevation
     }

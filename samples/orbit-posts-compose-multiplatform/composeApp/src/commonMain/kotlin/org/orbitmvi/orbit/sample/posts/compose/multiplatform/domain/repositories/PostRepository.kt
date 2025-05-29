@@ -18,5 +18,5 @@ package org.orbitmvi.orbit.sample.posts.compose.multiplatform.domain.repositorie
 
 public interface PostRepository {
     public suspend fun getOverviews(): List<PostOverview>
-    public suspend fun getDetail(id: Int): Status<PostDetail>
+    public suspend fun getDetail(id: Int): PostDetail
 }

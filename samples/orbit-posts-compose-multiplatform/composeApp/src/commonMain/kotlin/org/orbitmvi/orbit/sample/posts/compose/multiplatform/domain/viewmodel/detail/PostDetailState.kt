@@ -17,6 +17,7 @@
 package org.orbitmvi.orbit.sample.posts.compose.multiplatform.domain.viewmodel.detail
 
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 import org.orbitmvi.orbit.sample.posts.compose.multiplatform.domain.repositories.PostDetail
 import org.orbitmvi.orbit.sample.posts.compose.multiplatform.domain.repositories.PostOverview
 
@@ -26,8 +27,20 @@ public sealed class PostDetailState {
     public abstract val postOverview: PostOverview
 
     @Serializable
-    public data class Details(override val postOverview: PostOverview, val post: PostDetail) : PostDetailState()
+    public data class Ready(
+        override val postOverview: PostOverview,
+        val post: PostDetail
+    ) : PostDetailState()
 
     @Serializable
-    public data class NoDetailsAvailable(override val postOverview: PostOverview) : PostDetailState()
+    public data class Loading(
+        override val postOverview: PostOverview
+    ) : PostDetailState()
+
+    @Serializable
+    public data class Error(
+        override val postOverview: PostOverview,
+        @Transient
+        val onRetry: () -> Unit = {}
+    ) : PostDetailState()
 }

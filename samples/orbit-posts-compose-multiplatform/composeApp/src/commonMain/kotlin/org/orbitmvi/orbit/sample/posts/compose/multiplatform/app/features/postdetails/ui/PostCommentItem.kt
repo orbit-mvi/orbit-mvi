@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 2021-2025 Mikołaj Leszczyński & Appmattus Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,8 +18,8 @@ package org.orbitmvi.orbit.sample.posts.compose.multiplatform.app.features.postd
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -29,7 +29,7 @@ import org.orbitmvi.orbit.sample.posts.compose.multiplatform.domain.repositories
 public fun PostCommentItem(comment: PostComment) {
     Text(
         text = comment.name,
-        style = MaterialTheme.typography.overline,
+        style = MaterialTheme.typography.labelSmall,
         modifier = Modifier
             .padding(start = 16.dp, end = 16.dp, top = 16.dp)
             .fillMaxWidth()
@@ -37,7 +37,7 @@ public fun PostCommentItem(comment: PostComment) {
 
     Text(
         text = comment.email,
-        style = MaterialTheme.typography.caption,
+        style = MaterialTheme.typography.bodySmall,
         modifier = Modifier
             .padding(horizontal = 16.dp)
             .fillMaxWidth()
@@ -45,7 +45,7 @@ public fun PostCommentItem(comment: PostComment) {
 
     Text(
         text = comment.body,
-        style = MaterialTheme.typography.body1,
+        style = MaterialTheme.typography.bodyLarge,
         modifier = Modifier
             .padding(horizontal = 16.dp)
             .padding(bottom = 16.dp)
