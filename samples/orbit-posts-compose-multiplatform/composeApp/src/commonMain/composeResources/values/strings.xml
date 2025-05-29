@@ -1,8 +1,19 @@
 <resources>
-    <string name="app_name">Orbit Posts Multiplatform</string>
+    <string name="app_name">Orbit Posts CMP</string>
 
     <plurals name="comments">
         <item quantity="one">%1$d comment</item>
         <item quantity="other">%1$d comments</item>
     </plurals>
+
+    <string name="loading_title">Opening wormholes to your posts…</string>
+
+    <string name="overview_error_title">Posts Failed to Launch</string>
+    <string name="overview_error_body">Even rockets stall sometimes. Give it a refresh — unless you enjoy staring into the void.</string>
+    <string name="overview_error_retry">Refresh</string>
+
+    <string name="detail_error_title">Posts Failed to Launch</string>
+    <string name="detail_error_body">Even rockets stall sometimes. Give it a refresh — unless you enjoy staring into the void.</string>
+    <string name="detail_error_retry">Refresh</string>
+
 </resources>
