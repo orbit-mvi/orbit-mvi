@@ -12,8 +12,8 @@
     <string name="overview_error_body">Even rockets stall sometimes. Give it a refresh — unless you enjoy staring into the void.</string>
     <string name="overview_error_retry">Refresh</string>
 
-    <string name="detail_error_title">Posts Failed to Launch</string>
-    <string name="detail_error_body">Even rockets stall sometimes. Give it a refresh — unless you enjoy staring into the void.</string>
-    <string name="detail_error_retry">Refresh</string>
+    <string name="detail_error_title">Signal Interference</string>
+    <string name="detail_error_body">The post detail transmission was jammed by solar flares. Retry the connection and hope the aliens behave.</string>
+    <string name="detail_error_retry">Retry</string>
 
 </resources>
