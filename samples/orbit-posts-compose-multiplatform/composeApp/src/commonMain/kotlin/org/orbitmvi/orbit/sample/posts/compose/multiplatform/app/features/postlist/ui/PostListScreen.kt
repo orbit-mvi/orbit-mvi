@@ -46,10 +46,10 @@ import androidx.navigation.NavController
 import orbit_mvi.samples.orbit_posts_compose_multiplatform.composeapp.generated.resources.Res
 import orbit_mvi.samples.orbit_posts_compose_multiplatform.composeapp.generated.resources.app_name
 import orbit_mvi.samples.orbit_posts_compose_multiplatform.composeapp.generated.resources.ic_orbit_toolbar
-import orbit_mvi.samples.orbit_posts_compose_multiplatform.composeapp.generated.resources.loading_title
 import orbit_mvi.samples.orbit_posts_compose_multiplatform.composeapp.generated.resources.overview_error_body
 import orbit_mvi.samples.orbit_posts_compose_multiplatform.composeapp.generated.resources.overview_error_retry
 import orbit_mvi.samples.orbit_posts_compose_multiplatform.composeapp.generated.resources.overview_error_title
+import orbit_mvi.samples.orbit_posts_compose_multiplatform.composeapp.generated.resources.overview_loading_title
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -153,7 +153,7 @@ private fun Loading() {
         Spacer(modifier = Modifier.height(16.dp))
 
         Text(
-            text = stringResource(Res.string.loading_title),
+            text = stringResource(Res.string.overview_loading_title),
             modifier = Modifier.padding(horizontal = 32.dp),
             style = MaterialTheme.typography.headlineSmall,
             textAlign = TextAlign.Center,
