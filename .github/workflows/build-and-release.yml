@@ -60,11 +60,39 @@ jobs:
                     java-version: '17'
                     cache: 'gradle'
 
+            -   name: konan cache
+                uses: actions/cache@v4
+                with:
+                    path: ~/.konan
+                    key: ${{ runner.os }}-konan
+
             -   name: Setup Gradle
                 uses: gradle/actions/setup-gradle@v4
 
             -   name: API Check
                 run: ./gradlew apiCheck
+
+    samples:
+        runs-on: macos-15
+        steps:
+            -   uses: actions/checkout@v4
+            -   uses: actions/setup-java@v4
+                with:
+                    distribution: 'zulu'
+                    java-version: '17'
+                    cache: 'gradle'
+
+            -   name: konan cache
+                uses: actions/cache@v4
+                with:
+                    path: ~/.konan
+                    key: ${{ runner.os }}-konan
+
+            -   name: Setup Gradle
+                uses: gradle/actions/setup-gradle@v4
+
+            -   name: API Check
+                run: ./gradlew assembleSamples
 
     unit-tests:
         runs-on: macos-15
@@ -104,7 +132,7 @@ jobs:
                     token: ${{secrets.CODECOV_TOKEN}}
 
     build:
-        needs: [ static-checks, lint, unit-tests, api-check ]
+        needs: [ static-checks, lint, unit-tests, api-check, samples ]
         runs-on: macos-15
         steps:
             -   uses: actions/checkout@v4
@@ -124,7 +152,7 @@ jobs:
                     key: ${{ runner.os }}-konan
 
             -   name: Build
-                run: ./gradlew clean assemble -xassembleDebug
+                run: ./gradlew clean assembleProduction -xassembleDebug
 
             -   name: Prepare tag properties
                 if: runner.os != 'Windows' && startsWith(github.ref, 'refs/tags/')
