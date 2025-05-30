@@ -29,10 +29,10 @@ jobs:
                 uses: gradle/actions/setup-gradle@v4
 
             -   name: Detekt
-                run: ./gradlew detekt
+                run: ./gradlew detekt --scan
 
             -   name: Markdown lint
-                run: ./gradlew markdownlint
+                run: ./gradlew markdownlint --scan
 
     lint:
         runs-on: ubuntu-latest
@@ -48,7 +48,7 @@ jobs:
                 uses: gradle/actions/setup-gradle@v4
 
             -   name: Lint
-                run: ./gradlew lint
+                run: ./gradlew lint --scan
 
     api-check:
         runs-on: macos-15
@@ -70,7 +70,7 @@ jobs:
                 uses: gradle/actions/setup-gradle@v4
 
             -   name: API Check
-                run: ./gradlew apiCheck
+                run: ./gradlew apiCheck --scan
 
     samples:
         runs-on: macos-15
@@ -91,8 +91,8 @@ jobs:
             -   name: Setup Gradle
                 uses: gradle/actions/setup-gradle@v4
 
-            -   name: API Check
-                run: ./gradlew assembleSamples
+            -   name: Build Samples
+                run: ./gradlew assembleSamples --scan
 
     unit-tests:
         runs-on: macos-15
@@ -114,10 +114,10 @@ jobs:
                 uses: gradle/actions/setup-gradle@v4
 
             -   name: Unit tests
-                run: ./gradlew check -xlint -xdetekt -xapiCheck
+                run: ./gradlew check -xlint -xdetekt -xapiCheck --scan
 
             -   name: Re-generate jacoco reports
-                run: ./gradlew jacocoTestReport
+                run: ./gradlew jacocoTestReport --scan
 
             -   name: Upload test artifacts
                 if: failure()
@@ -152,7 +152,7 @@ jobs:
                     key: ${{ runner.os }}-konan
 
             -   name: Build
-                run: ./gradlew clean assembleProduction -xassembleDebug
+                run: ./gradlew clean assembleProduction -xassembleDebug --scan
 
             -   name: Prepare tag properties
                 if: runner.os != 'Windows' && startsWith(github.ref, 'refs/tags/')
