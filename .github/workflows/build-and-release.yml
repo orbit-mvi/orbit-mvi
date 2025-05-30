@@ -132,7 +132,7 @@ jobs:
                     token: ${{secrets.CODECOV_TOKEN}}
 
     build:
-        needs: [ static-checks, lint, unit-tests, api-check, samples ]
+        needs: [ static-checks, lint, unit-tests, api-check, sample-unit-tests ]
         runs-on: macos-15
         steps:
             -   uses: actions/checkout@v4
