@@ -114,7 +114,7 @@ jobs:
                 uses: gradle/actions/setup-gradle@v4
 
             -   name: Unit tests
-                run: ./gradlew checkProduction -xlint -xdetekt -xapiCheck --scan
+                run: ./gradlew checkMainModules -xlint -xdetekt -xapiCheck --scan
 
             -   name: Re-generate jacoco reports
                 run: ./gradlew jacocoTestReport --scan
@@ -152,7 +152,7 @@ jobs:
                     key: ${{ runner.os }}-konan
 
             -   name: Build
-                run: ./gradlew clean assembleProduction -xassembleDebug --scan
+                run: ./gradlew clean assembleMainModules -xassembleDebug --scan
 
             -   name: Prepare tag properties
                 if: runner.os != 'Windows' && startsWith(github.ref, 'refs/tags/')

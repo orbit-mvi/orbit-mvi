@@ -234,31 +234,27 @@ dependencies {
     dokka(project(":orbit-test:"))
 }
 
-fun isProduction(project: Project): Boolean {
+fun isMainModule(project: Project): Boolean {
     return project.name.startsWith("orbit-") && !project.path.contains(":samples")
 }
 
-fun isSample(project: Project): Boolean {
+fun isSampleModule(project: Project): Boolean {
     val exclusions = listOf(
         "orbit-posts-compose-multiplatform",
     )
     return project.path.contains(":samples:") && !exclusions.contains(project.name)
 }
 
-val checkProduction by tasks.registering {
-    dependsOn(subprojects.filter { isProduction(it) }.map { "${it.path}:check" })
+val checkMainModules by tasks.registering {
+    dependsOn(subprojects.filter { isMainModule(it) }.map { "${it.path}:check" })
 }
 
-val assembleProduction by tasks.registering {
-    dependsOn(subprojects.filter { isProduction(it) }.map { "${it.path}:assemble" })
-}
-
-val assembleSamples by tasks.registering {
-    dependsOn(subprojects.filter { isSample(it) }.map { "${it.path}:assemble" })
+val assembleMainModules by tasks.registering {
+    dependsOn(subprojects.filter { isMainModule(it) }.map { "${it.path}:assemble" })
 }
 
 val checkSamples by tasks.registering {
-    dependsOn(subprojects.filter { isSample(it) }.map { "${it.path}:check" })
+    dependsOn(subprojects.filter { isSampleModule(it) }.map { "${it.path}:check" })
 }
 
 apiValidation {
