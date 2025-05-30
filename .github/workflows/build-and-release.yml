@@ -72,7 +72,7 @@ jobs:
             -   name: API Check
                 run: ./gradlew apiCheck --scan
 
-    samples:
+    sample-unit-tests:
         runs-on: macos-15
         steps:
             -   uses: actions/checkout@v4
@@ -91,8 +91,8 @@ jobs:
             -   name: Setup Gradle
                 uses: gradle/actions/setup-gradle@v4
 
-            -   name: Build Samples
-                run: ./gradlew assembleSamples --scan
+            -   name: Samples unit tests
+                run: ./gradlew checkSamples --scan
 
     unit-tests:
         runs-on: macos-15

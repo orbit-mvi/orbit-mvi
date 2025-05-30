@@ -254,7 +254,11 @@ val assembleProduction by tasks.registering {
 }
 
 val assembleSamples by tasks.registering {
-    dependsOn(subprojects.filter { isSample(it) }.map { "${it.path}:assemble" }.also { println(it) })
+    dependsOn(subprojects.filter { isSample(it) }.map { "${it.path}:assemble" })
+}
+
+val checkSamples by tasks.registering {
+    dependsOn(subprojects.filter { isSample(it) }.map { "${it.path}:check" })
 }
 
 apiValidation {
