@@ -244,6 +244,11 @@ fun isSample(project: Project): Boolean {
     )
     return project.path.contains(":samples:") && !exclusions.contains(project.name)
 }
+
+val checkProduction by tasks.registering {
+    dependsOn(subprojects.filter { isProduction(it) }.map { "${it.path}:check" })
+}
+
 val assembleProduction by tasks.registering {
     dependsOn(subprojects.filter { isProduction(it) }.map { "${it.path}:assemble" })
 }

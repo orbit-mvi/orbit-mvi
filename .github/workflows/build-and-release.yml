@@ -114,7 +114,7 @@ jobs:
                 uses: gradle/actions/setup-gradle@v4
 
             -   name: Unit tests
-                run: ./gradlew check -xlint -xdetekt -xapiCheck --scan
+                run: ./gradlew checkProduction -xlint -xdetekt -xapiCheck --scan
 
             -   name: Re-generate jacoco reports
                 run: ./gradlew jacocoTestReport --scan
