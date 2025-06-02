@@ -141,5 +141,4 @@ class ContainerBackingFieldDetectorTest : LintDetectorTest() {
 
     """
     ).indented()
-
 }

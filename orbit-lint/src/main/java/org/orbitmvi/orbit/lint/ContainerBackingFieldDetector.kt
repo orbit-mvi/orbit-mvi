@@ -52,10 +52,11 @@ public class ContainerBackingFieldDetector : Detector(), SourceCodeScanner {
 
                 if (!hasBackingField) {
                     context.report(
-                        ISSUE,
-                        node,
-                        context.getNameLocation(node),
-                        "Container property must have a backing field. Use 'override val container = container<STATE, SIDE_EFFECT>(...)' instead of a getter."
+                        issue = ISSUE,
+                        scopeClass = node,
+                        location = context.getNameLocation(node),
+                        message = "Container property must have a backing field. Use 'override val container =" +
+                            " container<STATE, SIDE_EFFECT>(...)' instead of a getter."
                     )
                 }
             }
