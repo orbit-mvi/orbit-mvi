@@ -22,6 +22,7 @@ plugins {
 }
 
 dependencies {
+    compileOnly(kotlin("stdlib"))
     compileOnly(libs.androidLintApi)
     compileOnly(libs.androidLintChecks)
 
