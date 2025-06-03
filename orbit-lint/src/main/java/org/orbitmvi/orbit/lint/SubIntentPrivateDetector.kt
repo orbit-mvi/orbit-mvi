@@ -40,8 +40,7 @@ public class SubIntentPrivateDetector : Detector(), SourceCodeScanner {
         return object : UElementHandler() {
             override fun visitCallExpression(node: UCallExpression) {
                 // Check if the call is to subIntent
-                val methodName = node.methodName ?: return
-                if (methodName != "subIntent") return
+                if (node.methodName != "subIntent") return
 
                 // Get the containing method
                 val containingMethod = node.getContainingUMethod() ?: return
