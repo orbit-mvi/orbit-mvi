@@ -122,5 +122,9 @@ android {
         minSdk = 21
     }
 
+    dependencies {
+        lintPublish(project(":orbit-lint"))
+    }
+
     testOptions.unitTests.isIncludeAndroidResources = true
 }
