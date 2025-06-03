@@ -26,7 +26,8 @@ import com.android.tools.lint.detector.api.Issue
  */
 public class OrbitIssueRegistry : IssueRegistry() {
     override val issues: List<Issue> = listOf(
-        ContainerBackingFieldDetector.ISSUE
+        ContainerBackingFieldDetector.ISSUE,
+        SubIntentPrivateDetector.ISSUE
     )
 
     override val api: Int = CURRENT_API
