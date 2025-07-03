@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 2021-2025 Mikołaj Leszczyński & Appmattus Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,6 @@ import org.orbitmvi.orbit.sample.posts.compose.multiplatform.domain.repositories
 import org.orbitmvi.orbit.sample.posts.compose.multiplatform.domain.repositories.PostDetail
 import org.orbitmvi.orbit.sample.posts.compose.multiplatform.domain.repositories.PostOverview
 import org.orbitmvi.orbit.sample.posts.compose.multiplatform.domain.repositories.PostRepository
-import org.orbitmvi.orbit.sample.posts.compose.multiplatform.domain.repositories.Status
 
 public class PostDataRepository(
     private val networkDataSource: PostNetworkDataSource,
@@ -48,32 +47,27 @@ public class PostDataRepository(
         }
     }
 
-    override suspend fun getDetail(id: Int): Status<PostDetail> {
+    override suspend fun getDetail(id: Int): PostDetail {
         return coroutineScope {
-            when (val postData = networkDataSource.getPost(id)) {
-                is Status.Success -> {
-                    val comments = async {
-                        networkDataSource.getComments()
-                            .filter { it.postId == postData.data.id }
-                    }
+            val postData = networkDataSource.getPost(id)
 
-                    Status.Success(
-                        PostDetail(
-                            postData.data.id,
-                            postData.data.body,
-                            comments.await().map {
-                                PostComment(
-                                    it.id,
-                                    it.name,
-                                    it.email,
-                                    it.body
-                                )
-                            }
-                        )
+            val comments = async {
+                networkDataSource.getComments()
+                    .filter { it.postId == postData.id }
+            }
+
+            PostDetail(
+                postData.id,
+                postData.body,
+                comments.await().map {
+                    PostComment(
+                        it.id,
+                        it.name,
+                        it.email,
+                        it.body
                     )
                 }
-                is Status.Failure -> Status.Failure<PostDetail>(postData.exception)
-            }
+            )
         }
     }
 }

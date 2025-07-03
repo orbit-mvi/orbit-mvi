@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 2021-2025 Mikołaj Leszczyński & Appmattus Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,15 +20,17 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.AppBarDefaults
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarColors
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.unit.Dp
@@ -37,14 +39,18 @@ import orbit_mvi.samples.orbit_posts_compose_multiplatform.composeapp.generated.
 import orbit_mvi.samples.orbit_posts_compose_multiplatform.composeapp.generated.resources.ic_orbit_toolbar
 import org.jetbrains.compose.resources.painterResource
 
+public val topAppBarElevation: Dp = 4.dp
+
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 public fun AppBar(
     topAppBarText: String,
-    elevation: Dp = AppBarDefaults.TopAppBarElevation,
+    elevation: Dp = topAppBarElevation,
     iconPainter: Painter? = null,
     onBackPressed: (() -> Unit)? = null
 ) {
     TopAppBar(
+        modifier = Modifier.shadow(elevation = elevation),
         title = {
             Row {
                 Image(
@@ -58,8 +64,8 @@ public fun AppBar(
                 )
             }
         },
-        navigationIcon = onBackPressed?.let {
-            {
+        navigationIcon = {
+            onBackPressed?.let {
                 IconButton(onClick = onBackPressed) {
                     Icon(
                         Icons.AutoMirrored.Filled.ArrowBack,
@@ -68,8 +74,12 @@ public fun AppBar(
                 }
             }
         },
-        backgroundColor = Color.White,
-        contentColor = Color.Black,
-        elevation = elevation
+        colors = TopAppBarColors(
+            containerColor = Color.White,
+            scrolledContainerColor = Color.White,
+            navigationIconContentColor = Color.Black,
+            titleContentColor = Color.Black,
+            actionIconContentColor = Color.Black,
+        )
     )
 }

@@ -18,12 +18,12 @@ package org.orbitmvi.orbit.sample.posts.compose.multiplatform.domain.viewmodel.d
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import kotlinx.coroutines.Job
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.sample.posts.compose.multiplatform.domain.repositories.PostOverview
 import org.orbitmvi.orbit.sample.posts.compose.multiplatform.domain.repositories.PostRepository
-import org.orbitmvi.orbit.sample.posts.compose.multiplatform.domain.repositories.Status
 import org.orbitmvi.orbit.viewmodel.container
 
 public class PostDetailsViewModel(
@@ -33,21 +33,26 @@ public class PostDetailsViewModel(
 ) : ViewModel(), ContainerHost<PostDetailState, Nothing> {
 
     override val container: Container<PostDetailState, Nothing> =
-        container(PostDetailState.NoDetailsAvailable(postOverview), savedStateHandle, PostDetailState.serializer()) {
-            if (state !is PostDetailState.Details) {
-                loadDetails()
+        container(PostDetailState.Loading(postOverview), savedStateHandle, PostDetailState.serializer()) {
+            when (state) {
+                is PostDetailState.Error -> reduce { PostDetailState.Error(state.postOverview, ::onRetry) }
+                is PostDetailState.Loading -> loadDetails()
+                is PostDetailState.Ready -> Unit
             }
         }
 
     @OptIn(OrbitExperimental::class)
     private suspend fun loadDetails() = subIntent {
-        val status = postRepository.getDetail(postOverview.id)
-
-        reduce {
-            when (status) {
-                is Status.Success -> PostDetailState.Details(state.postOverview, status.data)
-                is Status.Failure -> PostDetailState.NoDetailsAvailable(state.postOverview)
-            }
+        runCatching {
+            postRepository.getDetail(postOverview.id)
+        }.onSuccess { status ->
+            reduce { PostDetailState.Ready(state.postOverview, status) }
+        }.onFailure {
+            reduce { PostDetailState.Error(state.postOverview, ::onRetry) }
         }
+    }
+
+    private fun onRetry(): Job = intent {
+        loadDetails()
     }
 }
