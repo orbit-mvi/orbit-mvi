@@ -40,3 +40,16 @@ fun renameBuildFileToModuleName(project: ProjectDescriptor) {
 // E.g. `app/build.gradle` will become `app/app.gradle`
 // The root build.gradle file will remain untouched
 rootProject.children.forEach { subproject -> renameBuildFileToModuleName(subproject) }
+
+plugins {
+    id("com.gradle.develocity") version "4.0.2"
+}
+
+develocity {
+    buildScan {
+        termsOfUseUrl = "https://gradle.com/terms-of-service"
+        termsOfUseAgree = "yes"
+        val isCI = providers.environmentVariable("CI").isPresent
+        publishing.onlyIf { isCI }
+    }
+}

@@ -234,6 +234,29 @@ dependencies {
     dokka(project(":orbit-test:"))
 }
 
+fun isMainModule(project: Project): Boolean {
+    return project.name.startsWith("orbit-") && !project.path.contains(":samples")
+}
+
+fun isSampleModule(project: Project): Boolean {
+    val exclusions = listOf(
+        "orbit-posts-compose-multiplatform",
+    )
+    return project.path.contains(":samples:") && !exclusions.contains(project.name)
+}
+
+val checkMainModules by tasks.registering {
+    dependsOn(subprojects.filter { isMainModule(it) }.map { "${it.path}:check" })
+}
+
+val assembleMainModules by tasks.registering {
+    dependsOn(subprojects.filter { isMainModule(it) }.map { "${it.path}:assemble" })
+}
+
+val checkSamples by tasks.registering {
+    dependsOn(subprojects.filter { isSampleModule(it) }.map { "${it.path}:check" })
+}
+
 apiValidation {
     @OptIn(kotlinx.validation.ExperimentalBCVApi::class)
     klib {
