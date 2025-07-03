@@ -34,5 +34,10 @@ public data class TestSettings(
     /**
      * Set this to override the explicit initial state check for this test
      */
-    val autoCheckInitialState: Boolean = true
+    val autoCheckInitialState: Boolean = true,
+
+    /**
+     * Set this to control whether you are testing internal, external or both states.
+     */
+    val awaitState: AwaitState = AwaitState.EXTERNAL_ONLY
 )

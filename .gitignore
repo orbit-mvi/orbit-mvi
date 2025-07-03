@@ -260,3 +260,4 @@ fabric.properties
 # End of https://www.toptal.com/developers/gitignore/api/linux,macos,kotlin,windows,android,androidstudio
 
 .kotlin
+kotlin-js-store/
