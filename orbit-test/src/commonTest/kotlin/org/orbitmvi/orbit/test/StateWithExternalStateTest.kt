@@ -20,7 +20,7 @@ import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
 import org.orbitmvi.orbit.ContainerHostWithExternalState
 import org.orbitmvi.orbit.container
-import org.orbitmvi.orbit.mapToExternalState
+import org.orbitmvi.orbit.withExternalState
 import kotlin.random.Random
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -42,7 +42,7 @@ class StateWithExternalStateTest {
     @Test
     fun external_succeeds_if_initial_state_matches_expected_state_with_expectState() = runTest {
         StateTestMiddleware(this).test(this, settings = TestSettings(autoCheckInitialState = false, awaitState = AwaitState.EXTERNAL_ONLY)) {
-            expectExternalState { containerHost.container.mapToExternalState(initialState) }
+            expectExternalState { containerHost.container.transformState(initialState) }
         }
     }
 
@@ -53,7 +53,7 @@ class StateWithExternalStateTest {
             settings = TestSettings(autoCheckInitialState = false, awaitState = AwaitState.INTERNAL_AND_EXTERNAL)
         ) {
             expectInternalState { initialState }
-            expectExternalState { containerHost.container.mapToExternalState(initialState) }
+            expectExternalState { containerHost.container.transformState(initialState) }
         }
     }
 
@@ -76,7 +76,7 @@ class StateWithExternalStateTest {
 
         assertFailsWith<AssertionError> {
             StateTestMiddleware(this).test(this, settings = TestSettings(autoCheckInitialState = false, awaitState = AwaitState.EXTERNAL_ONLY)) {
-                assertEquals(containerHost.container.mapToExternalState(someRandomState), awaitExternalState())
+                assertEquals(containerHost.container.transformState(someRandomState), awaitExternalState())
             }
         }.also {
             assertTrue { it.message?.startsWith(prefix = "expected", ignoreCase = true) == true }
@@ -109,7 +109,7 @@ class StateWithExternalStateTest {
                 settings = TestSettings(autoCheckInitialState = false, awaitState = AwaitState.INTERNAL_AND_EXTERNAL)
             ) {
                 assertEquals(initialState, awaitInternalState())
-                assertEquals(containerHost.container.mapToExternalState(someRandomState), awaitExternalState())
+                assertEquals(containerHost.container.transformState(someRandomState), awaitExternalState())
             }
         }.also {
             assertTrue { it.message?.startsWith(prefix = "expected", ignoreCase = true) == true }
@@ -679,8 +679,8 @@ class StateWithExternalStateTest {
 
     private inner class StateTestMiddleware(scope: TestScope) :
         ContainerHostWithExternalState<InternalState, ExternalState, Int> {
-        override val container = scope.backgroundScope.container<InternalState, Int>(initialState).mapToExternalState(::mapToExternalState)
-        private fun mapToExternalState(internalState: InternalState): ExternalState =
+        override val container = scope.backgroundScope.container<InternalState, Int>(initialState).withExternalState(::transformState)
+        private fun transformState(internalState: InternalState): ExternalState =
             ExternalState(internalState.count.toString(), internalState.list.map { it.toString() })
 
         fun newCount(action: Int) = intent {

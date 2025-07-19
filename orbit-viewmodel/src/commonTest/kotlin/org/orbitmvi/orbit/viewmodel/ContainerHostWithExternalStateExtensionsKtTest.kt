@@ -27,7 +27,7 @@ import kotlinx.coroutines.test.setMain
 import org.orbitmvi.orbit.ContainerHostWithExternalState
 import org.orbitmvi.orbit.RealSettings
 import org.orbitmvi.orbit.internal.RealContainer
-import org.orbitmvi.orbit.mapToExternalState
+import org.orbitmvi.orbit.withExternalState
 import kotlin.random.Random
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
@@ -48,7 +48,7 @@ class ContainerHostWithExternalStateExtensionsKtTest : RobolectricTest() {
             parentScope = scope,
             settings = RealSettings(),
             subscribedCounterOverride = testSubscribedCounter
-        ).mapToExternalState(Int::toString)
+        ).withExternalState(Int::toString)
     }
 
     @BeforeTest

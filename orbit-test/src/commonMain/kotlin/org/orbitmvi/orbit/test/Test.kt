@@ -178,7 +178,7 @@ public suspend fun <INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : An
                     assertEquals(resolvedInitialState, awaitInternalState())
                 }
                 if (settings.awaitState != AwaitState.INTERNAL_ONLY) {
-                    assertEquals(container.mapToExternalState(resolvedInitialState), awaitExternalState())
+                    assertEquals(container.transformState(resolvedInitialState), awaitExternalState())
                 }
             }
             validate(this)

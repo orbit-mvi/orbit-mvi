@@ -120,7 +120,7 @@ class ContainerHostWithExternalStateTest {
     }
 
     class TestHost(backgroundScope: CoroutineScope) : ContainerHostWithExternalState<Int, String, Int> {
-        override val container = backgroundScope.container<Int, Int>(initialState = 0).mapToExternalState(::mapToExternalState)
+        override val container = backgroundScope.container<Int, Int>(initialState = 0).withExternalState(::transformState)
 
         fun newState(action: Int) = intent { subIntent(action) }
 
@@ -129,7 +129,7 @@ class ContainerHostWithExternalStateTest {
         @OptIn(OrbitExperimental::class)
         private suspend fun subIntent(action: Int) = subIntent { reduce { action } }
 
-        private fun mapToExternalState(internalState: Int): String {
+        private fun transformState(internalState: Int): String {
             return internalState.mod(65536).toString()
         }
     }

@@ -21,7 +21,7 @@ import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
 import org.orbitmvi.orbit.ContainerHostWithExternalState
 import org.orbitmvi.orbit.container
-import org.orbitmvi.orbit.mapToExternalState
+import org.orbitmvi.orbit.withExternalState
 import kotlin.concurrent.atomics.AtomicBoolean
 import kotlin.random.Random
 import kotlin.test.Test
@@ -213,9 +213,9 @@ internal class InitWithExternalStateTest {
         ContainerHostWithExternalState<InternalState, ExternalState, Nothing> {
         override val container = coroutineScope.container<InternalState, Nothing>(initialState) {
             created()
-        }.mapToExternalState(::mapToExternalState)
+        }.withExternalState(::transformState)
 
-        private fun mapToExternalState(internalState: InternalState) = ExternalState(internalState.count.toString())
+        private fun transformState(internalState: InternalState) = ExternalState(internalState.count.toString())
 
         fun created() {
             dependency.create()

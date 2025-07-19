@@ -26,9 +26,9 @@ import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.parcelize.Parcelize
 import org.orbitmvi.orbit.ContainerHostWithExternalState
-import org.orbitmvi.orbit.mapToExternalState
 import org.orbitmvi.orbit.sample.calculator.CalculatorViewModel.InternalCalculatorState
 import org.orbitmvi.orbit.viewmodel.container
+import org.orbitmvi.orbit.withExternalState
 import java.math.BigDecimal
 import java.math.RoundingMode
 
@@ -38,9 +38,9 @@ class CalculatorViewModel(savedStateHandle: SavedStateHandle) :
     ContainerHostWithExternalState<InternalCalculatorState, CalculatorState, Nothing> {
 
     override val container = container<InternalCalculatorState, Nothing>(InternalCalculatorState(), savedStateHandle)
-        .mapToExternalState(::mapToExternalState)
+        .withExternalState(::transformState)
 
-    private fun mapToExternalState(internalState: InternalCalculatorState): CalculatorState {
+    private fun transformState(internalState: InternalCalculatorState): CalculatorState {
         return CalculatorState(
             digitalDisplay = if (internalState.xRegister.isEmpty()) {
                 internalState.yRegister.displayValue

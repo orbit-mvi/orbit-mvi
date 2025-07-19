@@ -31,18 +31,18 @@ import org.orbitmvi.orbit.internal.RealContainerWithExternalState
 public interface ContainerWithExternalState<INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : Any> :
     ContainerDecorator<INTERNAL_STATE, SIDE_EFFECT> {
 
-    public val mapToExternalState: (internalState: INTERNAL_STATE) -> EXTERNAL_STATE
+    public val transformState: (internalState: INTERNAL_STATE) -> EXTERNAL_STATE
 
     public val externalStateFlow: StateFlow<EXTERNAL_STATE>
 
     public val externalRefCountStateFlow: StateFlow<EXTERNAL_STATE>
 }
 
-public fun <INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : Any> Container<INTERNAL_STATE, SIDE_EFFECT>.mapToExternalState(
-    transform: (INTERNAL_STATE) -> EXTERNAL_STATE
+public fun <INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : Any> Container<INTERNAL_STATE, SIDE_EFFECT>.withExternalState(
+    transformState: (INTERNAL_STATE) -> EXTERNAL_STATE
 ): ContainerWithExternalState<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT> {
     return RealContainerWithExternalState(
         actual = this,
-        mapToExternalState = transform
+        transformState = transformState
     )
 }

@@ -20,7 +20,7 @@ import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
 import org.orbitmvi.orbit.ContainerHostWithExternalState
 import org.orbitmvi.orbit.container
-import org.orbitmvi.orbit.mapToExternalState
+import org.orbitmvi.orbit.withExternalState
 import kotlin.random.Random
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -201,9 +201,9 @@ class ItemsWithExternalStateTest {
 
     private inner class ItemTestMiddleware(scope: TestScope) :
         ContainerHostWithExternalState<InternalState, ExternalState, Int> {
-        override val container = scope.backgroundScope.container<InternalState, Int>(initialState).mapToExternalState(::mapToExternalState)
+        override val container = scope.backgroundScope.container<InternalState, Int>(initialState).withExternalState(::transformState)
 
-        private fun mapToExternalState(internalState: InternalState): ExternalState = ExternalState(internalState.count.toString())
+        private fun transformState(internalState: InternalState): ExternalState = ExternalState(internalState.count.toString())
 
         fun newState(action: Int) = intent {
             reduce {

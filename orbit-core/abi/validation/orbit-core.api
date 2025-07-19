@@ -70,7 +70,7 @@ public final class org/orbitmvi/orbit/ContainerHostWithExternalState$DefaultImpl
 public abstract interface class org/orbitmvi/orbit/ContainerWithExternalState : org/orbitmvi/orbit/ContainerDecorator {
 	public abstract fun getExternalRefCountStateFlow ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getExternalStateFlow ()Lkotlinx/coroutines/flow/StateFlow;
-	public abstract fun getMapToExternalState ()Lkotlin/jvm/functions/Function1;
+	public abstract fun getTransformState ()Lkotlin/jvm/functions/Function1;
 }
 
 public final class org/orbitmvi/orbit/ContainerWithExternalState$DefaultImpls {
@@ -87,7 +87,7 @@ public final class org/orbitmvi/orbit/ContainerWithExternalState$DefaultImpls {
 }
 
 public final class org/orbitmvi/orbit/ContainerWithExternalStateKt {
-	public static final fun mapToExternalState (Lorg/orbitmvi/orbit/Container;Lkotlin/jvm/functions/Function1;)Lorg/orbitmvi/orbit/ContainerWithExternalState;
+	public static final fun withExternalState (Lorg/orbitmvi/orbit/Container;Lkotlin/jvm/functions/Function1;)Lorg/orbitmvi/orbit/ContainerWithExternalState;
 }
 
 public final class org/orbitmvi/orbit/CoroutineScopeExtensionsKt {

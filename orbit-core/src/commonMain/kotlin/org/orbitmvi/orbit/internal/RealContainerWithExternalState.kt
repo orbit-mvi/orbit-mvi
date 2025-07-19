@@ -32,14 +32,14 @@ import org.orbitmvi.orbit.ContainerWithExternalState
  */
 public class RealContainerWithExternalState<INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : Any> internal constructor(
     public override val actual: Container<INTERNAL_STATE, SIDE_EFFECT>,
-    public override val mapToExternalState: (INTERNAL_STATE) -> EXTERNAL_STATE
+    public override val transformState: (INTERNAL_STATE) -> EXTERNAL_STATE
 ) : ContainerWithExternalState<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT> {
 
     public override val externalStateFlow: StateFlow<EXTERNAL_STATE>
-        get() = stateFlow.stateMap { mapToExternalState(it) }
+        get() = stateFlow.stateMap { transformState(it) }
 
     public override val externalRefCountStateFlow: StateFlow<EXTERNAL_STATE>
-        get() = refCountStateFlow.stateMap { mapToExternalState(it) }
+        get() = refCountStateFlow.stateMap { transformState(it) }
 }
 
 @OptIn(ExperimentalForInheritanceCoroutinesApi::class)

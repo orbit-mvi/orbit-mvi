@@ -40,7 +40,7 @@ public class OrbitTestContextWithExternalState<
     internal var currentConsumedInternalState: INTERNAL_STATE = resolvedInitialState
 
     @PublishedApi
-    internal var currentConsumedExternalState: EXTERNAL_STATE = containerHost.container.mapToExternalState(resolvedInitialState)
+    internal var currentConsumedExternalState: EXTERNAL_STATE = containerHost.container.transformState(resolvedInitialState)
 
     /**
      * Invoke `onCreate` lambda for the [ContainerHost].

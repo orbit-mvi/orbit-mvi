@@ -20,7 +20,7 @@ import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
 import org.orbitmvi.orbit.ContainerHostWithExternalState
 import org.orbitmvi.orbit.container
-import org.orbitmvi.orbit.mapToExternalState
+import org.orbitmvi.orbit.withExternalState
 import kotlin.random.Random
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -120,8 +120,8 @@ class SideEffectWithExternalStateTest {
     }
 
     private inner class SideEffectTestMiddleware(scope: TestScope) : ContainerHostWithExternalState<InternalState, ExternalState, Int> {
-        override val container = scope.backgroundScope.container<InternalState, Int>(initialState).mapToExternalState(::mapToExternalState)
-        private fun mapToExternalState(internalState: InternalState) = ExternalState(internalState.count.toString())
+        override val container = scope.backgroundScope.container<InternalState, Int>(initialState).withExternalState(::transformState)
+        private fun transformState(internalState: InternalState) = ExternalState(internalState.count.toString())
 
         fun newState(count: Int) = intent {
             reduce { state.copy(count = count) }

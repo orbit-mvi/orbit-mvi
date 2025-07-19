@@ -134,11 +134,11 @@ class ExampleViewModel(
 ) : ViewModel(), ContainerHostWithExternalState<ExampleState, ExampleSideEffect, ExampleExtState> {
     // create a container
     val container = container<ExampleState, ExampleSideEffect>(ExampleState(), savedStateHandle)
-        .mapToExternalState(::mapExternalState)
+        .withExternalState(::transformState)
 
     …
 
-    private fun mapExternalState(state: ExampleState): ExampleExtState {
+    private fun transformState(state: ExampleState): ExampleExtState {
         // Process the internal state into something the UI can easily consume...
         return ExampleExtState(...)
     }
