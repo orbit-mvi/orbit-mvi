@@ -17,40 +17,27 @@
 package org.orbitmvi.orbit.test
 
 import app.cash.turbine.ReceiveTurbine
-import kotlinx.coroutines.Job
-import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.ContainerHostWithExternalState
-import org.orbitmvi.orbit.annotation.OrbitInternal
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
 import kotlin.test.fail
 
-public class OrbitTestContextWithExternalState<
+public class OrbitScopedTestContextInternalAndExternal<
     INTERNAL_STATE : Any,
     EXTERNAL_STATE : Any,
     SIDE_EFFECT : Any,
     CONTAINER_HOST : ContainerHostWithExternalState<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>
     >(
-    public val containerHost: CONTAINER_HOST,
-    private val resolvedInitialState: INTERNAL_STATE,
-    private val emissions: ReceiveTurbine<ItemWithExternalState<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>>,
-    private val settings: TestSettings
-) {
+    containerHost: CONTAINER_HOST,
+    resolvedInitialState: INTERNAL_STATE,
+    emissions: ReceiveTurbine<ItemWithExternalState<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>>,
+): OrbitScopedTestContextBase<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT, CONTAINER_HOST>(containerHost, emissions) {
+
     @PublishedApi
     internal var currentConsumedInternalState: INTERNAL_STATE = resolvedInitialState
 
     @PublishedApi
     internal var currentConsumedExternalState: EXTERNAL_STATE = containerHost.container.transformState(resolvedInitialState)
-
-    /**
-     * Invoke `onCreate` lambda for the [ContainerHost].
-     */
-    public fun runOnCreate(): Job {
-        @OptIn(OrbitInternal::class)
-        val onCreate = containerHost.container.findOnCreate()
-        @OptIn(OrbitInternal::class)
-        return containerHost.container.orbit(onCreate)
-    }
 
     /**
      * Awaits for an internal state and checks if it matches the expected internal state change from the
@@ -127,44 +114,12 @@ public class OrbitTestContextWithExternalState<
     }
 
     /**
-     * Awaits for a side effect and checks if it matches the expected side effect
-     *
-     * @param expected The expected side effect
-     *
-     * @throws AssertionError if state does not match the expected change.
-     */
-    public suspend fun expectSideEffect(expected: SIDE_EFFECT) {
-        assertEquals(expected, awaitSideEffect())
-    }
-
-    /**
-     * Assert there are no unconsumed items
-     *
-     * @throws AssertionError if unconsumed items are found
-     */
-    public suspend fun expectNoItems() {
-        emissions.expectNoEvents()
-    }
-
-    /**
-     * Return the next item received.
-     * This function will suspend if no items have been received.
-     */
-    public suspend fun awaitItem(): ItemWithExternalState<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT> {
-        return emissions.awaitItem()
-    }
-
-    /**
      * Return the next internal state received.
      * This function will suspend if no items have been received.
      *
      * @throws AssertionError if the most recent item was not an internal state.
      */
     public suspend fun awaitInternalState(): INTERNAL_STATE {
-        if (settings.awaitState == AwaitState.EXTERNAL_ONLY) {
-            error("Internal state not being observed. Override with TestSettings(awaitState = ...)")
-        }
-
         val item = awaitItem()
         return (item as? ItemWithExternalState.InternalStateItem)?.value?.also { currentConsumedInternalState = it }
             ?: fail("Expected Internal State but got $item")
@@ -177,41 +132,8 @@ public class OrbitTestContextWithExternalState<
      * @throws AssertionError if the most recent item was not an external state.
      */
     public suspend fun awaitExternalState(): EXTERNAL_STATE {
-        if (settings.awaitState == AwaitState.INTERNAL_ONLY) {
-            error("External state not being observed. Override with TestSettings(awaitState = ...)")
-        }
-
         val item = awaitItem()
         return (item as? ItemWithExternalState.ExternalStateItem)?.value?.also { currentConsumedExternalState = it }
             ?: fail("Expected External State but got $item")
-    }
-
-    /**
-     * Return the next side effect received.
-     * This function will suspend if no side effects have been received.
-     *
-     * @throws AssertionError if the most recent item was not a side effect.
-     */
-    public suspend fun awaitSideEffect(): SIDE_EFFECT {
-        val item = awaitItem()
-
-        return (item as? ItemWithExternalState.SideEffectItem)?.value ?: fail("Expected Side Effect but got $item")
-    }
-
-    /**
-     * Assert that [count] items were received and ignore them.
-     * This function will suspend if no items have been received.
-     */
-    public suspend fun skipItems(count: Int) {
-        emissions.skipItems(count)
-    }
-
-    /**
-     * Finish this test and ignore any events which have already been received.
-     * This also cancels any in-progress intents.
-     */
-    public suspend fun cancelAndIgnoreRemainingItems() {
-        emissions.cancelAndIgnoreRemainingEvents()
-        containerHost.container.cancel()
     }
 }

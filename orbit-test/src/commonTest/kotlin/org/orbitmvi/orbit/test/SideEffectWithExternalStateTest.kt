@@ -35,7 +35,7 @@ class SideEffectWithExternalStateTest {
     fun succeeds_if_posted_side_effects_match_expected_side_effects() = runTest {
         val sideEffects = List(Random.nextInt(1, 5)) { Random.nextInt() }
 
-        SideEffectTestMiddleware(this).test(this) {
+        SideEffectTestMiddleware(this).testExternalState(this) {
             sideEffects.forEach { containerHost.something(it) }
 
             assertEquals(
@@ -53,7 +53,7 @@ class SideEffectWithExternalStateTest {
     fun succeeds_if_posted_side_effects_match_expected_side_effects__shorthand_syntax() = runTest {
         val sideEffects = List(Random.nextInt(1, 5)) { Random.nextInt() }
 
-        SideEffectTestMiddleware(this).test(this) {
+        SideEffectTestMiddleware(this).testExternalState(this) {
             sideEffects.forEach { containerHost.something(it) }
 
             sideEffects.forEach {
@@ -68,7 +68,7 @@ class SideEffectWithExternalStateTest {
         val sideEffects2 = List(Random.nextInt(1, 5)) { Random.nextInt() }
 
         assertFailsWith<AssertionError> {
-            SideEffectTestMiddleware(this).test(this) {
+            SideEffectTestMiddleware(this).testExternalState(this) {
                 sideEffects.forEach { containerHost.something(it) }
 
                 assertEquals(
@@ -90,7 +90,7 @@ class SideEffectWithExternalStateTest {
         val sideEffect = Random.nextInt()
 
         assertFailsWith<AssertionError> {
-            SideEffectTestMiddleware(this).test(this, settings = TestSettings(awaitState = AwaitState.INTERNAL_ONLY)) {
+            SideEffectTestMiddleware(this).testInternalState(this) {
                 containerHost.newState(sideEffect)
                 containerHost.something(sideEffect)
 
@@ -107,7 +107,7 @@ class SideEffectWithExternalStateTest {
         val sideEffect = Random.nextInt()
 
         assertFailsWith<AssertionError> {
-            SideEffectTestMiddleware(this).test(this, settings = TestSettings(awaitState = AwaitState.EXTERNAL_ONLY)) {
+            SideEffectTestMiddleware(this).testExternalState(this) {
                 containerHost.newState(sideEffect)
                 containerHost.something(sideEffect)
 

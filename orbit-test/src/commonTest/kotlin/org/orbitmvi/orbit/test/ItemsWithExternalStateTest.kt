@@ -37,7 +37,7 @@ class ItemsWithExternalStateTest {
         val sideEffect1 = 3
         val sideEffect2 = 4
 
-        ItemTestMiddleware(this).test(this, settings = TestSettings(awaitState = AwaitState.INTERNAL_ONLY)) {
+        ItemTestMiddleware(this).testInternalState(this) {
             containerHost.newState(state1)
             containerHost.newSideEffect(sideEffect1)
             containerHost.newState(state2)
@@ -55,7 +55,7 @@ class ItemsWithExternalStateTest {
         val sideEffect1 = 3
         val sideEffect2 = 4
 
-        ItemTestMiddleware(this).test(this, settings = TestSettings(awaitState = AwaitState.EXTERNAL_ONLY)) {
+        ItemTestMiddleware(this).testExternalState(this) {
             containerHost.newState(state1)
             containerHost.newSideEffect(sideEffect1)
             containerHost.newState(state2)
@@ -73,7 +73,7 @@ class ItemsWithExternalStateTest {
         val sideEffect1 = 3
         val sideEffect2 = 4
 
-        ItemTestMiddleware(this).test(this, settings = TestSettings(awaitState = AwaitState.INTERNAL_AND_EXTERNAL)) {
+        ItemTestMiddleware(this).testInternalAndExternalState(this) {
             containerHost.newState(state1)
             containerHost.newSideEffect(sideEffect1)
             containerHost.newState(state2)
@@ -91,7 +91,7 @@ class ItemsWithExternalStateTest {
         val sideEffect1 = 3
         val sideEffect2 = 4
 
-        ItemTestMiddleware(this).test(this, settings = TestSettings(awaitState = AwaitState.INTERNAL_ONLY)) {
+        ItemTestMiddleware(this).testInternalState(this) {
             containerHost.newState(state1)
             containerHost.newSideEffect(sideEffect1)
             containerHost.newState(state2)
@@ -111,7 +111,7 @@ class ItemsWithExternalStateTest {
         val sideEffect1 = 3
         val sideEffect2 = 4
 
-        ItemTestMiddleware(this).test(this, settings = TestSettings(awaitState = AwaitState.EXTERNAL_ONLY)) {
+        ItemTestMiddleware(this).testExternalState(this) {
             containerHost.newState(state1)
             containerHost.newSideEffect(sideEffect1)
             containerHost.newState(state2)
@@ -131,7 +131,7 @@ class ItemsWithExternalStateTest {
         val sideEffect1 = 3
         val sideEffect2 = 4
 
-        ItemTestMiddleware(this).test(this, settings = TestSettings(awaitState = AwaitState.INTERNAL_AND_EXTERNAL)) {
+        ItemTestMiddleware(this).testInternalAndExternalState(this) {
             containerHost.newState(state1)
             containerHost.newSideEffect(sideEffect1)
             containerHost.newState(state2)
@@ -148,30 +148,30 @@ class ItemsWithExternalStateTest {
 
     @Test
     fun internal_correctly_expects_no_items() = runTest {
-        ItemTestMiddleware(this).test(this, settings = TestSettings(awaitState = AwaitState.INTERNAL_ONLY)) {
+        ItemTestMiddleware(this).testInternalState(this) {
             expectNoItems()
         }
     }
 
     @Test
     fun external_correctly_expects_no_items() = runTest {
-        ItemTestMiddleware(this).test(this, settings = TestSettings(awaitState = AwaitState.EXTERNAL_ONLY)) {
+        ItemTestMiddleware(this).testExternalState(this) {
             expectNoItems()
         }
     }
 
     @Test
     fun internal_and_external_correctly_expects_no_items() = runTest {
-        ItemTestMiddleware(this).test(this, settings = TestSettings(awaitState = AwaitState.INTERNAL_AND_EXTERNAL)) {
+        ItemTestMiddleware(this).testInternalAndExternalState(this) {
             expectNoItems()
         }
     }
 
     @Test
     fun internal_expects_no_items_fails_when_there_are_unconsumed_items() = runTest {
-        ItemTestMiddleware(this).test(
+        ItemTestMiddleware(this).testInternalState(
             testScope = this,
-            settings = TestSettings(autoCheckInitialState = false, awaitState = AwaitState.INTERNAL_ONLY)
+            settings = TestSettings(autoCheckInitialState = false)
         ) {
             assertFails { expectNoItems() }
         }
@@ -179,9 +179,9 @@ class ItemsWithExternalStateTest {
 
     @Test
     fun external_expects_no_items_fails_when_there_are_unconsumed_items() = runTest {
-        ItemTestMiddleware(this).test(
+        ItemTestMiddleware(this).testExternalState(
             testScope = this,
-            settings = TestSettings(autoCheckInitialState = false, awaitState = AwaitState.EXTERNAL_ONLY)
+            settings = TestSettings(autoCheckInitialState = false)
         ) {
             assertFails { expectNoItems() }
         }
@@ -189,9 +189,9 @@ class ItemsWithExternalStateTest {
 
     @Test
     fun internal_and_external_expects_no_items_fails_when_there_are_unconsumed_items() = runTest {
-        ItemTestMiddleware(this).test(
+        ItemTestMiddleware(this).testInternalAndExternalState(
             testScope = this,
-            settings = TestSettings(autoCheckInitialState = false, awaitState = AwaitState.INTERNAL_AND_EXTERNAL)
+            settings = TestSettings(autoCheckInitialState = false)
         ) {
             // Under normal usage we wouldn't catch the failure; as we are we get a failure for each initial state, internal and external
             assertFails { expectNoItems() }
