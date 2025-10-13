@@ -1,19 +1,3 @@
-/*
- * Copyright 2022-2025 Mikołaj Leszczyński & Appmattus Limited
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package org.orbitmvi.orbit.compose
 
 import androidx.compose.runtime.Composable
@@ -30,9 +14,10 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
-import org.orbitmvi.orbit.ContainerHost
+import org.orbitmvi.orbit.ContainerHostWithExternalState
 import org.orbitmvi.orbit.RealSettings
 import org.orbitmvi.orbit.internal.RealContainer
+import org.orbitmvi.orbit.withExternalState
 import kotlin.random.Random
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
@@ -41,7 +26,7 @@ import kotlin.test.assertEquals
 
 @OptIn(ExperimentalTestApi::class)
 @ExperimentalCoroutinesApi
-class ContainerHostExtensionsKtTest : RobolectricTest() {
+class ContainerHostWithExternalStateExtensionsKtTest : RobolectricTest() {
 
     private val mockLifecycleOwner = MockLifecycleOwner()
 
@@ -49,13 +34,13 @@ class ContainerHostExtensionsKtTest : RobolectricTest() {
 
     private val scope by lazy { CoroutineScope(Job()) }
 
-    private val containerHost = object : ContainerHost<Int, Int> {
+    private val containerHost = object : ContainerHostWithExternalState<Int, String, Int> {
         override val container = RealContainer<Int, Int>(
-            initialState = Random.nextInt(),
+            initialState = Random.Default.nextInt(),
             parentScope = scope,
             settings = RealSettings(),
             subscribedCounterOverride = testSubscribedCounter
-        )
+        ).withExternalState(Int::toString)
     }
 
     @BeforeTest
@@ -70,7 +55,7 @@ class ContainerHostExtensionsKtTest : RobolectricTest() {
         scope.cancel()
     }
 
-    private fun ComposeUiTest.initialiseContainerHost(block: @Composable ContainerHost<Int, Int>.() -> Unit) {
+    private fun ComposeUiTest.initialiseContainerHost(block: @Composable ContainerHostWithExternalState<Int, String, Int>.() -> Unit) {
         setContent {
             CompositionLocalProvider(
                 LocalLifecycleOwner provides mockLifecycleOwner

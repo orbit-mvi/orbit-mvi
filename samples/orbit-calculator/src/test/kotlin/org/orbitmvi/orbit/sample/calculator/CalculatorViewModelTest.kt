@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 2021-2025 Mikołaj Leszczyński & Appmattus Limited
  * Copyright 2020 Babylon Partners Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -26,10 +26,10 @@ import com.appmattus.kotlinfixture.kotlinFixture
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
-import org.junit.Assert.assertEquals
 import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.RepeatedTest
 import org.junit.jupiter.api.Test
@@ -40,15 +40,18 @@ import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.Arguments.arguments
 import org.junit.jupiter.params.provider.ArgumentsProvider
 import org.junit.jupiter.params.provider.ArgumentsSource
+import org.orbitmvi.orbit.sample.calculator.CalculatorViewModel.InternalCalculatorState
 import org.orbitmvi.orbit.sample.calculator.livedata.InstantTaskExecutorExtension
 import org.orbitmvi.orbit.sample.calculator.livedata.MockLifecycleOwner
-import org.orbitmvi.orbit.sample.calculator.livedata.test
+import org.orbitmvi.orbit.test.OrbitScopedTestContextExternal
+import org.orbitmvi.orbit.test.TestSettings
+import org.orbitmvi.orbit.test.testWithExternalState
 import java.util.stream.Stream
 
 @ExtendWith(InstantTaskExecutorExtension::class)
 class CalculatorViewModelTest {
 
-    private val viewModel by lazy { CalculatorViewModel(SavedStateHandle()) }
+    private lateinit var viewModel: CalculatorViewModel
 
     private val mockLifecycleOwner = MockLifecycleOwner()
 
@@ -60,6 +63,7 @@ class CalculatorViewModelTest {
             it.dispatchEvent(Lifecycle.Event.ON_CREATE)
             it.dispatchEvent(Lifecycle.Event.ON_START)
         }
+        viewModel = CalculatorViewModel(SavedStateHandle())
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -72,7 +76,17 @@ class CalculatorViewModelTest {
      * Enter the whole number [value] into [this]
      * @return Number of characters entered
      */
-    private fun CalculatorViewModel.enterNumber(value: Int): Int = enterNumber(value.toDouble())
+    private fun CalculatorViewModel.enterNumber(value: Int): Int {
+        return value.toString().apply {
+            forEach {
+                when (it) {
+                    '-' -> plusMinus()
+                    '.' -> period()
+                    else -> digit(it.toString().toInt())
+                }
+            }
+        }.length
+    }
 
     /**
      * Enter the decimal number [value] into [this]
@@ -91,199 +105,256 @@ class CalculatorViewModelTest {
     }
 
     @Test
-    fun `empty initial value displays as '0'`() {
-        val testLiveData = viewModel.state.test(mockLifecycleOwner)
-
-        testLiveData.awaitCount(1)
-
-        Assertions.assertEquals("0", testLiveData.values.last().digitalDisplay)
+    fun `empty initial value displays as '0'`() = runTest {
+        viewModel.testWithExternalState(this, settings = TestSettings(autoCheckInitialState = false)) {
+            assertEquals("0", awaitExternalState().digitalDisplay)
+        }
     }
 
     @Test
-    fun `negated empty initial value displays as '-0'`() {
-        val testLiveData = viewModel.state.test(mockLifecycleOwner)
+    fun `negated empty initial value displays as '-0'`() = runTest {
+        viewModel.testWithExternalState(this) {
+            viewModel.plusMinus()
 
-        viewModel.plusMinus()
-
-        testLiveData.awaitCount(2)
-
-        Assertions.assertEquals("-0", testLiveData.values.last().digitalDisplay)
+            assertEquals("-0", awaitExternalState().digitalDisplay)
+        }
     }
 
     @ParameterizedTest(name = "{0} + {1}")
     @ArgumentsSource(DecimalNumberPairProvider::class)
-    fun `add decimal numbers`(a: Double, b: Double) {
-        val testLiveData = viewModel.state.test(mockLifecycleOwner)
+    fun `add decimal numbers`(a: Double, b: Double) = runTest {
+        viewModel.testWithExternalState(this) {
+            viewModel.enterNumber(a)
+            awaitEntry(a)
 
-        val aCount = viewModel.enterNumber(a)
-        viewModel.add()
-        val bCount = viewModel.enterNumber(b)
-        viewModel.equals()
+            viewModel.add()
 
-        testLiveData.awaitCount(aCount + bCount + 3)
+            viewModel.enterNumber(b)
+            awaitEntry(b)
 
-        Assertions.assertEquals(a + b, testLiveData.values.last().digitalDisplay.toDouble(), 0.00001)
+            viewModel.equals()
+
+            assertEquals(a + b, awaitExternalState().digitalDisplay.toDouble(), 0.00001)
+        }
     }
 
     @ParameterizedTest(name = "{0} + {1}")
     @ArgumentsSource(WholeNumberPairProvider::class)
-    fun `add whole numbers`(a: Int, b: Int) {
-        val testLiveData = viewModel.state.test(mockLifecycleOwner)
+    fun `add whole numbers`(a: Int, b: Int) = runTest {
+        viewModel.testWithExternalState(this) {
+            viewModel.enterNumber(a)
+            awaitEntry(a)
 
-        val aCount = viewModel.enterNumber(a)
-        viewModel.add()
-        val bCount = viewModel.enterNumber(b)
-        viewModel.equals()
+            viewModel.add()
 
-        testLiveData.awaitCount(aCount + bCount + 3)
+            viewModel.enterNumber(b)
+            awaitEntry(b)
 
-        Assertions.assertEquals(a + b, testLiveData.values.last().digitalDisplay.toInt())
+            viewModel.equals()
+
+            // The display only updates if the last value and the result of the calculation are different
+            if (a + b != b) {
+                assertEquals(a + b, awaitExternalState().digitalDisplay.toInt())
+            }
+        }
     }
 
     @ParameterizedTest(name = "{0} − {1}")
     @ArgumentsSource(DecimalNumberPairProvider::class)
-    fun `subtract decimal numbers`(a: Double, b: Double) {
-        val testLiveData = viewModel.state.test(mockLifecycleOwner)
+    fun `subtract decimal numbers`(a: Double, b: Double) = runTest {
+        viewModel.testWithExternalState(this) {
+            viewModel.enterNumber(a)
+            awaitEntry(a)
 
-        val aCount = viewModel.enterNumber(a)
-        viewModel.subtract()
-        val bCount = viewModel.enterNumber(b)
-        viewModel.equals()
+            viewModel.subtract()
 
-        testLiveData.awaitCount(aCount + bCount + 3)
+            viewModel.enterNumber(b)
+            awaitEntry(b)
 
-        Assertions.assertEquals(a - b, testLiveData.values.last().digitalDisplay.toDouble(), 0.00001)
+            viewModel.equals()
+
+            assertEquals(a - b, awaitExternalState().digitalDisplay.toDouble(), 0.00001)
+        }
     }
 
     @ParameterizedTest(name = "{0} − {1}")
     @ArgumentsSource(WholeNumberPairProvider::class)
-    fun `subtract whole numbers`(a: Int, b: Int) {
-        val testLiveData = viewModel.state.test(mockLifecycleOwner)
+    fun `subtract whole numbers`(a: Int, b: Int) = runTest {
+        viewModel.testWithExternalState(this) {
+            viewModel.enterNumber(a)
+            awaitEntry(a)
 
-        val aCount = viewModel.enterNumber(a)
-        viewModel.subtract()
-        val bCount = viewModel.enterNumber(b)
-        viewModel.equals()
+            viewModel.subtract()
 
-        testLiveData.awaitCount(aCount + bCount + 3)
+            viewModel.enterNumber(b)
+            awaitEntry(b)
 
-        Assertions.assertEquals(a - b, testLiveData.values.last().digitalDisplay.toInt())
+            viewModel.equals()
+
+            assertEquals(a - b, awaitExternalState().digitalDisplay.toInt())
+        }
+    }
+
+    private suspend fun OrbitScopedTestContextExternal<InternalCalculatorState, CalculatorState, Nothing, *>.awaitEntry(value: Number) {
+        val currentValue = containerHost.container.externalStateFlow.value.digitalDisplay
+
+        // If the value to enter is a single digit and the current value is the same digit then the digital display will not update
+        if (value.toString().length == 1 && value.toString() == currentValue) {
+            return
+        }
+
+        while (value.toString() != awaitExternalState().digitalDisplay) {
+            // Wait until digital display matches the input value
+        }
     }
 
     @ParameterizedTest(name = "{0} × {1}")
     @ArgumentsSource(DecimalNumberPairProvider::class)
-    fun `multiply decimal numbers`(a: Double, b: Double) {
-        val testLiveData = viewModel.state.test(mockLifecycleOwner)
+    fun `multiply decimal numbers`(a: Double, b: Double) = runTest {
+        viewModel.testWithExternalState(this) {
+            viewModel.enterNumber(a)
+            awaitEntry(a)
 
-        val aCount = viewModel.enterNumber(a)
-        viewModel.multiply()
-        val bCount = viewModel.enterNumber(b)
-        viewModel.equals()
+            viewModel.multiply()
 
-        testLiveData.awaitCount(aCount + bCount + 3)
+            viewModel.enterNumber(b)
+            awaitEntry(b)
 
-        Assertions.assertEquals(a * b, testLiveData.values.last().digitalDisplay.toDouble(), 0.00001)
+            viewModel.equals()
+
+            assertEquals(a * b, awaitExternalState().digitalDisplay.toDouble(), 0.00001)
+        }
     }
 
     @ParameterizedTest(name = "{0} × {1}")
     @ArgumentsSource(WholeNumberPairProvider::class)
-    fun `multiply whole numbers`(a: Int, b: Int) {
-        val testLiveData = viewModel.state.test(mockLifecycleOwner)
+    fun `multiply whole numbers`(a: Int, b: Int) = runTest {
+        viewModel.testWithExternalState(this) {
+            viewModel.enterNumber(a)
+            awaitEntry(a)
 
-        val aCount = viewModel.enterNumber(a)
-        viewModel.multiply()
-        val bCount = viewModel.enterNumber(b)
-        viewModel.equals()
+            viewModel.multiply()
 
-        testLiveData.awaitCount(aCount + bCount + 3)
+            viewModel.enterNumber(b)
+            awaitEntry(b)
 
-        Assertions.assertEquals(a * b, testLiveData.values.last().digitalDisplay.toInt())
+            viewModel.equals()
+
+            // The display only updates if the last value and the result of the calculation are different
+            if (a * b != b) {
+                assertEquals(a * b, awaitExternalState().digitalDisplay.toInt())
+            }
+        }
     }
 
     @ParameterizedTest(name = "{0} ÷ {1}")
     @ArgumentsSource(DecimalNumberPairProvider::class)
-    fun `divide decimal numbers`(a: Double, b: Double) {
-        val testLiveData = viewModel.state.test(mockLifecycleOwner)
+    fun `divide decimal numbers`(a: Double, b: Double) = runTest {
+        viewModel.testWithExternalState(this) {
+            viewModel.enterNumber(a)
+            awaitEntry(a)
 
-        val aCount = viewModel.enterNumber(a)
-        viewModel.divide()
-        val bCount = viewModel.enterNumber(b)
-        viewModel.equals()
+            viewModel.divide()
 
-        testLiveData.awaitCount(aCount + bCount + 3)
+            viewModel.enterNumber(b)
+            awaitEntry(b)
 
-        Assertions.assertEquals(a / b, testLiveData.values.last().digitalDisplay.toDouble(), 0.00001)
+            viewModel.equals()
+
+            if (b == 0.0) {
+                assertEquals("Err", awaitExternalState().digitalDisplay)
+            } else if ((a / b) - b >= 0.00001 || (a / b) - b <= -0.00001 || (a / b).toString().endsWith(".0")) {
+                // The display only updates if the last value and the result of the calculation are different
+                assertEquals(a / b, awaitExternalState().digitalDisplay.toDouble(), 0.00001)
+            }
+        }
     }
 
     @ParameterizedTest(name = "{0} ÷ {1}")
     @ArgumentsSource(WholeNumberPairProvider::class)
-    fun `divide whole numbers`(a: Int, b: Int) {
-        val testLiveData = viewModel.state.test(mockLifecycleOwner)
+    fun `divide whole numbers`(a: Int, b: Int) = runTest {
+        viewModel.testWithExternalState(this) {
+            viewModel.enterNumber(a)
+            awaitEntry(a)
 
-        val aCount = viewModel.enterNumber(a)
-        viewModel.divide()
-        val bCount = viewModel.enterNumber(b)
-        viewModel.equals()
+            viewModel.divide()
 
-        testLiveData.awaitCount(aCount + bCount + 3)
+            viewModel.enterNumber(b)
+            awaitEntry(b)
 
-        if (b == 0) {
-            Assertions.assertEquals("Err", testLiveData.values.last().digitalDisplay)
-        } else {
-            Assertions.assertEquals(a.toDouble() / b.toDouble(), testLiveData.values.last().digitalDisplay.toDouble(), 0.00001)
+            viewModel.equals()
+
+            if (b == 0) {
+                assertEquals("Err", awaitExternalState().digitalDisplay)
+            } else if ((a.toDouble() / b.toDouble()) - b.toDouble() >= 0.00001 || (a.toDouble() / b.toDouble()) - b.toDouble() <= -0.00001) {
+                // The display only updates if the last value and the result of the calculation are different
+                assertEquals(a.toDouble() / b.toDouble(), awaitExternalState().digitalDisplay.toDouble(), 0.00001)
+            }
         }
     }
 
     @ParameterizedTest(name = "{0}")
     @ArgumentsSource(DecimalNumberPairProvider::class)
-    fun `percentage decimal number`(a: Double) {
-        val testLiveData = viewModel.state.test(mockLifecycleOwner)
+    fun `percentage decimal number`(a: Double) = runTest {
+        viewModel.testWithExternalState(this) {
+            viewModel.enterNumber(a)
+            awaitEntry(a)
 
-        val aCount = viewModel.enterNumber(a)
-        viewModel.percentage()
+            viewModel.percentage()
 
-        testLiveData.awaitCount(aCount + 2)
-
-        Assertions.assertEquals(a / 100, testLiveData.values.last().digitalDisplay.toDouble(), 0.00001)
+            // The display only updates if the last value is not zero
+            if (a != 0.0) {
+                assertEquals(a / 100, awaitExternalState().digitalDisplay.toDouble(), 0.00001)
+            }
+        }
     }
 
     @ParameterizedTest(name = "{0}")
     @ArgumentsSource(WholeNumberPairProvider::class)
-    fun `percentage whole number`(a: Int) {
-        val testLiveData = viewModel.state.test(mockLifecycleOwner)
+    fun `percentage whole number`(a: Int) = runTest {
+        viewModel.testWithExternalState(this) {
+            viewModel.enterNumber(a)
+            awaitEntry(a)
 
-        val aCount = viewModel.enterNumber(a)
-        viewModel.percentage()
+            viewModel.percentage()
 
-        testLiveData.awaitCount(aCount + 2)
-
-        Assertions.assertEquals(a.toDouble() / 100, testLiveData.values.last().digitalDisplay.toDouble(), 0.00001)
+            // The display only updates if the last value is not zero
+            if (a != 0) {
+                assertEquals(a.toDouble() / 100, awaitExternalState().digitalDisplay.toDouble(), 0.00001)
+            }
+        }
     }
 
     @RepeatedTest(10)
-    fun `clears values`() {
-        val testLiveData = viewModel.state.test(mockLifecycleOwner)
-
-        // Press some random buttons
-        repeat(fixture(0..15)) {
-            when (fixture(0..8)) {
-                0 -> viewModel.digit(fixture(0..9))
-                1 -> viewModel.equals()
-                2 -> viewModel.multiply()
-                3 -> viewModel.divide()
-                4 -> viewModel.subtract()
-                5 -> viewModel.add()
-                6 -> viewModel.percentage()
-                7 -> viewModel.period()
-                8 -> viewModel.plusMinus()
+    fun `clears values`() = runTest {
+        viewModel.testWithExternalState(this) {
+            repeat(fixture(0..15)) {
+                when (fixture(0..8)) {
+                    0 -> viewModel.digit(fixture(0..9))
+                    1 -> viewModel.equals()
+                    2 -> viewModel.multiply()
+                    3 -> viewModel.divide()
+                    4 -> viewModel.subtract()
+                    5 -> viewModel.add()
+                    6 -> viewModel.percentage()
+                    7 -> viewModel.period()
+                    8 -> viewModel.plusMinus()
+                }
             }
+
+            viewModel.add()
+            viewModel.digit(9)
+            viewModel.digit(9)
+            viewModel.digit(9)
+
+            while (awaitExternalState().digitalDisplay != "999") {
+                // Repeat until the result is 999
+            }
+
+            viewModel.clear()
+
+            assertEquals("0", awaitExternalState().digitalDisplay)
         }
-
-        viewModel.clear()
-
-        testLiveData.awaitIdle()
-
-        Assertions.assertEquals("0", testLiveData.values.last().digitalDisplay)
     }
 
     class DecimalNumberPairProvider : ArgumentsProvider {

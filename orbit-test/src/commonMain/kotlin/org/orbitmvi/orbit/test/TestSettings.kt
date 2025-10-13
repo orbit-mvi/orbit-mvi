@@ -34,5 +34,5 @@ public data class TestSettings(
     /**
      * Set this to override the explicit initial state check for this test
      */
-    val autoCheckInitialState: Boolean = true
+    val autoCheckInitialState: Boolean = true,
 )

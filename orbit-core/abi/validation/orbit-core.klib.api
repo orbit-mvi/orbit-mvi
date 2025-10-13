@@ -19,6 +19,23 @@ open annotation class org.orbitmvi.orbit.annotation/OrbitInternal : kotlin/Annot
     constructor <init>() // org.orbitmvi.orbit.annotation/OrbitInternal.<init>|<init>(){}[0]
 }
 
+abstract interface <#A: kotlin/Any, #B: kotlin/Any, #C: kotlin/Any> org.orbitmvi.orbit/ContainerHostWithExternalState { // org.orbitmvi.orbit/ContainerHostWithExternalState|null[0]
+    abstract val container // org.orbitmvi.orbit/ContainerHostWithExternalState.container|{}container[0]
+        abstract fun <get-container>(): org.orbitmvi.orbit/ContainerWithExternalState<#A, #B, #C> // org.orbitmvi.orbit/ContainerHostWithExternalState.container.<get-container>|<get-container>(){}[0]
+
+    open fun intent(kotlin/Boolean = ..., kotlin.coroutines/SuspendFunction1<org.orbitmvi.orbit.syntax/Syntax<#A, #C>, kotlin/Unit>): kotlinx.coroutines/Job // org.orbitmvi.orbit/ContainerHostWithExternalState.intent|intent(kotlin.Boolean;kotlin.coroutines.SuspendFunction1<org.orbitmvi.orbit.syntax.Syntax<1:0,1:2>,kotlin.Unit>){}[0]
+    open suspend fun subIntent(kotlin.coroutines/SuspendFunction1<org.orbitmvi.orbit.syntax/Syntax<#A, #C>, kotlin/Unit>) // org.orbitmvi.orbit/ContainerHostWithExternalState.subIntent|subIntent(kotlin.coroutines.SuspendFunction1<org.orbitmvi.orbit.syntax.Syntax<1:0,1:2>,kotlin.Unit>){}[0]
+}
+
+abstract interface <#A: kotlin/Any, #B: kotlin/Any, #C: kotlin/Any> org.orbitmvi.orbit/ContainerWithExternalState : org.orbitmvi.orbit/ContainerDecorator<#A, #C> { // org.orbitmvi.orbit/ContainerWithExternalState|null[0]
+    abstract val externalRefCountStateFlow // org.orbitmvi.orbit/ContainerWithExternalState.externalRefCountStateFlow|{}externalRefCountStateFlow[0]
+        abstract fun <get-externalRefCountStateFlow>(): kotlinx.coroutines.flow/StateFlow<#B> // org.orbitmvi.orbit/ContainerWithExternalState.externalRefCountStateFlow.<get-externalRefCountStateFlow>|<get-externalRefCountStateFlow>(){}[0]
+    abstract val externalStateFlow // org.orbitmvi.orbit/ContainerWithExternalState.externalStateFlow|{}externalStateFlow[0]
+        abstract fun <get-externalStateFlow>(): kotlinx.coroutines.flow/StateFlow<#B> // org.orbitmvi.orbit/ContainerWithExternalState.externalStateFlow.<get-externalStateFlow>|<get-externalStateFlow>(){}[0]
+    abstract val transformState // org.orbitmvi.orbit/ContainerWithExternalState.transformState|{}transformState[0]
+        abstract fun <get-transformState>(): kotlin/Function1<#A, #B> // org.orbitmvi.orbit/ContainerWithExternalState.transformState.<get-transformState>|<get-transformState>(){}[0]
+}
+
 abstract interface <#A: kotlin/Any, #B: kotlin/Any> org.orbitmvi.orbit/Container { // org.orbitmvi.orbit/Container|null[0]
     abstract val refCountSideEffectFlow // org.orbitmvi.orbit/Container.refCountSideEffectFlow|{}refCountSideEffectFlow[0]
         abstract fun <get-refCountSideEffectFlow>(): kotlinx.coroutines.flow/Flow<#B> // org.orbitmvi.orbit/Container.refCountSideEffectFlow.<get-refCountSideEffectFlow>|<get-refCountSideEffectFlow>(){}[0]
@@ -171,6 +188,7 @@ final class org.orbitmvi.orbit/SettingsBuilder { // org.orbitmvi.orbit/SettingsB
         final fun <set-sideEffectBufferSize>(kotlin/Int) // org.orbitmvi.orbit/SettingsBuilder.sideEffectBufferSize.<set-sideEffectBufferSize>|<set-sideEffectBufferSize>(kotlin.Int){}[0]
 }
 
+final fun <#A: kotlin/Any, #B: kotlin/Any, #C: kotlin/Any> (org.orbitmvi.orbit/Container<#A, #C>).org.orbitmvi.orbit/withExternalState(kotlin/Function1<#A, #B>): org.orbitmvi.orbit/ContainerWithExternalState<#A, #B, #C> // org.orbitmvi.orbit/withExternalState|withExternalState@org.orbitmvi.orbit.Container<0:0,0:2>(kotlin.Function1<0:0,0:1>){0§<kotlin.Any>;1§<kotlin.Any>;2§<kotlin.Any>}[0]
 final fun <#A: kotlin/Any, #B: kotlin/Any> (kotlinx.coroutines/CoroutineScope).org.orbitmvi.orbit/container(#A, kotlin/Function1<org.orbitmvi.orbit/SettingsBuilder, kotlin/Unit> = ..., kotlin.coroutines/SuspendFunction1<org.orbitmvi.orbit.syntax/Syntax<#A, #B>, kotlin/Unit>? = ...): org.orbitmvi.orbit/Container<#A, #B> // org.orbitmvi.orbit/container|container@kotlinx.coroutines.CoroutineScope(0:0;kotlin.Function1<org.orbitmvi.orbit.SettingsBuilder,kotlin.Unit>;kotlin.coroutines.SuspendFunction1<org.orbitmvi.orbit.syntax.Syntax<0:0,0:1>,kotlin.Unit>?){0§<kotlin.Any>;1§<kotlin.Any>}[0]
 final suspend fun <#A: kotlin/Any, #B: kotlin/Any> (org.orbitmvi.orbit.syntax/ContainerContext<#A, #B>).org.orbitmvi.orbit.idling/withIdling(kotlin/Boolean, kotlin.coroutines/SuspendFunction1<org.orbitmvi.orbit.syntax/ContainerContext<#A, #B>, kotlin/Unit>) // org.orbitmvi.orbit.idling/withIdling|withIdling@org.orbitmvi.orbit.syntax.ContainerContext<0:0,0:1>(kotlin.Boolean;kotlin.coroutines.SuspendFunction1<org.orbitmvi.orbit.syntax.ContainerContext<0:0,0:1>,kotlin.Unit>){0§<kotlin.Any>;1§<kotlin.Any>}[0]
 final suspend fun <#A: org.orbitmvi.orbit.syntax/Operator<*, *>, #B: kotlin/Any?> (org.orbitmvi.orbit.syntax/ContainerContext<*, *>).org.orbitmvi.orbit.idling/withIdling(#A, kotlin.coroutines/SuspendFunction1<#A, #B>): #B // org.orbitmvi.orbit.idling/withIdling|withIdling@org.orbitmvi.orbit.syntax.ContainerContext<*,*>(0:0;kotlin.coroutines.SuspendFunction1<0:0,0:1>){0§<org.orbitmvi.orbit.syntax.Operator<*,*>>;1§<kotlin.Any?>}[0]

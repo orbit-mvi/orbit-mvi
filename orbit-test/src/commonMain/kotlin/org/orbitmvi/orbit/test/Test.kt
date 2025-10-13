@@ -75,7 +75,10 @@ public suspend fun <STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHo
 
     val resolvedInitialState: STATE = initialState ?: containerHost.container.findTestContainer().originalInitialState
 
-    mergedFlow().test(timeout = timeout) {
+    merge(
+        container.stateFlow.map<STATE, Item<STATE, SIDE_EFFECT>> { Item.StateItem(it) },
+        container.sideEffectFlow.map<SIDE_EFFECT, Item<STATE, SIDE_EFFECT>> { Item.SideEffectItem(it) }
+    ).test(timeout = timeout) {
         OrbitTestContext(
             containerHost,
             resolvedInitialState,
@@ -94,7 +97,7 @@ public suspend fun <STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHo
     }
 }
 
-private fun createRealSettings(testDispatcher: CoroutineDispatcher?, testExceptionHandler: CoroutineExceptionHandler?): RealSettings {
+internal fun createRealSettings(testDispatcher: CoroutineDispatcher?, testExceptionHandler: CoroutineExceptionHandler?): RealSettings {
     val dispatcher = testDispatcher ?: StandardTestDispatcher()
 
     return RealSettings(
@@ -104,11 +107,3 @@ private fun createRealSettings(testDispatcher: CoroutineDispatcher?, testExcepti
         repeatOnSubscribedStopTimeout = 0L
     )
 }
-
-private fun <STATE : Any, SIDE_EFFECT : Any> ContainerHost<STATE, SIDE_EFFECT>.mergedFlow() =
-    merge(
-        container.stateFlow
-            .map<STATE, Item<STATE, SIDE_EFFECT>> { Item.StateItem(it) },
-        container.sideEffectFlow
-            .map<SIDE_EFFECT, Item<STATE, SIDE_EFFECT>> { Item.SideEffectItem(it) }
-    )
