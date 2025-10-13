@@ -30,7 +30,7 @@ public class OrbitScopedTestContextInternalAndExternal<
     >(
     containerHost: CONTAINER_HOST,
     resolvedInitialState: INTERNAL_STATE,
-    emissions: ReceiveTurbine<ItemWithExternalState<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>>,
+    emissions: ReceiveTurbine<ItemWithInternalAndExternalState<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>>,
 ) : OrbitScopedTestContextBase<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT, CONTAINER_HOST>(containerHost, emissions) {
 
     @PublishedApi
@@ -121,7 +121,7 @@ public class OrbitScopedTestContextInternalAndExternal<
      */
     public suspend fun awaitInternalState(): INTERNAL_STATE {
         val item = awaitItem()
-        return (item as? ItemWithExternalState.InternalStateItem)?.value?.also { currentConsumedInternalState = it }
+        return (item as? ItemWithInternalAndExternalState.InternalStateItem)?.value?.also { currentConsumedInternalState = it }
             ?: fail("Expected Internal State but got $item")
     }
 
@@ -133,7 +133,7 @@ public class OrbitScopedTestContextInternalAndExternal<
      */
     public suspend fun awaitExternalState(): EXTERNAL_STATE {
         val item = awaitItem()
-        return (item as? ItemWithExternalState.ExternalStateItem)?.value?.also { currentConsumedExternalState = it }
+        return (item as? ItemWithInternalAndExternalState.ExternalStateItem)?.value?.also { currentConsumedExternalState = it }
             ?: fail("Expected External State but got $item")
     }
 }

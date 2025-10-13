@@ -31,7 +31,8 @@ public abstract class OrbitScopedTestContextBase<
     CONTAINER_HOST : ContainerHostWithExternalState<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>
     >(
     public val containerHost: CONTAINER_HOST,
-    private val emissions: ReceiveTurbine<ItemWithExternalState<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>>,
+    private val emissions:
+    ReceiveTurbine<ItemWithInternalAndExternalState<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>>,
 ) {
 
     /**
@@ -60,15 +61,11 @@ public abstract class OrbitScopedTestContextBase<
      *
      * @throws AssertionError if unconsumed items are found
      */
-    public suspend fun expectNoItems() {
+    public fun expectNoItems() {
         emissions.expectNoEvents()
     }
 
-    /**
-     * Return the next item received.
-     * This function will suspend if no items have been received.
-     */
-    public suspend fun awaitItem(): ItemWithExternalState<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT> {
+    internal suspend fun awaitItem(): ItemWithInternalAndExternalState<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT> {
         return emissions.awaitItem()
     }
 
@@ -81,7 +78,7 @@ public abstract class OrbitScopedTestContextBase<
     public suspend fun awaitSideEffect(): SIDE_EFFECT {
         val item = awaitItem()
 
-        return (item as? ItemWithExternalState.SideEffectItem)?.value ?: fail("Expected Side Effect but got $item")
+        return (item as? ItemWithInternalAndExternalState.SideEffectItem)?.value ?: fail("Expected Side Effect but got $item")
     }
 
     /**

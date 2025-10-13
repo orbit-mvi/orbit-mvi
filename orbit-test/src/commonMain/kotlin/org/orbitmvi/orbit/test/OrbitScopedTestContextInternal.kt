@@ -30,7 +30,7 @@ public class OrbitScopedTestContextInternal<
     >(
     containerHost: CONTAINER_HOST,
     resolvedInitialState: INTERNAL_STATE,
-    emissions: ReceiveTurbine<ItemWithExternalState<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>>,
+    emissions: ReceiveTurbine<ItemWithInternalAndExternalState<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>>,
 ) : OrbitScopedTestContextBase<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT, CONTAINER_HOST>(containerHost, emissions) {
     @PublishedApi
     internal var currentConsumedInternalState: INTERNAL_STATE = resolvedInitialState
@@ -80,7 +80,7 @@ public class OrbitScopedTestContextInternal<
      */
     public suspend fun awaitInternalState(): INTERNAL_STATE {
         val item = awaitItem()
-        return (item as? ItemWithExternalState.InternalStateItem)?.value?.also { currentConsumedInternalState = it }
+        return (item as? ItemWithInternalAndExternalState.InternalStateItem)?.value?.also { currentConsumedInternalState = it }
             ?: fail("Expected Internal State but got $item")
     }
 }

@@ -16,16 +16,16 @@
 
 package org.orbitmvi.orbit.test
 
-public sealed class ItemWithExternalState<INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : Any> {
+public sealed class ItemWithInternalAndExternalState<INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : Any> {
     public data class InternalStateItem<INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : Any>(
         val value: INTERNAL_STATE
-    ) : ItemWithExternalState<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>()
+    ) : ItemWithInternalAndExternalState<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>()
 
     public data class ExternalStateItem<INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : Any>(
         val value: EXTERNAL_STATE
-    ) : ItemWithExternalState<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>()
+    ) : ItemWithInternalAndExternalState<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>()
 
     public data class SideEffectItem<INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : Any>(
         val value: SIDE_EFFECT
-    ) : ItemWithExternalState<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>()
+    ) : ItemWithInternalAndExternalState<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>()
 }

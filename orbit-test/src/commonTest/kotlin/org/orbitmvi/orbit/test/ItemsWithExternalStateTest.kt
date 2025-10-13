@@ -97,10 +97,10 @@ class ItemsWithExternalStateTest {
             containerHost.newState(state2)
             containerHost.newSideEffect(sideEffect2)
 
-            assertEquals(ItemWithExternalState.InternalStateItem(InternalState(1)), awaitItem())
-            assertEquals(ItemWithExternalState.SideEffectItem(3), awaitItem())
-            assertEquals(ItemWithExternalState.InternalStateItem(InternalState(2)), awaitItem())
-            assertEquals(ItemWithExternalState.SideEffectItem(4), awaitItem())
+            assertEquals(ItemWithInternalAndExternalState.InternalStateItem(InternalState(1)), awaitItem())
+            assertEquals(ItemWithInternalAndExternalState.SideEffectItem(3), awaitItem())
+            assertEquals(ItemWithInternalAndExternalState.InternalStateItem(InternalState(2)), awaitItem())
+            assertEquals(ItemWithInternalAndExternalState.SideEffectItem(4), awaitItem())
         }
     }
 
@@ -117,10 +117,10 @@ class ItemsWithExternalStateTest {
             containerHost.newState(state2)
             containerHost.newSideEffect(sideEffect2)
 
-            assertEquals(ItemWithExternalState.ExternalStateItem(ExternalState("1")), awaitItem())
-            assertEquals(ItemWithExternalState.SideEffectItem(3), awaitItem())
-            assertEquals(ItemWithExternalState.ExternalStateItem(ExternalState("2")), awaitItem())
-            assertEquals(ItemWithExternalState.SideEffectItem(4), awaitItem())
+            assertEquals(ItemWithInternalAndExternalState.ExternalStateItem(ExternalState("1")), awaitItem())
+            assertEquals(ItemWithInternalAndExternalState.SideEffectItem(3), awaitItem())
+            assertEquals(ItemWithInternalAndExternalState.ExternalStateItem(ExternalState("2")), awaitItem())
+            assertEquals(ItemWithInternalAndExternalState.SideEffectItem(4), awaitItem())
         }
     }
 
@@ -137,12 +137,12 @@ class ItemsWithExternalStateTest {
             containerHost.newState(state2)
             containerHost.newSideEffect(sideEffect2)
 
-            assertEquals(ItemWithExternalState.InternalStateItem(InternalState(1)), awaitItem())
-            assertEquals(ItemWithExternalState.ExternalStateItem(ExternalState("1")), awaitItem())
-            assertEquals(ItemWithExternalState.SideEffectItem(3), awaitItem())
-            assertEquals(ItemWithExternalState.InternalStateItem(InternalState(2)), awaitItem())
-            assertEquals(ItemWithExternalState.ExternalStateItem(ExternalState("2")), awaitItem())
-            assertEquals(ItemWithExternalState.SideEffectItem(4), awaitItem())
+            assertEquals(ItemWithInternalAndExternalState.InternalStateItem(InternalState(1)), awaitItem())
+            assertEquals(ItemWithInternalAndExternalState.ExternalStateItem(ExternalState("1")), awaitItem())
+            assertEquals(ItemWithInternalAndExternalState.SideEffectItem(3), awaitItem())
+            assertEquals(ItemWithInternalAndExternalState.InternalStateItem(InternalState(2)), awaitItem())
+            assertEquals(ItemWithInternalAndExternalState.ExternalStateItem(ExternalState("2")), awaitItem())
+            assertEquals(ItemWithInternalAndExternalState.SideEffectItem(4), awaitItem())
         }
     }
 

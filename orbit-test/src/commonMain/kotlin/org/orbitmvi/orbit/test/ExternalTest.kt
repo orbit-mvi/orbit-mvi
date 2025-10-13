@@ -13,9 +13,9 @@ import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.ContainerHostWithExternalState
 import org.orbitmvi.orbit.RealSettings
-import org.orbitmvi.orbit.test.ItemWithExternalState.ExternalStateItem
-import org.orbitmvi.orbit.test.ItemWithExternalState.InternalStateItem
-import org.orbitmvi.orbit.test.ItemWithExternalState.SideEffectItem
+import org.orbitmvi.orbit.test.ItemWithInternalAndExternalState.ExternalStateItem
+import org.orbitmvi.orbit.test.ItemWithInternalAndExternalState.InternalStateItem
+import org.orbitmvi.orbit.test.ItemWithInternalAndExternalState.SideEffectItem
 import kotlin.test.assertEquals
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
@@ -69,18 +69,20 @@ public suspend fun <INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : An
     buildList {
         add(
             container.stateFlow
-                .map<INTERNAL_STATE, ItemWithExternalState<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>> { InternalStateItem(it) }
+                .map<INTERNAL_STATE, ItemWithInternalAndExternalState<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>> {
+                    InternalStateItem(it)
+                }
         )
 
         add(
             container.sideEffectFlow
-                .map<SIDE_EFFECT, ItemWithExternalState<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>> { SideEffectItem(it) }
+                .map<SIDE_EFFECT, ItemWithInternalAndExternalState<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>> { SideEffectItem(it) }
         )
     }.merge().test(timeout = timeout) {
         OrbitScopedTestContextInternal(
             containerHost,
             resolvedInitialState,
-            this as ReceiveTurbine<ItemWithExternalState<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>>,
+            this as ReceiveTurbine<ItemWithInternalAndExternalState<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>>,
         ).apply {
             if (settings.autoCheckInitialState) {
                 assertEquals(resolvedInitialState, awaitInternalState())
@@ -129,18 +131,20 @@ public suspend fun <INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : An
     buildList {
         add(
             container.externalStateFlow
-                .map<EXTERNAL_STATE, ItemWithExternalState<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>> { ExternalStateItem(it) }
+                .map<EXTERNAL_STATE, ItemWithInternalAndExternalState<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>> {
+                    ExternalStateItem(it)
+                }
         )
 
         add(
             container.sideEffectFlow
-                .map<SIDE_EFFECT, ItemWithExternalState<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>> { SideEffectItem(it) }
+                .map<SIDE_EFFECT, ItemWithInternalAndExternalState<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>> { SideEffectItem(it) }
         )
     }.merge().test(timeout = timeout) {
         OrbitScopedTestContextExternal(
             containerHost,
             resolvedInitialState,
-            this as ReceiveTurbine<ItemWithExternalState<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>>,
+            this as ReceiveTurbine<ItemWithInternalAndExternalState<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>>,
         ).apply {
             if (settings.autoCheckInitialState) {
                 assertEquals(container.transformState(resolvedInitialState), awaitExternalState())
@@ -189,21 +193,25 @@ public suspend fun <INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : An
     buildList {
         add(
             container.stateFlow
-                .map<INTERNAL_STATE, ItemWithExternalState<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>> { InternalStateItem(it) }
+                .map<INTERNAL_STATE, ItemWithInternalAndExternalState<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>> {
+                    InternalStateItem(it)
+                }
         )
         add(
             container.externalStateFlow
-                .map<EXTERNAL_STATE, ItemWithExternalState<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>> { ExternalStateItem(it) }
+                .map<EXTERNAL_STATE, ItemWithInternalAndExternalState<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>> {
+                    ExternalStateItem(it)
+                }
         )
         add(
             container.sideEffectFlow
-                .map<SIDE_EFFECT, ItemWithExternalState<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>> { SideEffectItem(it) }
+                .map<SIDE_EFFECT, ItemWithInternalAndExternalState<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>> { SideEffectItem(it) }
         )
     }.merge().test(timeout = timeout) {
         OrbitScopedTestContextInternalAndExternal(
             containerHost,
             resolvedInitialState,
-            this as ReceiveTurbine<ItemWithExternalState<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>>,
+            this as ReceiveTurbine<ItemWithInternalAndExternalState<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>>,
         ).apply {
             if (settings.autoCheckInitialState) {
                 assertEquals(resolvedInitialState, awaitInternalState())
