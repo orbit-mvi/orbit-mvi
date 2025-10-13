@@ -16,7 +16,6 @@
 
 package org.orbitmvi.orbit.test
 
-import app.cash.turbine.ReceiveTurbine
 import app.cash.turbine.test
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineDispatcher
@@ -28,10 +27,7 @@ import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
-import org.orbitmvi.orbit.ContainerHostWithExternalState
 import org.orbitmvi.orbit.RealSettings
-import org.orbitmvi.orbit.test.ItemWithExternalState.ExternalStateItem
-import org.orbitmvi.orbit.test.ItemWithExternalState.InternalStateItem
 import org.orbitmvi.orbit.test.ItemWithExternalState.SideEffectItem
 import kotlin.test.assertEquals
 import kotlin.time.Duration

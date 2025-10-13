@@ -33,14 +33,14 @@ class ExpectStateOnWithExternalStateTest {
 
     @Test
     fun internal_succeeds_if_initial_state_matches_expected_state() = runTest {
-        StateTestMiddleware(this).testInternalState(this, settings = TestSettings(autoCheckInitialState = false)) {
+        StateTestMiddleware(this).testWithInternalState(this, settings = TestSettings(autoCheckInitialState = false)) {
             expectInternalStateOn<InternalState.Loading> { initialState }
         }
     }
 
     @Test
     fun external_succeeds_if_initial_state_matches_expected_state() = runTest {
-        StateTestMiddleware(this).testExternalState(this, settings = TestSettings(autoCheckInitialState = false)) {
+        StateTestMiddleware(this).testWithExternalState(this, settings = TestSettings(autoCheckInitialState = false)) {
             expectExternalStateOn<ExternalState.Loading> { ExternalState.Loading }
         }
     }
@@ -48,7 +48,7 @@ class ExpectStateOnWithExternalStateTest {
     @Test
     fun internal_fails_if_initial_state_does_not_match_type() = runTest {
         assertFailsWith<AssertionError> {
-            StateTestMiddleware(this).testInternalState(this, settings = TestSettings(autoCheckInitialState = false)) {
+            StateTestMiddleware(this).testWithInternalState(this, settings = TestSettings(autoCheckInitialState = false)) {
                 expectInternalStateOn<InternalState.Ready> { initialState }
             }
         }.also {
@@ -59,7 +59,7 @@ class ExpectStateOnWithExternalStateTest {
     @Test
     fun external_fails_if_initial_state_does_not_match_type() = runTest {
         assertFailsWith<AssertionError> {
-            StateTestMiddleware(this).testExternalState(this, settings = TestSettings(autoCheckInitialState = false)) {
+            StateTestMiddleware(this).testWithExternalState(this, settings = TestSettings(autoCheckInitialState = false)) {
                 expectExternalStateOn<ExternalState.Ready> { ExternalState.Loading }
             }
         }.also {
@@ -72,7 +72,7 @@ class ExpectStateOnWithExternalStateTest {
         val someRandomState = InternalState.Ready(Random.nextInt())
 
         assertFailsWith<AssertionError> {
-            StateTestMiddleware(this).testInternalState(this, settings = TestSettings(autoCheckInitialState = false)) {
+            StateTestMiddleware(this).testWithInternalState(this, settings = TestSettings(autoCheckInitialState = false)) {
                 expectInternalStateOn<InternalState.Loading> { someRandomState }
             }
         }.also {
@@ -85,7 +85,7 @@ class ExpectStateOnWithExternalStateTest {
         val someRandomState = ExternalState.Ready(Random.nextInt().toString())
 
         assertFailsWith<AssertionError> {
-            StateTestMiddleware(this).testExternalState(this, settings = TestSettings(autoCheckInitialState = false)) {
+            StateTestMiddleware(this).testWithExternalState(this, settings = TestSettings(autoCheckInitialState = false)) {
                 expectExternalStateOn<ExternalState.Loading> { someRandomState }
             }
         }.also {
@@ -98,7 +98,7 @@ class ExpectStateOnWithExternalStateTest {
         val action = Random.nextInt()
         val action2 = Random.nextInt()
 
-        StateTestMiddleware(this).testInternalState(this) {
+        StateTestMiddleware(this).testWithInternalState(this) {
             containerHost.newCount(action)
             containerHost.newCount(action2)
             expectInternalStateOn<InternalState.Loading> { InternalState.Ready(count = action) }
@@ -111,7 +111,7 @@ class ExpectStateOnWithExternalStateTest {
         val action = Random.nextInt()
         val action2 = Random.nextInt()
 
-        StateTestMiddleware(this).testExternalState(this,) {
+        StateTestMiddleware(this).testWithExternalState(this,) {
             containerHost.newCount(action)
             containerHost.newCount(action2)
             expectExternalStateOn<ExternalState.Loading> { ExternalState.Ready(count = action.toString()) }
@@ -126,7 +126,7 @@ class ExpectStateOnWithExternalStateTest {
         val action3 = Random.nextInt()
 
         assertFailsWith<AssertionError> {
-            StateTestMiddleware(this).testInternalState(this) {
+            StateTestMiddleware(this).testWithInternalState(this) {
                 containerHost.newCount(action)
                 containerHost.newCount(action2)
                 containerHost.newCount(action3)
@@ -145,7 +145,7 @@ class ExpectStateOnWithExternalStateTest {
         val action3 = Random.nextInt()
 
         assertFailsWith<AssertionError> {
-            StateTestMiddleware(this).testExternalState(this,) {
+            StateTestMiddleware(this).testWithExternalState(this,) {
                 containerHost.newCount(action)
                 containerHost.newCount(action2)
                 containerHost.newCount(action3)
@@ -164,7 +164,7 @@ class ExpectStateOnWithExternalStateTest {
         val action3 = Random.nextInt()
 
         assertFailsWith<AssertionError> {
-            StateTestMiddleware(this).testInternalState(this, timeout = 500.milliseconds) {
+            StateTestMiddleware(this).testWithInternalState(this, timeout = 500.milliseconds) {
                 containerHost.newCount(action)
                 containerHost.newCount(action2)
                 expectInternalStateOn<InternalState.Loading> { InternalState.Ready(count = action) }
@@ -183,7 +183,7 @@ class ExpectStateOnWithExternalStateTest {
         val action3 = Random.nextInt()
 
         assertFailsWith<AssertionError> {
-            StateTestMiddleware(this).testExternalState(this, timeout = 500.milliseconds,) {
+            StateTestMiddleware(this).testWithExternalState(this, timeout = 500.milliseconds,) {
                 containerHost.newCount(action)
                 containerHost.newCount(action2)
                 expectExternalStateOn<ExternalState.Loading> { ExternalState.Ready(count = action.toString()) }
@@ -202,7 +202,7 @@ class ExpectStateOnWithExternalStateTest {
         val action3 = Random.nextInt()
 
         assertFailsWith<AssertionError> {
-            StateTestMiddleware(this).testInternalState(this) {
+            StateTestMiddleware(this).testWithInternalState(this) {
                 containerHost.newCount(action)
                 containerHost.newCount(action2)
                 expectInternalStateOn<InternalState.Loading> { InternalState.Ready(count = action2) }
@@ -220,7 +220,7 @@ class ExpectStateOnWithExternalStateTest {
         val action3 = Random.nextInt()
 
         assertFailsWith<AssertionError> {
-            StateTestMiddleware(this).testExternalState(this,) {
+            StateTestMiddleware(this).testWithExternalState(this,) {
                 containerHost.newCount(action)
                 containerHost.newCount(action2)
                 expectExternalStateOn<ExternalState.Loading> { ExternalState.Ready(count = action2.toString()) }
@@ -238,7 +238,7 @@ class ExpectStateOnWithExternalStateTest {
         val action3 = Random.nextInt()
 
         assertFailsWith<AssertionError> {
-            StateTestMiddleware(this).testInternalState(this) {
+            StateTestMiddleware(this).testWithInternalState(this) {
                 containerHost.newCount(action)
                 containerHost.newCount(action2)
                 expectInternalStateOn<InternalState.Loading> { InternalState.Ready(count = action) }
@@ -256,7 +256,7 @@ class ExpectStateOnWithExternalStateTest {
         val action3 = Random.nextInt()
 
         assertFailsWith<AssertionError> {
-            StateTestMiddleware(this).testExternalState(this,) {
+            StateTestMiddleware(this).testWithExternalState(this,) {
                 containerHost.newCount(action)
                 containerHost.newCount(action2)
                 expectExternalStateOn<ExternalState.Loading> { ExternalState.Ready(count = action.toString()) }
@@ -274,7 +274,7 @@ class ExpectStateOnWithExternalStateTest {
         val action3 = Random.nextInt()
 
         assertFailsWith<AssertionError> {
-            StateTestMiddleware(this).testInternalState(this) {
+            StateTestMiddleware(this).testWithInternalState(this) {
                 containerHost.newCount(action)
                 containerHost.newCount(action2)
                 expectInternalStateOn<InternalState.Ready> { InternalState.Ready(count = action2) }
@@ -292,7 +292,7 @@ class ExpectStateOnWithExternalStateTest {
         val action3 = Random.nextInt()
 
         assertFailsWith<AssertionError> {
-            StateTestMiddleware(this).testExternalState(this,) {
+            StateTestMiddleware(this).testWithExternalState(this,) {
                 containerHost.newCount(action)
                 containerHost.newCount(action2)
                 expectExternalStateOn<ExternalState.Ready> { ExternalState.Ready(count = action2.toString()) }
@@ -310,7 +310,7 @@ class ExpectStateOnWithExternalStateTest {
         val action3 = Random.nextInt()
 
         assertFailsWith<AssertionError> {
-            StateTestMiddleware(this).testInternalState(this) {
+            StateTestMiddleware(this).testWithInternalState(this) {
                 containerHost.newCount(action)
                 containerHost.newCount(action2)
                 expectInternalStateOn<InternalState.Loading> { InternalState.Ready(count = action) }
@@ -328,7 +328,7 @@ class ExpectStateOnWithExternalStateTest {
         val action3 = Random.nextInt()
 
         assertFailsWith<AssertionError> {
-            StateTestMiddleware(this).testExternalState(this,) {
+            StateTestMiddleware(this).testWithExternalState(this,) {
                 containerHost.newCount(action)
                 containerHost.newCount(action2)
                 expectExternalStateOn<ExternalState.Loading> { ExternalState.Ready(count = action.toString()) }
@@ -346,7 +346,7 @@ class ExpectStateOnWithExternalStateTest {
         val action3 = Random.nextInt()
 
         assertFailsWith<AssertionError> {
-            StateTestMiddleware(this).testInternalState(this) {
+            StateTestMiddleware(this).testWithInternalState(this) {
                 containerHost.newCount(action)
                 containerHost.newCount(action2)
                 containerHost.newCount(action3)
@@ -366,7 +366,7 @@ class ExpectStateOnWithExternalStateTest {
         val action3 = Random.nextInt()
 
         assertFailsWith<AssertionError> {
-            StateTestMiddleware(this).testExternalState(this,) {
+            StateTestMiddleware(this).testWithExternalState(this,) {
                 containerHost.newCount(action)
                 containerHost.newCount(action2)
                 containerHost.newCount(action3)
@@ -384,7 +384,7 @@ class ExpectStateOnWithExternalStateTest {
         val sideEffect = Random.nextInt()
 
         assertFailsWith<AssertionError> {
-            StateTestMiddleware(this).testInternalState(this) {
+            StateTestMiddleware(this).testWithInternalState(this) {
                 containerHost.newSideEffect(sideEffect)
                 containerHost.newCount(sideEffect)
 
@@ -401,7 +401,7 @@ class ExpectStateOnWithExternalStateTest {
         val sideEffect = Random.nextInt()
 
         assertFailsWith<AssertionError> {
-            StateTestMiddleware(this).testExternalState(this,) {
+            StateTestMiddleware(this).testWithExternalState(this,) {
                 containerHost.newSideEffect(sideEffect)
                 containerHost.newCount(sideEffect)
 

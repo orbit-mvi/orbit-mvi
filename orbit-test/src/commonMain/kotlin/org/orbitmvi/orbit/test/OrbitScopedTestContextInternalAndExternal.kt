@@ -31,7 +31,7 @@ public class OrbitScopedTestContextInternalAndExternal<
     containerHost: CONTAINER_HOST,
     resolvedInitialState: INTERNAL_STATE,
     emissions: ReceiveTurbine<ItemWithExternalState<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>>,
-): OrbitScopedTestContextBase<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT, CONTAINER_HOST>(containerHost, emissions) {
+) : OrbitScopedTestContextBase<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT, CONTAINER_HOST>(containerHost, emissions) {
 
     @PublishedApi
     internal var currentConsumedInternalState: INTERNAL_STATE = resolvedInitialState

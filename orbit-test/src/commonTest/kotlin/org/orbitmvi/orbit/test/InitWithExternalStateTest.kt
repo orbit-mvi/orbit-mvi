@@ -26,8 +26,6 @@ import kotlin.concurrent.atomics.AtomicBoolean
 import kotlin.random.Random
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
-import kotlin.test.assertTrue
 
 internal class InitWithExternalStateTest {
     private val initialState = InternalState(Random.nextInt())
@@ -35,7 +33,7 @@ internal class InitWithExternalStateTest {
     @Test
     fun internal_created_is_not_invoked_by_default() = runTest {
         val mockDependency = FakeDependency()
-        createMiddleware(mockDependency).testInternalState(
+        createMiddleware(mockDependency).testWithInternalState(
             this,
             initialState,
             settings = TestSettings(autoCheckInitialState = false)
@@ -49,7 +47,7 @@ internal class InitWithExternalStateTest {
     @Test
     fun external_created_is_not_invoked_by_default() = runTest {
         val mockDependency = FakeDependency()
-        createMiddleware(mockDependency).testExternalState(
+        createMiddleware(mockDependency).testWithExternalState(
             this,
             initialState,
             settings = TestSettings(autoCheckInitialState = false)
@@ -63,7 +61,7 @@ internal class InitWithExternalStateTest {
     @Test
     fun internal_and_external_created_is_not_invoked_by_default() = runTest {
         val mockDependency = FakeDependency()
-        createMiddleware(mockDependency).testInternalAndExternalState(
+        createMiddleware(mockDependency).testWithInternalAndExternalState(
             this,
             initialState,
             settings = TestSettings(autoCheckInitialState = false)
@@ -78,7 +76,7 @@ internal class InitWithExternalStateTest {
     @Test
     fun internal_created_is_invoked_upon_request() = runTest {
         val mockDependency = FakeDependency()
-        createMiddleware(mockDependency).testInternalState(
+        createMiddleware(mockDependency).testWithInternalState(
             this,
             initialState = initialState,
             settings = TestSettings(autoCheckInitialState = false)
@@ -93,7 +91,7 @@ internal class InitWithExternalStateTest {
     @Test
     fun external_created_is_invoked_upon_request() = runTest {
         val mockDependency = FakeDependency()
-        createMiddleware(mockDependency).testExternalState(
+        createMiddleware(mockDependency).testWithExternalState(
             this,
             initialState = initialState,
             settings = TestSettings(autoCheckInitialState = false)
@@ -108,7 +106,7 @@ internal class InitWithExternalStateTest {
     @Test
     fun internal_and_external_created_is_invoked_upon_request() = runTest {
         val mockDependency = FakeDependency()
-        createMiddleware(mockDependency).testInternalAndExternalState(
+        createMiddleware(mockDependency).testWithInternalAndExternalState(
             this,
             initialState = initialState,
             settings = TestSettings(autoCheckInitialState = false)
@@ -123,21 +121,21 @@ internal class InitWithExternalStateTest {
 
     @Test
     fun internal_initial_state_can_be_explicitly_checked_in_test_with_awaitState() = runTest {
-        createMiddleware().testInternalState(this, settings = TestSettings(autoCheckInitialState = false)) {
+        createMiddleware().testWithInternalState(this, settings = TestSettings(autoCheckInitialState = false)) {
             assertEquals(initialState, awaitInternalState())
         }
     }
 
     @Test
     fun external_initial_state_can_be_explicitly_checked_in_test_with_awaitState() = runTest {
-        createMiddleware().testExternalState(this, settings = TestSettings(autoCheckInitialState = false)) {
+        createMiddleware().testWithExternalState(this, settings = TestSettings(autoCheckInitialState = false)) {
             assertEquals(ExternalState(initialState.count.toString()), awaitExternalState())
         }
     }
 
     @Test
     fun internal_and_external_initial_state_can_be_explicitly_checked_in_test_with_awaitState() = runTest {
-        createMiddleware().testInternalAndExternalState(this, settings = TestSettings(autoCheckInitialState = false)) {
+        createMiddleware().testWithInternalAndExternalState(this, settings = TestSettings(autoCheckInitialState = false)) {
             assertEquals(initialState, awaitInternalState())
             assertEquals(ExternalState(initialState.count.toString()), awaitExternalState())
         }
@@ -145,21 +143,21 @@ internal class InitWithExternalStateTest {
 
     @Test
     fun internal_initial_state_can_be_explicitly_checked_in_test_with_expectState() = runTest {
-        createMiddleware().testInternalState(this, settings = TestSettings(autoCheckInitialState = false)) {
+        createMiddleware().testWithInternalState(this, settings = TestSettings(autoCheckInitialState = false)) {
             expectInternalState { initialState }
         }
     }
 
     @Test
     fun external_initial_state_can_be_explicitly_checked_in_test_with_expectState() = runTest {
-        createMiddleware().testExternalState(this, settings = TestSettings(autoCheckInitialState = false)) {
+        createMiddleware().testWithExternalState(this, settings = TestSettings(autoCheckInitialState = false)) {
             expectExternalState { ExternalState(initialState.count.toString()) }
         }
     }
 
     @Test
     fun internal_and_external_initial_state_can_be_explicitly_checked_in_test_with_expectState() = runTest {
-        createMiddleware().testInternalAndExternalState(this, settings = TestSettings(autoCheckInitialState = false)) {
+        createMiddleware().testWithInternalAndExternalState(this, settings = TestSettings(autoCheckInitialState = false)) {
             expectInternalState { initialState }
             expectExternalState { ExternalState(initialState.count.toString()) }
         }
@@ -167,19 +165,19 @@ internal class InitWithExternalStateTest {
 
     @Test
     fun internal_initial_state_can_be_omitted_from_test() = runTest {
-        createMiddleware().testInternalState(this) {
+        createMiddleware().testWithInternalState(this) {
         }
     }
 
     @Test
     fun external_initial_state_can_be_omitted_from_test() = runTest {
-        createMiddleware().testInternalState(this) {
+        createMiddleware().testWithInternalState(this) {
         }
     }
 
     @Test
     fun internal_and_external_initial_state_can_be_omitted_from_test() = runTest {
-        createMiddleware().testInternalAndExternalState(this) {
+        createMiddleware().testWithInternalAndExternalState(this) {
         }
     }
 

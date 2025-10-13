@@ -36,12 +36,13 @@ import kotlin.time.Duration.Companion.seconds
  */
 @OptIn(ExperimentalStdlibApi::class)
 @Suppress("MaxLineLength")
-public suspend fun <INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHostWithExternalState<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>> CONTAINER_HOST.testInternalState(
+public suspend fun <INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHostWithExternalState<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>> CONTAINER_HOST.testWithInternalState(
     testScope: TestScope,
     initialState: INTERNAL_STATE? = null,
     timeout: Duration? = null,
     settings: TestSettings = TestSettings(),
-    validate: suspend OrbitScopedTestContextInternal<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT, CONTAINER_HOST>.() -> Unit
+    validate:
+    suspend OrbitScopedTestContextInternal<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT, CONTAINER_HOST>.() -> Unit
 ) {
     val containerHost = this
     val testDispatcher = settings.dispatcherOverride ?: testScope.backgroundScope.coroutineContext[CoroutineDispatcher.Key]
@@ -80,7 +81,6 @@ public suspend fun <INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : An
             containerHost,
             resolvedInitialState,
             this as ReceiveTurbine<ItemWithExternalState<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>>,
-            settings
         ).apply {
             if (settings.autoCheckInitialState) {
                 assertEquals(resolvedInitialState, awaitInternalState())
@@ -96,12 +96,13 @@ public suspend fun <INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : An
 
 @OptIn(ExperimentalStdlibApi::class)
 @Suppress("MaxLineLength")
-public suspend fun <INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHostWithExternalState<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>> CONTAINER_HOST.testExternalState(
+public suspend fun <INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHostWithExternalState<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>> CONTAINER_HOST.testWithExternalState(
     testScope: TestScope,
     initialState: INTERNAL_STATE? = null,
     timeout: Duration? = null,
     settings: TestSettings = TestSettings(),
-    validate: suspend OrbitScopedTestContextExternal<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT, CONTAINER_HOST>.() -> Unit
+    validate:
+    suspend OrbitScopedTestContextExternal<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT, CONTAINER_HOST>.() -> Unit
 ) {
     val containerHost = this
     val testDispatcher = settings.dispatcherOverride ?: testScope.backgroundScope.coroutineContext[CoroutineDispatcher.Key]
@@ -140,7 +141,6 @@ public suspend fun <INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : An
             containerHost,
             resolvedInitialState,
             this as ReceiveTurbine<ItemWithExternalState<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>>,
-            settings
         ).apply {
             if (settings.autoCheckInitialState) {
                 assertEquals(container.transformState(resolvedInitialState), awaitExternalState())
@@ -156,12 +156,13 @@ public suspend fun <INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : An
 
 @OptIn(ExperimentalStdlibApi::class)
 @Suppress("MaxLineLength")
-public suspend fun <INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHostWithExternalState<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>> CONTAINER_HOST.testInternalAndExternalState(
+public suspend fun <INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHostWithExternalState<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>> CONTAINER_HOST.testWithInternalAndExternalState(
     testScope: TestScope,
     initialState: INTERNAL_STATE? = null,
     timeout: Duration? = null,
     settings: TestSettings = TestSettings(),
-    validate: suspend OrbitScopedTestContextInternalAndExternal<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT, CONTAINER_HOST>.() -> Unit
+    validate:
+    suspend OrbitScopedTestContextInternalAndExternal<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT, CONTAINER_HOST>.() -> Unit
 ) {
     val containerHost = this
     val testDispatcher = settings.dispatcherOverride ?: testScope.backgroundScope.coroutineContext[CoroutineDispatcher.Key]
@@ -203,7 +204,6 @@ public suspend fun <INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : An
             containerHost,
             resolvedInitialState,
             this as ReceiveTurbine<ItemWithExternalState<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>>,
-            settings
         ).apply {
             if (settings.autoCheckInitialState) {
                 assertEquals(resolvedInitialState, awaitInternalState())

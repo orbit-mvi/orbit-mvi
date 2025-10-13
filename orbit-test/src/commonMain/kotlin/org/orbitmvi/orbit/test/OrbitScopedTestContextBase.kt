@@ -25,11 +25,11 @@ import kotlin.test.assertEquals
 import kotlin.test.fail
 
 public abstract class OrbitScopedTestContextBase<
-        INTERNAL_STATE : Any,
-        EXTERNAL_STATE : Any,
-        SIDE_EFFECT : Any,
-        CONTAINER_HOST : ContainerHostWithExternalState<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>
-        >(
+    INTERNAL_STATE : Any,
+    EXTERNAL_STATE : Any,
+    SIDE_EFFECT : Any,
+    CONTAINER_HOST : ContainerHostWithExternalState<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>
+    >(
     public val containerHost: CONTAINER_HOST,
     private val emissions: ReceiveTurbine<ItemWithExternalState<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>>,
 ) {

@@ -23,11 +23,11 @@ import kotlin.test.assertIs
 import kotlin.test.fail
 
 public class OrbitScopedTestContextExternal<
-        INTERNAL_STATE : Any,
-        EXTERNAL_STATE : Any,
-        SIDE_EFFECT : Any,
-        CONTAINER_HOST : ContainerHostWithExternalState<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>
-        >(
+    INTERNAL_STATE : Any,
+    EXTERNAL_STATE : Any,
+    SIDE_EFFECT : Any,
+    CONTAINER_HOST : ContainerHostWithExternalState<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>
+    >(
     containerHost: CONTAINER_HOST,
     resolvedInitialState: INTERNAL_STATE,
     emissions: ReceiveTurbine<ItemWithExternalState<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>>,

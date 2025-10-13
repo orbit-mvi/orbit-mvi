@@ -37,7 +37,7 @@ class ItemsWithExternalStateTest {
         val sideEffect1 = 3
         val sideEffect2 = 4
 
-        ItemTestMiddleware(this).testInternalState(this) {
+        ItemTestMiddleware(this).testWithInternalState(this) {
             containerHost.newState(state1)
             containerHost.newSideEffect(sideEffect1)
             containerHost.newState(state2)
@@ -55,7 +55,7 @@ class ItemsWithExternalStateTest {
         val sideEffect1 = 3
         val sideEffect2 = 4
 
-        ItemTestMiddleware(this).testExternalState(this) {
+        ItemTestMiddleware(this).testWithExternalState(this) {
             containerHost.newState(state1)
             containerHost.newSideEffect(sideEffect1)
             containerHost.newState(state2)
@@ -73,7 +73,7 @@ class ItemsWithExternalStateTest {
         val sideEffect1 = 3
         val sideEffect2 = 4
 
-        ItemTestMiddleware(this).testInternalAndExternalState(this) {
+        ItemTestMiddleware(this).testWithInternalAndExternalState(this) {
             containerHost.newState(state1)
             containerHost.newSideEffect(sideEffect1)
             containerHost.newState(state2)
@@ -91,7 +91,7 @@ class ItemsWithExternalStateTest {
         val sideEffect1 = 3
         val sideEffect2 = 4
 
-        ItemTestMiddleware(this).testInternalState(this) {
+        ItemTestMiddleware(this).testWithInternalState(this) {
             containerHost.newState(state1)
             containerHost.newSideEffect(sideEffect1)
             containerHost.newState(state2)
@@ -111,7 +111,7 @@ class ItemsWithExternalStateTest {
         val sideEffect1 = 3
         val sideEffect2 = 4
 
-        ItemTestMiddleware(this).testExternalState(this) {
+        ItemTestMiddleware(this).testWithExternalState(this) {
             containerHost.newState(state1)
             containerHost.newSideEffect(sideEffect1)
             containerHost.newState(state2)
@@ -131,7 +131,7 @@ class ItemsWithExternalStateTest {
         val sideEffect1 = 3
         val sideEffect2 = 4
 
-        ItemTestMiddleware(this).testInternalAndExternalState(this) {
+        ItemTestMiddleware(this).testWithInternalAndExternalState(this) {
             containerHost.newState(state1)
             containerHost.newSideEffect(sideEffect1)
             containerHost.newState(state2)
@@ -148,28 +148,28 @@ class ItemsWithExternalStateTest {
 
     @Test
     fun internal_correctly_expects_no_items() = runTest {
-        ItemTestMiddleware(this).testInternalState(this) {
+        ItemTestMiddleware(this).testWithInternalState(this) {
             expectNoItems()
         }
     }
 
     @Test
     fun external_correctly_expects_no_items() = runTest {
-        ItemTestMiddleware(this).testExternalState(this) {
+        ItemTestMiddleware(this).testWithExternalState(this) {
             expectNoItems()
         }
     }
 
     @Test
     fun internal_and_external_correctly_expects_no_items() = runTest {
-        ItemTestMiddleware(this).testInternalAndExternalState(this) {
+        ItemTestMiddleware(this).testWithInternalAndExternalState(this) {
             expectNoItems()
         }
     }
 
     @Test
     fun internal_expects_no_items_fails_when_there_are_unconsumed_items() = runTest {
-        ItemTestMiddleware(this).testInternalState(
+        ItemTestMiddleware(this).testWithInternalState(
             testScope = this,
             settings = TestSettings(autoCheckInitialState = false)
         ) {
@@ -179,7 +179,7 @@ class ItemsWithExternalStateTest {
 
     @Test
     fun external_expects_no_items_fails_when_there_are_unconsumed_items() = runTest {
-        ItemTestMiddleware(this).testExternalState(
+        ItemTestMiddleware(this).testWithExternalState(
             testScope = this,
             settings = TestSettings(autoCheckInitialState = false)
         ) {
@@ -189,7 +189,7 @@ class ItemsWithExternalStateTest {
 
     @Test
     fun internal_and_external_expects_no_items_fails_when_there_are_unconsumed_items() = runTest {
-        ItemTestMiddleware(this).testInternalAndExternalState(
+        ItemTestMiddleware(this).testWithInternalAndExternalState(
             testScope = this,
             settings = TestSettings(autoCheckInitialState = false)
         ) {
