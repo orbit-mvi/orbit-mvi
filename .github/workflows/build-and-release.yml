@@ -159,7 +159,7 @@ jobs:
                 run: |
                     echo "${{secrets.GPG_SIGNING_SECRET_KEY_RING_FILE_BASE64}}" > $HOME/.gradle/sonatype-orbitmvi-keys.gpg.b64
                     base64 -d -i $HOME/.gradle/sonatype-orbitmvi-keys.gpg.b64 -o $HOME/.gradle/sonatype-orbitmvi-keys.gpg
-                    echo "${{secrets.GPG_GRADLE_PROPERTIES}}" > $HOME/.gradle/gradle.properties
+                    echo "${{secrets.PUBLISHING_GRADLE_PROPERTIES}}" > $HOME/.gradle/gradle.properties
 
             -   name: Upload tag
                 if: startsWith(github.ref, 'refs/tags/')
