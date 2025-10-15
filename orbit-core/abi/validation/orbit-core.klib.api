@@ -196,4 +196,7 @@ final suspend fun <#A: org.orbitmvi.orbit.syntax/Operator<*, *>, #B: kotlin/Any?
 final suspend inline fun <#A: kotlin/Any, #B: reified #A> (kotlinx.coroutines.flow/Flow<#A>).org.orbitmvi.orbit.syntax/runOn(crossinline kotlin/Function1<#B, kotlin/Boolean> = ..., crossinline kotlin.coroutines/SuspendFunction1<#B, kotlin/Unit>) // org.orbitmvi.orbit.syntax/runOn|runOn@kotlinx.coroutines.flow.Flow<0:0>(kotlin.Function1<0:1,kotlin.Boolean>;kotlin.coroutines.SuspendFunction1<0:1,kotlin.Unit>){0§<kotlin.Any>;1§<0:0>}[0]
 
 // Targets: [native]
+final fun <#A: kotlin/Any, #B: kotlin/Any, #C: kotlin/Any> (org.orbitmvi.orbit/ContainerHostWithExternalState<#A, #B, #C>).org.orbitmvi.orbit/blockingIntent(kotlin/Boolean = ..., kotlin.coroutines/SuspendFunction1<org.orbitmvi.orbit.syntax/Syntax<#A, #C>, kotlin/Unit>) // org.orbitmvi.orbit/blockingIntent|blockingIntent@org.orbitmvi.orbit.ContainerHostWithExternalState<0:0,0:1,0:2>(kotlin.Boolean;kotlin.coroutines.SuspendFunction1<org.orbitmvi.orbit.syntax.Syntax<0:0,0:2>,kotlin.Unit>){0§<kotlin.Any>;1§<kotlin.Any>;2§<kotlin.Any>}[0]
+
+// Targets: [native]
 final fun <#A: kotlin/Any, #B: kotlin/Any> (org.orbitmvi.orbit/ContainerHost<#A, #B>).org.orbitmvi.orbit/blockingIntent(kotlin/Boolean = ..., kotlin.coroutines/SuspendFunction1<org.orbitmvi.orbit.syntax/Syntax<#A, #B>, kotlin/Unit>) // org.orbitmvi.orbit/blockingIntent|blockingIntent@org.orbitmvi.orbit.ContainerHost<0:0,0:1>(kotlin.Boolean;kotlin.coroutines.SuspendFunction1<org.orbitmvi.orbit.syntax.Syntax<0:0,0:1>,kotlin.Unit>){0§<kotlin.Any>;1§<kotlin.Any>}[0]

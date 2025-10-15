@@ -40,3 +40,24 @@ public fun <STATE : Any, SIDE_EFFECT : Any> ContainerHost<STATE, SIDE_EFFECT>.bl
         }
     }
 }
+
+/**
+ * Build and execute an intent on [ContainerWithExternalState] in a blocking manner, without dispatching.
+ *
+ * This API is reserved for special cases e.g. storing text input in the state.
+ *
+ * @param registerIdling whether to register an idling resource when executing this intent. Defaults to true.
+ * @param transformer lambda representing the transformer
+ */
+@OrbitDsl
+public fun <INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : Any>
+    ContainerHostWithExternalState<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>.blockingIntent(
+        registerIdling: Boolean = true,
+        transformer: suspend Syntax<INTERNAL_STATE, SIDE_EFFECT>.() -> Unit
+    ): Unit = runBlocking {
+    container.inlineOrbit {
+        withIdling(registerIdling) {
+            Syntax(this).transformer()
+        }
+    }
+}

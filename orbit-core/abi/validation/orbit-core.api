@@ -52,7 +52,9 @@ public final class org/orbitmvi/orbit/ContainerHost$DefaultImpls {
 
 public final class org/orbitmvi/orbit/ContainerHostExtKt {
 	public static final fun blockingIntent (Lorg/orbitmvi/orbit/ContainerHost;ZLkotlin/jvm/functions/Function2;)V
+	public static final fun blockingIntent (Lorg/orbitmvi/orbit/ContainerHostWithExternalState;ZLkotlin/jvm/functions/Function2;)V
 	public static synthetic fun blockingIntent$default (Lorg/orbitmvi/orbit/ContainerHost;ZLkotlin/jvm/functions/Function2;ILjava/lang/Object;)V
+	public static synthetic fun blockingIntent$default (Lorg/orbitmvi/orbit/ContainerHostWithExternalState;ZLkotlin/jvm/functions/Function2;ILjava/lang/Object;)V
 }
 
 public abstract interface class org/orbitmvi/orbit/ContainerHostWithExternalState {
