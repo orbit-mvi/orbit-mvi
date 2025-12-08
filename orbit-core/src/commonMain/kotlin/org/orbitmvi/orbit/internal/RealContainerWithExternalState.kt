@@ -35,11 +35,9 @@ public class RealContainerWithExternalState<INTERNAL_STATE : Any, EXTERNAL_STATE
     public override val transformState: (INTERNAL_STATE) -> EXTERNAL_STATE
 ) : ContainerWithExternalState<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT> {
 
-    public override val externalStateFlow: StateFlow<EXTERNAL_STATE>
-        get() = stateFlow.stateMap { transformState(it) }
+    public override val externalStateFlow: StateFlow<EXTERNAL_STATE> = stateFlow.stateMap { transformState(it) }
 
-    public override val externalRefCountStateFlow: StateFlow<EXTERNAL_STATE>
-        get() = refCountStateFlow.stateMap { transformState(it) }
+    public override val externalRefCountStateFlow: StateFlow<EXTERNAL_STATE> = refCountStateFlow.stateMap { transformState(it) }
 }
 
 @OptIn(ExperimentalForInheritanceCoroutinesApi::class)
