@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-@file:Suppress("DEPRECATION")
-
 package org.orbitmvi.orbit.sample.posts.compose.multiplatform.domain.viewmodel.detail
 
 import androidx.lifecycle.SavedStateHandle
@@ -24,7 +22,7 @@ import org.orbitmvi.orbit.sample.posts.compose.multiplatform.domain.repositories
 import org.orbitmvi.orbit.sample.posts.compose.multiplatform.domain.repositories.PostDetail
 import org.orbitmvi.orbit.sample.posts.compose.multiplatform.domain.repositories.PostOverview
 import org.orbitmvi.orbit.sample.posts.compose.multiplatform.domain.repositories.PostRepository
-import org.orbitmvi.orbit.test.test
+import org.orbitmvi.orbit.test.testWithInternalState
 import kotlin.random.Random
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -47,7 +45,7 @@ class PostDetailsViewModelTest {
             override suspend fun getDetail(id: Int): PostDetail = details
         }
 
-        PostDetailsViewModel(SavedStateHandle(), repository, overview).test(
+        PostDetailsViewModel(SavedStateHandle(), repository, overview).testWithInternalState(
             this,
             initialState = initialState,
         ) {
@@ -55,7 +53,7 @@ class PostDetailsViewModelTest {
             runOnCreate()
 
             // Then the view model loads the details
-            expectState { PostDetailState.Ready(overview, details) }
+            expectInternalState { PostDetailState.Ready(overview, details) }
         }
     }
 
@@ -69,7 +67,7 @@ class PostDetailsViewModelTest {
             override suspend fun getDetail(id: Int): PostDetail = error("Not implemented")
         }
 
-        PostDetailsViewModel(SavedStateHandle(), repository, overview).test(
+        PostDetailsViewModel(SavedStateHandle(), repository, overview).testWithInternalState(
             this,
             initialState = initialState
         ) {
@@ -91,7 +89,7 @@ class PostDetailsViewModelTest {
             override suspend fun getDetail(id: Int): PostDetail = error("Not implemented")
         }
 
-        PostDetailsViewModel(SavedStateHandle(), repository, overview).test(
+        PostDetailsViewModel(SavedStateHandle(), repository, overview).testWithInternalState(
             this,
             initialState = initialState
         ) {
@@ -99,7 +97,7 @@ class PostDetailsViewModelTest {
             runOnCreate()
 
             // Then the view model returns error
-            val error = assertIs<PostDetailState.Error>(awaitState())
+            val error = assertIs<PostDetailState.Error>(awaitInternalState())
             assertEquals(overview, error.postOverview)
         }
     }
@@ -114,20 +112,20 @@ class PostDetailsViewModelTest {
             override suspend fun getDetail(id: Int): PostDetail = details
         }
 
-        PostDetailsViewModel(SavedStateHandle(), repository, overview).test(
+        PostDetailsViewModel(SavedStateHandle(), repository, overview).testWithInternalState(
             this,
             initialState = initialState
         ) {
             // And we run onCreate
             runOnCreate()
             // And capture the error
-            val state = assertIs<PostDetailState.Error>(awaitState())
+            val state = assertIs<PostDetailState.Error>(awaitInternalState())
 
             // When we call onRetry
             state.onRetry()
 
             // Then the view model returns ready with the overviews
-            expectState { PostDetailState.Ready(overview, details) }
+            expectInternalState { PostDetailState.Ready(overview, details) }
         }
     }
 

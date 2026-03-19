@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-@file:Suppress("DEPRECATION")
-
 package org.orbitmvi.orbit.test
 
 import kotlinx.coroutines.test.TestScope
@@ -33,7 +31,7 @@ class ExceptionTest {
     @Test
     fun exceptions_thrown_during_test_can_be_asserted_on() = runTest {
         assertFails {
-            ExceptionTestMiddleware(this).test(this) {
+            ExceptionTestMiddleware(this).testWithInternalState(this) {
                 val job = containerHost.boom()
 
                 job.join()

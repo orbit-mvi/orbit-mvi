@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-@file:Suppress("DEPRECATION")
-
 package org.orbitmvi.orbit.test
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -39,7 +37,7 @@ class IntentJobsTest {
     @Test
     fun unfinished_intents_at_the_end_of_the_test_cause_the_test_to_fail() = runTest {
         assertFails {
-            IntentJobsMiddleware(this).test(this) {
+            IntentJobsMiddleware(this).testWithInternalState(this) {
                 containerHost.infiniteIntent()
             }
         }
@@ -47,7 +45,7 @@ class IntentJobsTest {
 
     @Test
     fun unfinished_intents_at_the_end_of_the_test_may_be_ignored() = runTest {
-        IntentJobsMiddleware(this).test(this) {
+        IntentJobsMiddleware(this).testWithInternalState(this) {
             containerHost.infiniteIntent()
             cancelAndIgnoreRemainingItems()
         }
@@ -55,7 +53,7 @@ class IntentJobsTest {
 
     @Test
     fun intents_may_be_cancelled() = runTest {
-        IntentJobsMiddleware(this).test(this) {
+        IntentJobsMiddleware(this).testWithInternalState(this) {
             val job = containerHost.infiniteIntent()
 
             job.cancel()
@@ -65,7 +63,7 @@ class IntentJobsTest {
     @Test
     fun intents_may_be_joined() = runTest {
         val scope = TestScope()
-        IntentJobsMiddleware(this).test(scope) {
+        IntentJobsMiddleware(this).testWithInternalState(scope) {
             val job = containerHost.longIntent()
 
             scope.testScheduler.advanceTimeBy(300)
@@ -76,14 +74,14 @@ class IntentJobsTest {
             assertTrue { job.isActive }
             scope.testScheduler.advanceTimeBy(1)
             assertTrue { job.isCompleted }
-            expectState { this + 2 }
+            expectInternalState { this + 2 }
         }
     }
 
     @Test
     fun on_create_may_be_joined() = runTest {
         val scope = TestScope()
-        IntentJobsMiddleware(this).test(scope) {
+        IntentJobsMiddleware(this).testWithInternalState(scope) {
             val job = runOnCreate()
 
             scope.testScheduler.advanceTimeBy(300)
@@ -94,14 +92,14 @@ class IntentJobsTest {
             assertTrue { job.isActive }
             scope.testScheduler.advanceTimeBy(1)
             assertTrue { job.isCompleted }
-            expectState { this + 2 }
+            expectInternalState { this + 2 }
         }
     }
 
     @Test
     fun on_create_may_be_cancelled() = runTest {
         val scope = TestScope()
-        IntentJobsMiddleware(this).test(scope) {
+        IntentJobsMiddleware(this).testWithInternalState(scope) {
             val job = runOnCreate()
 
             scope.testScheduler.advanceTimeBy(200)

@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-@file:Suppress("DEPRECATION")
-
 package org.orbitmvi.orbit.test
 
 import kotlinx.coroutines.test.TestScope
@@ -38,7 +36,7 @@ class ItemsTest {
         val sideEffect1 = 3
         val sideEffect2 = 4
 
-        ItemTestMiddleware(this).test(this) {
+        ItemTestMiddleware(this).testWithInternalState(this) {
             containerHost.newState(state1)
             containerHost.newSideEffect(sideEffect1)
             containerHost.newState(state2)
@@ -56,29 +54,29 @@ class ItemsTest {
         val sideEffect1 = 3
         val sideEffect2 = 4
 
-        ItemTestMiddleware(this).test(this) {
+        ItemTestMiddleware(this).testWithInternalState(this) {
             containerHost.newState(state1)
             containerHost.newSideEffect(sideEffect1)
             containerHost.newState(state2)
             containerHost.newSideEffect(sideEffect2)
 
-            assertEquals(Item.StateItem(State(1)), awaitItem())
-            assertEquals(Item.SideEffectItem(3), awaitItem())
-            assertEquals(Item.StateItem(State(2)), awaitItem())
-            assertEquals(Item.SideEffectItem(4), awaitItem())
+            assertEquals(State(1), awaitInternalState())
+            assertEquals(3, awaitSideEffect())
+            assertEquals(State(2), awaitInternalState())
+            assertEquals(4, awaitSideEffect())
         }
     }
 
     @Test
     fun correctly_expects_no_items() = runTest {
-        ItemTestMiddleware(this).test(this) {
+        ItemTestMiddleware(this).testWithInternalState(this) {
             expectNoItems()
         }
     }
 
     @Test
     fun expects_no_items_fails_when_there_are_unconsumed_items() = runTest {
-        ItemTestMiddleware(this).test(this, settings = TestSettings(autoCheckInitialState = false)) {
+        ItemTestMiddleware(this).testWithInternalState(this, settings = TestSettings(autoCheckInitialState = false)) {
             assertFails { expectNoItems() }
         }
     }

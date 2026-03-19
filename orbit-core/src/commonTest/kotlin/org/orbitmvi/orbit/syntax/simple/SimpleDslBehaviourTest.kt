@@ -18,8 +18,6 @@
  * See: https://github.com/orbit-mvi/orbit-mvi/compare/c5b8b3f2b83b5972ba2ad98f73f75086a89653d3...main
  */
 
-@file:Suppress("DEPRECATION")
-
 package org.orbitmvi.orbit.syntax.simple
 
 import kotlinx.coroutines.delay
@@ -27,7 +25,7 @@ import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
 import org.orbitmvi.orbit.OrbitContainerHost
 import org.orbitmvi.orbit.container
-import org.orbitmvi.orbit.test.test
+import org.orbitmvi.orbit.test.testWithInternalState
 import kotlin.random.Random
 import kotlin.test.Test
 
@@ -38,27 +36,27 @@ internal class SimpleDslBehaviourTest {
     @Test
     fun reducer_produces_new_states() = runTest {
         val action = Random.nextInt()
-        BaseDslMiddleware(this).test(this, initialState) {
+        BaseDslMiddleware(this).testWithInternalState(this, initialState) {
             containerHost.reducer(action)
 
-            expectState { TestState(action) }
+            expectInternalState { TestState(action) }
         }
     }
 
     @Test
     fun transformer_maps_values() = runTest {
         val action = Random.nextInt()
-        BaseDslMiddleware(this).test(this, initialState) {
+        BaseDslMiddleware(this).testWithInternalState(this, initialState) {
             containerHost.transformer(action)
 
-            expectState { TestState(action + 5) }
+            expectInternalState { TestState(action + 5) }
         }
     }
 
     @Test
     fun posting_side_effects_emit_side_effects() = runTest {
         val action = Random.nextInt()
-        BaseDslMiddleware(this).test(this, initialState) {
+        BaseDslMiddleware(this).testWithInternalState(this, initialState) {
             containerHost.postingSideEffect(action)
 
             expectSideEffect(action.toString())

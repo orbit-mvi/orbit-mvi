@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-@file:Suppress("DEPRECATION")
-
 package org.orbitmvi.orbit.test
 
 import kotlinx.coroutines.CoroutineScope
@@ -34,8 +32,8 @@ internal class InitTest {
     @Test
     fun created_is_not_invoked_by_default() = runTest {
         val mockDependency = FakeDependency()
-        createMiddleware(mockDependency).test(this, initialState, settings = TestSettings(autoCheckInitialState = false)) {
-            expectState { initialState }
+        createMiddleware(mockDependency).testWithInternalState(this, initialState, settings = TestSettings(autoCheckInitialState = false)) {
+            expectInternalState { initialState }
         }
 
         assertEquals(false, mockDependency.createCalled.load())
@@ -44,8 +42,8 @@ internal class InitTest {
     @Test
     fun created_is_invoked_upon_request() = runTest {
         val mockDependency = FakeDependency()
-        createMiddleware(mockDependency).test(this, initialState = initialState, settings = TestSettings(autoCheckInitialState = false)) {
-            expectState { initialState }
+        createMiddleware(mockDependency).testWithInternalState(this, initialState = initialState, settings = TestSettings(autoCheckInitialState = false)) {
+            expectInternalState { initialState }
             runOnCreate()
         }
 
@@ -53,30 +51,29 @@ internal class InitTest {
     }
 
     @Test
-    fun initial_state_can_be_explicitly_checked_in_test_with_awaitState() = runTest {
-        createMiddleware().test(this, settings = TestSettings(autoCheckInitialState = false)) {
-            assertEquals(initialState, awaitState())
+    fun initial_state_can_be_explicitly_checked_in_test_with_awaitInternalState() = runTest {
+        createMiddleware().testWithInternalState(this, settings = TestSettings(autoCheckInitialState = false)) {
+            assertEquals(initialState, awaitInternalState())
         }
     }
 
     @Test
-    fun initial_state_can_be_explicitly_checked_in_test_with_expectInitialState() = runTest {
-        createMiddleware().test(this, settings = TestSettings(autoCheckInitialState = false)) {
-            @Suppress("DEPRECATION")
-            expectInitialState()
+    fun initial_state_can_be_explicitly_checked_in_test_with_expectInternalState() = runTest {
+        createMiddleware().testWithInternalState(this, settings = TestSettings(autoCheckInitialState = false)) {
+            expectInternalState(initialState)
         }
     }
 
     @Test
-    fun initial_state_can_be_explicitly_checked_in_test_with_expectState() = runTest {
-        createMiddleware().test(this, settings = TestSettings(autoCheckInitialState = false)) {
-            expectState { initialState }
+    fun initial_state_can_be_explicitly_checked_in_test_with_expectInternalState_lambda() = runTest {
+        createMiddleware().testWithInternalState(this, settings = TestSettings(autoCheckInitialState = false)) {
+            expectInternalState { initialState }
         }
     }
 
     @Test
     fun initial_state_can_be_omitted_from_test() = runTest {
-        createMiddleware().test(this) {
+        createMiddleware().testWithInternalState(this) {
         }
     }
 

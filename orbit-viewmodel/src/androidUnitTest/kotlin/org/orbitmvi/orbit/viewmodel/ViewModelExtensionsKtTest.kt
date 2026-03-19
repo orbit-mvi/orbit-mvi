@@ -18,8 +18,6 @@
  * See: https://github.com/orbit-mvi/orbit-mvi/compare/c5b8b3f2b83b5972ba2ad98f73f75086a89653d3...main
  */
 
-@file:Suppress("DEPRECATION")
-
 package org.orbitmvi.orbit.viewmodel
 
 import android.os.Parcelable
@@ -31,7 +29,7 @@ import kotlinx.parcelize.Parcelize
 import org.junit.Test
 import org.orbitmvi.orbit.OrbitContainerHost
 import org.orbitmvi.orbit.syntax.Syntax
-import org.orbitmvi.orbit.test.test
+import org.orbitmvi.orbit.test.testWithInternalState
 import kotlin.random.Random
 import kotlin.test.assertEquals
 
@@ -99,7 +97,7 @@ class ViewModelExtensionsKtTest {
 
         Middleware(savedStateHandle, initialState) {
             assertEquals(savedState, state)
-        }.test(this) {
+        }.testWithInternalState(this) {
             runOnCreate()
         }
     }
@@ -111,7 +109,7 @@ class ViewModelExtensionsKtTest {
 
         Middleware(savedStateHandle, initialState) {
             assertEquals(initialState, state)
-        }.test(this) {
+        }.testWithInternalState(this) {
             runOnCreate()
         }
     }

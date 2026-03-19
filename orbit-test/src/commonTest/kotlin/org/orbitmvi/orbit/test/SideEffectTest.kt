@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-@file:Suppress("DEPRECATION")
-
 package org.orbitmvi.orbit.test
 
 import kotlinx.coroutines.test.TestScope
@@ -36,7 +34,7 @@ class SideEffectTest {
     fun succeeds_if_posted_side_effects_match_expected_side_effects() = runTest {
         val sideEffects = List(Random.nextInt(1, 5)) { Random.nextInt() }
 
-        SideEffectTestMiddleware(this).test(this) {
+        SideEffectTestMiddleware(this).testWithInternalState(this) {
             sideEffects.forEach { containerHost.something(it) }
 
             assertEquals(
@@ -54,7 +52,7 @@ class SideEffectTest {
     fun succeeds_if_posted_side_effects_match_expected_side_effects__shorthand_syntax() = runTest {
         val sideEffects = List(Random.nextInt(1, 5)) { Random.nextInt() }
 
-        SideEffectTestMiddleware(this).test(this) {
+        SideEffectTestMiddleware(this).testWithInternalState(this) {
             sideEffects.forEach { containerHost.something(it) }
 
             sideEffects.forEach {
@@ -69,7 +67,7 @@ class SideEffectTest {
         val sideEffects2 = List(Random.nextInt(1, 5)) { Random.nextInt() }
 
         assertFailsWith<AssertionError> {
-            SideEffectTestMiddleware(this).test(this) {
+            SideEffectTestMiddleware(this).testWithInternalState(this) {
                 sideEffects.forEach { containerHost.something(it) }
 
                 assertEquals(
@@ -91,15 +89,15 @@ class SideEffectTest {
         val sideEffect = Random.nextInt()
 
         assertFailsWith<AssertionError> {
-            SideEffectTestMiddleware(this).test(this) {
+            SideEffectTestMiddleware(this).testWithInternalState(this) {
                 containerHost.newState(sideEffect)
                 containerHost.something(sideEffect)
 
                 awaitSideEffect()
-                awaitState()
+                awaitInternalState()
             }
         }.also {
-            assertTrue { it.message?.startsWith("Expected Side Effect but got StateItem") == true }
+            assertTrue { it.message?.startsWith("Expected Side Effect but got InternalStateItem") == true }
         }
     }
 

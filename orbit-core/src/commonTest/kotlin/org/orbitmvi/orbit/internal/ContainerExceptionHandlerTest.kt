@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-@file:Suppress("DEPRECATION")
-
 package org.orbitmvi.orbit.internal
 
 import app.cash.turbine.test
@@ -36,7 +34,7 @@ import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
 import org.orbitmvi.orbit.OrbitContainerHost
 import org.orbitmvi.orbit.container
-import org.orbitmvi.orbit.test.test
+import org.orbitmvi.orbit.test.testWithInternalState
 import kotlin.random.Random
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -50,7 +48,7 @@ internal class ContainerExceptionHandlerTest {
     @Test
     fun by_default_exceptions_are_uncaught() = runTest {
         assertFailsWith<IllegalStateException> {
-            ExceptionTestMiddleware(this).test(this) {
+            ExceptionTestMiddleware(this).testWithInternalState(this) {
                 containerHost.exceptionIntent().join()
             }
         }
@@ -86,7 +84,7 @@ internal class ContainerExceptionHandlerTest {
         val initState = Random.nextInt()
         val exceptions = Channel<Throwable>(capacity = Channel.BUFFERED)
         val exceptionHandler = CoroutineExceptionHandler { _, throwable -> exceptions.trySend(throwable) }
-        ExceptionTestMiddleware(this, exceptionHandler).test(this, initState) {
+        ExceptionTestMiddleware(this, exceptionHandler).testWithInternalState(this, initState) {
             containerHost.exceptionIntent()
 
             exceptions.consumeAsFlow().test {
@@ -144,7 +142,7 @@ internal class ContainerExceptionHandlerTest {
     @Test
     fun without_exception_handler_test_does_break() = runTest {
         assertFailsWith<IllegalStateException> {
-            ExceptionTestMiddleware(this).test(this) {
+            ExceptionTestMiddleware(this).testWithInternalState(this) {
                 containerHost.exceptionIntent().join()
             }
         }

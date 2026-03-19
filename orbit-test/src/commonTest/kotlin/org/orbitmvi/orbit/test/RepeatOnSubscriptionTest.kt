@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-@file:Suppress("DEPRECATION")
-
 package org.orbitmvi.orbit.test
 
 import kotlinx.coroutines.test.TestScope
@@ -31,10 +29,10 @@ class RepeatOnSubscriptionTest {
 
     @Test
     fun test_does_not_hang_when_using_repeat_on_subscription() = runTest {
-        TestMiddleware(this).test(this, initialState = initialState) {
+        TestMiddleware(this).testWithInternalState(this, initialState = initialState) {
             containerHost.callOnSubscription { 42 }
 
-            assertEquals(State(42), awaitState())
+            assertEquals(State(42), awaitInternalState())
         }
     }
 

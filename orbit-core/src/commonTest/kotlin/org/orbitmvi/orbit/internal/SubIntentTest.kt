@@ -18,8 +18,6 @@
  * See: https://github.com/orbit-mvi/orbit-mvi/compare/c5b8b3f2b83b5972ba2ad98f73f75086a89653d3...main
  */
 
-@file:Suppress("DEPRECATION")
-
 package org.orbitmvi.orbit.internal
 
 import kotlinx.coroutines.CoroutineScope
@@ -32,7 +30,7 @@ import kotlinx.coroutines.test.runTest
 import org.orbitmvi.orbit.OrbitContainerHost
 import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.container
-import org.orbitmvi.orbit.test.test
+import org.orbitmvi.orbit.test.testWithInternalState
 import kotlin.random.Random
 import kotlin.test.Test
 
@@ -48,7 +46,7 @@ internal class SubIntentTest {
             initialState = initialState,
             flow1 = channel1.consumeAsFlow(),
             flow2 = channel2.consumeAsFlow()
-        ).test(
+        ).testWithInternalState(
             this,
         ) {
             val job = runOnCreate()
