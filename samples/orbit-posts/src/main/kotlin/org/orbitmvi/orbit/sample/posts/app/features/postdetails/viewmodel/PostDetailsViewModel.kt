@@ -22,7 +22,7 @@ package org.orbitmvi.orbit.sample.posts.app.features.postdetails.viewmodel
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import org.orbitmvi.orbit.ContainerHost
+import org.orbitmvi.orbit.OrbitContainerHost
 import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.sample.posts.domain.repositories.PostOverview
 import org.orbitmvi.orbit.sample.posts.domain.repositories.PostRepository
@@ -33,7 +33,7 @@ class PostDetailsViewModel(
     savedStateHandle: SavedStateHandle,
     private val postRepository: PostRepository,
     private val postOverview: PostOverview
-) : ViewModel(), ContainerHost<PostDetailState, Nothing> {
+) : ViewModel(), OrbitContainerHost<PostDetailState, PostDetailState, Nothing> {
 
     override val container = container<PostDetailState, Nothing>(PostDetailState.NoDetailsAvailable(postOverview), savedStateHandle) {
         if (state !is PostDetailState.Details) {

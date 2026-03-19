@@ -26,7 +26,6 @@ import androidx.lifecycle.viewModelScope
 import androidx.savedstate.SavedState
 import androidx.savedstate.serialization.decodeFromSavedState
 import kotlinx.serialization.KSerializer
-import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.OrbitContainer
 import org.orbitmvi.orbit.SettingsBuilder
 import org.orbitmvi.orbit.container
@@ -40,56 +39,14 @@ private const val SAVED_STATE_KMP_KEY = "state-kmp"
  * @param initialState The initial state of the container.
  * @param buildSettings This builder can be used to change the container's settings.
  * @param onCreate The intent to execute when the container is created
- * @return A [Container] implementation
+ * @return An [OrbitContainer] implementation
  */
 public fun <STATE : Any, SIDE_EFFECT : Any> ViewModel.container(
     initialState: STATE,
     buildSettings: SettingsBuilder.() -> Unit = {},
     onCreate: (suspend Syntax<STATE, SIDE_EFFECT>.() -> Unit)? = null
-): Container<STATE, SIDE_EFFECT> {
+): OrbitContainer<STATE, STATE, SIDE_EFFECT> {
     return viewModelScope.container(initialState, buildSettings, onCreate)
-}
-
-/**
- * Creates a container scoped with ViewModelScope and allows you to used the
- * Android ViewModel's saved state support.
- *
- * Provide a [SavedStateHandle] in order for your [Serializable] state to be automatically saved as
- * you use the container.
- *
- * @param initialState The initial state of the container.
- * @param savedStateHandle The [SavedStateHandle] corresponding to this host. Typically retrieved
- * from the containing [ViewModel]
- * @param serializer The [KSerializer] to use for serializing and deserializing state.
- * @param buildSettings This builder can be used to change the container's settings.
- * @param onCreate The intent to execute when the container is created, provided with the default or recreated state
- * @return A [Container] implementation
- */
-public fun <STATE : Any, SIDE_EFFECT : Any> ViewModel.container(
-    initialState: STATE,
-    savedStateHandle: SavedStateHandle,
-    serializer: KSerializer<STATE>,
-    buildSettings: SettingsBuilder.() -> Unit = {},
-    onCreate: (suspend Syntax<STATE, SIDE_EFFECT>.() -> Unit)? = null
-): Container<STATE, SIDE_EFFECT> {
-    val savedState: STATE? = savedStateHandle.get<SavedState>(SAVED_STATE_KMP_KEY)?.let {
-        decodeFromSavedState(
-            deserializer = serializer,
-            savedState = it
-        )
-    }
-
-    val state = savedState ?: initialState
-
-    val realContainer: Container<STATE, SIDE_EFFECT> =
-        viewModelScope.container(state, buildSettings, onCreate)
-
-    return SavedStateContainerDecorator(
-        realContainer,
-        savedStateHandle,
-        serializer,
-        SAVED_STATE_KMP_KEY
-    )
 }
 
 /**
@@ -111,8 +68,42 @@ public fun <INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : Any> ViewM
 }
 
 /**
+ * Creates a container scoped with ViewModelScope with saved state support.
+ *
+ * Provide a [SavedStateHandle] in order for your state to be automatically saved as
+ * you use the container.
+ *
+ * @param initialState The initial state of the container.
+ * @param savedStateHandle The [SavedStateHandle] corresponding to this host. Typically retrieved
+ * from the containing [ViewModel]
+ * @param serializer The [KSerializer] to use for serializing and deserializing state.
+ * @param buildSettings This builder can be used to change the container's settings.
+ * @param onCreate The intent to execute when the container is created
+ * @return An [OrbitContainer] implementation
+ */
+public fun <STATE : Any, SIDE_EFFECT : Any> ViewModel.container(
+    initialState: STATE,
+    savedStateHandle: SavedStateHandle,
+    serializer: KSerializer<STATE>,
+    buildSettings: SettingsBuilder.() -> Unit = {},
+    onCreate: (suspend Syntax<STATE, SIDE_EFFECT>.() -> Unit)? = null
+): OrbitContainer<STATE, STATE, SIDE_EFFECT> {
+    return container(
+        initialState = initialState,
+        savedStateHandle = savedStateHandle,
+        serializer = serializer,
+        transformState = { it },
+        buildSettings = buildSettings,
+        onCreate = onCreate
+    )
+}
+
+/**
  * Creates a container scoped with ViewModelScope with external state transformation and
  * saved state support.
+ *
+ * Provide a [SavedStateHandle] in order for your state to be automatically saved as
+ * you use the container.
  *
  * @param initialState The initial state of the container.
  * @param savedStateHandle The [SavedStateHandle] corresponding to this host.
@@ -122,6 +113,7 @@ public fun <INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : Any> ViewM
  * @param onCreate The intent to execute when the container is created
  * @return An [OrbitContainer] implementation
  */
+@Suppress("LongParameterList")
 public fun <INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : Any> ViewModel.container(
     initialState: INTERNAL_STATE,
     savedStateHandle: SavedStateHandle,
@@ -130,12 +122,13 @@ public fun <INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : Any> ViewM
     buildSettings: SettingsBuilder.() -> Unit = {},
     onCreate: (suspend Syntax<INTERNAL_STATE, SIDE_EFFECT>.() -> Unit)? = null
 ): OrbitContainer<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT> {
-    val savedState: INTERNAL_STATE? = savedStateHandle.get<SavedState>(SAVED_STATE_KMP_KEY)?.let {
-        decodeFromSavedState(
-            deserializer = serializer,
-            savedState = it
-        )
-    }
+    val savedState: INTERNAL_STATE? =
+        savedStateHandle.get<SavedState>(SAVED_STATE_KMP_KEY)?.let {
+            decodeFromSavedState(
+                deserializer = serializer,
+                savedState = it
+            )
+        }
 
     val state = savedState ?: initialState
 

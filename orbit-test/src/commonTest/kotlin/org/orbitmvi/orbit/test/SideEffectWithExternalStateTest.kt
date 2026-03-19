@@ -120,7 +120,10 @@ class SideEffectWithExternalStateTest {
     }
 
     private inner class SideEffectTestMiddleware(scope: TestScope) : OrbitContainerHost<InternalState, ExternalState, Int> {
-        override val container: OrbitContainer<InternalState, ExternalState, Int> = scope.backgroundScope.container(initialState, ::transformState)
+        override val container: OrbitContainer<InternalState, ExternalState, Int> = scope.backgroundScope.container(
+            initialState,
+            ::transformState
+        )
         private fun transformState(internalState: InternalState) = ExternalState(internalState.count.toString())
 
         fun newState(count: Int) = intent {

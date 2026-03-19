@@ -187,9 +187,10 @@ internal class InitWithExternalStateTest {
 
     private inner class GeneralTestMiddleware(coroutineScope: CoroutineScope, val dependency: BogusDependency) :
         OrbitContainerHost<InternalState, ExternalState, Nothing> {
-        override val container: OrbitContainer<InternalState, ExternalState, Nothing> = coroutineScope.container(initialState, ::transformState, onCreate = {
-            created()
-        })
+        override val container: OrbitContainer<InternalState, ExternalState, Nothing> =
+            coroutineScope.container(initialState, ::transformState, onCreate = {
+                created()
+            })
 
         private fun transformState(internalState: InternalState) = ExternalState(internalState.count.toString())
 

@@ -24,7 +24,7 @@ import app.cash.turbine.test
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.runTest
-import org.orbitmvi.orbit.Container
+import org.orbitmvi.orbit.OrbitContainer
 import org.orbitmvi.orbit.container
 import kotlin.random.Random
 import kotlin.test.Test
@@ -109,7 +109,7 @@ internal class ContainerThreadingTest {
 
     private data class TestState(val ids: List<Int> = emptyList())
 
-    private suspend fun Container<TestState, Nothing>.one(delay: Boolean = false) = orbit {
+    private suspend fun OrbitContainer<TestState, TestState, Nothing>.one(delay: Boolean = false) = orbit {
         if (delay) {
             delay(Random.nextLong(20))
         }
@@ -118,7 +118,7 @@ internal class ContainerThreadingTest {
         }
     }
 
-    private suspend fun Container<TestState, Nothing>.two(delay: Boolean = false) = orbit {
+    private suspend fun OrbitContainer<TestState, TestState, Nothing>.two(delay: Boolean = false) = orbit {
         if (delay) {
             delay(Random.nextLong(20))
         }
@@ -127,7 +127,7 @@ internal class ContainerThreadingTest {
         }
     }
 
-    private suspend fun Container<TestState, Nothing>.three(delay: Boolean = false) = orbit {
+    private suspend fun OrbitContainer<TestState, TestState, Nothing>.three(delay: Boolean = false) = orbit {
         if (delay) {
             delay(Random.nextLong(20))
         }

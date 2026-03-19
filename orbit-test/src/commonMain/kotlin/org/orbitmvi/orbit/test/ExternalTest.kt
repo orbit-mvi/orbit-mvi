@@ -9,8 +9,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
-import org.orbitmvi.orbit.Container
-import org.orbitmvi.orbit.ContainerHost
+import org.orbitmvi.orbit.OrbitContainer
 import org.orbitmvi.orbit.OrbitContainerHost
 import org.orbitmvi.orbit.RealSettings
 import org.orbitmvi.orbit.test.ItemWithInternalAndExternalState.ExternalStateItem
@@ -21,7 +20,7 @@ import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
 /**
- *  Run tests on your [ContainerHost]. This mode uses a real Orbit container, but the container's [CoroutineDispatcher] is set to the
+ *  Run tests on your [OrbitContainerHost]. This mode uses a real Orbit container, but the container's [CoroutineDispatcher] is set to the
  *  [TestScope]'s background dispatcher.
  *
  *  Typically this is the scope defined by kotlin's [runTest], but you are free to provide your own [TestScope].
@@ -29,7 +28,7 @@ import kotlin.time.Duration.Companion.seconds
  *
  *  During a test, all of the emitted states and side effects must be consumed - otherwise the test fails. See [OrbitTestContext].
  *
- * @param testScope The scope in which the [Container] will run.
+ * @param testScope The scope in which the [OrbitContainer] will run.
  * @param initialState The state to initialize the test container with. Omit this parameter to use the real initial state of the container.
  * @param settings Use this to set overrides for some of the container's [RealSettings] for this test.
  * @param validate Perform your test within this block. See [OrbitTestContext].

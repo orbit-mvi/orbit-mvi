@@ -19,7 +19,7 @@ package org.orbitmvi.orbit.test
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
-import org.orbitmvi.orbit.ContainerHost
+import org.orbitmvi.orbit.OrbitContainerHost
 import org.orbitmvi.orbit.container
 import kotlin.concurrent.atomics.AtomicBoolean
 import kotlin.random.Random
@@ -83,7 +83,7 @@ internal class InitTest {
     }
 
     private inner class GeneralTestMiddleware(coroutineScope: CoroutineScope, val dependency: BogusDependency) :
-        ContainerHost<State, Nothing> {
+        OrbitContainerHost<State, State, Nothing> {
         override val container = coroutineScope.container<State, Nothing>(initialState) {
             created()
         }

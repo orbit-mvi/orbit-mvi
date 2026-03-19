@@ -22,7 +22,7 @@ package org.orbitmvi.orbit.sample.posts.app.features.postlist.viewmodel
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import org.orbitmvi.orbit.ContainerHost
+import org.orbitmvi.orbit.OrbitContainerHost
 import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.sample.posts.app.common.NavigationEvent
 import org.orbitmvi.orbit.sample.posts.domain.repositories.PostOverview
@@ -32,7 +32,7 @@ import org.orbitmvi.orbit.viewmodel.container
 class PostListViewModel(
     savedStateHandle: SavedStateHandle,
     private val postRepository: PostRepository
-) : ViewModel(), ContainerHost<PostListState, NavigationEvent> {
+) : ViewModel(), OrbitContainerHost<PostListState, PostListState, NavigationEvent> {
 
     override val container = container<PostListState, NavigationEvent>(
         initialState = PostListState(),

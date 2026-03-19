@@ -19,8 +19,8 @@ package org.orbitmvi.orbit.sample.posts.compose.multiplatform.domain.viewmodel.l
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.Job
-import org.orbitmvi.orbit.Container
-import org.orbitmvi.orbit.ContainerHost
+import org.orbitmvi.orbit.OrbitContainer
+import org.orbitmvi.orbit.OrbitContainerHost
 import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.sample.posts.compose.multiplatform.domain.repositories.PostOverview
 import org.orbitmvi.orbit.sample.posts.compose.multiplatform.domain.repositories.PostRepository
@@ -30,9 +30,9 @@ import org.orbitmvi.orbit.viewmodel.container
 public class PostListViewModel(
     savedStateHandle: SavedStateHandle,
     private val postRepository: PostRepository
-) : ViewModel(), ContainerHost<PostListState, NavigationEvent> {
+) : ViewModel(), OrbitContainerHost<PostListState, PostListState, NavigationEvent> {
 
-    override val container: Container<PostListState, NavigationEvent> = container(
+    override val container: OrbitContainer<PostListState, PostListState, NavigationEvent> = container(
         initialState = PostListState.Loading,
         savedStateHandle = savedStateHandle,
         serializer = PostListState.serializer()

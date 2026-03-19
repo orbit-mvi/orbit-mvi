@@ -33,14 +33,14 @@ import org.orbitmvi.orbit.syntax.Syntax
  * @param buildSettings This builder can be used to change the container's settings.
  * @param onCreate The lambda to execute when the container is created. By default it is
  * executed in a lazy manner when the container is first interacted with in any way.
- * @return A [Container] implementation
+ * @return An [OrbitContainer] implementation
  */
 public fun <STATE : Any, SIDE_EFFECT : Any> CoroutineScope.container(
     initialState: STATE,
     buildSettings: SettingsBuilder.() -> Unit = {},
     onCreate: (suspend Syntax<STATE, SIDE_EFFECT>.() -> Unit)? = null
-): Container<STATE, SIDE_EFFECT> {
-    return containerInternal(
+): OrbitContainer<STATE, STATE, SIDE_EFFECT> {
+    return container(
         initialState = initialState,
         transformState = { it },
         buildSettings = buildSettings,
@@ -59,20 +59,6 @@ public fun <STATE : Any, SIDE_EFFECT : Any> CoroutineScope.container(
  * @return An [OrbitContainer] implementation
  */
 public fun <INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : Any> CoroutineScope.container(
-    initialState: INTERNAL_STATE,
-    transformState: (INTERNAL_STATE) -> EXTERNAL_STATE,
-    buildSettings: SettingsBuilder.() -> Unit = {},
-    onCreate: (suspend Syntax<INTERNAL_STATE, SIDE_EFFECT>.() -> Unit)? = null
-): OrbitContainer<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT> {
-    return containerInternal(
-        initialState = initialState,
-        transformState = transformState,
-        buildSettings = buildSettings,
-        onCreate = onCreate
-    )
-}
-
-private fun <INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : Any> CoroutineScope.containerInternal(
     initialState: INTERNAL_STATE,
     transformState: (INTERNAL_STATE) -> EXTERNAL_STATE,
     buildSettings: SettingsBuilder.() -> Unit = {},

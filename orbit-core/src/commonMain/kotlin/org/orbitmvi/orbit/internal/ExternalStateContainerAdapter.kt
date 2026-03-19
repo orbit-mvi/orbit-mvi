@@ -20,20 +20,19 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
-import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.OrbitContainer
 import org.orbitmvi.orbit.RealSettings
 import org.orbitmvi.orbit.annotation.OrbitInternal
 import org.orbitmvi.orbit.syntax.ContainerContext
 
 /**
- * Adapts a [Container] (where internal state = external state) to an [OrbitContainer]
+ * Adapts an [OrbitContainer] (where internal state = external state) to an [OrbitContainer]
  * with a different external state type. Used for backwards compatibility with the deprecated
  * [org.orbitmvi.orbit.withExternalState] extension function.
  */
 @OrbitInternal
 public class ExternalStateContainerAdapter<INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : Any>(
-    public val delegate: Container<INTERNAL_STATE, SIDE_EFFECT>,
+    public val delegate: OrbitContainer<INTERNAL_STATE, INTERNAL_STATE, SIDE_EFFECT>,
     private val externalTransformState: (INTERNAL_STATE) -> EXTERNAL_STATE
 ) : OrbitContainer<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT> {
 

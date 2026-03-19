@@ -18,7 +18,6 @@ package org.orbitmvi.orbit.test
 
 import app.cash.turbine.ReceiveTurbine
 import kotlinx.coroutines.Job
-import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.OrbitContainerHost
 import org.orbitmvi.orbit.annotation.OrbitInternal
 import kotlin.test.assertEquals
@@ -36,7 +35,7 @@ public abstract class OrbitScopedTestContextBase<
 ) {
 
     /**
-     * Invoke `onCreate` lambda for the [ContainerHost].
+     * Invoke `onCreate` lambda for the [OrbitContainerHost].
      */
     public fun runOnCreate(): Job {
         @OptIn(OrbitInternal::class)

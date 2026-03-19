@@ -24,7 +24,7 @@ import app.cash.turbine.test
 import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.runTest
-import org.orbitmvi.orbit.Container
+import org.orbitmvi.orbit.OrbitContainer
 import org.orbitmvi.orbit.container
 import kotlin.random.Random
 import kotlin.test.Test
@@ -122,7 +122,7 @@ internal class SideEffectTest {
         }
     }
 
-    private suspend fun Container<Unit, Int>.someFlow(action: Int) = orbit {
+    private suspend fun OrbitContainer<Unit, Unit, Int>.someFlow(action: Int) = orbit {
         postSideEffect(action)
     }
 }

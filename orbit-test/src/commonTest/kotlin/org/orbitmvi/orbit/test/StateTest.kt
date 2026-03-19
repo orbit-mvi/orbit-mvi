@@ -18,7 +18,7 @@ package org.orbitmvi.orbit.test
 
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
-import org.orbitmvi.orbit.ContainerHost
+import org.orbitmvi.orbit.OrbitContainerHost
 import org.orbitmvi.orbit.container
 import kotlin.random.Random
 import kotlin.test.Test
@@ -252,7 +252,7 @@ class StateTest {
     }
 
     private inner class StateTestMiddleware(scope: TestScope) :
-        ContainerHost<State, Int> {
+        OrbitContainerHost<State, State, Int> {
         override val container = scope.backgroundScope.container<State, Int>(initialState)
 
         fun newCount(action: Int) = intent {

@@ -24,7 +24,7 @@ import androidx.savedstate.serialization.encodeToSavedState
 import app.cash.turbine.test
 import kotlinx.coroutines.test.runTest
 import kotlinx.serialization.Serializable
-import org.orbitmvi.orbit.ContainerHost
+import org.orbitmvi.orbit.OrbitContainerHost
 import org.orbitmvi.orbit.syntax.Syntax
 import org.orbitmvi.orbit.test.test
 import kotlin.random.Random
@@ -122,7 +122,7 @@ class ViewModelExtensionsKtKmpTest : RobolectricTest() {
         savedStateHandle: SavedStateHandle,
         initialState: TestState,
         onCreate: (suspend Syntax<TestState, Int>.() -> Unit)? = null
-    ) : ContainerHost<TestState, Int>, ViewModel() {
+    ) : OrbitContainerHost<TestState, TestState, Int>, ViewModel() {
         override val container = container(
             initialState = initialState,
             savedStateHandle = savedStateHandle,

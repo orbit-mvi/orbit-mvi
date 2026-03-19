@@ -14,14 +14,12 @@
  * limitations under the License.
  */
 
-@file:Suppress("DEPRECATION")
-
 package org.orbitmvi.orbit
 
 import org.orbitmvi.orbit.internal.ExternalStateContainerAdapter
 
 /**
- * Wraps a [Container] with an external state transformation.
+ * Wraps an [OrbitContainer] with an external state transformation.
  *
  * @param transformState The function that transforms the internal state to the external state.
  * @return An [OrbitContainer] with the external state transformation applied.
@@ -30,9 +28,10 @@ import org.orbitmvi.orbit.internal.ExternalStateContainerAdapter
     "Use the scope.container(initialState, transformState) factory function instead",
     ReplaceWith("scope.container(initialState, transformState)")
 )
-public fun <INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : Any> Container<INTERNAL_STATE, SIDE_EFFECT>.withExternalState(
-    transformState: (INTERNAL_STATE) -> EXTERNAL_STATE
-): OrbitContainer<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT> {
+public fun <INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : Any>
+    OrbitContainer<INTERNAL_STATE, INTERNAL_STATE, SIDE_EFFECT>.withExternalState(
+        transformState: (INTERNAL_STATE) -> EXTERNAL_STATE
+    ): OrbitContainer<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT> {
     return ExternalStateContainerAdapter(
         delegate = this,
         externalTransformState = transformState

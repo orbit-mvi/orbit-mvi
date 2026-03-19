@@ -27,7 +27,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.runTest
-import org.orbitmvi.orbit.ContainerHost
+import org.orbitmvi.orbit.OrbitContainerHost
 import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.container
 import org.orbitmvi.orbit.test.test
@@ -69,7 +69,7 @@ internal class SubIntentTest {
         initialState: TestState,
         private val flow1: Flow<String>,
         private val flow2: Flow<String>
-    ) : ContainerHost<TestState, String> {
+    ) : OrbitContainerHost<TestState, TestState, String> {
         override val container = scope.container<TestState, String>(initialState) {
             coroutineScope {
                 launch {

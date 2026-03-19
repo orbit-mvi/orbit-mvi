@@ -59,7 +59,10 @@ public class RealContainer<INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFE
 ) : OrbitContainer<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT> {
     override val scope: CoroutineScope = parentScope + settings.eventLoopDispatcher
     private val intentJob = Job(scope.coroutineContext[Job])
-    private val dispatchChannel = Channel<Pair<CompletableJob, suspend ContainerContext<INTERNAL_STATE, SIDE_EFFECT>.() -> Unit>>(Channel.UNLIMITED)
+    private val dispatchChannel =
+        Channel<Pair<CompletableJob, suspend ContainerContext<INTERNAL_STATE, SIDE_EFFECT>.() -> Unit>>(
+            Channel.UNLIMITED
+        )
     private val initialised = AtomicBoolean(false)
     private val subscribedCounter = subscribedCounterOverride ?: DelayingSubscribedCounter(scope, settings.repeatOnSubscribedStopTimeout)
     private val internalStateFlow = MutableStateFlow(initialState)

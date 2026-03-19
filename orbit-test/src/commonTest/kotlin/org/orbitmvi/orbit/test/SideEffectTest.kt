@@ -18,7 +18,7 @@ package org.orbitmvi.orbit.test
 
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
-import org.orbitmvi.orbit.ContainerHost
+import org.orbitmvi.orbit.OrbitContainerHost
 import org.orbitmvi.orbit.container
 import kotlin.random.Random
 import kotlin.test.Test
@@ -101,7 +101,7 @@ class SideEffectTest {
         }
     }
 
-    private inner class SideEffectTestMiddleware(scope: TestScope) : ContainerHost<State, Int> {
+    private inner class SideEffectTestMiddleware(scope: TestScope) : OrbitContainerHost<State, State, Int> {
         override val container = scope.backgroundScope.container<State, Int>(initialState)
 
         fun newState(count: Int) = intent {

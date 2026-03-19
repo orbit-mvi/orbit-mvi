@@ -37,10 +37,11 @@ import org.orbitmvi.orbit.syntax.Syntax
  * @param lifecycleState [Lifecycle.State] in which side effects are collected.
  */
 @Composable
-public fun <INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : Any> OrbitContainerHost<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>.collectSideEffect(
-    lifecycleState: Lifecycle.State = Lifecycle.State.STARTED,
-    sideEffect: (suspend (sideEffect: SIDE_EFFECT) -> Unit)
-) {
+public fun <INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : Any>
+    OrbitContainerHost<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>.collectSideEffect(
+        lifecycleState: Lifecycle.State = Lifecycle.State.STARTED,
+        sideEffect: (suspend (sideEffect: SIDE_EFFECT) -> Unit)
+    ) {
     val sideEffectFlow = container.refCountSideEffectFlow
     val lifecycleOwner = LocalLifecycleOwner.current
 
@@ -60,8 +61,9 @@ public fun <INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : Any> Orbit
  * Active subscriptions from this operator count towards [Syntax.repeatOnSubscription] subscribers.
  */
 @Composable
-public fun <INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : Any> OrbitContainerHost<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>.collectAsState(
-    lifecycleState: Lifecycle.State = Lifecycle.State.STARTED
-): State<EXTERNAL_STATE> {
+public fun <INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : Any>
+    OrbitContainerHost<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>.collectAsState(
+        lifecycleState: Lifecycle.State = Lifecycle.State.STARTED
+    ): State<EXTERNAL_STATE> {
     return container.externalRefCountStateFlow.collectAsStateWithLifecycle(minActiveState = lifecycleState)
 }

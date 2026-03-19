@@ -18,7 +18,7 @@ package org.orbitmvi.orbit.test
 
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
-import org.orbitmvi.orbit.ContainerHost
+import org.orbitmvi.orbit.OrbitContainerHost
 import org.orbitmvi.orbit.container
 import kotlin.random.Random
 import kotlin.test.Test
@@ -36,7 +36,7 @@ class RepeatOnSubscriptionTest {
         }
     }
 
-    private inner class TestMiddleware(scope: TestScope) : ContainerHost<State, Nothing> {
+    private inner class TestMiddleware(scope: TestScope) : OrbitContainerHost<State, State, Nothing> {
         override val container = scope.backgroundScope.container<State, Nothing>(initialState)
 
         fun callOnSubscription(externalCall: suspend () -> Int) = intent {

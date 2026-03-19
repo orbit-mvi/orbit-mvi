@@ -117,7 +117,8 @@ public interface OrbitContainer<INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE
     public fun orbit(orbitIntent: suspend ContainerContext<INTERNAL_STATE, SIDE_EFFECT>.() -> Unit): Job
 
     /**
-     * Executes an orbit intent inline, circumventing orbit's dispatching. The intents are built in the [OrbitContainerHost] using your chosen syntax.
+     * Executes an orbit intent inline, circumventing orbit's dispatching.
+     * The intents are built in the [OrbitContainerHost] using your chosen syntax.
      *
      * @param orbitIntent lambda returning the suspend function representing the intent
      */
@@ -137,6 +138,10 @@ public interface OrbitContainer<INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE
 /**
  * An [OrbitContainer] where the internal state and external state are the same type.
  */
+@Deprecated(
+    "Use OrbitContainer directly",
+    ReplaceWith("OrbitContainer<STATE, STATE, SIDE_EFFECT>", "org.orbitmvi.orbit.OrbitContainer")
+)
 public typealias Container<STATE, SIDE_EFFECT> = OrbitContainer<STATE, STATE, SIDE_EFFECT>
 
 /**

@@ -24,24 +24,26 @@ import org.orbitmvi.orbit.internal.LazyCreateContainerDecorator
 import org.orbitmvi.orbit.internal.TestContainerDecorator
 import org.orbitmvi.orbit.syntax.ContainerContext
 
+@Suppress("DEPRECATION")
 @OptIn(OrbitInternal::class)
 internal fun <INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : Any>
     OrbitContainer<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>.findOnCreate():
     suspend ContainerContext<INTERNAL_STATE, SIDE_EFFECT>.() -> Unit {
     return (this as? LazyCreateContainerDecorator<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>)?.onCreate
         ?: (this as? OrbitContainerDecorator<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>)?.actual?.findOnCreate()
-        ?: @Suppress("DEPRECATION") (this as? ExternalStateContainerAdapter<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>)?.delegate?.findOnCreate()
+        ?: (this as? ExternalStateContainerAdapter<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>)?.delegate?.findOnCreate()
         ?: {}
 }
 
+@Suppress("DEPRECATION", "UNCHECKED_CAST")
 @OptIn(OrbitInternal::class)
-@Suppress("UNCHECKED_CAST")
 internal fun <INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : Any>
     OrbitContainer<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>.findTestContainer():
     TestContainerDecorator<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT> {
     return (this as? TestContainerDecorator<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>)
         ?: (this as? OrbitContainerDecorator<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>)?.actual?.findTestContainer()
-        ?: @Suppress("DEPRECATION") (this as? ExternalStateContainerAdapter<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>)
-            ?.delegate?.findTestContainer() as? TestContainerDecorator<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>
+        ?: (this as? ExternalStateContainerAdapter<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>)
+            ?.delegate?.findTestContainer()
+            as? TestContainerDecorator<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>
         ?: error("No TestContainerDecorator found!")
 }

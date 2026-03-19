@@ -22,14 +22,14 @@ package org.orbitmvi.orbit.sample.stocklist.list.business
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import org.orbitmvi.orbit.ContainerHost
+import org.orbitmvi.orbit.OrbitContainerHost
 import org.orbitmvi.orbit.sample.stocklist.streaming.stock.StockRepository
 import org.orbitmvi.orbit.viewmodel.container
 
 class ListViewModel(
     savedStateHandle: SavedStateHandle,
     private val stockRepository: StockRepository
-) : ViewModel(), ContainerHost<ListState, ListSideEffect> {
+) : ViewModel(), OrbitContainerHost<ListState, ListState, ListSideEffect> {
 
     override val container = container<ListState, ListSideEffect>(ListState(), savedStateHandle) { requestStocks() }
 

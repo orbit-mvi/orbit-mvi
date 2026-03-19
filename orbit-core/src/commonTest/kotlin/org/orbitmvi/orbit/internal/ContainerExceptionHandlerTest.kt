@@ -32,7 +32,7 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
-import org.orbitmvi.orbit.ContainerHost
+import org.orbitmvi.orbit.OrbitContainerHost
 import org.orbitmvi.orbit.container
 import org.orbitmvi.orbit.test.test
 import kotlin.random.Random
@@ -151,7 +151,7 @@ internal class ContainerExceptionHandlerTest {
     private inner class ExceptionTestMiddleware(
         scope: TestScope,
         exceptionHandler: CoroutineExceptionHandler? = null
-    ) : ContainerHost<Int, Nothing> {
+    ) : OrbitContainerHost<Int, Int, Nothing> {
         val initState = Random.nextInt()
         override val container = scope.backgroundScope.container<Int, Nothing>(
             initialState = initState,

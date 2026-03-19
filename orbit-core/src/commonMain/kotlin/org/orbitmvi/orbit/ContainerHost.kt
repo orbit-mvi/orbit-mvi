@@ -115,6 +115,10 @@ public interface OrbitContainerHost<INTERNAL_STATE : Any, EXTERNAL_STATE : Any, 
 /**
  * An [OrbitContainerHost] where the internal state and external state are the same type.
  */
+@Deprecated(
+    "Use OrbitContainerHost directly",
+    ReplaceWith("OrbitContainerHost<STATE, STATE, SIDE_EFFECT>", "org.orbitmvi.orbit.OrbitContainerHost")
+)
 public typealias ContainerHost<STATE, SIDE_EFFECT> = OrbitContainerHost<STATE, STATE, SIDE_EFFECT>
 
 /**
