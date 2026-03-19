@@ -50,10 +50,11 @@ class ContainerHostExtensionsKtTest : RobolectricTest() {
     private val scope by lazy { CoroutineScope(Job()) }
 
     private val containerHost = object : ContainerHost<Int, Int> {
-        override val container = RealContainer<Int, Int>(
+        override val container = RealContainer<Int, Int, Int>(
             initialState = Random.nextInt(),
             parentScope = scope,
             settings = RealSettings(),
+            transformState = { it },
             subscribedCounterOverride = testSubscribedCounter
         )
     }

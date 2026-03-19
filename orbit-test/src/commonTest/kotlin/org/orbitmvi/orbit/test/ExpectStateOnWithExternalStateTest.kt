@@ -18,9 +18,9 @@ package org.orbitmvi.orbit.test
 
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
-import org.orbitmvi.orbit.ContainerHostWithExternalState
+import org.orbitmvi.orbit.OrbitContainer
+import org.orbitmvi.orbit.OrbitContainerHost
 import org.orbitmvi.orbit.container
-import org.orbitmvi.orbit.withExternalState
 import kotlin.random.Random
 import kotlin.test.Test
 import kotlin.test.assertFailsWith
@@ -413,8 +413,8 @@ class ExpectStateOnWithExternalStateTest {
         }
     }
 
-    private inner class StateTestMiddleware(scope: TestScope) : ContainerHostWithExternalState<InternalState, ExternalState, Int> {
-        override val container = scope.backgroundScope.container<InternalState, Int>(initialState).withExternalState(::transformState)
+    private inner class StateTestMiddleware(scope: TestScope) : OrbitContainerHost<InternalState, ExternalState, Int> {
+        override val container: OrbitContainer<InternalState, ExternalState, Int> = scope.backgroundScope.container(initialState, ::transformState)
 
         private fun transformState(internalState: InternalState): ExternalState {
             return when (internalState) {

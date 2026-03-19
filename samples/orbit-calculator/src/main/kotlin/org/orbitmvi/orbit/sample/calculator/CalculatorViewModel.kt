@@ -25,20 +25,20 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.parcelize.Parcelize
-import org.orbitmvi.orbit.ContainerHostWithExternalState
+import org.orbitmvi.orbit.OrbitContainer
+import org.orbitmvi.orbit.OrbitContainerHost
 import org.orbitmvi.orbit.sample.calculator.CalculatorViewModel.InternalCalculatorState
 import org.orbitmvi.orbit.viewmodel.container
-import org.orbitmvi.orbit.withExternalState
 import java.math.BigDecimal
 import java.math.RoundingMode
 
 @Suppress("TooManyFunctions")
 class CalculatorViewModel(savedStateHandle: SavedStateHandle) :
     ViewModel(),
-    ContainerHostWithExternalState<InternalCalculatorState, CalculatorState, Nothing> {
+    OrbitContainerHost<InternalCalculatorState, CalculatorState, Nothing> {
 
-    override val container = container<InternalCalculatorState, Nothing>(InternalCalculatorState(), savedStateHandle)
-        .withExternalState(::transformState)
+    override val container: OrbitContainer<InternalCalculatorState, CalculatorState, Nothing> =
+        container(InternalCalculatorState(), savedStateHandle, ::transformState)
 
     private fun transformState(internalState: InternalCalculatorState): CalculatorState {
         return CalculatorState(

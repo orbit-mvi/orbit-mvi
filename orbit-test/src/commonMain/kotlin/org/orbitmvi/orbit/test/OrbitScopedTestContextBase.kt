@@ -19,7 +19,7 @@ package org.orbitmvi.orbit.test
 import app.cash.turbine.ReceiveTurbine
 import kotlinx.coroutines.Job
 import org.orbitmvi.orbit.ContainerHost
-import org.orbitmvi.orbit.ContainerHostWithExternalState
+import org.orbitmvi.orbit.OrbitContainerHost
 import org.orbitmvi.orbit.annotation.OrbitInternal
 import kotlin.test.assertEquals
 import kotlin.test.fail
@@ -28,7 +28,7 @@ public abstract class OrbitScopedTestContextBase<
     INTERNAL_STATE : Any,
     EXTERNAL_STATE : Any,
     SIDE_EFFECT : Any,
-    CONTAINER_HOST : ContainerHostWithExternalState<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>
+    CONTAINER_HOST : OrbitContainerHost<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>
     >(
     public val containerHost: CONTAINER_HOST,
     private val emissions:

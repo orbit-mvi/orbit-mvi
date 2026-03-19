@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-2024 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 2021-2025 Mikołaj Leszczyński & Appmattus Limited
  * Copyright 2020 Babylon Partners Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -40,22 +40,63 @@ public fun <STATE : Any, SIDE_EFFECT : Any> CoroutineScope.container(
     buildSettings: SettingsBuilder.() -> Unit = {},
     onCreate: (suspend Syntax<STATE, SIDE_EFFECT>.() -> Unit)? = null
 ): Container<STATE, SIDE_EFFECT> {
-    val realContainer = RealContainer<STATE, SIDE_EFFECT>(
+    return containerInternal(
+        initialState = initialState,
+        transformState = { it },
+        buildSettings = buildSettings,
+        onCreate = onCreate
+    )
+}
+
+/**
+ * Helps create a concrete container with external state transformation in a standard way.
+ *
+ * @param initialState The initial state of the container.
+ * @param transformState The function that transforms the internal state to the external state.
+ * @param buildSettings This builder can be used to change the container's settings.
+ * @param onCreate The lambda to execute when the container is created. By default it is
+ * executed in a lazy manner when the container is first interacted with in any way.
+ * @return An [OrbitContainer] implementation
+ */
+public fun <INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : Any> CoroutineScope.container(
+    initialState: INTERNAL_STATE,
+    transformState: (INTERNAL_STATE) -> EXTERNAL_STATE,
+    buildSettings: SettingsBuilder.() -> Unit = {},
+    onCreate: (suspend Syntax<INTERNAL_STATE, SIDE_EFFECT>.() -> Unit)? = null
+): OrbitContainer<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT> {
+    return containerInternal(
+        initialState = initialState,
+        transformState = transformState,
+        buildSettings = buildSettings,
+        onCreate = onCreate
+    )
+}
+
+private fun <INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : Any> CoroutineScope.containerInternal(
+    initialState: INTERNAL_STATE,
+    transformState: (INTERNAL_STATE) -> EXTERNAL_STATE,
+    buildSettings: SettingsBuilder.() -> Unit = {},
+    onCreate: (suspend Syntax<INTERNAL_STATE, SIDE_EFFECT>.() -> Unit)? = null
+): OrbitContainer<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT> {
+    val realContainer = RealContainer<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>(
         initialState = initialState,
         settings = SettingsBuilder().apply { buildSettings() }.settings,
-        parentScope = this
+        parentScope = this,
+        transformState = transformState
     )
     return if (onCreate == null) {
         TestContainerDecorator(
             initialState,
-            realContainer
+            realContainer,
+            transformState
         )
     } else {
         TestContainerDecorator(
             initialState,
             LazyCreateContainerDecorator(
                 realContainer
-            ) { Syntax(this).onCreate() }
+            ) { Syntax(this).onCreate() },
+            transformState
         )
     }
 }

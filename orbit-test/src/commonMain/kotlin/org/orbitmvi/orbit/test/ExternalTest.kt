@@ -11,7 +11,7 @@ import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
-import org.orbitmvi.orbit.ContainerHostWithExternalState
+import org.orbitmvi.orbit.OrbitContainerHost
 import org.orbitmvi.orbit.RealSettings
 import org.orbitmvi.orbit.test.ItemWithInternalAndExternalState.ExternalStateItem
 import org.orbitmvi.orbit.test.ItemWithInternalAndExternalState.InternalStateItem
@@ -36,7 +36,7 @@ import kotlin.time.Duration.Companion.seconds
  */
 @OptIn(ExperimentalStdlibApi::class)
 @Suppress("MaxLineLength")
-public suspend fun <INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHostWithExternalState<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>> CONTAINER_HOST.testWithInternalState(
+public suspend fun <INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : OrbitContainerHost<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>> CONTAINER_HOST.testWithInternalState(
     testScope: TestScope,
     initialState: INTERNAL_STATE? = null,
     timeout: Duration? = null,
@@ -98,7 +98,7 @@ public suspend fun <INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : An
 
 @OptIn(ExperimentalStdlibApi::class)
 @Suppress("MaxLineLength")
-public suspend fun <INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHostWithExternalState<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>> CONTAINER_HOST.testWithExternalState(
+public suspend fun <INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : OrbitContainerHost<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>> CONTAINER_HOST.testWithExternalState(
     testScope: TestScope,
     initialState: INTERNAL_STATE? = null,
     timeout: Duration? = null,
@@ -160,7 +160,7 @@ public suspend fun <INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : An
 
 @OptIn(ExperimentalStdlibApi::class)
 @Suppress("MaxLineLength")
-public suspend fun <INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHostWithExternalState<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>> CONTAINER_HOST.testWithInternalAndExternalState(
+public suspend fun <INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : OrbitContainerHost<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>> CONTAINER_HOST.testWithInternalAndExternalState(
     testScope: TestScope,
     initialState: INTERNAL_STATE? = null,
     timeout: Duration? = null,

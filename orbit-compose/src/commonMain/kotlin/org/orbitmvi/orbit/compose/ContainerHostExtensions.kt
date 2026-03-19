@@ -25,19 +25,19 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
-import org.orbitmvi.orbit.Container
-import org.orbitmvi.orbit.ContainerHost
+import org.orbitmvi.orbit.OrbitContainer
+import org.orbitmvi.orbit.OrbitContainerHost
 import org.orbitmvi.orbit.syntax.Syntax
 
 /**
- * Observe [Container.sideEffectFlow] in a Compose [LaunchedEffect].
+ * Observe [OrbitContainer.sideEffectFlow] in a Compose [LaunchedEffect].
  *
  * Active subscriptions from this operator count towards [Syntax.repeatOnSubscription] subscribers.
  *
  * @param lifecycleState [Lifecycle.State] in which side effects are collected.
  */
 @Composable
-public fun <STATE : Any, SIDE_EFFECT : Any> ContainerHost<STATE, SIDE_EFFECT>.collectSideEffect(
+public fun <INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : Any> OrbitContainerHost<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>.collectSideEffect(
     lifecycleState: Lifecycle.State = Lifecycle.State.STARTED,
     sideEffect: (suspend (sideEffect: SIDE_EFFECT) -> Unit)
 ) {
@@ -54,14 +54,14 @@ public fun <STATE : Any, SIDE_EFFECT : Any> ContainerHost<STATE, SIDE_EFFECT>.co
 }
 
 /**
- * Observe [Container.stateFlow] as [State].
+ * Observe [OrbitContainer.externalStateFlow] as [State].
  * @param lifecycleState The minimum lifecycle state at which the state is observed.
  *
  * Active subscriptions from this operator count towards [Syntax.repeatOnSubscription] subscribers.
  */
 @Composable
-public fun <STATE : Any, SIDE_EFFECT : Any> ContainerHost<STATE, SIDE_EFFECT>.collectAsState(
+public fun <INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : Any> OrbitContainerHost<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>.collectAsState(
     lifecycleState: Lifecycle.State = Lifecycle.State.STARTED
-): State<STATE> {
-    return container.refCountStateFlow.collectAsStateWithLifecycle(minActiveState = lifecycleState)
+): State<EXTERNAL_STATE> {
+    return container.externalRefCountStateFlow.collectAsStateWithLifecycle(minActiveState = lifecycleState)
 }

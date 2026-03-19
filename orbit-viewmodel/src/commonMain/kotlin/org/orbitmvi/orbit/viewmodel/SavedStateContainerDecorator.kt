@@ -20,17 +20,17 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.savedstate.serialization.encodeToSavedState
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.serialization.KSerializer
-import org.orbitmvi.orbit.Container
-import org.orbitmvi.orbit.ContainerDecorator
+import org.orbitmvi.orbit.OrbitContainer
+import org.orbitmvi.orbit.OrbitContainerDecorator
 
-internal class SavedStateContainerDecorator<STATE : Any, SIDE_EFFECT : Any>(
-    override val actual: Container<STATE, SIDE_EFFECT>,
+internal class SavedStateContainerDecorator<INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : Any>(
+    override val actual: OrbitContainer<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>,
     private val savedStateHandle: SavedStateHandle,
-    private val serializer: KSerializer<STATE>,
+    private val serializer: KSerializer<INTERNAL_STATE>,
     private val savedStateHandleKey: String
-) : ContainerDecorator<STATE, SIDE_EFFECT> {
+) : OrbitContainerDecorator<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT> {
 
-    override val stateFlow: StateFlow<STATE> by lazy {
+    override val stateFlow: StateFlow<INTERNAL_STATE> by lazy {
         actual.stateFlow.onEach {
             savedStateHandle[savedStateHandleKey] = encodeToSavedState(
                 serializer = serializer,
@@ -39,7 +39,7 @@ internal class SavedStateContainerDecorator<STATE : Any, SIDE_EFFECT : Any>(
         }
     }
 
-    override val refCountStateFlow: StateFlow<STATE> by lazy {
+    override val refCountStateFlow: StateFlow<INTERNAL_STATE> by lazy {
         actual.refCountStateFlow.onEach {
             savedStateHandle[savedStateHandleKey] = encodeToSavedState(
                 serializer = serializer,

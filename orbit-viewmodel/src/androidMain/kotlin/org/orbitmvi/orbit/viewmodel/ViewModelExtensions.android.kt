@@ -24,6 +24,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import org.orbitmvi.orbit.Container
+import org.orbitmvi.orbit.OrbitContainer
 import org.orbitmvi.orbit.SettingsBuilder
 import org.orbitmvi.orbit.container
 import org.orbitmvi.orbit.syntax.Syntax
@@ -55,6 +56,40 @@ public fun <STATE : Parcelable, SIDE_EFFECT : Any> ViewModel.container(
 
     val realContainer: Container<STATE, SIDE_EFFECT> =
         viewModelScope.container(state, buildSettings, onCreate)
+
+    return SavedStateContainerDecoratorParcelable(
+        realContainer,
+        savedStateHandle,
+        SAVED_STATE_KEY
+    )
+}
+
+/**
+ * Creates a container scoped with ViewModelScope with external state transformation and
+ * Android ViewModel's saved state support.
+ *
+ * Provide a [SavedStateHandle] in order for your [Parcelable] state to be automatically saved as
+ * you use the container.
+ *
+ * @param initialState The initial state of the container.
+ * @param savedStateHandle The [SavedStateHandle] corresponding to this host.
+ * @param transformState The function that transforms the internal state to the external state.
+ * @param buildSettings This builder can be used to change the container's settings.
+ * @param onCreate The intent to execute when the container is created
+ * @return An [OrbitContainer] implementation
+ */
+public fun <INTERNAL_STATE : Parcelable, EXTERNAL_STATE : Any, SIDE_EFFECT : Any> ViewModel.container(
+    initialState: INTERNAL_STATE,
+    savedStateHandle: SavedStateHandle,
+    transformState: (INTERNAL_STATE) -> EXTERNAL_STATE,
+    buildSettings: SettingsBuilder.() -> Unit = {},
+    onCreate: (suspend Syntax<INTERNAL_STATE, SIDE_EFFECT>.() -> Unit)? = null
+): OrbitContainer<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT> {
+    val savedState: INTERNAL_STATE? = savedStateHandle[SAVED_STATE_KEY]
+    val state = savedState ?: initialState
+
+    val realContainer: OrbitContainer<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT> =
+        viewModelScope.container(state, transformState, buildSettings, onCreate)
 
     return SavedStateContainerDecoratorParcelable(
         realContainer,
