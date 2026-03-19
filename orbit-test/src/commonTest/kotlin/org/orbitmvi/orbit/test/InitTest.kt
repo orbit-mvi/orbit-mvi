@@ -42,7 +42,11 @@ internal class InitTest {
     @Test
     fun created_is_invoked_upon_request() = runTest {
         val mockDependency = FakeDependency()
-        createMiddleware(mockDependency).testWithInternalState(this, initialState = initialState, settings = TestSettings(autoCheckInitialState = false)) {
+        createMiddleware(mockDependency).testWithInternalState(
+            this,
+            initialState = initialState,
+            settings = TestSettings(autoCheckInitialState = false)
+        ) {
             expectInternalState { initialState }
             runOnCreate()
         }
