@@ -6,7 +6,7 @@
 // - Show manifest properties: true
 // - Show declarations: true
 
-// Library unique name: <singapore:orbit-core>
+// Library unique name: <orbit-mvi:orbit-core>
 open annotation class org.orbitmvi.orbit.annotation/OrbitDsl : kotlin/Annotation { // org.orbitmvi.orbit.annotation/OrbitDsl|null[0]
     constructor <init>() // org.orbitmvi.orbit.annotation/OrbitDsl.<init>|<init>(){}[0]
 }
