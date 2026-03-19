@@ -46,6 +46,13 @@ import kotlin.time.Duration.Companion.seconds
  * @param settings Use this to set overrides for some of the container's [RealSettings] for this test.
  * @param validate Perform your test within this block. See [OrbitTestContext].
  */
+@Deprecated(
+    message = "Use testWithInternalState instead",
+    replaceWith = ReplaceWith(
+        "testWithInternalState(testScope, initialState, timeout, settings, validate)",
+        "org.orbitmvi.orbit.test.testWithInternalState"
+    )
+)
 @OptIn(ExperimentalStdlibApi::class)
 public suspend fun <STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : OrbitContainerHost<STATE, STATE, SIDE_EFFECT>> CONTAINER_HOST.test(
     testScope: TestScope,

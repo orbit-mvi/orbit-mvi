@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("DEPRECATION")
+
 package org.orbitmvi.orbit.internal
 
 import app.cash.turbine.test

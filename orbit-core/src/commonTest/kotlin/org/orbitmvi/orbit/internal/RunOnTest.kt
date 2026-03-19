@@ -17,6 +17,8 @@
  * See: https://github.com/orbit-mvi/orbit-mvi/compare/c5b8b3f2b83b5972ba2ad98f73f75086a89653d3...main
  */
 
+@file:Suppress("DEPRECATION")
+
 package org.orbitmvi.orbit.internal
 
 import kotlinx.coroutines.CoroutineScope

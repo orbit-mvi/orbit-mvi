@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("DEPRECATION")
+
 package org.orbitmvi.orbit.sample.posts.compose.multiplatform.domain.viewmodel.detail
 
 import androidx.lifecycle.SavedStateHandle
