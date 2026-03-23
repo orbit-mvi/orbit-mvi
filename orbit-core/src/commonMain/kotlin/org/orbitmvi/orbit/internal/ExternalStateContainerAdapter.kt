@@ -38,7 +38,6 @@ public class ExternalStateContainerAdapter<INTERNAL_STATE : Any, EXTERNAL_STATE 
 
     override val scope: CoroutineScope get() = delegate.scope
     override val settings: RealSettings get() = delegate.settings
-    override val transformState: (INTERNAL_STATE) -> EXTERNAL_STATE get() = externalTransformState
 
     override val stateFlow: StateFlow<INTERNAL_STATE> get() = delegate.stateFlow
     override val refCountStateFlow: StateFlow<INTERNAL_STATE> get() = delegate.refCountStateFlow

@@ -47,9 +47,6 @@ public interface OrbitContainerDecorator<INTERNAL_STATE : Any, EXTERNAL_STATE : 
     override val settings: RealSettings
         get() = actual.settings
 
-    override val transformState: (INTERNAL_STATE) -> EXTERNAL_STATE
-        get() = actual.transformState
-
     override val stateFlow: StateFlow<INTERNAL_STATE>
         get() = actual.stateFlow
     override val refCountStateFlow: StateFlow<INTERNAL_STATE>

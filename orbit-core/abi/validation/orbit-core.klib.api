@@ -36,8 +36,6 @@ abstract interface <#A: kotlin/Any, #B: kotlin/Any, #C: kotlin/Any> org.orbitmvi
         abstract fun <get-sideEffectFlow>(): kotlinx.coroutines.flow/Flow<#C> // org.orbitmvi.orbit/OrbitContainer.sideEffectFlow.<get-sideEffectFlow>|<get-sideEffectFlow>(){}[0]
     abstract val stateFlow // org.orbitmvi.orbit/OrbitContainer.stateFlow|{}stateFlow[0]
         abstract fun <get-stateFlow>(): kotlinx.coroutines.flow/StateFlow<#A> // org.orbitmvi.orbit/OrbitContainer.stateFlow.<get-stateFlow>|<get-stateFlow>(){}[0]
-    abstract val transformState // org.orbitmvi.orbit/OrbitContainer.transformState|{}transformState[0]
-        abstract fun <get-transformState>(): kotlin/Function1<#A, #B> // org.orbitmvi.orbit/OrbitContainer.transformState.<get-transformState>|<get-transformState>(){}[0]
 
     abstract fun cancel() // org.orbitmvi.orbit/OrbitContainer.cancel|cancel(){}[0]
     abstract fun orbit(kotlin.coroutines/SuspendFunction1<org.orbitmvi.orbit.syntax/ContainerContext<#A, #C>, kotlin/Unit>): kotlinx.coroutines/Job // org.orbitmvi.orbit/OrbitContainer.orbit|orbit(kotlin.coroutines.SuspendFunction1<org.orbitmvi.orbit.syntax.ContainerContext<1:0,1:2>,kotlin.Unit>){}[0]
@@ -64,8 +62,6 @@ abstract interface <#A: kotlin/Any, #B: kotlin/Any, #C: kotlin/Any> org.orbitmvi
         open fun <get-sideEffectFlow>(): kotlinx.coroutines.flow/Flow<#C> // org.orbitmvi.orbit/OrbitContainerDecorator.sideEffectFlow.<get-sideEffectFlow>|<get-sideEffectFlow>(){}[0]
     open val stateFlow // org.orbitmvi.orbit/OrbitContainerDecorator.stateFlow|{}stateFlow[0]
         open fun <get-stateFlow>(): kotlinx.coroutines.flow/StateFlow<#A> // org.orbitmvi.orbit/OrbitContainerDecorator.stateFlow.<get-stateFlow>|<get-stateFlow>(){}[0]
-    open val transformState // org.orbitmvi.orbit/OrbitContainerDecorator.transformState|{}transformState[0]
-        open fun <get-transformState>(): kotlin/Function1<#A, #B> // org.orbitmvi.orbit/OrbitContainerDecorator.transformState.<get-transformState>|<get-transformState>(){}[0]
 
     open fun cancel() // org.orbitmvi.orbit/OrbitContainerDecorator.cancel|cancel(){}[0]
     open fun orbit(kotlin.coroutines/SuspendFunction1<org.orbitmvi.orbit.syntax/ContainerContext<#A, #C>, kotlin/Unit>): kotlinx.coroutines/Job // org.orbitmvi.orbit/OrbitContainerDecorator.orbit|orbit(kotlin.coroutines.SuspendFunction1<org.orbitmvi.orbit.syntax.ContainerContext<1:0,1:2>,kotlin.Unit>){}[0]

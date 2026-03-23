@@ -47,11 +47,6 @@ public interface OrbitContainer<INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE
     public val settings: RealSettings
 
     /**
-     * The function that transforms the internal state to the external state.
-     */
-    public val transformState: (INTERNAL_STATE) -> EXTERNAL_STATE
-
-    /**
      * A [StateFlow] of internal state updates. Emits the latest state upon subscription and serves only distinct
      * values (through equality comparison).
      */

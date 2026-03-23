@@ -29,7 +29,7 @@ import kotlin.concurrent.atomics.AtomicReference
 public class TestContainerDecorator<INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : Any>(
     public val originalInitialState: INTERNAL_STATE,
     override val actual: OrbitContainer<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>,
-    private val originalTransformState: (INTERNAL_STATE) -> EXTERNAL_STATE
+    public val originalTransformState: (INTERNAL_STATE) -> EXTERNAL_STATE
 ) : OrbitContainerDecorator<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT> {
 
     private val delegate = AtomicReference(actual)

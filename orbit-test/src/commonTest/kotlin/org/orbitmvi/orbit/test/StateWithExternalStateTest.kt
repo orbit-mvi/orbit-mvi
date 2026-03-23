@@ -42,7 +42,7 @@ class StateWithExternalStateTest {
     @Test
     fun external_succeeds_if_initial_state_matches_expected_state_with_expectState() = runTest {
         StateTestMiddleware(this).testWithExternalState(this, settings = TestSettings(autoCheckInitialState = false)) {
-            expectExternalState { containerHost.container.transformState(initialState) }
+            expectExternalState { containerHost.container.findTestContainer().originalTransformState(initialState) }
         }
     }
 
@@ -53,7 +53,7 @@ class StateWithExternalStateTest {
             settings = TestSettings(autoCheckInitialState = false)
         ) {
             expectInternalState { initialState }
-            expectExternalState { containerHost.container.transformState(initialState) }
+            expectExternalState { containerHost.container.findTestContainer().originalTransformState(initialState) }
         }
     }
 
@@ -76,7 +76,7 @@ class StateWithExternalStateTest {
 
         assertFailsWith<AssertionError> {
             StateTestMiddleware(this).testWithExternalState(this, settings = TestSettings(autoCheckInitialState = false)) {
-                assertEquals(containerHost.container.transformState(someRandomState), awaitExternalState())
+                assertEquals(containerHost.container.findTestContainer().originalTransformState(someRandomState), awaitExternalState())
             }
         }.also {
             assertTrue { it.message?.startsWith(prefix = "expected", ignoreCase = true) == true }
@@ -109,7 +109,7 @@ class StateWithExternalStateTest {
                 settings = TestSettings(autoCheckInitialState = false)
             ) {
                 assertEquals(initialState, awaitInternalState())
-                assertEquals(containerHost.container.transformState(someRandomState), awaitExternalState())
+                assertEquals(containerHost.container.findTestContainer().originalTransformState(someRandomState), awaitExternalState())
             }
         }.also {
             assertTrue { it.message?.startsWith(prefix = "expected", ignoreCase = true) == true }

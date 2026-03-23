@@ -146,7 +146,7 @@ public suspend fun <INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : An
             this as ReceiveTurbine<ItemWithInternalAndExternalState<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>>,
         ).apply {
             if (settings.autoCheckInitialState) {
-                assertEquals(container.transformState(resolvedInitialState), awaitExternalState())
+                assertEquals(container.findTestContainer().originalTransformState(resolvedInitialState), awaitExternalState())
             }
             validate(this)
             caughtException?.let { throw it }
@@ -214,7 +214,7 @@ public suspend fun <INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : An
         ).apply {
             if (settings.autoCheckInitialState) {
                 assertEquals(resolvedInitialState, awaitInternalState())
-                assertEquals(container.transformState(resolvedInitialState), awaitExternalState())
+                assertEquals(container.findTestContainer().originalTransformState(resolvedInitialState), awaitExternalState())
             }
             validate(this)
             caughtException?.let { throw it }
