@@ -80,19 +80,19 @@ sealed class CalculatorSideEffect {
 ### Create the ViewModel
 
 1. Implement the
-   [ContainerHost](orbit-core/src/commonMain/kotlin/org/orbitmvi/orbit/ContainerHost.kt)
+   [OrbitContainerHost](orbit-core/src/commonMain/kotlin/org/orbitmvi/orbit/ContainerHost.kt)
    interface
-1. Override the `container` field and use the `ViewModel.container` factory
+1. Override the `container` field and use the `ViewModel.orbitContainer` factory
    function to build an Orbit
-   [Container](orbit-core/src/commonMain/kotlin/org/orbitmvi/orbit/Container.kt)
+   [OrbitContainer](orbit-core/src/commonMain/kotlin/org/orbitmvi/orbit/Container.kt)
    in your
-   [ContainerHost](orbit-core/src/commonMain/kotlin/org/orbitmvi/orbit/ContainerHost.kt)
+   [OrbitContainerHost](orbit-core/src/commonMain/kotlin/org/orbitmvi/orbit/ContainerHost.kt)
 
 ```kotlin
-class CalculatorViewModel: ContainerHost<CalculatorState, CalculatorSideEffect>, ViewModel() {
+class CalculatorViewModel: OrbitContainerHost<CalculatorState, CalculatorState, CalculatorSideEffect>, ViewModel() {
 
     // Include `orbit-viewmodel` for the factory function
-    override val container = container<CalculatorState, CalculatorSideEffect>(CalculatorState())
+    override val container = orbitContainer<CalculatorState, CalculatorSideEffect>(CalculatorState())
 
     fun add(number: Int) = intent {
         postSideEffect(CalculatorSideEffect.Toast("Adding $number to ${state.total}!"))

@@ -25,8 +25,8 @@ by itself. It should know only how to render itself based on the input state.
 
 ```mermaid
 graph LR
-	A[UI] -->|calls| B(ContainerHost)
-	B --> C(Container)
+	A[UI] -->|calls| B(OrbitContainerHost)
+	B --> C(OrbitContainer)
 	C --> D(Transformer)
 	D -->|events| E(Reducer)
 	E -->|state updates| A
@@ -35,12 +35,12 @@ graph LR
 We can map the above logic onto real components.
 
 1. UI invokes functions on a class implementing the
-   [ContainerHost](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-container-host/)
+   [OrbitContainerHost](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-orbit-container-host/)
    interface. Typically in Android this might be an Activity, Fragment
    or a simple View. However, an Orbit system can also be run without
    any UI, for example as a background service.
 1. The functions call through to a
-   [Container](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-container/)
+   [OrbitContainer](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-orbit-container/)
    instance through the `intent` block which offloads work to a background
    coroutine and provides a DSL for side effects and reductions.
 1. Transformations are performed through user-defined business logic within
@@ -58,13 +58,13 @@ Notes:
 In the real world such a system cannot exist without side effects. Side effects
 are commonly truly one-off events like navigation, logging, analytics, toasts
 etc that do not alter the state of the Orbit
-[Container](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-container/).
+[OrbitContainer](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-orbit-container/).
 As such there's a third Orbit operator that can deal with side effects.
 
 ```mermaid
 graph LR
-	A[UI] -->|calls| B(ContainerHost)
-	B --> C(Container)
+	A[UI] -->|calls| B(OrbitContainerHost)
+	B --> C(OrbitContainer)
 	C --> D(Transformer)
 	C --> D2(Side Effect)
 	D2 -->|side effects| A

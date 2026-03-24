@@ -20,14 +20,14 @@ MVI and how its concepts map onto Orbit's components.
 ## Orbit container
 
 A
-[Container](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-container/)
+[OrbitContainer](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-orbit-container/)
 is the heart of the Orbit MVI system. It retains the state, allows you to listen
 to side effects and state updates and allows you to modify the state through the
 `orbit` function which executes Orbit operators of your desired business logic.
 
 ### Subscribing to the container
 
-[Container](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-container/)
+[OrbitContainer](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-orbit-container/)
 exposes flows that emit updates to the container state and side effects.
 
 - State emissions are conflated
@@ -42,10 +42,10 @@ sealed class ExampleSideEffect {
     data class Toast(val text: String)
 }
 
-class ExampleContainerHost(scope: CoroutineScope) : ContainerHost<ExampleState, ExampleSideEffect> {
-    
+class ExampleContainerHost(scope: CoroutineScope) : OrbitContainerHost<ExampleState, ExampleState, ExampleSideEffect> {
+
     // create a container
-    override val container = scope.container<ExampleState, ExampleSideEffect>(ExampleState())
+    override val container = scope.orbitContainer<ExampleState, ExampleSideEffect>(ExampleState())
 
     fun doSomethingUseful() = intent {
         ...
@@ -58,7 +58,7 @@ private val viewModel = ExampleContainerHost(scope)
 fun main() {
 
     // subscribe to updates
-    // On Android, use ContainerHost.observe() from the orbit-viewmodel module
+    // On Android, use OrbitContainerHost.observe() from the orbit-viewmodel module
     scope.launch {
         viewModel.container.stateFlow.collect {
             // do something with the state
@@ -76,65 +76,69 @@ fun main() {
 }
 ```
 
-### ContainerHost
+### OrbitContainerHost
 
 A
-[ContainerHost](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-container-host/)
+[OrbitContainerHost](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-orbit-container-host/)
 is not strictly required to work with an Orbit
-[Container](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-container/).
+[OrbitContainer](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-orbit-container/).
 However, Orbit's syntax is defined as an extension on this class. Additionally
 it simplifies and organises your business logic and so is highly recommended. A
-[ContainerHost](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-container-host/)
+[OrbitContainerHost](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-orbit-container-host/)
 typically defines MVI flows (your business logic and Orbit operators to be
 invoked on the
-[Container](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-container/))
+[OrbitContainer](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-orbit-container/))
 as functions that can be called by e.g. the UI.
 
 In a typical implementation you would subclass Android's `ViewModel` and
 implement
-[ContainerHost](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-container-host/)
+[OrbitContainerHost](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-orbit-container-host/)
 in order to create an Orbit-enabled Android `ViewModel`.
 
 ```kotlin
 class ExampleViewModel(
     savedStateHandle: SavedStateHandle
-) : ViewModel(), ContainerHost<ExampleState, ExampleSideEffect> {
+) : ViewModel(), OrbitContainerHost<ExampleState, ExampleState, ExampleSideEffect> {
     // create a container
-    val container = container<ExampleState, ExampleSideEffect>(ExampleState(), savedStateHandle)
+    val container = orbitContainer<ExampleState, ExampleSideEffect>(ExampleState(), savedStateHandle)
 
     …
 }
 ```
 
-### ContainerHostWithExternalState
+### External state
 
-A
-[ContainerHostWithExternalState](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-container-host-with-external-state/)
-is used whenever you want to have separation between the internal and external
-states of a ContainerHost.
+`OrbitContainerHost` supports separation between internal and external states
+via its third type parameter. This is useful whenever the raw internal state is
+not well suited to consumption outside of the host (e.g. by a UI).
 
 Let's define an outside consumer as anything that consumes the state of the
-ContainerHost and is external to it - e.g. a UI.
+`OrbitContainerHost` and is external to it - e.g. a UI.
 
-Internal state is the raw ContainerHost's state that is not well suited to
-consumption outside of the ContainerHost. It may contain lots of unnecessary
+Internal state is the raw host's state that is not well suited to
+consumption outside of the host. It may contain lots of unnecessary
 information and you may see the complexity bleeding into the UI. Ideally UIs
 should not contain any business logic.
 
 External state is the state that is exposed to the outside world. It is a mapped
 representation of the internal state that contains the minimum necessary data
-for outside consumers. The data is mapped in a way that is ready for 
+for outside consumers. The data is mapped in a way that is ready for
 consumption, avoiding the need for any additional processing in the UI.
 
-Creating such a separation is easy:
+To use external state, specify a different type for the external state parameter
+of `OrbitContainerHost` and pass a `transformState` function to the container
+factory:
 
-``` kotlin
+```kotlin
 class ExampleViewModel(
     savedStateHandle: SavedStateHandle
-) : ViewModel(), ContainerHostWithExternalState<ExampleState, ExampleSideEffect, ExampleExtState> {
-    // create a container
-    val container = container<ExampleState, ExampleSideEffect>(ExampleState(), savedStateHandle)
-        .withExternalState(::transformState)
+) : ViewModel(), OrbitContainerHost<ExampleState, ExampleExtState, ExampleSideEffect> {
+    // create a container with external state transformation
+    override val container = orbitContainer<ExampleState, ExampleExtState, ExampleSideEffect>(
+        ExampleState(),
+        savedStateHandle,
+        ::transformState
+    )
 
     …
 
@@ -155,20 +159,20 @@ they map to MVI concepts:
 | block              | `intent { ... }`               | Contains business logic, allows you to invoke other operators within                                      |
 | transformation     | operations within `intent`     | Run business operations to transform data                                                                 |
 | posted side effect | `postSideEffect(...)`          | Sends one-off events to the side effect channel                                                           |
-| reduction          | `reduce { ... }`               | Atomically updates the Container's  state                                                                 |
+| reduction          | `reduce { ... }`               | Atomically updates the OrbitContainer's  state                                                                 |
 | -                  | `repeatOnSubscription { ... }` | Helps collect infinite flows only when there are active subscribers                                       |
 | -                  | `subIntent { ... }`            | Use this to break big `intent` blocks into smaller parts, or for parallel decomposition.                  |
 | -                  | `runOn { ... }`                | Useful for working with sealed class states. The block is only executed if (and while) the state matches. |
 
 Operators are invoked through the `intent` block in a
-[ContainerHost](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-container-host/).
+[OrbitContainerHost](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-orbit-container-host/).
 For more information about which threads these operators run on please see
 [Threading](#threading).
 
 ### Transformation
 
 ```kotlin
-class Example : ContainerHost<ExampleState, ExampleSideEffect> {
+class Example : OrbitContainerHost<ExampleState, ExampleState, ExampleSideEffect> {
     ...
 
     fun simpleExample() = intent {
@@ -197,7 +201,7 @@ of new intents until that code completes.
 ### Reduction
 
 ```kotlin
-class Example : ContainerHost<ExampleState, ExampleSideEffect> {
+class Example : OrbitContainerHost<ExampleState, ExampleState, ExampleSideEffect> {
     ...
 
     fun simpleExample(number: Int) = intent {
@@ -212,7 +216,7 @@ Reducers take incoming events and the current state to produce a new state.
 ### Side effect
 
 ```kotlin
-class Example : ContainerHost<ExampleState, ExampleSideEffect> {
+class Example : OrbitContainerHost<ExampleState, ExampleState, ExampleSideEffect> {
     ...
 
     fun simpleExample(number: Int) = intent {
@@ -230,7 +234,7 @@ This functionality is commonly used for things like truly one-off events,
 navigation, logging, analytics etc.
 
 You may post the side effect in order to send it to a
-[Container](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-container/)'s
+[OrbitContainer](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-orbit-container/)'s
 side effect flow. Use this for view-related side effects like Toasts,
 Navigation, etc.
 
@@ -239,7 +243,7 @@ events such as navigation are delivered after re-subscription.
 
 :::caution
 
-`Container.sideEffectFlow` is designed for a single observer to ensure
+`OrbitContainer.sideEffectFlow` is designed for a single observer to ensure
 predictable side effect caching. If you need multiple observers, use `shareIn`,
 but note that caching may not apply to the resulting `SharedFlow`.
 
@@ -248,7 +252,7 @@ but note that caching may not apply to the resulting `SharedFlow`.
 ### Repeat on subscription
 
 ```kotlin
-class Example : ContainerHost<ExampleState, ExampleSideEffect> {
+class Example : OrbitContainerHost<ExampleState, ExampleState, ExampleSideEffect> {
     ...
 
     fun simpleExample() = intent(idlingResource = false) {
@@ -280,10 +284,10 @@ is no longer the case.
 ### Sub-intent
 
 ```kotlin
-class Example : ContainerHost<ExampleState, ExampleSideEffect> {
+class Example : OrbitContainerHost<ExampleState, ExampleState, ExampleSideEffect> {
     ...
     
-    override val container = scope.container<ExampleState, ExampleSideEffect>(
+    override val container = scope.orbitContainer<ExampleState, ExampleSideEffect>(
         ExampleState()
     ) {
         // Remember that this `onCreate` block is an implicit `intent`.
@@ -339,11 +343,11 @@ collecting several flows or performing several parallel operations on creation.
 ### RunOn
 
 ```kotlin
-class Example : ContainerHost<ExampleSealedClassState, ExampleSideEffect> {
+class Example : OrbitContainerHost<ExampleSealedClassState, ExampleSealedClassState, ExampleSideEffect> {
     ...
     
     override val container = 
-        scope.container<ExampleSealedClassState, ExampleSideEffect>(
+        scope.orbitContainer<ExampleSealedClassState, ExampleSideEffect>(
             ExampleSealedClassState.Loading
         )
 
@@ -375,12 +379,12 @@ get executed partially.
 
 Each simple syntax operator lambda has a receiver that exposes the current state
 of the
-[Container](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-container/)
+[OrbitContainer](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-orbit-container/)
 as `state`
 
 ```kotlin
 perform("Toast the current state")
-class Example : ContainerHost<ExampleState, ExampleSideEffect> {
+class Example : OrbitContainerHost<ExampleState, ExampleState, ExampleSideEffect> {
     ...
 
     fun anotherExample(number: Int) = intent {
@@ -399,12 +403,12 @@ not to change.
 
 :::
 
-## Container factories
+## OrbitContainer factories
 
 ```kotlin
 perform("Toast the current state")
-class Example : ContainerHost<ExampleState, ExampleSideEffect> {
-    override val container = container<ExampleState, ExampleSideEffect>(ExampleState()) {
+class Example : OrbitContainerHost<ExampleState, ExampleState, ExampleSideEffect> {
+    override val container = orbitContainer<ExampleState, ExampleSideEffect>(ExampleState()) {
         // This block is an intent invoked when the container is first created
         reduce { ... }
     }
@@ -414,7 +418,7 @@ class Example : ContainerHost<ExampleState, ExampleSideEffect> {
 Containers are typically not created directly but through convenient factory
 functions. This allows you to pass through extra settings or an intent lambda to
 invoke when the
-[Container](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-container/)
+[OrbitContainer](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-orbit-container/)
 is first created (important for containers that can be recreated from a saved
 state or live longer than the UI).
 
@@ -426,8 +430,8 @@ perform("Toast the current state")
 class Example(
     private val flow1: Flow<Int>,
     private val flow2: Flow<Int>,
-): ContainerHost<ExampleState, ExampleSideEffect> {
-    override val container = container<ExampleState, ExampleSideEffect>(ExampleState()) {
+): OrbitContainerHost<ExampleState, ExampleState, ExampleSideEffect> {
+    override val container = orbitContainer<ExampleState, ExampleSideEffect>(ExampleState()) {
         coroutineScope {
             repeatOnSubscription {
             launch {
@@ -445,7 +449,7 @@ class Example(
 ```
 
 Extra
-[Container](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-container/)
+[OrbitContainer](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-orbit-container/)
 factory functionality is provided via extension functions. One example is
 `ViewModel` saved state support via a `SavedStateHandle`.
 
@@ -458,7 +462,7 @@ done by switching your coroutine context.
 
 ### Threading guarantees
 
-- Calls to Container.intent` do not block the caller. The
+- Calls to `OrbitContainer.intent` do not block the caller. The
   operations within are offloaded to an event-loop style background coroutine.
 - Generally it is good practice to make sure long-running operations are done
   in a switched coroutine context in order not to block the Orbit "event

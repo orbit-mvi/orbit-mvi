@@ -7,7 +7,7 @@ import latestRelease from "@site/src/plugins/github-latest-release/generated/dat
 
 # Jetpack Compose and Compose Multiplatform
 
-The module provides [ContainerHost](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-container-host/)
+The module provides [OrbitContainerHost](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-orbit-container-host/)
 extensions for easy subscription from `Composables`.
 
 :::caution
@@ -20,9 +20,9 @@ Compose Multiplatform support added in Orbit v10.0.0.
 
 <CodeBlock language="kotlin">implementation("org.orbit-mvi:orbit-compose:{latestRelease.tag_name}")</CodeBlock>
 
-## Subscribing to a ContainerHost in Compose
+## Subscribing to an OrbitContainerHost in Compose
 
-Use the method below to subscribe to a [ContainerHost](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-container-host/)
+Use the method below to subscribe to an [OrbitContainerHost](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-orbit-container-host/)
 in Compose.
 
 The functions safely follow the Composable lifecycle and will automatically
@@ -60,8 +60,8 @@ Alternatively, `TextField` can be provided a `TextFieldState` which we can
 provide and observe in our `ViewModel`:
 
 ```kotlin
-class TextViewModel : ViewModel(), ContainerHost<TextViewModel.State, Nothing> {
-    override val container: Container<State, Nothing> = container(State()) {
+class TextViewModel : ViewModel(), OrbitContainerHost<TextViewModel.State, TextViewModel.State, Nothing> {
+    override val container: OrbitContainer<State, State, Nothing> = orbitContainer(State()) {
         coroutineScope {
             launch {
                 snapshotFlow { state.textFieldState.text }.collectLatest { text ->
