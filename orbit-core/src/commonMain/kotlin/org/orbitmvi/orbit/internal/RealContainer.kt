@@ -199,4 +199,6 @@ internal class MappedStateFlow<T : Any, U : Any>(
 internal fun <T : Any, U : Any> StateFlow<T>.stateMap(transform: (T) -> U): StateFlow<U> =
     MappedStateFlow(this, transform)
 
-private fun resolveBufferSize(size: Int): Int = if (size < 0) 64 else size
+private const val DEFAULT_BUFFER_SIZE = 64
+
+private fun resolveBufferSize(size: Int): Int = if (size < 0) DEFAULT_BUFFER_SIZE else size
