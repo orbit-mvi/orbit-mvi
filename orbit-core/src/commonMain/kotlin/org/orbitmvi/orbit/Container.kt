@@ -78,12 +78,12 @@ public interface OrbitContainer<INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE
     /**
      * A [Flow] of one-off side effects posted from [OrbitContainer]. Caches side effects when there are no collectors.
      * The size of the cache can be controlled via [SettingsBuilder] and determines if and when the orbit thread suspends when you
-     * post a side effect. The default is unlimited. You don't have to touch this unless you are posting many side effects which could result in
-     * `OutOfMemoryError`.
+     * post a side effect.
      *
-     * This is designed to be collected by one observer only in order to ensure that side effect caching works in a predictable way.
-     * If your particular use case requires multi-casting use `broadcast` on this [Flow], but be aware that caching will not work for the
-     * resulting `BroadcastChannel`.
+     * The delivery behavior depends on [SideEffectMode]:
+     * - [SideEffectMode.FAN_OUT]: Each side effect is delivered to exactly one collector. Designed for single-observer use.
+     * - [SideEffectMode.BROADCAST]: Side effects are broadcast to all active collectors. Cached side effects are replayed
+     *   to all collectors when they reconnect. The replay cache is cleared shortly after subscribers reconnect.
      */
     public val sideEffectFlow: Flow<SIDE_EFFECT>
 
@@ -91,16 +91,14 @@ public interface OrbitContainer<INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE
      * A version of [sideEffectFlow] ref-counted for the [Syntax.repeatOnSubscription] operator.
      * Do not use when subscribing to state updates within your [OrbitContainerHost].
      *
-     * [Flow] of one-off side effects posted from [OrbitContainer]. Caches side effects when there are no collectors.
+     * A [Flow] of one-off side effects posted from [OrbitContainer]. Caches side effects when there are no collectors.
      * The size of the cache can be controlled via [SettingsBuilder] and determines if and when the orbit thread suspends when you
-     * post a side effect. The default is unlimited. You don't have to touch this unless you are posting many side effects which could result in
-     * `OutOfMemoryError`.
+     * post a side effect.
      *
-     * This is designed to be collected by one observer only in order to ensure that side effect caching works in a predictable way.
-     * If your particular use case requires multi-casting use `broadcast` on this [Flow], but be aware that caching will not work for the
-     * resulting `BroadcastChannel`.
-     *
-     *  It's the same as [sideEffectFlow], but it's ref-counted for the [Syntax.repeatOnSubscription] operator.
+     * The delivery behavior depends on [SideEffectMode]:
+     * - [SideEffectMode.FAN_OUT]: Each side effect is delivered to exactly one collector. Designed for single-observer use.
+     * - [SideEffectMode.BROADCAST]: Side effects are broadcast to all active collectors. Cached side effects are replayed
+     *   to all collectors when they reconnect. The replay cache is cleared shortly after subscribers reconnect.
      */
     public val refCountSideEffectFlow: Flow<SIDE_EFFECT>
 
