@@ -74,14 +74,18 @@ public class RealContainer<INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFE
     private val intentCounter = AtomicInt(0)
 
     private val sideEffectSharedFlow: MutableSharedFlow<SIDE_EFFECT>? =
-        if (settings.sideEffectMode == SideEffectMode.BROADCAST)
+        if (settings.sideEffectMode == SideEffectMode.BROADCAST) {
             MutableSharedFlow(replay = resolveBufferSize(settings.sideEffectBufferSize), onBufferOverflow = BufferOverflow.SUSPEND)
-        else null
+        } else {
+            null
+        }
 
     private val sideEffectChannel: Channel<SIDE_EFFECT>? =
-        if (settings.sideEffectMode == SideEffectMode.FAN_OUT)
+        if (settings.sideEffectMode == SideEffectMode.FAN_OUT) {
             Channel(settings.sideEffectBufferSize)
-        else null
+        } else {
+            null
+        }
 
     override val stateFlow: StateFlow<INTERNAL_STATE> = internalStateFlow.asStateFlow()
     override val sideEffectFlow: Flow<SIDE_EFFECT> =
