@@ -33,7 +33,7 @@ import org.orbitmvi.orbit.sample.posts.domain.repositories.PostOverview
 import org.orbitmvi.orbit.sample.posts.domain.repositories.PostRepository
 import org.orbitmvi.orbit.sample.posts.domain.repositories.Status
 import org.orbitmvi.orbit.test.TestSettings
-import org.orbitmvi.orbit.test.test
+import org.orbitmvi.orbit.test.testWithInternalState
 import java.io.IOException
 
 @ExtendWith(InstantTaskExecutorExtension::class)
@@ -55,14 +55,14 @@ class PostDetailsViewModelTest {
             .thenReturn(Status.Success(details))
 
         // when we observe details from the view model
-        PostDetailsViewModel(SavedStateHandle(), repository, overview).test(
+        PostDetailsViewModel(SavedStateHandle(), repository, overview).testWithInternalState(
             this,
             initialState = initialState,
         ) {
             runOnCreate()
 
             // then the view model loads the details
-            expectState { PostDetailState.Details(overview, details) }
+            expectInternalState { PostDetailState.Details(overview, details) }
         }
     }
 
@@ -78,7 +78,7 @@ class PostDetailsViewModelTest {
 
         // when we observe details from the view model
         // when we observe details from the view model
-        PostDetailsViewModel(SavedStateHandle(), repository, overview).test(
+        PostDetailsViewModel(SavedStateHandle(), repository, overview).testWithInternalState(
             this,
             initialState = initialState,
             settings = TestSettings(autoCheckInitialState = false)
@@ -86,7 +86,7 @@ class PostDetailsViewModelTest {
             runOnCreate()
 
             // then the view model only emits initial state
-            expectState { initialState }
+            expectInternalState { initialState }
 
             expectNoItems()
         }
@@ -103,7 +103,7 @@ class PostDetailsViewModelTest {
             .thenReturn(Status.Failure(exception))
 
         // when we observe details from the view model
-        PostDetailsViewModel(SavedStateHandle(), repository, overview).test(
+        PostDetailsViewModel(SavedStateHandle(), repository, overview).testWithInternalState(
             this,
             initialState = initialState,
             settings = TestSettings(autoCheckInitialState = false)
@@ -111,7 +111,7 @@ class PostDetailsViewModelTest {
             runOnCreate().join()
 
             // then the view model shows no details
-            expectState { PostDetailState.NoDetailsAvailable(postOverview) }
+            expectInternalState { PostDetailState.NoDetailsAvailable(postOverview) }
         }
     }
 }

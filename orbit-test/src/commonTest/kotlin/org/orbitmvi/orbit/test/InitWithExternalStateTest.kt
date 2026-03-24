@@ -19,9 +19,9 @@ package org.orbitmvi.orbit.test
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
-import org.orbitmvi.orbit.ContainerHostWithExternalState
-import org.orbitmvi.orbit.container
-import org.orbitmvi.orbit.withExternalState
+import org.orbitmvi.orbit.OrbitContainer
+import org.orbitmvi.orbit.OrbitContainerHost
+import org.orbitmvi.orbit.orbitContainer
 import kotlin.concurrent.atomics.AtomicBoolean
 import kotlin.random.Random
 import kotlin.test.Test
@@ -186,10 +186,11 @@ internal class InitWithExternalStateTest {
     }
 
     private inner class GeneralTestMiddleware(coroutineScope: CoroutineScope, val dependency: BogusDependency) :
-        ContainerHostWithExternalState<InternalState, ExternalState, Nothing> {
-        override val container = coroutineScope.container<InternalState, Nothing>(initialState) {
-            created()
-        }.withExternalState(::transformState)
+        OrbitContainerHost<InternalState, ExternalState, Nothing> {
+        override val container: OrbitContainer<InternalState, ExternalState, Nothing> =
+            coroutineScope.orbitContainer(initialState, ::transformState, onCreate = {
+                created()
+            })
 
         private fun transformState(internalState: InternalState) = ExternalState(internalState.count.toString())
 

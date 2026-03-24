@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 2023-2025 Mikołaj Leszczyński & Appmattus Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,23 +16,34 @@
 
 package org.orbitmvi.orbit.test
 
-import org.orbitmvi.orbit.Container
-import org.orbitmvi.orbit.ContainerDecorator
+import org.orbitmvi.orbit.OrbitContainer
+import org.orbitmvi.orbit.OrbitContainerDecorator
 import org.orbitmvi.orbit.annotation.OrbitInternal
+import org.orbitmvi.orbit.internal.ExternalStateContainerAdapter
 import org.orbitmvi.orbit.internal.LazyCreateContainerDecorator
 import org.orbitmvi.orbit.internal.TestContainerDecorator
 import org.orbitmvi.orbit.syntax.ContainerContext
 
+@Suppress("DEPRECATION")
 @OptIn(OrbitInternal::class)
-internal fun <STATE : Any, SIDE_EFFECT : Any> Container<STATE, SIDE_EFFECT>.findOnCreate():
-    suspend ContainerContext<STATE, SIDE_EFFECT>.() -> Unit {
-    return (this as? LazyCreateContainerDecorator<STATE, SIDE_EFFECT>)?.onCreate
-        ?: (this as? ContainerDecorator<STATE, SIDE_EFFECT>)?.actual?.findOnCreate()
+internal fun <INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : Any>
+    OrbitContainer<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>.findOnCreate():
+    suspend ContainerContext<INTERNAL_STATE, SIDE_EFFECT>.() -> Unit {
+    return (this as? LazyCreateContainerDecorator<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>)?.onCreate
+        ?: (this as? OrbitContainerDecorator<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>)?.actual?.findOnCreate()
+        ?: (this as? ExternalStateContainerAdapter<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>)?.delegate?.findOnCreate()
         ?: {}
 }
 
-internal fun <STATE : Any, SIDE_EFFECT : Any> Container<STATE, SIDE_EFFECT>.findTestContainer(): TestContainerDecorator<STATE, SIDE_EFFECT> {
-    return (this as? TestContainerDecorator<STATE, SIDE_EFFECT>)
-        ?: (this as? ContainerDecorator<STATE, SIDE_EFFECT>)?.actual?.findTestContainer()
+@Suppress("DEPRECATION", "UNCHECKED_CAST")
+@OptIn(OrbitInternal::class)
+internal fun <INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : Any>
+    OrbitContainer<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>.findTestContainer():
+    TestContainerDecorator<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT> {
+    return (this as? TestContainerDecorator<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>)
+        ?: (this as? OrbitContainerDecorator<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>)?.actual?.findTestContainer()
+        ?: (this as? ExternalStateContainerAdapter<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>)
+            ?.delegate?.findTestContainer()
+            as? TestContainerDecorator<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>
         ?: error("No TestContainerDecorator found!")
 }

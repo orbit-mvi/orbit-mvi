@@ -23,9 +23,9 @@ package org.orbitmvi.orbit.syntax.simple
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
-import org.orbitmvi.orbit.ContainerHost
-import org.orbitmvi.orbit.container
-import org.orbitmvi.orbit.test.test
+import org.orbitmvi.orbit.OrbitContainerHost
+import org.orbitmvi.orbit.orbitContainer
+import org.orbitmvi.orbit.test.testWithInternalState
 import kotlin.random.Random
 import kotlin.test.Test
 
@@ -36,27 +36,27 @@ internal class SimpleDslBehaviourTest {
     @Test
     fun reducer_produces_new_states() = runTest {
         val action = Random.nextInt()
-        BaseDslMiddleware(this).test(this, initialState) {
+        BaseDslMiddleware(this).testWithInternalState(this, initialState) {
             containerHost.reducer(action)
 
-            expectState { TestState(action) }
+            expectInternalState { TestState(action) }
         }
     }
 
     @Test
     fun transformer_maps_values() = runTest {
         val action = Random.nextInt()
-        BaseDslMiddleware(this).test(this, initialState) {
+        BaseDslMiddleware(this).testWithInternalState(this, initialState) {
             containerHost.transformer(action)
 
-            expectState { TestState(action + 5) }
+            expectInternalState { TestState(action + 5) }
         }
     }
 
     @Test
     fun posting_side_effects_emit_side_effects() = runTest {
         val action = Random.nextInt()
-        BaseDslMiddleware(this).test(this, initialState) {
+        BaseDslMiddleware(this).testWithInternalState(this, initialState) {
             containerHost.postingSideEffect(action)
 
             expectSideEffect(action.toString())
@@ -65,8 +65,8 @@ internal class SimpleDslBehaviourTest {
 
     private data class TestState(val id: Int = Random.nextInt())
 
-    private inner class BaseDslMiddleware(scope: TestScope) : ContainerHost<TestState, String> {
-        override val container = scope.backgroundScope.container<TestState, String>(TestState(42))
+    private inner class BaseDslMiddleware(scope: TestScope) : OrbitContainerHost<TestState, TestState, String> {
+        override val container = scope.backgroundScope.orbitContainer<TestState, String>(TestState(42))
 
         fun reducer(action: Int) = intent {
             reduce {

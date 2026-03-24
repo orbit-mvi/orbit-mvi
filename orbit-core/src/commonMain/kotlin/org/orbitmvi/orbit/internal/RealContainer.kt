@@ -24,12 +24,14 @@ import kotlinx.coroutines.CompletableJob
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalForInheritanceCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.channels.produce
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -38,7 +40,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
-import org.orbitmvi.orbit.Container
+import org.orbitmvi.orbit.OrbitContainer
 import org.orbitmvi.orbit.RealSettings
 import org.orbitmvi.orbit.internal.repeatonsubscription.DelayingSubscribedCounter
 import org.orbitmvi.orbit.internal.repeatonsubscription.SubscribedCounter
@@ -48,26 +50,37 @@ import kotlin.concurrent.atomics.AtomicBoolean
 import kotlin.concurrent.atomics.AtomicInt
 import kotlin.concurrent.atomics.fetchAndIncrement
 
-public class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
-    initialState: STATE,
+public class RealContainer<INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : Any>(
+    initialState: INTERNAL_STATE,
     parentScope: CoroutineScope,
     public override val settings: RealSettings,
+    internal val transformState: (INTERNAL_STATE) -> EXTERNAL_STATE,
     subscribedCounterOverride: SubscribedCounter? = null
-) : Container<STATE, SIDE_EFFECT> {
+) : OrbitContainer<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT> {
     override val scope: CoroutineScope = parentScope + settings.eventLoopDispatcher
     private val intentJob = Job(scope.coroutineContext[Job])
-    private val dispatchChannel = Channel<Pair<CompletableJob, suspend ContainerContext<STATE, SIDE_EFFECT>.() -> Unit>>(Channel.UNLIMITED)
+    private val dispatchChannel =
+        Channel<Pair<CompletableJob, suspend ContainerContext<INTERNAL_STATE, SIDE_EFFECT>.() -> Unit>>(
+            Channel.UNLIMITED
+        )
     private val initialised = AtomicBoolean(false)
     private val subscribedCounter = subscribedCounterOverride ?: DelayingSubscribedCounter(scope, settings.repeatOnSubscribedStopTimeout)
     private val internalStateFlow = MutableStateFlow(initialState)
     private val sideEffectChannel = Channel<SIDE_EFFECT>(settings.sideEffectBufferSize)
     private val intentCounter = AtomicInt(0)
 
-    override val stateFlow: StateFlow<STATE> = internalStateFlow.asStateFlow()
+    override val stateFlow: StateFlow<INTERNAL_STATE> = internalStateFlow.asStateFlow()
     override val sideEffectFlow: Flow<SIDE_EFFECT> = sideEffectChannel.receiveAsFlow()
 
-    override val refCountStateFlow: StateFlow<STATE> = internalStateFlow.refCount(subscribedCounter)
+    override val refCountStateFlow: StateFlow<INTERNAL_STATE> = internalStateFlow.refCount(subscribedCounter)
     override val refCountSideEffectFlow: Flow<SIDE_EFFECT> = sideEffectFlow.refCount(subscribedCounter)
+
+    override val externalStateFlow: StateFlow<EXTERNAL_STATE> by lazy {
+        stateFlow.stateMap(transformState)
+    }
+    override val externalRefCountStateFlow: StateFlow<EXTERNAL_STATE> by lazy {
+        refCountStateFlow.stateMap(transformState)
+    }
 
     override suspend fun joinIntents() {
         intentJob.children.toList().joinAll()
@@ -78,7 +91,7 @@ public class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
         intentJob.cancel()
     }
 
-    internal val pluginContext: ContainerContext<STATE, SIDE_EFFECT> = ContainerContext(
+    internal val pluginContext: ContainerContext<INTERNAL_STATE, SIDE_EFFECT> = ContainerContext(
         settings = settings,
         postSideEffect = { sideEffectChannel.send(it) },
         reduce = { reducer -> internalStateFlow.update(reducer) },
@@ -86,7 +99,7 @@ public class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
         stateFlow = stateFlow,
     )
 
-    override fun orbit(orbitIntent: suspend ContainerContext<STATE, SIDE_EFFECT>.() -> Unit): Job {
+    override fun orbit(orbitIntent: suspend ContainerContext<INTERNAL_STATE, SIDE_EFFECT>.() -> Unit): Job {
         initialiseIfNeeded()
 
         val job = Job(intentJob)
@@ -94,7 +107,7 @@ public class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
         return job
     }
 
-    override suspend fun inlineOrbit(orbitIntent: suspend ContainerContext<STATE, SIDE_EFFECT>.() -> Unit) {
+    override suspend fun inlineOrbit(orbitIntent: suspend ContainerContext<INTERNAL_STATE, SIDE_EFFECT>.() -> Unit) {
         initialiseIfNeeded()
         pluginContext.orbitIntent()
     }
@@ -129,3 +142,30 @@ public class RealContainer<STATE : Any, SIDE_EFFECT : Any>(
         private const val COROUTINE_NAME_INTENT = "orbit-intent-"
     }
 }
+
+@OptIn(ExperimentalForInheritanceCoroutinesApi::class)
+internal class MappedStateFlow<T : Any, U : Any>(
+    private val upstream: StateFlow<T>,
+    private val transform: (T) -> U
+) : StateFlow<U> {
+
+    override val replayCache: List<U>
+        get() = upstream.replayCache.map(transform)
+
+    override val value: U
+        get() = transform(upstream.value)
+
+    override suspend fun collect(collector: FlowCollector<U>): Nothing {
+        var previous: Any? = null
+        upstream.collect {
+            val value = transform(it)
+            if (previous == null || value != previous) {
+                previous = value
+                collector.emit(value)
+            }
+        }
+    }
+}
+
+internal fun <T : Any, U : Any> StateFlow<T>.stateMap(transform: (T) -> U): StateFlow<U> =
+    MappedStateFlow(this, transform)

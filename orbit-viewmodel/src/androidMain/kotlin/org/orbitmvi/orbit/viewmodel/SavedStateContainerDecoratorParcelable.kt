@@ -22,22 +22,22 @@ package org.orbitmvi.orbit.viewmodel
 
 import androidx.lifecycle.SavedStateHandle
 import kotlinx.coroutines.flow.StateFlow
-import org.orbitmvi.orbit.Container
-import org.orbitmvi.orbit.ContainerDecorator
+import org.orbitmvi.orbit.OrbitContainer
+import org.orbitmvi.orbit.OrbitContainerDecorator
 
-internal class SavedStateContainerDecoratorParcelable<STATE : Any, SIDE_EFFECT : Any>(
-    override val actual: Container<STATE, SIDE_EFFECT>,
+internal class SavedStateContainerDecoratorParcelable<INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : Any>(
+    override val actual: OrbitContainer<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>,
     private val savedStateHandle: SavedStateHandle,
     private val savedStateHandleKey: String
-) : ContainerDecorator<STATE, SIDE_EFFECT> {
+) : OrbitContainerDecorator<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT> {
 
-    override val stateFlow: StateFlow<STATE> by lazy {
+    override val stateFlow: StateFlow<INTERNAL_STATE> by lazy {
         actual.stateFlow.onEach {
             savedStateHandle[savedStateHandleKey] = it
         }
     }
 
-    override val refCountStateFlow: StateFlow<STATE> by lazy {
+    override val refCountStateFlow: StateFlow<INTERNAL_STATE> by lazy {
         actual.refCountStateFlow.onEach {
             savedStateHandle[savedStateHandleKey] = it
         }

@@ -23,11 +23,11 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.test.runTest
-import org.orbitmvi.orbit.ContainerHost
+import org.orbitmvi.orbit.OrbitContainerHost
 import org.orbitmvi.orbit.annotation.OrbitExperimental
-import org.orbitmvi.orbit.container
+import org.orbitmvi.orbit.orbitContainer
 import org.orbitmvi.orbit.test.TestSettings
-import org.orbitmvi.orbit.test.test
+import org.orbitmvi.orbit.test.testWithInternalState
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -38,8 +38,8 @@ internal class RunOnTest {
     fun run_on_does_not_run_when_state_does_not_match_expected() = runTest {
         val middleware = Middleware(backgroundScope)
 
-        middleware.test(this, settings = TestSettings(autoCheckInitialState = false)) {
-            expectState { TestState.Loading }
+        middleware.testWithInternalState(this, settings = TestSettings(autoCheckInitialState = false)) {
+            expectInternalState { TestState.Loading }
 
             val job = middleware.doIfInReadyState()
 
@@ -53,14 +53,14 @@ internal class RunOnTest {
     fun run_on_runs_when_state_matches_expected() = runTest {
         val middleware = Middleware(backgroundScope)
 
-        middleware.test(this, settings = TestSettings(autoCheckInitialState = false)) {
-            expectState { TestState.Loading }
+        middleware.testWithInternalState(this, settings = TestSettings(autoCheckInitialState = false)) {
+            expectInternalState { TestState.Loading }
 
             middleware.changeToState(TestState.Ready(42))
-            expectState { TestState.Ready(42) }
+            expectInternalState { TestState.Ready(42) }
 
             middleware.doIfInReadyState()
-            expectState { TestState.Ready(43) }
+            expectInternalState { TestState.Ready(43) }
         }
     }
 
@@ -68,11 +68,11 @@ internal class RunOnTest {
     fun run_on_does_not_run_when_state_matches_expected_but_predicate_does_not_match() = runTest {
         val middleware = Middleware(backgroundScope)
 
-        middleware.test(this, settings = TestSettings(autoCheckInitialState = false)) {
-            expectState { TestState.Loading }
+        middleware.testWithInternalState(this, settings = TestSettings(autoCheckInitialState = false)) {
+            expectInternalState { TestState.Loading }
 
             middleware.changeToState(TestState.Ready(42))
-            expectState { TestState.Ready(42) }
+            expectInternalState { TestState.Ready(42) }
 
             val job = middleware.doIfInReadyState(predicate = { it.id % 2 == 1 })
 
@@ -85,14 +85,14 @@ internal class RunOnTest {
     fun run_on_runs_when_state_matches_expected_and_predicate_matches() = runTest {
         val middleware = Middleware(backgroundScope)
 
-        middleware.test(this, settings = TestSettings(autoCheckInitialState = false)) {
-            expectState { TestState.Loading }
+        middleware.testWithInternalState(this, settings = TestSettings(autoCheckInitialState = false)) {
+            expectInternalState { TestState.Loading }
 
             middleware.changeToState(TestState.Ready(42))
-            expectState { TestState.Ready(42) }
+            expectInternalState { TestState.Ready(42) }
 
             val job = middleware.doIfInReadyState(predicate = { it.id % 2 == 0 })
-            expectState { TestState.Ready(43) }
+            expectInternalState { TestState.Ready(43) }
 
             job.join()
             expectNoItems()
@@ -103,11 +103,11 @@ internal class RunOnTest {
     fun run_on_cancels_when_state_stops_matching_expected() = runTest {
         val middleware = Middleware(backgroundScope)
 
-        middleware.test(this, settings = TestSettings(autoCheckInitialState = false)) {
-            expectState { TestState.Loading }
+        middleware.testWithInternalState(this, settings = TestSettings(autoCheckInitialState = false)) {
+            expectInternalState { TestState.Loading }
 
             middleware.changeToState(TestState.Ready(42))
-            expectState { TestState.Ready(42) }
+            expectInternalState { TestState.Ready(42) }
 
             val job = middleware.collectIfInReadyState()
 
@@ -115,7 +115,7 @@ internal class RunOnTest {
             assertEquals(123, middleware.collectorChannel.receive())
 
             middleware.changeToState(TestState.Loading)
-            expectState { TestState.Loading }
+            expectInternalState { TestState.Loading }
 
             job.join() // This will never finish if the `collect` is still running
         }
@@ -125,11 +125,11 @@ internal class RunOnTest {
     fun run_on_cancels_when_predicate_stops_matching() = runTest {
         val middleware = Middleware(backgroundScope)
 
-        middleware.test(this, settings = TestSettings(autoCheckInitialState = false)) {
-            expectState { TestState.Loading }
+        middleware.testWithInternalState(this, settings = TestSettings(autoCheckInitialState = false)) {
+            expectInternalState { TestState.Loading }
 
             middleware.changeToState(TestState.Ready(42))
-            expectState { TestState.Ready(42) }
+            expectInternalState { TestState.Ready(42) }
 
             val job = middleware.collectIfInReadyState(predicate = { it.id % 2 == 0 })
 
@@ -137,7 +137,7 @@ internal class RunOnTest {
             assertEquals(123, middleware.collectorChannel.receive())
 
             middleware.changeToState(TestState.Ready(43))
-            expectState { TestState.Ready(43) }
+            expectInternalState { TestState.Ready(43) }
 
             job.join() // This will never finish if the `collect` is still running
         }
@@ -147,11 +147,11 @@ internal class RunOnTest {
     fun run_on_does_not_cancel_when_predicate_keeps_matching_on_subsequent_emissions() = runTest {
         val middleware = Middleware(backgroundScope)
 
-        middleware.test(this, settings = TestSettings(autoCheckInitialState = false)) {
-            expectState { TestState.Loading }
+        middleware.testWithInternalState(this, settings = TestSettings(autoCheckInitialState = false)) {
+            expectInternalState { TestState.Loading }
 
             middleware.changeToState(TestState.Ready(42))
-            expectState { TestState.Ready(42) }
+            expectInternalState { TestState.Ready(42) }
 
             val job = middleware.collectIfInReadyState(predicate = { it.id % 2 == 0 })
 
@@ -159,7 +159,7 @@ internal class RunOnTest {
             assertEquals(123, middleware.collectorChannel.receive())
 
             middleware.changeToState(TestState.Ready(50))
-            expectState { TestState.Ready(50) }
+            expectInternalState { TestState.Ready(50) }
 
             assertTrue(job.isActive)
             job.cancel()
@@ -172,8 +172,8 @@ internal class RunOnTest {
     }
 
     @OptIn(OrbitExperimental::class)
-    private inner class Middleware(scope: CoroutineScope) : ContainerHost<TestState, String> {
-        override val container = scope.container<TestState, String>(TestState.Loading)
+    private inner class Middleware(scope: CoroutineScope) : OrbitContainerHost<TestState, TestState, String> {
+        override val container = scope.orbitContainer<TestState, String>(TestState.Loading)
 
         val channel: Channel<Int> = Channel()
         val collectorChannel: Channel<Int> = Channel()

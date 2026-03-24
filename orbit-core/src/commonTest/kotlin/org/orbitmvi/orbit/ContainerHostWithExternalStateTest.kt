@@ -119,8 +119,9 @@ class ContainerHostWithExternalStateTest {
         }
     }
 
-    class TestHost(backgroundScope: CoroutineScope) : ContainerHostWithExternalState<Int, String, Int> {
-        override val container = backgroundScope.container<Int, Int>(initialState = 0).withExternalState(::transformState)
+    class TestHost(backgroundScope: CoroutineScope) : OrbitContainerHost<Int, String, Int> {
+        override val container: OrbitContainer<Int, String, Int> =
+            backgroundScope.orbitContainer(initialState = 0, transformState = ::transformState)
 
         fun newState(action: Int) = intent { subIntent(action) }
 

@@ -18,13 +18,13 @@ package org.orbitmvi.orbit.test
 
 import app.cash.turbine.ReceiveTurbine
 import kotlinx.coroutines.Job
-import org.orbitmvi.orbit.ContainerHost
+import org.orbitmvi.orbit.OrbitContainerHost
 import org.orbitmvi.orbit.annotation.OrbitInternal
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
 import kotlin.test.fail
 
-public class OrbitTestContext<STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHost<STATE, SIDE_EFFECT>>(
+public class OrbitTestContext<STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : OrbitContainerHost<STATE, STATE, SIDE_EFFECT>>(
     public val containerHost: CONTAINER_HOST,
     private val resolvedInitialState: STATE,
     private val emissions: ReceiveTurbine<Item<STATE, SIDE_EFFECT>>,
@@ -34,7 +34,7 @@ public class OrbitTestContext<STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : C
     internal var currentConsumedState: STATE = resolvedInitialState
 
     /**
-     * Invoke `onCreate` lambda for the [ContainerHost].
+     * Invoke `onCreate` lambda for the [OrbitContainerHost].
      */
     public fun runOnCreate(): Job {
         @OptIn(OrbitInternal::class)

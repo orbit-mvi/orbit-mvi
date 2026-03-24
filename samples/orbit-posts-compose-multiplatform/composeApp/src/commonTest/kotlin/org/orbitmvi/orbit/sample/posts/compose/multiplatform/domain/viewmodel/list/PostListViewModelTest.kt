@@ -21,7 +21,7 @@ import kotlinx.coroutines.test.runTest
 import org.orbitmvi.orbit.sample.posts.compose.multiplatform.domain.repositories.PostDetail
 import org.orbitmvi.orbit.sample.posts.compose.multiplatform.domain.repositories.PostOverview
 import org.orbitmvi.orbit.sample.posts.compose.multiplatform.domain.repositories.PostRepository
-import org.orbitmvi.orbit.test.test
+import org.orbitmvi.orbit.test.testWithInternalState
 import kotlin.random.Random
 import kotlin.test.Test
 import kotlin.test.assertIs
@@ -42,7 +42,7 @@ class PostListViewModelTest {
             override suspend fun getDetail(id: Int): PostDetail = error("Not implemented")
         }
 
-        PostListViewModel(SavedStateHandle(), repository).test(
+        PostListViewModel(SavedStateHandle(), repository).testWithInternalState(
             this,
             initialState = initialState,
         ) {
@@ -50,7 +50,7 @@ class PostListViewModelTest {
             runOnCreate()
 
             // Then the view model returns ready with the overviews
-            expectState { PostListState.Ready(overviews = overviews) }
+            expectInternalState { PostListState.Ready(overviews = overviews) }
         }
     }
 
@@ -64,7 +64,7 @@ class PostListViewModelTest {
             override suspend fun getDetail(id: Int): PostDetail = error("Not implemented")
         }
 
-        PostListViewModel(SavedStateHandle(), repository).test(
+        PostListViewModel(SavedStateHandle(), repository).testWithInternalState(
             this,
             initialState = initialState,
         ) {
@@ -72,7 +72,7 @@ class PostListViewModelTest {
             runOnCreate()
 
             // Then the view model returns error
-            assertIs<PostListState.Error>(awaitState())
+            assertIs<PostListState.Error>(awaitInternalState())
         }
     }
 
@@ -86,20 +86,20 @@ class PostListViewModelTest {
             override suspend fun getDetail(id: Int): PostDetail = error("Not implemented")
         }
 
-        PostListViewModel(SavedStateHandle(), repository).test(
+        PostListViewModel(SavedStateHandle(), repository).testWithInternalState(
             this,
             initialState = initialState
         ) {
             // And we run onCreate
             runOnCreate()
             // And capture the error
-            val state = assertIs<PostListState.Error>(awaitState())
+            val state = assertIs<PostListState.Error>(awaitInternalState())
 
             // When we call onRetry
             state.onRetry()
 
             // Then the view model returns ready with the overviews
-            expectState { PostListState.Ready(overviews = overviews) }
+            expectInternalState { PostListState.Ready(overviews = overviews) }
         }
     }
 
@@ -113,7 +113,7 @@ class PostListViewModelTest {
             override suspend fun getDetail(id: Int): PostDetail = error("Not implemented")
         }
 
-        PostListViewModel(SavedStateHandle(), repository).test(
+        PostListViewModel(SavedStateHandle(), repository).testWithInternalState(
             this,
             initialState = initialState,
         ) {
@@ -135,7 +135,7 @@ class PostListViewModelTest {
             override suspend fun getDetail(id: Int): PostDetail = error("Not implemented")
         }
 
-        PostListViewModel(SavedStateHandle(), repository).test(
+        PostListViewModel(SavedStateHandle(), repository).testWithInternalState(
             this,
             initialState = initialState,
         ) {

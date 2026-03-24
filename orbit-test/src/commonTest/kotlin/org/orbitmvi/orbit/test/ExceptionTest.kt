@@ -18,8 +18,8 @@ package org.orbitmvi.orbit.test
 
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
-import org.orbitmvi.orbit.ContainerHost
-import org.orbitmvi.orbit.container
+import org.orbitmvi.orbit.OrbitContainerHost
+import org.orbitmvi.orbit.orbitContainer
 import kotlin.random.Random
 import kotlin.test.Test
 import kotlin.test.assertFails
@@ -31,7 +31,7 @@ class ExceptionTest {
     @Test
     fun exceptions_thrown_during_test_can_be_asserted_on() = runTest {
         assertFails {
-            ExceptionTestMiddleware(this).test(this) {
+            ExceptionTestMiddleware(this).testWithInternalState(this) {
                 val job = containerHost.boom()
 
                 job.join()
@@ -39,8 +39,8 @@ class ExceptionTest {
         }
     }
 
-    private inner class ExceptionTestMiddleware(scope: TestScope) : ContainerHost<State, Int> {
-        override val container = scope.backgroundScope.container<State, Int>(initialState)
+    private inner class ExceptionTestMiddleware(scope: TestScope) : OrbitContainerHost<State, State, Int> {
+        override val container = scope.backgroundScope.orbitContainer<State, Int>(initialState)
 
         fun boom() = intent {
             throw IllegalStateException("Boom!")

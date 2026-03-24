@@ -18,8 +18,8 @@ package org.orbitmvi.orbit.test
 
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
-import org.orbitmvi.orbit.ContainerHost
-import org.orbitmvi.orbit.container
+import org.orbitmvi.orbit.OrbitContainerHost
+import org.orbitmvi.orbit.orbitContainer
 import kotlin.random.Random
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -29,15 +29,15 @@ class RepeatOnSubscriptionTest {
 
     @Test
     fun test_does_not_hang_when_using_repeat_on_subscription() = runTest {
-        TestMiddleware(this).test(this, initialState = initialState) {
+        TestMiddleware(this).testWithInternalState(this, initialState = initialState) {
             containerHost.callOnSubscription { 42 }
 
-            assertEquals(State(42), awaitState())
+            assertEquals(State(42), awaitInternalState())
         }
     }
 
-    private inner class TestMiddleware(scope: TestScope) : ContainerHost<State, Nothing> {
-        override val container = scope.backgroundScope.container<State, Nothing>(initialState)
+    private inner class TestMiddleware(scope: TestScope) : OrbitContainerHost<State, State, Nothing> {
+        override val container = scope.backgroundScope.orbitContainer<State, Nothing>(initialState)
 
         fun callOnSubscription(externalCall: suspend () -> Int) = intent {
             repeatOnSubscription {

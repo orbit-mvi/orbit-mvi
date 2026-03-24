@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-2024 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 2021-2025 Mikołaj Leszczyński & Appmattus Limited
  * Copyright 2020 Babylon Partners Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -31,11 +31,13 @@ import org.orbitmvi.orbit.syntax.Syntax
  * The heart of the Orbit MVI system. Represents an MVI container with its input and outputs.
  * You can manipulate the container through the [orbit] function
  *
- * @param STATE The container's state type.
+ * @param INTERNAL_STATE The container's internal state type.
+ * @param EXTERNAL_STATE The container's external (exposed) state type. When the same as [INTERNAL_STATE],
+ * the container exposes its internal state directly.
  * @param SIDE_EFFECT The type of side effects posted by this container. Can be [Nothing] if this
  * container never posts side effects.
  */
-public interface Container<STATE : Any, SIDE_EFFECT : Any> {
+public interface OrbitContainer<INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : Any> {
 
     public val scope: CoroutineScope
 
@@ -45,24 +47,36 @@ public interface Container<STATE : Any, SIDE_EFFECT : Any> {
     public val settings: RealSettings
 
     /**
-     * A [StateFlow] of state updates. Emits the latest state upon subscription and serves only distinct
+     * A [StateFlow] of internal state updates. Emits the latest state upon subscription and serves only distinct
      * values (through equality comparison).
      */
-    public val stateFlow: StateFlow<STATE>
+    public val stateFlow: StateFlow<INTERNAL_STATE>
 
     /**
      *
      * A version of [stateFlow] ref-counted for the [Syntax.repeatOnSubscription] operator. Do not use when subscribing to state updates within
-     * your [ContainerHost].
+     * your [OrbitContainerHost].
      *
-     * A [StateFlow] of state updates. Emits the latest state upon subscription and serves only distinct
+     * A [StateFlow] of internal state updates. Emits the latest state upon subscription and serves only distinct
      * values (through equality comparison).
      *
      */
-    public val refCountStateFlow: StateFlow<STATE>
+    public val refCountStateFlow: StateFlow<INTERNAL_STATE>
 
     /**
-     * A [Flow] of one-off side effects posted from [Container]. Caches side effects when there are no collectors.
+     * A [StateFlow] of external state updates. Derived from [stateFlow] via [transformState].
+     * Emits the latest state upon subscription and serves only distinct values (through equality comparison).
+     */
+    public val externalStateFlow: StateFlow<EXTERNAL_STATE>
+
+    /**
+     * A version of [externalStateFlow] ref-counted for the [Syntax.repeatOnSubscription] operator.
+     * Do not use when subscribing to state updates within your [OrbitContainerHost].
+     */
+    public val externalRefCountStateFlow: StateFlow<EXTERNAL_STATE>
+
+    /**
+     * A [Flow] of one-off side effects posted from [OrbitContainer]. Caches side effects when there are no collectors.
      * The size of the cache can be controlled via [SettingsBuilder] and determines if and when the orbit thread suspends when you
      * post a side effect. The default is unlimited. You don't have to touch this unless you are posting many side effects which could result in
      * `OutOfMemoryError`.
@@ -75,9 +89,9 @@ public interface Container<STATE : Any, SIDE_EFFECT : Any> {
 
     /**
      * A version of [sideEffectFlow] ref-counted for the [Syntax.repeatOnSubscription] operator.
-     * Do not use when subscribing to state updates within your [ContainerHost].
+     * Do not use when subscribing to state updates within your [OrbitContainerHost].
      *
-     * [Flow] of one-off side effects posted from [Container]. Caches side effects when there are no collectors.
+     * [Flow] of one-off side effects posted from [OrbitContainer]. Caches side effects when there are no collectors.
      * The size of the cache can be controlled via [SettingsBuilder] and determines if and when the orbit thread suspends when you
      * post a side effect. The default is unlimited. You don't have to touch this unless you are posting many side effects which could result in
      * `OutOfMemoryError`.
@@ -91,18 +105,19 @@ public interface Container<STATE : Any, SIDE_EFFECT : Any> {
     public val refCountSideEffectFlow: Flow<SIDE_EFFECT>
 
     /**
-     * Executes an orbit intent. The intents are built in the [ContainerHost] using your chosen syntax.
+     * Executes an orbit intent. The intents are built in the [OrbitContainerHost] using your chosen syntax.
      *
      * @param orbitIntent lambda returning the suspend function representing the intent
      */
-    public fun orbit(orbitIntent: suspend ContainerContext<STATE, SIDE_EFFECT>.() -> Unit): Job
+    public fun orbit(orbitIntent: suspend ContainerContext<INTERNAL_STATE, SIDE_EFFECT>.() -> Unit): Job
 
     /**
-     * Executes an orbit intent inline, circumventing orbit's dispatching. The intents are built in the [ContainerHost] using your chosen syntax.
+     * Executes an orbit intent inline, circumventing orbit's dispatching.
+     * The intents are built in the [OrbitContainerHost] using your chosen syntax.
      *
      * @param orbitIntent lambda returning the suspend function representing the intent
      */
-    public suspend fun inlineOrbit(orbitIntent: suspend ContainerContext<STATE, SIDE_EFFECT>.() -> Unit)
+    public suspend fun inlineOrbit(orbitIntent: suspend ContainerContext<INTERNAL_STATE, SIDE_EFFECT>.() -> Unit)
 
     /**
      * Cancels the container scope and all intents in progress.
@@ -114,3 +129,22 @@ public interface Container<STATE : Any, SIDE_EFFECT : Any> {
      */
     public suspend fun joinIntents()
 }
+
+/**
+ * An [OrbitContainer] where the internal state and external state are the same type.
+ */
+@Deprecated(
+    "Use OrbitContainer directly",
+    ReplaceWith("OrbitContainer<STATE, STATE, SIDE_EFFECT>", "org.orbitmvi.orbit.OrbitContainer")
+)
+public typealias Container<STATE, SIDE_EFFECT> = OrbitContainer<STATE, STATE, SIDE_EFFECT>
+
+/**
+ * An [OrbitContainer] with distinct internal and external state types.
+ */
+@Deprecated(
+    "Use OrbitContainer directly",
+    ReplaceWith("OrbitContainer<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>", "org.orbitmvi.orbit.OrbitContainer")
+)
+public typealias ContainerWithExternalState<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT> =
+    OrbitContainer<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>

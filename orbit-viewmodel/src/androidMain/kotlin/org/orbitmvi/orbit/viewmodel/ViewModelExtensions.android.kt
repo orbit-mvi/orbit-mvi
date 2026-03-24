@@ -23,38 +23,67 @@ import android.os.Parcelable
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import org.orbitmvi.orbit.Container
+import org.orbitmvi.orbit.OrbitContainer
 import org.orbitmvi.orbit.SettingsBuilder
-import org.orbitmvi.orbit.container
+import org.orbitmvi.orbit.orbitContainer
 import org.orbitmvi.orbit.syntax.Syntax
 
 private const val SAVED_STATE_KEY = "state"
 
 /**
- * Creates a container scoped with ViewModelScope and allows you to used the
- * Android ViewModel's saved state support.
+ * Creates a container scoped with ViewModelScope with
+ * Android ViewModel's saved state support for [Parcelable] state.
  *
  * Provide a [SavedStateHandle] in order for your [Parcelable] state to be automatically saved as
  * you use the container.
  *
  * @param initialState The initial state of the container.
- * @param savedStateHandle The [SavedStateHandle] corresponding to this host. Typically retrieved
- * from the containing [ViewModel]
+ * @param savedStateHandle The [SavedStateHandle] corresponding to this host.
  * @param buildSettings This builder can be used to change the container's settings.
- * @param onCreate The intent to execute when the container is created, provided with the default or recreated state
- * @return A [Container] implementation
+ * @param onCreate The intent to execute when the container is created
+ * @return An [OrbitContainer] implementation
  */
-public fun <STATE : Parcelable, SIDE_EFFECT : Any> ViewModel.container(
+public fun <STATE : Parcelable, SIDE_EFFECT : Any> ViewModel.orbitContainer(
     initialState: STATE,
     savedStateHandle: SavedStateHandle,
     buildSettings: SettingsBuilder.() -> Unit = {},
     onCreate: (suspend Syntax<STATE, SIDE_EFFECT>.() -> Unit)? = null
-): Container<STATE, SIDE_EFFECT> {
-    val savedState: STATE? = savedStateHandle[SAVED_STATE_KEY]
+): OrbitContainer<STATE, STATE, SIDE_EFFECT> {
+    return orbitContainer(
+        initialState = initialState,
+        savedStateHandle = savedStateHandle,
+        transformState = { it },
+        buildSettings = buildSettings,
+        onCreate = onCreate
+    )
+}
+
+/**
+ * Creates a container scoped with ViewModelScope with external state transformation and
+ * Android ViewModel's saved state support for [Parcelable] state.
+ *
+ * Provide a [SavedStateHandle] in order for your [Parcelable] state to be automatically saved as
+ * you use the container.
+ *
+ * @param initialState The initial state of the container.
+ * @param savedStateHandle The [SavedStateHandle] corresponding to this host.
+ * @param transformState The function that transforms the internal state to the external state.
+ * @param buildSettings This builder can be used to change the container's settings.
+ * @param onCreate The intent to execute when the container is created
+ * @return An [OrbitContainer] implementation
+ */
+public fun <INTERNAL_STATE : Parcelable, EXTERNAL_STATE : Any, SIDE_EFFECT : Any> ViewModel.orbitContainer(
+    initialState: INTERNAL_STATE,
+    savedStateHandle: SavedStateHandle,
+    transformState: (INTERNAL_STATE) -> EXTERNAL_STATE,
+    buildSettings: SettingsBuilder.() -> Unit = {},
+    onCreate: (suspend Syntax<INTERNAL_STATE, SIDE_EFFECT>.() -> Unit)? = null
+): OrbitContainer<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT> {
+    val savedState: INTERNAL_STATE? = savedStateHandle[SAVED_STATE_KEY]
     val state = savedState ?: initialState
 
-    val realContainer: Container<STATE, SIDE_EFFECT> =
-        viewModelScope.container(state, buildSettings, onCreate)
+    val realContainer: OrbitContainer<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT> =
+        viewModelScope.orbitContainer(state, transformState, buildSettings, onCreate)
 
     return SavedStateContainerDecoratorParcelable(
         realContainer,
@@ -62,3 +91,42 @@ public fun <STATE : Parcelable, SIDE_EFFECT : Any> ViewModel.container(
         SAVED_STATE_KEY
     )
 }
+
+// region Deprecated
+
+/**
+ * Creates a container scoped with ViewModelScope with
+ * Android ViewModel's saved state support for [Parcelable] state.
+ */
+@Deprecated(
+    "Use orbitContainer instead",
+    ReplaceWith("orbitContainer(initialState, savedStateHandle, buildSettings, onCreate)")
+)
+public fun <STATE : Parcelable, SIDE_EFFECT : Any> ViewModel.container(
+    initialState: STATE,
+    savedStateHandle: SavedStateHandle,
+    buildSettings: SettingsBuilder.() -> Unit = {},
+    onCreate: (suspend Syntax<STATE, SIDE_EFFECT>.() -> Unit)? = null
+): OrbitContainer<STATE, STATE, SIDE_EFFECT> =
+    orbitContainer(initialState, savedStateHandle, buildSettings, onCreate)
+
+/**
+ * Creates a container scoped with ViewModelScope with external state transformation and
+ * Android ViewModel's saved state support for [Parcelable] state.
+ */
+@Deprecated(
+    "Use orbitContainer instead",
+    ReplaceWith(
+        "orbitContainer(initialState, savedStateHandle, transformState, buildSettings, onCreate)"
+    )
+)
+public fun <INTERNAL_STATE : Parcelable, EXTERNAL_STATE : Any, SIDE_EFFECT : Any> ViewModel.container(
+    initialState: INTERNAL_STATE,
+    savedStateHandle: SavedStateHandle,
+    transformState: (INTERNAL_STATE) -> EXTERNAL_STATE,
+    buildSettings: SettingsBuilder.() -> Unit = {},
+    onCreate: (suspend Syntax<INTERNAL_STATE, SIDE_EFFECT>.() -> Unit)? = null
+): OrbitContainer<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT> =
+    orbitContainer(initialState, savedStateHandle, transformState, buildSettings, onCreate)
+
+// endregion

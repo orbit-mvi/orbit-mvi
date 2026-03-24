@@ -9,9 +9,8 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
-import org.orbitmvi.orbit.Container
-import org.orbitmvi.orbit.ContainerHost
-import org.orbitmvi.orbit.ContainerHostWithExternalState
+import org.orbitmvi.orbit.OrbitContainer
+import org.orbitmvi.orbit.OrbitContainerHost
 import org.orbitmvi.orbit.RealSettings
 import org.orbitmvi.orbit.test.ItemWithInternalAndExternalState.ExternalStateItem
 import org.orbitmvi.orbit.test.ItemWithInternalAndExternalState.InternalStateItem
@@ -21,7 +20,7 @@ import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
 /**
- *  Run tests on your [ContainerHost]. This mode uses a real Orbit container, but the container's [CoroutineDispatcher] is set to the
+ *  Run tests on your [OrbitContainerHost]. This mode uses a real Orbit container, but the container's [CoroutineDispatcher] is set to the
  *  [TestScope]'s background dispatcher.
  *
  *  Typically this is the scope defined by kotlin's [runTest], but you are free to provide your own [TestScope].
@@ -29,14 +28,14 @@ import kotlin.time.Duration.Companion.seconds
  *
  *  During a test, all of the emitted states and side effects must be consumed - otherwise the test fails. See [OrbitTestContext].
  *
- * @param testScope The scope in which the [Container] will run.
+ * @param testScope The scope in which the [OrbitContainer] will run.
  * @param initialState The state to initialize the test container with. Omit this parameter to use the real initial state of the container.
  * @param settings Use this to set overrides for some of the container's [RealSettings] for this test.
  * @param validate Perform your test within this block. See [OrbitTestContext].
  */
 @OptIn(ExperimentalStdlibApi::class)
 @Suppress("MaxLineLength")
-public suspend fun <INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHostWithExternalState<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>> CONTAINER_HOST.testWithInternalState(
+public suspend fun <INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : OrbitContainerHost<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>> CONTAINER_HOST.testWithInternalState(
     testScope: TestScope,
     initialState: INTERNAL_STATE? = null,
     timeout: Duration? = null,
@@ -98,7 +97,7 @@ public suspend fun <INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : An
 
 @OptIn(ExperimentalStdlibApi::class)
 @Suppress("MaxLineLength")
-public suspend fun <INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHostWithExternalState<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>> CONTAINER_HOST.testWithExternalState(
+public suspend fun <INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : OrbitContainerHost<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>> CONTAINER_HOST.testWithExternalState(
     testScope: TestScope,
     initialState: INTERNAL_STATE? = null,
     timeout: Duration? = null,
@@ -147,7 +146,7 @@ public suspend fun <INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : An
             this as ReceiveTurbine<ItemWithInternalAndExternalState<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>>,
         ).apply {
             if (settings.autoCheckInitialState) {
-                assertEquals(container.transformState(resolvedInitialState), awaitExternalState())
+                assertEquals(container.findTestContainer().originalTransformState(resolvedInitialState), awaitExternalState())
             }
             validate(this)
             caughtException?.let { throw it }
@@ -160,7 +159,7 @@ public suspend fun <INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : An
 
 @OptIn(ExperimentalStdlibApi::class)
 @Suppress("MaxLineLength")
-public suspend fun <INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : ContainerHostWithExternalState<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>> CONTAINER_HOST.testWithInternalAndExternalState(
+public suspend fun <INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : OrbitContainerHost<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>> CONTAINER_HOST.testWithInternalAndExternalState(
     testScope: TestScope,
     initialState: INTERNAL_STATE? = null,
     timeout: Duration? = null,
@@ -215,7 +214,7 @@ public suspend fun <INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : An
         ).apply {
             if (settings.autoCheckInitialState) {
                 assertEquals(resolvedInitialState, awaitInternalState())
-                assertEquals(container.transformState(resolvedInitialState), awaitExternalState())
+                assertEquals(container.findTestContainer().originalTransformState(resolvedInitialState), awaitExternalState())
             }
             validate(this)
             caughtException?.let { throw it }

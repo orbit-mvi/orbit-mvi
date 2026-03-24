@@ -14,10 +14,9 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
-import org.orbitmvi.orbit.ContainerHostWithExternalState
+import org.orbitmvi.orbit.OrbitContainerHost
 import org.orbitmvi.orbit.RealSettings
 import org.orbitmvi.orbit.internal.RealContainer
-import org.orbitmvi.orbit.withExternalState
 import kotlin.random.Random
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
@@ -34,13 +33,14 @@ class ContainerHostWithExternalStateExtensionsKtTest : RobolectricTest() {
 
     private val scope by lazy { CoroutineScope(Job()) }
 
-    private val containerHost = object : ContainerHostWithExternalState<Int, String, Int> {
-        override val container = RealContainer<Int, Int>(
+    private val containerHost = object : OrbitContainerHost<Int, String, Int> {
+        override val container = RealContainer<Int, String, Int>(
             initialState = Random.Default.nextInt(),
             parentScope = scope,
             settings = RealSettings(),
+            transformState = Int::toString,
             subscribedCounterOverride = testSubscribedCounter
-        ).withExternalState(Int::toString)
+        )
     }
 
     @BeforeTest
@@ -55,7 +55,7 @@ class ContainerHostWithExternalStateExtensionsKtTest : RobolectricTest() {
         scope.cancel()
     }
 
-    private fun ComposeUiTest.initialiseContainerHost(block: @Composable ContainerHostWithExternalState<Int, String, Int>.() -> Unit) {
+    private fun ComposeUiTest.initialiseContainerHost(block: @Composable OrbitContainerHost<Int, String, Int>.() -> Unit) {
         setContent {
             CompositionLocalProvider(
                 LocalLifecycleOwner provides mockLifecycleOwner

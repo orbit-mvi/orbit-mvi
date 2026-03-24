@@ -24,9 +24,9 @@ import androidx.savedstate.serialization.encodeToSavedState
 import app.cash.turbine.test
 import kotlinx.coroutines.test.runTest
 import kotlinx.serialization.Serializable
-import org.orbitmvi.orbit.ContainerHost
+import org.orbitmvi.orbit.OrbitContainerHost
 import org.orbitmvi.orbit.syntax.Syntax
-import org.orbitmvi.orbit.test.test
+import org.orbitmvi.orbit.test.testWithInternalState
 import kotlin.random.Random
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -101,7 +101,7 @@ class ViewModelExtensionsKtKmpTest : RobolectricTest() {
 
         Middleware(savedStateHandle, initialState) {
             assertEquals(savedState, state)
-        }.test(this) {
+        }.testWithInternalState(this) {
             runOnCreate()
         }
     }
@@ -113,7 +113,7 @@ class ViewModelExtensionsKtKmpTest : RobolectricTest() {
 
         Middleware(savedStateHandle, initialState) {
             assertEquals(initialState, state)
-        }.test(this) {
+        }.testWithInternalState(this) {
             runOnCreate()
         }
     }
@@ -122,8 +122,8 @@ class ViewModelExtensionsKtKmpTest : RobolectricTest() {
         savedStateHandle: SavedStateHandle,
         initialState: TestState,
         onCreate: (suspend Syntax<TestState, Int>.() -> Unit)? = null
-    ) : ContainerHost<TestState, Int>, ViewModel() {
-        override val container = container(
+    ) : OrbitContainerHost<TestState, TestState, Int>, ViewModel() {
+        override val container = orbitContainer(
             initialState = initialState,
             savedStateHandle = savedStateHandle,
             serializer = TestState.serializer(),

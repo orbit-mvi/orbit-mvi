@@ -27,9 +27,9 @@ import app.cash.turbine.test
 import kotlinx.coroutines.test.runTest
 import kotlinx.parcelize.Parcelize
 import org.junit.Test
-import org.orbitmvi.orbit.ContainerHost
+import org.orbitmvi.orbit.OrbitContainerHost
 import org.orbitmvi.orbit.syntax.Syntax
-import org.orbitmvi.orbit.test.test
+import org.orbitmvi.orbit.test.testWithInternalState
 import kotlin.random.Random
 import kotlin.test.assertEquals
 
@@ -97,7 +97,7 @@ class ViewModelExtensionsKtTest {
 
         Middleware(savedStateHandle, initialState) {
             assertEquals(savedState, state)
-        }.test(this) {
+        }.testWithInternalState(this) {
             runOnCreate()
         }
     }
@@ -109,7 +109,7 @@ class ViewModelExtensionsKtTest {
 
         Middleware(savedStateHandle, initialState) {
             assertEquals(initialState, state)
-        }.test(this) {
+        }.testWithInternalState(this) {
             runOnCreate()
         }
     }
@@ -118,8 +118,8 @@ class ViewModelExtensionsKtTest {
         savedStateHandle: SavedStateHandle,
         initialState: TestState,
         onCreate: (suspend Syntax<TestState, Int>.() -> Unit)? = null
-    ) : ContainerHost<TestState, Int>, ViewModel() {
-        override val container = container(
+    ) : OrbitContainerHost<TestState, TestState, Int>, ViewModel() {
+        override val container = orbitContainer(
             initialState = initialState,
             savedStateHandle = savedStateHandle,
             onCreate = onCreate

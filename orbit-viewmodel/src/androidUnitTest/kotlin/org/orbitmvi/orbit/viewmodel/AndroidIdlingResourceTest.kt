@@ -34,9 +34,9 @@ import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withTimeout
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.orbitmvi.orbit.Container
-import org.orbitmvi.orbit.ContainerHost
-import org.orbitmvi.orbit.container
+import org.orbitmvi.orbit.OrbitContainer
+import org.orbitmvi.orbit.OrbitContainerHost
+import org.orbitmvi.orbit.orbitContainer
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 import kotlin.test.AfterTest
@@ -318,9 +318,9 @@ class AndroidIdlingResourceTest {
         }
     }
 
-    private fun CoroutineScope.createContainerHost(): ContainerHost<TestState, Int> {
-        return object : ContainerHost<TestState, Int> {
-            override val container: Container<TestState, Int> = container(
+    private fun CoroutineScope.createContainerHost(): OrbitContainerHost<TestState, TestState, Int> {
+        return object : OrbitContainerHost<TestState, TestState, Int> {
+            override val container: OrbitContainer<TestState, TestState, Int> = orbitContainer(
                 initialState = TestState(0),
                 buildSettings = { idlingRegistry = AndroidIdlingResource() }
             )

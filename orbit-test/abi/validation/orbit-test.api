@@ -1,10 +1,10 @@
 public final class org/orbitmvi/orbit/test/ExternalTestKt {
-	public static final fun testWithExternalState-Tnuy9kA (Lorg/orbitmvi/orbit/ContainerHostWithExternalState;Lkotlinx/coroutines/test/TestScope;Ljava/lang/Object;Lkotlin/time/Duration;Lorg/orbitmvi/orbit/test/TestSettings;Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public static synthetic fun testWithExternalState-Tnuy9kA$default (Lorg/orbitmvi/orbit/ContainerHostWithExternalState;Lkotlinx/coroutines/test/TestScope;Ljava/lang/Object;Lkotlin/time/Duration;Lorg/orbitmvi/orbit/test/TestSettings;Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
-	public static final fun testWithInternalAndExternalState-Tnuy9kA (Lorg/orbitmvi/orbit/ContainerHostWithExternalState;Lkotlinx/coroutines/test/TestScope;Ljava/lang/Object;Lkotlin/time/Duration;Lorg/orbitmvi/orbit/test/TestSettings;Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public static synthetic fun testWithInternalAndExternalState-Tnuy9kA$default (Lorg/orbitmvi/orbit/ContainerHostWithExternalState;Lkotlinx/coroutines/test/TestScope;Ljava/lang/Object;Lkotlin/time/Duration;Lorg/orbitmvi/orbit/test/TestSettings;Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
-	public static final fun testWithInternalState-Tnuy9kA (Lorg/orbitmvi/orbit/ContainerHostWithExternalState;Lkotlinx/coroutines/test/TestScope;Ljava/lang/Object;Lkotlin/time/Duration;Lorg/orbitmvi/orbit/test/TestSettings;Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public static synthetic fun testWithInternalState-Tnuy9kA$default (Lorg/orbitmvi/orbit/ContainerHostWithExternalState;Lkotlinx/coroutines/test/TestScope;Ljava/lang/Object;Lkotlin/time/Duration;Lorg/orbitmvi/orbit/test/TestSettings;Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public static final fun testWithExternalState-Tnuy9kA (Lorg/orbitmvi/orbit/OrbitContainerHost;Lkotlinx/coroutines/test/TestScope;Ljava/lang/Object;Lkotlin/time/Duration;Lorg/orbitmvi/orbit/test/TestSettings;Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun testWithExternalState-Tnuy9kA$default (Lorg/orbitmvi/orbit/OrbitContainerHost;Lkotlinx/coroutines/test/TestScope;Ljava/lang/Object;Lkotlin/time/Duration;Lorg/orbitmvi/orbit/test/TestSettings;Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public static final fun testWithInternalAndExternalState-Tnuy9kA (Lorg/orbitmvi/orbit/OrbitContainerHost;Lkotlinx/coroutines/test/TestScope;Ljava/lang/Object;Lkotlin/time/Duration;Lorg/orbitmvi/orbit/test/TestSettings;Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun testWithInternalAndExternalState-Tnuy9kA$default (Lorg/orbitmvi/orbit/OrbitContainerHost;Lkotlinx/coroutines/test/TestScope;Ljava/lang/Object;Lkotlin/time/Duration;Lorg/orbitmvi/orbit/test/TestSettings;Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public static final fun testWithInternalState-Tnuy9kA (Lorg/orbitmvi/orbit/OrbitContainerHost;Lkotlinx/coroutines/test/TestScope;Ljava/lang/Object;Lkotlin/time/Duration;Lorg/orbitmvi/orbit/test/TestSettings;Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun testWithInternalState-Tnuy9kA$default (Lorg/orbitmvi/orbit/OrbitContainerHost;Lkotlinx/coroutines/test/TestScope;Ljava/lang/Object;Lkotlin/time/Duration;Lorg/orbitmvi/orbit/test/TestSettings;Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
 }
 
 public abstract class org/orbitmvi/orbit/test/Item {
@@ -69,18 +69,18 @@ public final class org/orbitmvi/orbit/test/ItemWithInternalAndExternalState$Side
 }
 
 public abstract class org/orbitmvi/orbit/test/OrbitScopedTestContextBase {
-	public fun <init> (Lorg/orbitmvi/orbit/ContainerHostWithExternalState;Lapp/cash/turbine/ReceiveTurbine;)V
+	public fun <init> (Lorg/orbitmvi/orbit/OrbitContainerHost;Lapp/cash/turbine/ReceiveTurbine;)V
 	public final fun awaitSideEffect (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public final fun cancelAndIgnoreRemainingItems (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public final fun expectNoItems ()V
 	public final fun expectSideEffect (Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public final fun getContainerHost ()Lorg/orbitmvi/orbit/ContainerHostWithExternalState;
+	public final fun getContainerHost ()Lorg/orbitmvi/orbit/OrbitContainerHost;
 	public final fun runOnCreate ()Lkotlinx/coroutines/Job;
 	public final fun skipItems (ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
 public final class org/orbitmvi/orbit/test/OrbitScopedTestContextExternal : org/orbitmvi/orbit/test/OrbitScopedTestContextBase {
-	public fun <init> (Lorg/orbitmvi/orbit/ContainerHostWithExternalState;Ljava/lang/Object;Lapp/cash/turbine/ReceiveTurbine;)V
+	public fun <init> (Lorg/orbitmvi/orbit/OrbitContainerHost;Ljava/lang/Object;Lapp/cash/turbine/ReceiveTurbine;)V
 	public final fun awaitExternalState (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public final fun expectExternalState (Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public final fun expectExternalState (Lkotlin/jvm/functions/Function1;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
@@ -89,7 +89,7 @@ public final class org/orbitmvi/orbit/test/OrbitScopedTestContextExternal : org/
 }
 
 public final class org/orbitmvi/orbit/test/OrbitScopedTestContextInternal : org/orbitmvi/orbit/test/OrbitScopedTestContextBase {
-	public fun <init> (Lorg/orbitmvi/orbit/ContainerHostWithExternalState;Ljava/lang/Object;Lapp/cash/turbine/ReceiveTurbine;)V
+	public fun <init> (Lorg/orbitmvi/orbit/OrbitContainerHost;Ljava/lang/Object;Lapp/cash/turbine/ReceiveTurbine;)V
 	public final fun awaitInternalState (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public final fun expectInternalState (Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public final fun expectInternalState (Lkotlin/jvm/functions/Function1;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
@@ -98,7 +98,7 @@ public final class org/orbitmvi/orbit/test/OrbitScopedTestContextInternal : org/
 }
 
 public final class org/orbitmvi/orbit/test/OrbitScopedTestContextInternalAndExternal : org/orbitmvi/orbit/test/OrbitScopedTestContextBase {
-	public fun <init> (Lorg/orbitmvi/orbit/ContainerHostWithExternalState;Ljava/lang/Object;Lapp/cash/turbine/ReceiveTurbine;)V
+	public fun <init> (Lorg/orbitmvi/orbit/OrbitContainerHost;Ljava/lang/Object;Lapp/cash/turbine/ReceiveTurbine;)V
 	public final fun awaitExternalState (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public final fun awaitInternalState (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public final fun expectExternalState (Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
@@ -112,7 +112,7 @@ public final class org/orbitmvi/orbit/test/OrbitScopedTestContextInternalAndExte
 }
 
 public final class org/orbitmvi/orbit/test/OrbitTestContext {
-	public fun <init> (Lorg/orbitmvi/orbit/ContainerHost;Ljava/lang/Object;Lapp/cash/turbine/ReceiveTurbine;Lorg/orbitmvi/orbit/test/TestSettings;)V
+	public fun <init> (Lorg/orbitmvi/orbit/OrbitContainerHost;Ljava/lang/Object;Lapp/cash/turbine/ReceiveTurbine;Lorg/orbitmvi/orbit/test/TestSettings;)V
 	public final fun awaitItem (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public final fun awaitSideEffect (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public final fun awaitState (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
@@ -122,7 +122,7 @@ public final class org/orbitmvi/orbit/test/OrbitTestContext {
 	public final fun expectSideEffect (Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public final fun expectState (Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public final fun expectState (Lkotlin/jvm/functions/Function1;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public final fun getContainerHost ()Lorg/orbitmvi/orbit/ContainerHost;
+	public final fun getContainerHost ()Lorg/orbitmvi/orbit/OrbitContainerHost;
 	public final fun getCurrentConsumedState ()Ljava/lang/Object;
 	public final fun runOnCreate ()Lkotlinx/coroutines/Job;
 	public final fun setCurrentConsumedState (Ljava/lang/Object;)V
@@ -130,8 +130,8 @@ public final class org/orbitmvi/orbit/test/OrbitTestContext {
 }
 
 public final class org/orbitmvi/orbit/test/TestKt {
-	public static final fun test-Tnuy9kA (Lorg/orbitmvi/orbit/ContainerHost;Lkotlinx/coroutines/test/TestScope;Ljava/lang/Object;Lkotlin/time/Duration;Lorg/orbitmvi/orbit/test/TestSettings;Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public static synthetic fun test-Tnuy9kA$default (Lorg/orbitmvi/orbit/ContainerHost;Lkotlinx/coroutines/test/TestScope;Ljava/lang/Object;Lkotlin/time/Duration;Lorg/orbitmvi/orbit/test/TestSettings;Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public static final fun test-Tnuy9kA (Lorg/orbitmvi/orbit/OrbitContainerHost;Lkotlinx/coroutines/test/TestScope;Ljava/lang/Object;Lkotlin/time/Duration;Lorg/orbitmvi/orbit/test/TestSettings;Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun test-Tnuy9kA$default (Lorg/orbitmvi/orbit/OrbitContainerHost;Lkotlinx/coroutines/test/TestScope;Ljava/lang/Object;Lkotlin/time/Duration;Lorg/orbitmvi/orbit/test/TestSettings;Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
 }
 
 public final class org/orbitmvi/orbit/test/TestSettings {

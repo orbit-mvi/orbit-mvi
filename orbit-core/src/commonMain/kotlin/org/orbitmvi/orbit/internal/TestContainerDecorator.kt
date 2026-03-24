@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-2024 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 2021-2025 Mikołaj Leszczyński & Appmattus Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,48 +20,54 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
-import org.orbitmvi.orbit.Container
-import org.orbitmvi.orbit.ContainerDecorator
+import org.orbitmvi.orbit.OrbitContainer
+import org.orbitmvi.orbit.OrbitContainerDecorator
 import org.orbitmvi.orbit.RealSettings
 import org.orbitmvi.orbit.syntax.ContainerContext
 import kotlin.concurrent.atomics.AtomicReference
 
-public class TestContainerDecorator<STATE : Any, SIDE_EFFECT : Any>(
-    public val originalInitialState: STATE,
-    override val actual: Container<STATE, SIDE_EFFECT>
-) : ContainerDecorator<STATE, SIDE_EFFECT> {
+public class TestContainerDecorator<INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : Any>(
+    public val originalInitialState: INTERNAL_STATE,
+    override val actual: OrbitContainer<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>,
+    public val originalTransformState: (INTERNAL_STATE) -> EXTERNAL_STATE
+) : OrbitContainerDecorator<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT> {
 
     private val delegate = AtomicReference(actual)
 
     override val settings: RealSettings
         get() = delegate.load().settings
 
-    override val stateFlow: StateFlow<STATE>
+    override val stateFlow: StateFlow<INTERNAL_STATE>
         get() = delegate.load().stateFlow
-    override val refCountStateFlow: StateFlow<STATE>
+    override val refCountStateFlow: StateFlow<INTERNAL_STATE>
         get() = delegate.load().refCountStateFlow
+    override val externalStateFlow: StateFlow<EXTERNAL_STATE>
+        get() = delegate.load().externalStateFlow
+    override val externalRefCountStateFlow: StateFlow<EXTERNAL_STATE>
+        get() = delegate.load().externalRefCountStateFlow
     override val sideEffectFlow: Flow<SIDE_EFFECT>
         get() = delegate.load().sideEffectFlow
     override val refCountSideEffectFlow: Flow<SIDE_EFFECT>
         get() = delegate.load().refCountSideEffectFlow
 
-    override fun orbit(orbitIntent: suspend ContainerContext<STATE, SIDE_EFFECT>.() -> Unit): Job {
+    override fun orbit(orbitIntent: suspend ContainerContext<INTERNAL_STATE, SIDE_EFFECT>.() -> Unit): Job {
         return delegate.load().orbit(orbitIntent)
     }
 
-    override suspend fun inlineOrbit(orbitIntent: suspend ContainerContext<STATE, SIDE_EFFECT>.() -> Unit) {
+    override suspend fun inlineOrbit(orbitIntent: suspend ContainerContext<INTERNAL_STATE, SIDE_EFFECT>.() -> Unit) {
         delegate.load().inlineOrbit(orbitIntent)
     }
 
     public fun test(
-        initialState: STATE? = null,
+        initialState: INTERNAL_STATE? = null,
         settings: RealSettings,
         testScope: CoroutineScope
     ) {
-        val testDelegate = RealContainer<STATE, SIDE_EFFECT>(
+        val testDelegate = RealContainer<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>(
             initialState = initialState ?: originalInitialState,
             parentScope = testScope,
             settings = settings,
+            transformState = originalTransformState,
             subscribedCounterOverride = AlwaysSubscribedCounter
         )
 

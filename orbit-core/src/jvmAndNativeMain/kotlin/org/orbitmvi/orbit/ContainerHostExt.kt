@@ -22,27 +22,7 @@ import org.orbitmvi.orbit.idling.withIdling
 import org.orbitmvi.orbit.syntax.Syntax
 
 /**
- * Build and execute an intent on [Container] in a blocking manner, without dispatching.
- *
- * This API is reserved for special cases e.g. storing text input in the state.
- *
- * @param registerIdling whether to register an idling resource when executing this intent. Defaults to true.
- * @param transformer lambda representing the transformer
- */
-@OrbitDsl
-public fun <STATE : Any, SIDE_EFFECT : Any> ContainerHost<STATE, SIDE_EFFECT>.blockingIntent(
-    registerIdling: Boolean = true,
-    transformer: suspend Syntax<STATE, SIDE_EFFECT>.() -> Unit
-): Unit = runBlocking {
-    container.inlineOrbit {
-        withIdling(registerIdling) {
-            Syntax(this).transformer()
-        }
-    }
-}
-
-/**
- * Build and execute an intent on [ContainerWithExternalState] in a blocking manner, without dispatching.
+ * Build and execute an intent on [OrbitContainer] in a blocking manner, without dispatching.
  *
  * This API is reserved for special cases e.g. storing text input in the state.
  *
@@ -51,7 +31,7 @@ public fun <STATE : Any, SIDE_EFFECT : Any> ContainerHost<STATE, SIDE_EFFECT>.bl
  */
 @OrbitDsl
 public fun <INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : Any>
-    ContainerHostWithExternalState<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>.blockingIntent(
+    OrbitContainerHost<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>.blockingIntent(
         registerIdling: Boolean = true,
         transformer: suspend Syntax<INTERNAL_STATE, SIDE_EFFECT>.() -> Unit
     ): Unit = runBlocking {

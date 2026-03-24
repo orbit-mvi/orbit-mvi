@@ -24,7 +24,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
-import org.orbitmvi.orbit.ContainerHost
+import org.orbitmvi.orbit.OrbitContainerHost
 import org.orbitmvi.orbit.RealSettings
 import org.orbitmvi.orbit.internal.RealContainer
 import kotlin.random.Random
@@ -41,11 +41,12 @@ class ContainerHostExtensionsKtTest : RobolectricTest() {
 
     private val scope by lazy { CoroutineScope(Job()) }
 
-    private val containerHost = object : ContainerHost<Int, Int> {
-        override val container = RealContainer<Int, Int>(
+    private val containerHost = object : OrbitContainerHost<Int, Int, Int> {
+        override val container = RealContainer<Int, Int, Int>(
             initialState = Random.nextInt(),
             parentScope = scope,
             settings = RealSettings(),
+            transformState = { it },
             subscribedCounterOverride = testSubscribedCounter
         )
     }

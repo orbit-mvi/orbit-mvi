@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-2024 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 2021-2025 Mikołaj Leszczyński & Appmattus Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,35 +21,36 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import kotlinx.coroutines.launch
-import org.orbitmvi.orbit.Container
-import org.orbitmvi.orbit.ContainerHost
+import org.orbitmvi.orbit.OrbitContainer
+import org.orbitmvi.orbit.OrbitContainerHost
 
 /**
- * Observe [Container.stateFlow] and [Container.sideEffectFlow] correctly on Android in one-line of code.
+ * Observe [OrbitContainer.externalStateFlow] and [OrbitContainer.sideEffectFlow] correctly on Android in one-line of code.
  * These streams are observed when the view is in [Lifecycle.State.STARTED].
  *
- * In Activities, call from onCreate, where viewModel is a [ContainerHost]:
+ * In Activities, call from onCreate, where viewModel is an [OrbitContainerHost]:
  *
  * ```
  * viewModel.observe(this, state = ::state, sideEffect = ::sideEffect)
  * ```
  *
- * In Fragments, call from onViewCreated, where viewModel is a [ContainerHost]:
+ * In Fragments, call from onViewCreated, where viewModel is an [OrbitContainerHost]:
  *
  * ```
  * viewModel.observe(viewLifecycleOwner, state = ::state, sideEffect = ::sideEffect)
  * ```
  */
-public fun <STATE : Any, SIDE_EFFECT : Any> ContainerHost<STATE, SIDE_EFFECT>.observe(
+@Suppress("MaxLineLength")
+public fun <INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : Any> OrbitContainerHost<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>.observe(
     lifecycleOwner: LifecycleOwner,
     lifecycleState: Lifecycle.State = Lifecycle.State.STARTED,
-    state: (suspend (state: STATE) -> Unit)? = null,
+    state: (suspend (state: EXTERNAL_STATE) -> Unit)? = null,
     sideEffect: (suspend (sideEffect: SIDE_EFFECT) -> Unit)? = null
 ) {
     lifecycleOwner.lifecycleScope.launch {
         // See https://medium.com/androiddevelopers/a-safer-way-to-collect-flows-from-android-uis-23080b1f8bda
         lifecycleOwner.lifecycle.repeatOnLifecycle(lifecycleState) {
-            state?.let { launch { container.refCountStateFlow.collect { state(it) } } }
+            state?.let { launch { container.externalRefCountStateFlow.collect { state(it) } } }
             sideEffect?.let { launch { container.refCountSideEffectFlow.collect { sideEffect(it) } } }
         }
     }

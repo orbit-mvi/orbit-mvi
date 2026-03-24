@@ -19,20 +19,20 @@ package org.orbitmvi.orbit.sample.stocklist.detail.business
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import org.orbitmvi.orbit.ContainerHost
+import org.orbitmvi.orbit.OrbitContainerHost
 import org.orbitmvi.orbit.sample.stocklist.streaming.stock.StockRepository
-import org.orbitmvi.orbit.viewmodel.container
+import org.orbitmvi.orbit.viewmodel.orbitContainer
 import javax.inject.Inject
 
 @HiltViewModel
 class DetailViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val stockRepository: StockRepository
-) : ViewModel(), ContainerHost<DetailState, Nothing> {
+) : ViewModel(), OrbitContainerHost<DetailState, DetailState, Nothing> {
 
     private val itemName = savedStateHandle.get<String>("itemName")!!
 
-    override val container = container<DetailState, Nothing>(DetailState(), savedStateHandle) { requestStock() }
+    override val container = orbitContainer<DetailState, Nothing>(DetailState(), savedStateHandle) { requestStock() }
 
     private fun requestStock() = intent(registerIdling = false) {
         repeatOnSubscription {

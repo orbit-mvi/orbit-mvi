@@ -18,8 +18,8 @@ package org.orbitmvi.orbit.test
 
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
-import org.orbitmvi.orbit.ContainerHost
-import org.orbitmvi.orbit.container
+import org.orbitmvi.orbit.OrbitContainerHost
+import org.orbitmvi.orbit.orbitContainer
 import kotlin.random.Random
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -32,17 +32,16 @@ class StateTest {
     private val initialState = State()
 
     @Test
-    fun succeeds_if_initial_state_matches_expected_state_with_expectState() = runTest {
-        StateTestMiddleware(this).test(this, settings = TestSettings(autoCheckInitialState = false)) {
-            expectState { initialState }
+    fun succeeds_if_initial_state_matches_expected_state_with_expectInternalState_lambda() = runTest {
+        StateTestMiddleware(this).testWithInternalState(this, settings = TestSettings(autoCheckInitialState = false)) {
+            expectInternalState { initialState }
         }
     }
 
     @Test
-    fun succeeds_if_initial_state_matches_expected_state_with_expectInitialState() = runTest {
-        StateTestMiddleware(this).test(this, settings = TestSettings(autoCheckInitialState = false)) {
-            @Suppress("DEPRECATION")
-            expectInitialState()
+    fun succeeds_if_initial_state_matches_expected_state_with_expectInternalState_value() = runTest {
+        StateTestMiddleware(this).testWithInternalState(this, settings = TestSettings(autoCheckInitialState = false)) {
+            expectInternalState(initialState)
         }
     }
 
@@ -51,8 +50,8 @@ class StateTest {
         val someRandomState = State()
 
         assertFailsWith<AssertionError> {
-            StateTestMiddleware(this).test(this, settings = TestSettings(autoCheckInitialState = false)) {
-                assertEquals(someRandomState, awaitState())
+            StateTestMiddleware(this).testWithInternalState(this, settings = TestSettings(autoCheckInitialState = false)) {
+                assertEquals(someRandomState, awaitInternalState())
             }
         }.also {
             assertTrue { it.message?.startsWith(prefix = "expected", ignoreCase = true) == true }
@@ -64,11 +63,11 @@ class StateTest {
         val action = Random.nextInt()
         val action2 = Random.nextInt()
 
-        StateTestMiddleware(this).test(this) {
+        StateTestMiddleware(this).testWithInternalState(this) {
             containerHost.newCount(action)
             containerHost.newCount(action2)
-            assertEquals(State(count = action), awaitState())
-            assertEquals(State(count = action2), awaitState())
+            assertEquals(State(count = action), awaitInternalState())
+            assertEquals(State(count = action2), awaitInternalState())
         }
     }
 
@@ -79,12 +78,12 @@ class StateTest {
         val action3 = Random.nextInt()
 
         assertFailsWith<AssertionError> {
-            StateTestMiddleware(this).test(this) {
+            StateTestMiddleware(this).testWithInternalState(this) {
                 containerHost.newCount(action)
                 containerHost.newCount(action2)
                 containerHost.newCount(action3)
-                assertEquals(State(count = action), awaitState())
-                assertEquals(State(count = action2), awaitState())
+                assertEquals(State(count = action), awaitInternalState())
+                assertEquals(State(count = action2), awaitInternalState())
             }
         }.also {
             assertTrue { it.message?.startsWith("Unconsumed events found") == true }
@@ -98,12 +97,12 @@ class StateTest {
         val action3 = Random.nextInt()
 
         assertFailsWith<AssertionError> {
-            StateTestMiddleware(this).test(this, timeout = 1000.milliseconds) {
+            StateTestMiddleware(this).testWithInternalState(this, timeout = 1000.milliseconds) {
                 containerHost.newCount(action)
                 containerHost.newCount(action2)
-                assertEquals(State(count = action), awaitState())
-                assertEquals(State(count = action2), awaitState())
-                assertEquals(State(count = action3), awaitState())
+                assertEquals(State(count = action), awaitInternalState())
+                assertEquals(State(count = action2), awaitInternalState())
+                assertEquals(State(count = action3), awaitInternalState())
             }
         }.also {
             assertTrue(it.message?.matches("No value produced in [0-9]+s".toRegex()) == true)
@@ -117,11 +116,11 @@ class StateTest {
         val action3 = Random.nextInt()
 
         assertFailsWith<AssertionError> {
-            StateTestMiddleware(this).test(this) {
+            StateTestMiddleware(this).testWithInternalState(this) {
                 containerHost.newCount(action)
                 containerHost.newCount(action2)
-                assertEquals(State(count = action2), awaitState())
-                assertEquals(State(count = action3), awaitState())
+                assertEquals(State(count = action2), awaitInternalState())
+                assertEquals(State(count = action3), awaitInternalState())
             }
         }.also {
             assertTrue { it.message?.startsWith(prefix = "expected", ignoreCase = true) == true }
@@ -135,11 +134,11 @@ class StateTest {
         val action3 = Random.nextInt()
 
         assertFailsWith<AssertionError> {
-            StateTestMiddleware(this).test(this) {
+            StateTestMiddleware(this).testWithInternalState(this) {
                 containerHost.newCount(action)
                 containerHost.newCount(action2)
-                assertEquals(State(count = action), awaitState())
-                assertEquals(State(count = action3), awaitState())
+                assertEquals(State(count = action), awaitInternalState())
+                assertEquals(State(count = action3), awaitInternalState())
             }
         }.also {
             assertTrue { it.message?.startsWith(prefix = "expected", ignoreCase = true) == true }
@@ -153,13 +152,13 @@ class StateTest {
         val action3 = Random.nextInt()
 
         assertFailsWith<AssertionError> {
-            StateTestMiddleware(this).test(this) {
+            StateTestMiddleware(this).testWithInternalState(this) {
                 containerHost.newCount(action)
                 containerHost.newCount(action2)
                 containerHost.newCount(action3)
-                assertEquals(State(count = action), awaitState())
-                assertEquals(State(count = action3), awaitState())
-                assertEquals(State(count = action2), awaitState())
+                assertEquals(State(count = action), awaitInternalState())
+                assertEquals(State(count = action3), awaitInternalState())
+                assertEquals(State(count = action2), awaitInternalState())
             }
         }.also {
             assertTrue { it.message?.startsWith(prefix = "expected", ignoreCase = true) == true }
@@ -171,15 +170,15 @@ class StateTest {
         val sideEffect = Random.nextInt()
 
         assertFailsWith<AssertionError> {
-            StateTestMiddleware(this).test(this) {
+            StateTestMiddleware(this).testWithInternalState(this) {
                 containerHost.newSideEffect(sideEffect)
                 containerHost.newCount(sideEffect)
 
-                awaitState()
+                awaitInternalState()
                 awaitSideEffect()
             }
         }.also {
-            assertTrue { it.message?.startsWith("Expected State but got SideEffectItem") == true }
+            assertTrue { it.message?.startsWith("Expected Internal State but got SideEffectItem") == true }
         }
     }
 
@@ -189,13 +188,13 @@ class StateTest {
         val action2 = Random.nextInt()
         val action3 = Random.nextInt()
 
-        StateTestMiddleware(this).test(this) {
+        StateTestMiddleware(this).testWithInternalState(this) {
             containerHost.newList(action)
             containerHost.newList(action2)
             containerHost.newList(action3)
-            expectState { copy(list = listOf(action)) }
-            expectState { copy(list = listOf(action, action2)) }
-            expectState { copy(list = listOf(action, action2, action3)) }
+            expectInternalState { copy(list = listOf(action)) }
+            expectInternalState { copy(list = listOf(action, action2)) }
+            expectInternalState { copy(list = listOf(action, action2, action3)) }
         }
     }
 
@@ -205,13 +204,13 @@ class StateTest {
         val action2 = Random.nextInt()
         val action3 = Random.nextInt()
 
-        StateTestMiddleware(this).test(this) {
+        StateTestMiddleware(this).testWithInternalState(this) {
             containerHost.newList(action)
             containerHost.newList(action2)
             containerHost.newList(action3)
-            expectState(State(count = initialState.count, list = listOf(action)))
-            expectState(State(count = initialState.count, list = listOf(action, action2)))
-            expectState(State(count = initialState.count, list = listOf(action, action2, action3)))
+            expectInternalState(State(count = initialState.count, list = listOf(action)))
+            expectInternalState(State(count = initialState.count, list = listOf(action, action2)))
+            expectInternalState(State(count = initialState.count, list = listOf(action, action2, action3)))
         }
     }
 
@@ -222,13 +221,13 @@ class StateTest {
         val action3 = Random.nextInt()
 
         assertFailsWith<AssertionError> {
-            StateTestMiddleware(this).test(this) {
+            StateTestMiddleware(this).testWithInternalState(this) {
                 containerHost.newList(action)
                 containerHost.newList(action2)
                 containerHost.newList(action3)
-                expectState { copy(list = listOf(action)) }
-                expectState { copy(list = listOf(action, action2, action3)) }
-                expectState { copy(list = listOf(action, action2)) }
+                expectInternalState { copy(list = listOf(action)) }
+                expectInternalState { copy(list = listOf(action, action2, action3)) }
+                expectInternalState { copy(list = listOf(action, action2)) }
             }
         }
     }
@@ -240,20 +239,20 @@ class StateTest {
         val action3 = Random.nextInt()
 
         assertFailsWith<AssertionError> {
-            StateTestMiddleware(this).test(this) {
+            StateTestMiddleware(this).testWithInternalState(this) {
                 containerHost.newList(action)
                 containerHost.newList(action2)
                 containerHost.newList(action3)
-                expectState(State(count = initialState.count, list = listOf(action)))
-                expectState(State(count = initialState.count, list = listOf(action, action2, action3)))
-                expectState(State(count = initialState.count, list = listOf(action, action2)))
+                expectInternalState(State(count = initialState.count, list = listOf(action)))
+                expectInternalState(State(count = initialState.count, list = listOf(action, action2, action3)))
+                expectInternalState(State(count = initialState.count, list = listOf(action, action2)))
             }
         }
     }
 
     private inner class StateTestMiddleware(scope: TestScope) :
-        ContainerHost<State, Int> {
-        override val container = scope.backgroundScope.container<State, Int>(initialState)
+        OrbitContainerHost<State, State, Int> {
+        override val container = scope.backgroundScope.orbitContainer<State, Int>(initialState)
 
         fun newCount(action: Int) = intent {
             reduce {

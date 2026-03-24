@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-2024 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 2021-2025 Mikołaj Leszczyński & Appmattus Limited
  * Copyright 2020 Babylon Partners Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,20 +25,20 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.flow
-import org.orbitmvi.orbit.Container
-import org.orbitmvi.orbit.ContainerDecorator
+import org.orbitmvi.orbit.OrbitContainer
+import org.orbitmvi.orbit.OrbitContainerDecorator
 import org.orbitmvi.orbit.syntax.ContainerContext
 import org.orbitmvi.orbit.syntax.intent
 import kotlin.concurrent.atomics.AtomicBoolean
 
-public class LazyCreateContainerDecorator<STATE : Any, SIDE_EFFECT : Any>(
-    override val actual: Container<STATE, SIDE_EFFECT>,
-    public val onCreate: suspend ContainerContext<STATE, SIDE_EFFECT>.() -> Unit
-) : ContainerDecorator<STATE, SIDE_EFFECT> {
+public class LazyCreateContainerDecorator<INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : Any>(
+    override val actual: OrbitContainer<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>,
+    public val onCreate: suspend ContainerContext<INTERNAL_STATE, SIDE_EFFECT>.() -> Unit
+) : OrbitContainerDecorator<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT> {
     private val created = AtomicBoolean(false)
 
-    override val stateFlow: StateFlow<STATE> = actual.stateFlow.onSubscribe { runOnCreate() }
-    override val refCountStateFlow: StateFlow<STATE> = actual.refCountStateFlow.onSubscribe { runOnCreate() }
+    override val stateFlow: StateFlow<INTERNAL_STATE> = actual.stateFlow.onSubscribe { runOnCreate() }
+    override val refCountStateFlow: StateFlow<INTERNAL_STATE> = actual.refCountStateFlow.onSubscribe { runOnCreate() }
     override val sideEffectFlow: Flow<SIDE_EFFECT> = flow {
         runOnCreate()
         emitAll(actual.sideEffectFlow)
@@ -54,11 +54,11 @@ public class LazyCreateContainerDecorator<STATE : Any, SIDE_EFFECT : Any>(
         }
     }
 
-    override fun orbit(orbitIntent: suspend ContainerContext<STATE, SIDE_EFFECT>.() -> Unit): Job {
+    override fun orbit(orbitIntent: suspend ContainerContext<INTERNAL_STATE, SIDE_EFFECT>.() -> Unit): Job {
         runOnCreate().also { return actual.orbit(orbitIntent) }
     }
 
-    override suspend fun inlineOrbit(orbitIntent: suspend ContainerContext<STATE, SIDE_EFFECT>.() -> Unit) {
+    override suspend fun inlineOrbit(orbitIntent: suspend ContainerContext<INTERNAL_STATE, SIDE_EFFECT>.() -> Unit) {
         runOnCreate().also { actual.inlineOrbit(orbitIntent) }
     }
 }

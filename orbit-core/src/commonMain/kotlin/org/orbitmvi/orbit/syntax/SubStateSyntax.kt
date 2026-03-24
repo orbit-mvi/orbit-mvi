@@ -22,7 +22,7 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.launch
-import org.orbitmvi.orbit.Container
+import org.orbitmvi.orbit.OrbitContainer
 import org.orbitmvi.orbit.SettingsBuilder
 import org.orbitmvi.orbit.annotation.OrbitDsl
 
@@ -37,7 +37,7 @@ public class SubStateSyntax<S : Any, SE : Any, T : S>(private val containerConte
     /**
      * Side effects allow you to deal with things like tracking, navigation etc.
      *
-     * These are delivered through [Container.sideEffectFlow] by calling [Syntax.postSideEffect].
+     * These are delivered through [OrbitContainer.sideEffectFlow] by calling [Syntax.postSideEffect].
      *
      * @param sideEffect the side effect to post through the side effect flow
      */
@@ -60,10 +60,10 @@ public class SubStateSyntax<S : Any, SE : Any, T : S>(private val containerConte
 
     /**
      * Starts and stops the provided block of code based on the number of subscribers to the
-     * [Container.refCountStateFlow] and [Container.refCountSideEffectFlow].
+     * [OrbitContainer.refCountStateFlow] and [OrbitContainer.refCountSideEffectFlow].
      *
      * If the number of subscribers reaches non-zero, the block is run. When the number of subscribers reaches
-     * zero, the block is cancelled after a short delay. The delay can be set when creating the [Container]
+     * zero, the block is cancelled after a short delay. The delay can be set when creating the [OrbitContainer]
      * using [SettingsBuilder.repeatOnSubscribedStopTimeout].
      *
      * This API is useful for collecting hot flows.

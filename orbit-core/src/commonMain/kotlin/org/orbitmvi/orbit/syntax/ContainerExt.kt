@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-2024 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 2021-2025 Mikołaj Leszczyński & Appmattus Limited
  * Copyright 2020 Babylon Partners Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,20 +21,20 @@
 package org.orbitmvi.orbit.syntax
 
 import kotlinx.coroutines.Job
-import org.orbitmvi.orbit.Container
+import org.orbitmvi.orbit.OrbitContainer
 import org.orbitmvi.orbit.annotation.OrbitDsl
 import org.orbitmvi.orbit.idling.withIdling
 
 /**
- * Build and execute an intent on [Container].
+ * Build and execute an intent on [OrbitContainer].
  *
  * @param registerIdling whether to register an idling resource when executing this intent. Defaults to true.
  * @param transformer lambda representing the transformer
  */
 @OrbitDsl
-internal fun <STATE : Any, SIDE_EFFECT : Any> Container<STATE, SIDE_EFFECT>.intent(
+internal fun <INTERNAL_STATE : Any, SIDE_EFFECT : Any> OrbitContainer<INTERNAL_STATE, *, SIDE_EFFECT>.intent(
     registerIdling: Boolean = true,
-    transformer: suspend ContainerContext<STATE, SIDE_EFFECT>.() -> Unit
+    transformer: suspend ContainerContext<INTERNAL_STATE, SIDE_EFFECT>.() -> Unit
 ): Job = orbit {
     withIdling(registerIdling) {
         transformer()

@@ -18,8 +18,8 @@ package org.orbitmvi.orbit.test
 
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
-import org.orbitmvi.orbit.ContainerHost
-import org.orbitmvi.orbit.container
+import org.orbitmvi.orbit.OrbitContainerHost
+import org.orbitmvi.orbit.orbitContainer
 import kotlin.random.Random
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -34,7 +34,7 @@ class SideEffectTest {
     fun succeeds_if_posted_side_effects_match_expected_side_effects() = runTest {
         val sideEffects = List(Random.nextInt(1, 5)) { Random.nextInt() }
 
-        SideEffectTestMiddleware(this).test(this) {
+        SideEffectTestMiddleware(this).testWithInternalState(this) {
             sideEffects.forEach { containerHost.something(it) }
 
             assertEquals(
@@ -52,7 +52,7 @@ class SideEffectTest {
     fun succeeds_if_posted_side_effects_match_expected_side_effects__shorthand_syntax() = runTest {
         val sideEffects = List(Random.nextInt(1, 5)) { Random.nextInt() }
 
-        SideEffectTestMiddleware(this).test(this) {
+        SideEffectTestMiddleware(this).testWithInternalState(this) {
             sideEffects.forEach { containerHost.something(it) }
 
             sideEffects.forEach {
@@ -67,7 +67,7 @@ class SideEffectTest {
         val sideEffects2 = List(Random.nextInt(1, 5)) { Random.nextInt() }
 
         assertFailsWith<AssertionError> {
-            SideEffectTestMiddleware(this).test(this) {
+            SideEffectTestMiddleware(this).testWithInternalState(this) {
                 sideEffects.forEach { containerHost.something(it) }
 
                 assertEquals(
@@ -89,20 +89,20 @@ class SideEffectTest {
         val sideEffect = Random.nextInt()
 
         assertFailsWith<AssertionError> {
-            SideEffectTestMiddleware(this).test(this) {
+            SideEffectTestMiddleware(this).testWithInternalState(this) {
                 containerHost.newState(sideEffect)
                 containerHost.something(sideEffect)
 
                 awaitSideEffect()
-                awaitState()
+                awaitInternalState()
             }
         }.also {
-            assertTrue { it.message?.startsWith("Expected Side Effect but got StateItem") == true }
+            assertTrue { it.message?.startsWith("Expected Side Effect but got InternalStateItem") == true }
         }
     }
 
-    private inner class SideEffectTestMiddleware(scope: TestScope) : ContainerHost<State, Int> {
-        override val container = scope.backgroundScope.container<State, Int>(initialState)
+    private inner class SideEffectTestMiddleware(scope: TestScope) : OrbitContainerHost<State, State, Int> {
+        override val container = scope.backgroundScope.orbitContainer<State, Int>(initialState)
 
         fun newState(count: Int) = intent {
             reduce { state.copy(count = count) }

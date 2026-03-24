@@ -25,8 +25,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.test.runTest
-import org.orbitmvi.orbit.ContainerHost
-import org.orbitmvi.orbit.container
+import org.orbitmvi.orbit.OrbitContainerHost
+import org.orbitmvi.orbit.orbitContainer
 import kotlin.random.Random
 import kotlin.test.AfterTest
 import kotlin.test.Test
@@ -90,8 +90,8 @@ internal class StateTest {
 
     private data class TestState(val id: Int = Random.nextInt())
 
-    private inner class Middleware(initialState: TestState) : ContainerHost<TestState, String> {
-        override val container = scope.container<TestState, String>(initialState)
+    private inner class Middleware(initialState: TestState) : OrbitContainerHost<TestState, TestState, String> {
+        override val container = scope.orbitContainer<TestState, String>(initialState)
 
         fun something(action: Int) = intent {
             reduce {

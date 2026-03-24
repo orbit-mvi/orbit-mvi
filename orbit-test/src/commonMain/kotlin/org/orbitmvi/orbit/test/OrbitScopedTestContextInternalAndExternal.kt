@@ -17,7 +17,7 @@
 package org.orbitmvi.orbit.test
 
 import app.cash.turbine.ReceiveTurbine
-import org.orbitmvi.orbit.ContainerHostWithExternalState
+import org.orbitmvi.orbit.OrbitContainerHost
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
 import kotlin.test.fail
@@ -26,7 +26,7 @@ public class OrbitScopedTestContextInternalAndExternal<
     INTERNAL_STATE : Any,
     EXTERNAL_STATE : Any,
     SIDE_EFFECT : Any,
-    CONTAINER_HOST : ContainerHostWithExternalState<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>
+    CONTAINER_HOST : OrbitContainerHost<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>
     >(
     containerHost: CONTAINER_HOST,
     resolvedInitialState: INTERNAL_STATE,
@@ -37,7 +37,9 @@ public class OrbitScopedTestContextInternalAndExternal<
     internal var currentConsumedInternalState: INTERNAL_STATE = resolvedInitialState
 
     @PublishedApi
-    internal var currentConsumedExternalState: EXTERNAL_STATE = containerHost.container.transformState(resolvedInitialState)
+    internal var currentConsumedExternalState: EXTERNAL_STATE = containerHost.container.findTestContainer().originalTransformState(
+        resolvedInitialState
+    )
 
     /**
      * Awaits for an internal state and checks if it matches the expected internal state change from the

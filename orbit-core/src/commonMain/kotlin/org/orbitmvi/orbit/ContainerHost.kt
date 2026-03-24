@@ -34,21 +34,27 @@ import org.orbitmvi.orbit.syntax.intent
  *
  * Extension functions `intent` and `orbit` are provided as a convenient way of launching orbit
  * intents on the container.
+ *
+ * @param INTERNAL_STATE The container's internal state type.
+ * @param EXTERNAL_STATE The container's external (exposed) state type. When the same as [INTERNAL_STATE],
+ * the container exposes its internal state directly.
+ * @param SIDE_EFFECT The type of side effects posted by this container. Can be [Nothing] if this
+ * container never posts side effects.
  */
-public interface ContainerHost<STATE : Any, SIDE_EFFECT : Any> {
+public interface OrbitContainerHost<INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : Any> {
     /**
-     * The orbit [Container] instance.
+     * The orbit [OrbitContainer] instance.
      *
-     * Use factory functions to easily obtain a [Container] instance.
+     * Use factory functions to easily obtain an [OrbitContainer] instance.
      *
      * ```
-     * override val container = scope.container<MyState, MySideEffect>(initialState)
+     * override val container = scope.orbitContainer<MyState, MySideEffect>(initialState)
      * ```
      */
-    public val container: Container<STATE, SIDE_EFFECT>
+    public val container: OrbitContainer<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>
 
     /**
-     * Build and execute an intent on [Container].
+     * Build and execute an intent on [OrbitContainer].
      *
      * @param registerIdling whether to register an idling resource when executing this intent. Defaults to true.
      * @param transformer lambda representing the transformer
@@ -56,7 +62,7 @@ public interface ContainerHost<STATE : Any, SIDE_EFFECT : Any> {
     @OrbitDsl
     public fun intent(
         registerIdling: Boolean = true,
-        transformer: suspend Syntax<STATE, SIDE_EFFECT>.() -> Unit
+        transformer: suspend Syntax<INTERNAL_STATE, SIDE_EFFECT>.() -> Unit
     ): Job = container.intent(registerIdling) { Syntax(this).transformer() }
 
     /**
@@ -65,10 +71,10 @@ public interface ContainerHost<STATE : Any, SIDE_EFFECT : Any> {
      * Should only be used from within an [intent] or [subIntent] block.
      *
      * An example use case for sub-intents is to [launch] multiple from a single intent using [coroutineScope].
-     * For example, when listening to multiple flows from the [Container] `onCreate` lambda.
+     * For example, when listening to multiple flows from the [OrbitContainer] `onCreate` lambda.
      *
      * ```
-     * override val container = scope.container<TestState, String>(initialState) {
+     * override val container = scope.orbitContainer<TestState, String>(initialState) {
      *             coroutineScope {
      *                 launch {
      *                     sendSideEffect1()
@@ -100,8 +106,27 @@ public interface ContainerHost<STATE : Any, SIDE_EFFECT : Any> {
     @OrbitDsl
     @OrbitExperimental
     public suspend fun subIntent(
-        transformer: suspend Syntax<STATE, SIDE_EFFECT>.() -> Unit,
+        transformer: suspend Syntax<INTERNAL_STATE, SIDE_EFFECT>.() -> Unit,
     ): Unit = container.inlineOrbit {
         Syntax(this).transformer()
     }
 }
+
+/**
+ * An [OrbitContainerHost] where the internal state and external state are the same type.
+ */
+@Deprecated(
+    "Use OrbitContainerHost directly",
+    ReplaceWith("OrbitContainerHost<STATE, STATE, SIDE_EFFECT>", "org.orbitmvi.orbit.OrbitContainerHost")
+)
+public typealias ContainerHost<STATE, SIDE_EFFECT> = OrbitContainerHost<STATE, STATE, SIDE_EFFECT>
+
+/**
+ * An [OrbitContainerHost] with distinct internal and external state types.
+ */
+@Deprecated(
+    "Use OrbitContainerHost directly",
+    ReplaceWith("OrbitContainerHost<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>", "org.orbitmvi.orbit.OrbitContainerHost")
+)
+public typealias ContainerHostWithExternalState<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT> =
+    OrbitContainerHost<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>

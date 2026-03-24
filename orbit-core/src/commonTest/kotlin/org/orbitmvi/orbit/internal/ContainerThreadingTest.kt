@@ -24,8 +24,8 @@ import app.cash.turbine.test
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.runTest
-import org.orbitmvi.orbit.Container
-import org.orbitmvi.orbit.container
+import org.orbitmvi.orbit.OrbitContainer
+import org.orbitmvi.orbit.orbitContainer
 import kotlin.random.Random
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -36,7 +36,7 @@ internal class ContainerThreadingTest {
     fun container_can_process_a_second_action_while_the_first_is_suspended() = runTest {
         val initState = Random.nextInt()
         val newState = Random.nextInt()
-        val container = backgroundScope.container<Int, Nothing>(initState)
+        val container = backgroundScope.orbitContainer<Int, Nothing>(initState)
 
         container.stateFlow.test {
             container.orbit {
@@ -53,7 +53,7 @@ internal class ContainerThreadingTest {
     @Test
     fun reductions_are_applied_in_order_if_called_from_single_thread() = runTest {
         var expectedState = TestState()
-        val container = backgroundScope.container<TestState, Nothing>(expectedState)
+        val container = backgroundScope.orbitContainer<TestState, Nothing>(expectedState)
         container.stateFlow.test {
             skipItems(1)
 
@@ -80,7 +80,7 @@ internal class ContainerThreadingTest {
                 emptyList()
             )
         )
-        val container = backgroundScope.container<TestState, Nothing>(expectedStates.first())
+        val container = backgroundScope.orbitContainer<TestState, Nothing>(expectedStates.first())
         container.stateFlow.test {
             skipItems(1)
 
@@ -109,7 +109,7 @@ internal class ContainerThreadingTest {
 
     private data class TestState(val ids: List<Int> = emptyList())
 
-    private suspend fun Container<TestState, Nothing>.one(delay: Boolean = false) = orbit {
+    private suspend fun OrbitContainer<TestState, TestState, Nothing>.one(delay: Boolean = false) = orbit {
         if (delay) {
             delay(Random.nextLong(20))
         }
@@ -118,7 +118,7 @@ internal class ContainerThreadingTest {
         }
     }
 
-    private suspend fun Container<TestState, Nothing>.two(delay: Boolean = false) = orbit {
+    private suspend fun OrbitContainer<TestState, TestState, Nothing>.two(delay: Boolean = false) = orbit {
         if (delay) {
             delay(Random.nextLong(20))
         }
@@ -127,7 +127,7 @@ internal class ContainerThreadingTest {
         }
     }
 
-    private suspend fun Container<TestState, Nothing>.three(delay: Boolean = false) = orbit {
+    private suspend fun OrbitContainer<TestState, TestState, Nothing>.three(delay: Boolean = false) = orbit {
         if (delay) {
             delay(Random.nextLong(20))
         }

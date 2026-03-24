@@ -16,33 +16,24 @@
 
 package org.orbitmvi.orbit
 
-import kotlinx.coroutines.flow.StateFlow
-import org.orbitmvi.orbit.internal.RealContainerWithExternalState
+import org.orbitmvi.orbit.internal.ExternalStateContainerAdapter
 
 /**
- * The heart of the Orbit MVI system. Represents an MVI container with its input and outputs.
- * You can manipulate the container through the [orbit] function
+ * Wraps an [OrbitContainer] with an external state transformation.
  *
- * @param INTERNAL_STATE The container's internal state type.
- * @param EXTERNAL_STATE The container's external state type.
- * @param SIDE_EFFECT The type of side effects posted by this container. Can be [Nothing] if this
- * container never posts side effects.
+ * @param transformState The function that transforms the internal state to the external state.
+ * @return An [OrbitContainer] with the external state transformation applied.
  */
-public interface ContainerWithExternalState<INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : Any> :
-    ContainerDecorator<INTERNAL_STATE, SIDE_EFFECT> {
-
-    public val transformState: (internalState: INTERNAL_STATE) -> EXTERNAL_STATE
-
-    public val externalStateFlow: StateFlow<EXTERNAL_STATE>
-
-    public val externalRefCountStateFlow: StateFlow<EXTERNAL_STATE>
-}
-
-public fun <INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : Any> Container<INTERNAL_STATE, SIDE_EFFECT>.withExternalState(
-    transformState: (INTERNAL_STATE) -> EXTERNAL_STATE
-): ContainerWithExternalState<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT> {
-    return RealContainerWithExternalState(
-        actual = this,
-        transformState = transformState
+@Deprecated(
+    "Use the scope.orbitContainer(initialState, transformState) factory function instead",
+    ReplaceWith("scope.orbitContainer(initialState, transformState)")
+)
+public fun <INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : Any>
+    OrbitContainer<INTERNAL_STATE, INTERNAL_STATE, SIDE_EFFECT>.withExternalState(
+        transformState: (INTERNAL_STATE) -> EXTERNAL_STATE
+    ): OrbitContainer<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT> {
+    return ExternalStateContainerAdapter(
+        delegate = this,
+        externalTransformState = transformState
     )
 }

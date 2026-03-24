@@ -30,7 +30,7 @@ import org.mockito.kotlin.whenever
 import org.orbitmvi.orbit.sample.posts.InstantTaskExecutorExtension
 import org.orbitmvi.orbit.sample.posts.domain.repositories.PostOverview
 import org.orbitmvi.orbit.sample.posts.domain.repositories.PostRepository
-import org.orbitmvi.orbit.test.test
+import org.orbitmvi.orbit.test.testWithInternalState
 
 @ExtendWith(InstantTaskExecutorExtension::class)
 class PostListViewModelTest {
@@ -48,14 +48,14 @@ class PostListViewModelTest {
             .thenReturn(overviews)
 
         // when we observe details from the view model
-        PostListViewModel(SavedStateHandle(), repository).test(
+        PostListViewModel(SavedStateHandle(), repository).testWithInternalState(
             this,
             initialState = initialState,
         ) {
             runOnCreate().join()
 
             // then the view model loads the overviews
-            expectState { copy(overviews = overviews) }
+            expectInternalState { copy(overviews = overviews) }
         }
     }
 
@@ -69,7 +69,7 @@ class PostListViewModelTest {
             .thenReturn(overviews)
 
         // when we observe details from the view model
-        PostListViewModel(SavedStateHandle(), repository).test(
+        PostListViewModel(SavedStateHandle(), repository).testWithInternalState(
             this,
             initialState = initialState,
         ) {
@@ -86,7 +86,7 @@ class PostListViewModelTest {
         val initialState = PostListState(overviews)
 
         // given we have already loaded the overviews
-        PostListViewModel(SavedStateHandle(), repository).test(
+        PostListViewModel(SavedStateHandle(), repository).testWithInternalState(
             this,
             initialState = initialState,
         ) {

@@ -28,7 +28,7 @@ import kotlinx.coroutines.cancel
 import org.junit.After
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.orbitmvi.orbit.container
+import org.orbitmvi.orbit.orbitContainer
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 import kotlin.test.assertEquals
@@ -46,12 +46,12 @@ class AndroidIdlingResourceRobolectricTest {
 
     @Test
     fun idling_resources_have_unique_names() {
-        scope.container<TestState, Int>(
+        scope.orbitContainer<TestState, Int>(
             initialState = TestState(0),
             buildSettings = { idlingRegistry = AndroidIdlingResource() }
         )
 
-        scope.container<TestState, Int>(
+        scope.orbitContainer<TestState, Int>(
             initialState = TestState(0),
             buildSettings = { idlingRegistry = AndroidIdlingResource() }
         )
