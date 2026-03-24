@@ -24,7 +24,7 @@ import org.orbitmvi.orbit.OrbitContainerHost
 import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.sample.posts.compose.multiplatform.domain.repositories.PostOverview
 import org.orbitmvi.orbit.sample.posts.compose.multiplatform.domain.repositories.PostRepository
-import org.orbitmvi.orbit.viewmodel.container
+import org.orbitmvi.orbit.viewmodel.orbitContainer
 
 public class PostDetailsViewModel(
     savedStateHandle: SavedStateHandle,
@@ -33,7 +33,7 @@ public class PostDetailsViewModel(
 ) : ViewModel(), OrbitContainerHost<PostDetailState, PostDetailState, Nothing> {
 
     override val container: OrbitContainer<PostDetailState, PostDetailState, Nothing> =
-        container(PostDetailState.Loading(postOverview), savedStateHandle, PostDetailState.serializer()) {
+        orbitContainer(PostDetailState.Loading(postOverview), savedStateHandle, PostDetailState.serializer()) {
             when (state) {
                 is PostDetailState.Error -> reduce { PostDetailState.Error(state.postOverview, ::onRetry) }
                 is PostDetailState.Loading -> loadDetails()

@@ -22,7 +22,7 @@ package org.orbitmvi.orbit.internal
 import app.cash.turbine.test
 import kotlinx.coroutines.test.runTest
 import org.orbitmvi.orbit.OrbitContainer
-import org.orbitmvi.orbit.container
+import org.orbitmvi.orbit.orbitContainer
 import kotlin.random.Random
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -31,7 +31,7 @@ internal class RefCountSideEffectTest {
 
     @Test
     fun side_effects_are_emitted_in_order() = runTest {
-        val container = backgroundScope.container<Unit, Int>(Unit)
+        val container = backgroundScope.orbitContainer<Unit, Int>(Unit)
 
         container.refCountSideEffectFlow.test {
             repeat(1000) {
@@ -46,7 +46,7 @@ internal class RefCountSideEffectTest {
 
     @Test
     fun side_effects_are_cached_when_there_are_no_subscribers() = runTest {
-        val container = backgroundScope.container<Unit, Int>(Unit)
+        val container = backgroundScope.orbitContainer<Unit, Int>(Unit)
         val action = Random.nextInt()
         val action2 = Random.nextInt()
         val action3 = Random.nextInt()
@@ -64,7 +64,7 @@ internal class RefCountSideEffectTest {
 
     @Test
     fun consumed_side_effects_are_not_resent() = runTest {
-        val container = backgroundScope.container<Unit, Int>(Unit)
+        val container = backgroundScope.orbitContainer<Unit, Int>(Unit)
         val action = Random.nextInt()
         val action2 = Random.nextInt()
         val action3 = Random.nextInt()
@@ -85,7 +85,7 @@ internal class RefCountSideEffectTest {
 
     @Test
     fun only_new_side_effects_are_emitted_when_resubscribing() = runTest {
-        val container = backgroundScope.container<Unit, Int>(Unit)
+        val container = backgroundScope.orbitContainer<Unit, Int>(Unit)
         val action = Random.nextInt()
 
         container.refCountSideEffectFlow.test {

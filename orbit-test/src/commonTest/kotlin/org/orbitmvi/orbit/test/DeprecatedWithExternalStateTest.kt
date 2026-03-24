@@ -21,8 +21,8 @@ import kotlinx.coroutines.test.runTest
 import org.orbitmvi.orbit.OrbitContainer
 import org.orbitmvi.orbit.OrbitContainerHost
 import org.orbitmvi.orbit.annotation.OrbitInternal
-import org.orbitmvi.orbit.container
 import org.orbitmvi.orbit.internal.ExternalStateContainerAdapter
+import org.orbitmvi.orbit.orbitContainer
 import org.orbitmvi.orbit.withExternalState
 import kotlin.random.Random
 import kotlin.test.Test
@@ -93,7 +93,7 @@ class DeprecatedWithExternalStateTest {
     private inner class MiddlewareWithDeprecatedExternalState(scope: TestScope) :
         OrbitContainerHost<InternalState, ExternalState, Int> {
         override val container: OrbitContainer<InternalState, ExternalState, Int> =
-            scope.backgroundScope.container<InternalState, Int>(initialState)
+            scope.backgroundScope.orbitContainer<InternalState, Int>(initialState)
                 .withExternalState { ExternalState(it.count.toString()) }
 
         fun newCount(action: Int) = intent {
@@ -108,7 +108,7 @@ class DeprecatedWithExternalStateTest {
     private inner class MiddlewareWithDeprecatedExternalStateAndOnCreate(scope: TestScope) :
         OrbitContainerHost<InternalState, ExternalState, Int> {
         override val container: OrbitContainer<InternalState, ExternalState, Int> =
-            scope.backgroundScope.container<InternalState, Int>(
+            scope.backgroundScope.orbitContainer<InternalState, Int>(
                 initialState,
                 onCreate = { reduce { state.copy(count = -1) } }
             ).withExternalState { ExternalState(it.count.toString()) }

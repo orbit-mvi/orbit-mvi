@@ -33,7 +33,7 @@ import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
 import org.orbitmvi.orbit.OrbitContainerHost
-import org.orbitmvi.orbit.container
+import org.orbitmvi.orbit.orbitContainer
 import org.orbitmvi.orbit.test.testWithInternalState
 import kotlin.random.Random
 import kotlin.test.Test
@@ -60,7 +60,7 @@ internal class ContainerExceptionHandlerTest {
         val exceptions = Channel<Throwable>(capacity = Channel.BUFFERED)
         val exceptionHandler = CoroutineExceptionHandler { _, throwable -> exceptions.trySend(throwable) }
 
-        val container = backgroundScope.container<Int, Nothing>(
+        val container = backgroundScope.orbitContainer<Int, Nothing>(
             initialState = initState,
             buildSettings = {
                 this.exceptionHandler = exceptionHandler
@@ -115,7 +115,7 @@ internal class ContainerExceptionHandlerTest {
             } else {
                 null
             }
-        val container = containerScope.container<Unit, Nothing>(
+        val container = containerScope.orbitContainer<Unit, Nothing>(
             initialState = Unit,
             buildSettings = {
                 this.exceptionHandler = exceptionHandler
@@ -153,7 +153,7 @@ internal class ContainerExceptionHandlerTest {
         exceptionHandler: CoroutineExceptionHandler? = null
     ) : OrbitContainerHost<Int, Int, Nothing> {
         val initState = Random.nextInt()
-        override val container = scope.backgroundScope.container<Int, Nothing>(
+        override val container = scope.backgroundScope.orbitContainer<Int, Nothing>(
             initialState = initState,
             buildSettings = {
                 this.exceptionHandler = exceptionHandler

@@ -27,7 +27,7 @@ import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.sample.posts.domain.repositories.PostOverview
 import org.orbitmvi.orbit.sample.posts.domain.repositories.PostRepository
 import org.orbitmvi.orbit.sample.posts.domain.repositories.Status
-import org.orbitmvi.orbit.viewmodel.container
+import org.orbitmvi.orbit.viewmodel.orbitContainer
 
 class PostDetailsViewModel(
     savedStateHandle: SavedStateHandle,
@@ -35,7 +35,7 @@ class PostDetailsViewModel(
     private val postOverview: PostOverview
 ) : ViewModel(), OrbitContainerHost<PostDetailState, PostDetailState, Nothing> {
 
-    override val container = container<PostDetailState, Nothing>(PostDetailState.NoDetailsAvailable(postOverview), savedStateHandle) {
+    override val container = orbitContainer<PostDetailState, Nothing>(PostDetailState.NoDetailsAvailable(postOverview), savedStateHandle) {
         if (state !is PostDetailState.Details) {
             loadDetails()
         }

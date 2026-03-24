@@ -24,7 +24,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
 import org.orbitmvi.orbit.OrbitContainerHost
-import org.orbitmvi.orbit.container
+import org.orbitmvi.orbit.orbitContainer
 import org.orbitmvi.orbit.test.testWithInternalState
 import kotlin.random.Random
 import kotlin.test.Test
@@ -66,7 +66,7 @@ internal class SimpleDslBehaviourTest {
     private data class TestState(val id: Int = Random.nextInt())
 
     private inner class BaseDslMiddleware(scope: TestScope) : OrbitContainerHost<TestState, TestState, String> {
-        override val container = scope.backgroundScope.container<TestState, String>(TestState(42))
+        override val container = scope.backgroundScope.orbitContainer<TestState, String>(TestState(42))
 
         fun reducer(action: Int) = intent {
             reduce {

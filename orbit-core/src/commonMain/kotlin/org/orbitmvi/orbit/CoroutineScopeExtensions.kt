@@ -35,12 +35,12 @@ import org.orbitmvi.orbit.syntax.Syntax
  * executed in a lazy manner when the container is first interacted with in any way.
  * @return An [OrbitContainer] implementation
  */
-public fun <STATE : Any, SIDE_EFFECT : Any> CoroutineScope.container(
+public fun <STATE : Any, SIDE_EFFECT : Any> CoroutineScope.orbitContainer(
     initialState: STATE,
     buildSettings: SettingsBuilder.() -> Unit = {},
     onCreate: (suspend Syntax<STATE, SIDE_EFFECT>.() -> Unit)? = null
 ): OrbitContainer<STATE, STATE, SIDE_EFFECT> {
-    return container(
+    return orbitContainer(
         initialState = initialState,
         transformState = { it },
         buildSettings = buildSettings,
@@ -58,7 +58,7 @@ public fun <STATE : Any, SIDE_EFFECT : Any> CoroutineScope.container(
  * executed in a lazy manner when the container is first interacted with in any way.
  * @return An [OrbitContainer] implementation
  */
-public fun <INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : Any> CoroutineScope.container(
+public fun <INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : Any> CoroutineScope.orbitContainer(
     initialState: INTERNAL_STATE,
     transformState: (INTERNAL_STATE) -> EXTERNAL_STATE,
     buildSettings: SettingsBuilder.() -> Unit = {},
@@ -86,3 +86,44 @@ public fun <INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : Any> Corou
         )
     }
 }
+
+/**
+ * Helps create a concrete container in a standard way.
+ *
+ * @param initialState The initial state of the container.
+ * @param buildSettings This builder can be used to change the container's settings.
+ * @param onCreate The lambda to execute when the container is created. By default it is
+ * executed in a lazy manner when the container is first interacted with in any way.
+ * @return An [OrbitContainer] implementation
+ */
+@Deprecated(
+    "Use orbitContainer instead",
+    ReplaceWith("orbitContainer(initialState, buildSettings, onCreate)")
+)
+public fun <STATE : Any, SIDE_EFFECT : Any> CoroutineScope.container(
+    initialState: STATE,
+    buildSettings: SettingsBuilder.() -> Unit = {},
+    onCreate: (suspend Syntax<STATE, SIDE_EFFECT>.() -> Unit)? = null
+): OrbitContainer<STATE, STATE, SIDE_EFFECT> = orbitContainer(initialState, buildSettings, onCreate)
+
+/**
+ * Helps create a concrete container with external state transformation in a standard way.
+ *
+ * @param initialState The initial state of the container.
+ * @param transformState The function that transforms the internal state to the external state.
+ * @param buildSettings This builder can be used to change the container's settings.
+ * @param onCreate The lambda to execute when the container is created. By default it is
+ * executed in a lazy manner when the container is first interacted with in any way.
+ * @return An [OrbitContainer] implementation
+ */
+@Deprecated(
+    "Use orbitContainer instead",
+    ReplaceWith("orbitContainer(initialState, transformState, buildSettings, onCreate)")
+)
+public fun <INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : Any> CoroutineScope.container(
+    initialState: INTERNAL_STATE,
+    transformState: (INTERNAL_STATE) -> EXTERNAL_STATE,
+    buildSettings: SettingsBuilder.() -> Unit = {},
+    onCreate: (suspend Syntax<INTERNAL_STATE, SIDE_EFFECT>.() -> Unit)? = null
+): OrbitContainer<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT> =
+    orbitContainer(initialState, transformState, buildSettings, onCreate)

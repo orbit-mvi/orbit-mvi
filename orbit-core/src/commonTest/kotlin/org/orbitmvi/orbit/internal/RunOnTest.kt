@@ -25,7 +25,7 @@ import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.test.runTest
 import org.orbitmvi.orbit.OrbitContainerHost
 import org.orbitmvi.orbit.annotation.OrbitExperimental
-import org.orbitmvi.orbit.container
+import org.orbitmvi.orbit.orbitContainer
 import org.orbitmvi.orbit.test.TestSettings
 import org.orbitmvi.orbit.test.testWithInternalState
 import kotlin.test.Test
@@ -173,7 +173,7 @@ internal class RunOnTest {
 
     @OptIn(OrbitExperimental::class)
     private inner class Middleware(scope: CoroutineScope) : OrbitContainerHost<TestState, TestState, String> {
-        override val container = scope.container<TestState, String>(TestState.Loading)
+        override val container = scope.orbitContainer<TestState, String>(TestState.Loading)
 
         val channel: Channel<Int> = Channel()
         val collectorChannel: Channel<Int> = Channel()

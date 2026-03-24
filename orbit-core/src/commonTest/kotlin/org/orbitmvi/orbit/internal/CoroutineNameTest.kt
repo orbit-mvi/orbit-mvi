@@ -5,7 +5,7 @@ import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
 import org.orbitmvi.orbit.OrbitContainerHost
-import org.orbitmvi.orbit.container
+import org.orbitmvi.orbit.orbitContainer
 import kotlin.coroutines.coroutineContext
 import kotlin.random.Random
 import kotlin.test.Test
@@ -29,7 +29,7 @@ internal class CoroutineNameTest {
 
     private inner class Middleware(scope: TestScope) : OrbitContainerHost<TestState, TestState, String> {
 
-        override val container = scope.backgroundScope.container(TestState()) {
+        override val container = scope.backgroundScope.orbitContainer(TestState()) {
             postSideEffect(coroutineContext[CoroutineName]?.name ?: "unknown")
         }
 

@@ -20,7 +20,7 @@ package org.orbitmvi.orbit.test
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
 import org.orbitmvi.orbit.OrbitContainerHost
-import org.orbitmvi.orbit.container
+import org.orbitmvi.orbit.orbitContainer
 import kotlin.random.Random
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -63,7 +63,7 @@ internal class CreateTest {
     private inner class GeneralTestMiddleware(scope: TestScope) :
         OrbitContainerHost<State, State, Nothing> {
         var createCalled = false
-        override val container = scope.backgroundScope.container<State, Nothing>(initialState) {
+        override val container = scope.backgroundScope.orbitContainer<State, Nothing>(initialState) {
             createCalled = true
         }
     }

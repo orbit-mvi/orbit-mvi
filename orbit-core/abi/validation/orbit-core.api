@@ -12,6 +12,10 @@ public final class org/orbitmvi/orbit/CoroutineScopeExtensionsKt {
 	public static final fun container (Lkotlinx/coroutines/CoroutineScope;Ljava/lang/Object;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;)Lorg/orbitmvi/orbit/OrbitContainer;
 	public static synthetic fun container$default (Lkotlinx/coroutines/CoroutineScope;Ljava/lang/Object;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;ILjava/lang/Object;)Lorg/orbitmvi/orbit/OrbitContainer;
 	public static synthetic fun container$default (Lkotlinx/coroutines/CoroutineScope;Ljava/lang/Object;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;ILjava/lang/Object;)Lorg/orbitmvi/orbit/OrbitContainer;
+	public static final fun orbitContainer (Lkotlinx/coroutines/CoroutineScope;Ljava/lang/Object;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;)Lorg/orbitmvi/orbit/OrbitContainer;
+	public static final fun orbitContainer (Lkotlinx/coroutines/CoroutineScope;Ljava/lang/Object;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;)Lorg/orbitmvi/orbit/OrbitContainer;
+	public static synthetic fun orbitContainer$default (Lkotlinx/coroutines/CoroutineScope;Ljava/lang/Object;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;ILjava/lang/Object;)Lorg/orbitmvi/orbit/OrbitContainer;
+	public static synthetic fun orbitContainer$default (Lkotlinx/coroutines/CoroutineScope;Ljava/lang/Object;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;ILjava/lang/Object;)Lorg/orbitmvi/orbit/OrbitContainer;
 }
 
 public abstract interface class org/orbitmvi/orbit/OrbitContainer {

@@ -24,7 +24,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import org.orbitmvi.orbit.OrbitContainerHost
 import org.orbitmvi.orbit.sample.stocklist.streaming.stock.StockRepository
-import org.orbitmvi.orbit.viewmodel.container
+import org.orbitmvi.orbit.viewmodel.orbitContainer
 
 class DetailViewModel(
     savedStateHandle: SavedStateHandle,
@@ -33,7 +33,7 @@ class DetailViewModel(
 ) : ViewModel(), OrbitContainerHost<DetailState, DetailState, Nothing> {
 
     override val container =
-        container<DetailState, Nothing>(DetailState(), savedStateHandle) { requestStock() }
+        orbitContainer<DetailState, Nothing>(DetailState(), savedStateHandle) { requestStock() }
 
     private fun requestStock() = intent(registerIdling = false) {
         stockRepository.stockDetails(itemName).collect {

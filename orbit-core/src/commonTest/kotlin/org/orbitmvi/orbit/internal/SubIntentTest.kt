@@ -29,7 +29,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.runTest
 import org.orbitmvi.orbit.OrbitContainerHost
 import org.orbitmvi.orbit.annotation.OrbitExperimental
-import org.orbitmvi.orbit.container
+import org.orbitmvi.orbit.orbitContainer
 import org.orbitmvi.orbit.test.testWithInternalState
 import kotlin.random.Random
 import kotlin.test.Test
@@ -70,7 +70,7 @@ internal class SubIntentTest {
         private val flow1: Flow<String>,
         private val flow2: Flow<String>
     ) : OrbitContainerHost<TestState, TestState, String> {
-        override val container = scope.container<TestState, String>(initialState) {
+        override val container = scope.orbitContainer<TestState, String>(initialState) {
             coroutineScope {
                 launch {
                     sendSideEffect1()

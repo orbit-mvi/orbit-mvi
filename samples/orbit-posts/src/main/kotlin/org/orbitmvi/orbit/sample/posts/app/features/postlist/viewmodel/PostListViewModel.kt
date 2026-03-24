@@ -27,14 +27,14 @@ import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.sample.posts.app.common.NavigationEvent
 import org.orbitmvi.orbit.sample.posts.domain.repositories.PostOverview
 import org.orbitmvi.orbit.sample.posts.domain.repositories.PostRepository
-import org.orbitmvi.orbit.viewmodel.container
+import org.orbitmvi.orbit.viewmodel.orbitContainer
 
 class PostListViewModel(
     savedStateHandle: SavedStateHandle,
     private val postRepository: PostRepository
 ) : ViewModel(), OrbitContainerHost<PostListState, PostListState, NavigationEvent> {
 
-    override val container = container<PostListState, NavigationEvent>(
+    override val container = orbitContainer<PostListState, NavigationEvent>(
         initialState = PostListState(),
         savedStateHandle = savedStateHandle
     ) {

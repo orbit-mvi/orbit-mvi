@@ -27,13 +27,13 @@ import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.OrbitContainer
 import org.orbitmvi.orbit.OrbitContainerHost
 import org.orbitmvi.orbit.blockingIntent
-import org.orbitmvi.orbit.container
+import org.orbitmvi.orbit.orbitContainer
 import kotlin.random.Random
 
 @Suppress("MagicNumber")
 class TextViewModel : OrbitContainerHost<TextViewModel.State, TextViewModel.State, Nothing> {
     private val scope = CoroutineScope(Dispatchers.Main)
-    override val container: OrbitContainer<State, State, Nothing> = scope.container(State()) {
+    override val container: OrbitContainer<State, State, Nothing> = scope.orbitContainer(State()) {
         coroutineScope {
             launch {
                 snapshotFlow { state.textFieldState.text }.collectLatest { text ->

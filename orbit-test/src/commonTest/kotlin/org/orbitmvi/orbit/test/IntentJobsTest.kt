@@ -23,7 +23,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
 import org.orbitmvi.orbit.OrbitContainerHost
-import org.orbitmvi.orbit.container
+import org.orbitmvi.orbit.orbitContainer
 import kotlin.coroutines.coroutineContext
 import kotlin.test.Test
 import kotlin.test.assertFails
@@ -112,7 +112,7 @@ class IntentJobsTest {
     }
 
     private inner class IntentJobsMiddleware(scope: TestScope) : OrbitContainerHost<Int, Int, Int> {
-        override val container = scope.backgroundScope.container<Int, Int>(initialState) {
+        override val container = scope.backgroundScope.orbitContainer<Int, Int>(initialState) {
             delay(300)
             reduce { state + 2 }
         }

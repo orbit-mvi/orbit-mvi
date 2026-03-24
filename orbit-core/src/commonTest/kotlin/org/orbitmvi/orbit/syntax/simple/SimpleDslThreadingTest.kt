@@ -30,7 +30,7 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.withContext
 import org.orbitmvi.orbit.IgnoreJs
 import org.orbitmvi.orbit.OrbitContainerHost
-import org.orbitmvi.orbit.container
+import org.orbitmvi.orbit.orbitContainer
 import org.orbitmvi.orbit.test.ScopedBlockingWorkSimulator
 import kotlin.random.Random
 import kotlin.test.Test
@@ -108,7 +108,7 @@ internal class SimpleDslThreadingTest {
     @Suppress("ControlFlowWithEmptyBody", "EmptyWhileBlock")
     private inner class BaseDslMiddleware(scope: TestScope) : OrbitContainerHost<TestState, TestState, String> {
 
-        override val container = scope.backgroundScope.container<TestState, String>(TestState(42))
+        override val container = scope.backgroundScope.orbitContainer<TestState, String>(TestState(42))
 
         val workSimulator = ScopedBlockingWorkSimulator(scope.backgroundScope)
 

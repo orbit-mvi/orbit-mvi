@@ -25,7 +25,7 @@ import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.runTest
 import org.orbitmvi.orbit.OrbitContainer
-import org.orbitmvi.orbit.container
+import org.orbitmvi.orbit.orbitContainer
 import kotlin.random.Random
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -34,7 +34,7 @@ internal class SideEffectTest {
 
     @Test
     fun side_effects_are_emitted_in_order() = runTest {
-        val container = backgroundScope.container<Unit, Int>(Unit)
+        val container = backgroundScope.orbitContainer<Unit, Int>(Unit)
 
         container.sideEffectFlow.test {
             repeat(1000) {
@@ -52,7 +52,7 @@ internal class SideEffectTest {
         val action = Random.nextInt()
         val action2 = Random.nextInt()
         val action3 = Random.nextInt()
-        val container = backgroundScope.container<Unit, Int>(Unit)
+        val container = backgroundScope.orbitContainer<Unit, Int>(Unit)
 
         joinAll(
             container.someFlow(action),
@@ -73,7 +73,7 @@ internal class SideEffectTest {
         val action = Random.nextInt()
         val action2 = Random.nextInt()
         val action3 = Random.nextInt()
-        val container = backgroundScope.container<Unit, Int>(Unit)
+        val container = backgroundScope.orbitContainer<Unit, Int>(Unit)
 
         joinAll(
             container.someFlow(action),
@@ -98,7 +98,7 @@ internal class SideEffectTest {
     @Test
     fun only_new_side_effects_are_emitted_when_resubscribing() = runTest {
         val action = Random.nextInt()
-        val container = backgroundScope.container<Unit, Int>(Unit)
+        val container = backgroundScope.orbitContainer<Unit, Int>(Unit)
 
         container.sideEffectFlow.test {
             container.someFlow(action)

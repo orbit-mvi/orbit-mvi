@@ -25,8 +25,8 @@ import org.orbitmvi.orbit.internal.ExternalStateContainerAdapter
  * @return An [OrbitContainer] with the external state transformation applied.
  */
 @Deprecated(
-    "Use the scope.container(initialState, transformState) factory function instead",
-    ReplaceWith("scope.container(initialState, transformState)")
+    "Use the scope.orbitContainer(initialState, transformState) factory function instead",
+    ReplaceWith("scope.orbitContainer(initialState, transformState)")
 )
 public fun <INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : Any>
     OrbitContainer<INTERNAL_STATE, INTERNAL_STATE, SIDE_EFFECT>.withExternalState(

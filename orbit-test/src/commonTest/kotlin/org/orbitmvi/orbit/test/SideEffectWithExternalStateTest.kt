@@ -20,7 +20,7 @@ import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
 import org.orbitmvi.orbit.OrbitContainer
 import org.orbitmvi.orbit.OrbitContainerHost
-import org.orbitmvi.orbit.container
+import org.orbitmvi.orbit.orbitContainer
 import kotlin.random.Random
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -120,7 +120,7 @@ class SideEffectWithExternalStateTest {
     }
 
     private inner class SideEffectTestMiddleware(scope: TestScope) : OrbitContainerHost<InternalState, ExternalState, Int> {
-        override val container: OrbitContainer<InternalState, ExternalState, Int> = scope.backgroundScope.container(
+        override val container: OrbitContainer<InternalState, ExternalState, Int> = scope.backgroundScope.orbitContainer(
             initialState,
             ::transformState
         )

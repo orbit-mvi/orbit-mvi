@@ -30,8 +30,8 @@ import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeout
 import org.orbitmvi.orbit.OrbitContainer
 import org.orbitmvi.orbit.OrbitContainerHost
-import org.orbitmvi.orbit.container
 import org.orbitmvi.orbit.idling.IdlingResource
+import org.orbitmvi.orbit.orbitContainer
 import org.orbitmvi.orbit.test.assertEventually
 import kotlin.concurrent.atomics.AtomicInt
 import kotlin.concurrent.atomics.decrementAndFetch
@@ -111,7 +111,7 @@ internal class SimpleDslIdlingTest {
 
     private fun CoroutineScope.createContainerHost(): OrbitContainerHost<TestState, TestState, Int> {
         return object : OrbitContainerHost<TestState, TestState, Int> {
-            override val container: OrbitContainer<TestState, TestState, Int> = container(
+            override val container: OrbitContainer<TestState, TestState, Int> = orbitContainer(
                 initialState = TestState(0),
                 buildSettings = {
                     idlingRegistry = testIdlingResource

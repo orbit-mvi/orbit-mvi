@@ -119,7 +119,7 @@ class ViewModelExtensionsKtTest {
         initialState: TestState,
         onCreate: (suspend Syntax<TestState, Int>.() -> Unit)? = null
     ) : OrbitContainerHost<TestState, TestState, Int>, ViewModel() {
-        override val container = container(
+        override val container = orbitContainer(
             initialState = initialState,
             savedStateHandle = savedStateHandle,
             onCreate = onCreate

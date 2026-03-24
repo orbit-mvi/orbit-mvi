@@ -20,7 +20,7 @@ import app.cash.turbine.test
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
 import org.orbitmvi.orbit.OrbitContainerHost
-import org.orbitmvi.orbit.container
+import org.orbitmvi.orbit.orbitContainer
 import kotlin.random.Random
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -83,7 +83,7 @@ internal class RepeatOnSubscriptionTest {
     }
 
     private inner class TestMiddleware(testScope: TestScope) : OrbitContainerHost<State, State, Int> {
-        override val container = testScope.backgroundScope.container<State, Int>(initialState)
+        override val container = testScope.backgroundScope.orbitContainer<State, Int>(initialState)
 
         fun updateState(externalCall: suspend () -> Int) = intent {
             repeatOnSubscription {

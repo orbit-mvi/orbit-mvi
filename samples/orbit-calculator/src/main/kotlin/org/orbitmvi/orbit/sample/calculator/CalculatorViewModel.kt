@@ -28,7 +28,7 @@ import kotlinx.parcelize.Parcelize
 import org.orbitmvi.orbit.OrbitContainer
 import org.orbitmvi.orbit.OrbitContainerHost
 import org.orbitmvi.orbit.sample.calculator.CalculatorViewModel.InternalCalculatorState
-import org.orbitmvi.orbit.viewmodel.container
+import org.orbitmvi.orbit.viewmodel.orbitContainer
 import java.math.BigDecimal
 import java.math.RoundingMode
 
@@ -38,7 +38,7 @@ class CalculatorViewModel(savedStateHandle: SavedStateHandle) :
     OrbitContainerHost<InternalCalculatorState, CalculatorState, Nothing> {
 
     override val container: OrbitContainer<InternalCalculatorState, CalculatorState, Nothing> =
-        container(InternalCalculatorState(), savedStateHandle, ::transformState)
+        orbitContainer(InternalCalculatorState(), savedStateHandle, ::transformState)
 
     private fun transformState(internalState: InternalCalculatorState): CalculatorState {
         return CalculatorState(

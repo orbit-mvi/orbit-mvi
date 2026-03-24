@@ -21,7 +21,7 @@ import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import org.orbitmvi.orbit.OrbitContainerHost
 import org.orbitmvi.orbit.sample.stocklist.streaming.stock.StockRepository
-import org.orbitmvi.orbit.viewmodel.container
+import org.orbitmvi.orbit.viewmodel.orbitContainer
 import javax.inject.Inject
 
 @HiltViewModel
@@ -30,7 +30,7 @@ class ListViewModel @Inject constructor(
     private val stockRepository: StockRepository
 ) : ViewModel(), OrbitContainerHost<ListState, ListState, ListSideEffect> {
 
-    override val container = container<ListState, ListSideEffect>(ListState(), savedStateHandle) { requestStocks() }
+    override val container = orbitContainer<ListState, ListSideEffect>(ListState(), savedStateHandle) { requestStocks() }
 
     private fun requestStocks() = intent(registerIdling = false) {
         repeatOnSubscription {

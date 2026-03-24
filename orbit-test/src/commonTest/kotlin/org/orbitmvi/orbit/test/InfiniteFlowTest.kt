@@ -24,7 +24,7 @@ import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.runTest
 import org.orbitmvi.orbit.OrbitContainer
 import org.orbitmvi.orbit.OrbitContainerHost
-import org.orbitmvi.orbit.container
+import org.orbitmvi.orbit.orbitContainer
 import kotlin.coroutines.coroutineContext
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -69,7 +69,7 @@ internal class InfiniteFlowTest {
 //    org.orbitmvi.orbit.SuspendingStrategyDispatchTest[jvm] > suspending test maintains test dispatcher through runTest[jvm] PASSED
 
     private inner class InfiniteFlowMiddleware(testScope: TestScope) : OrbitContainerHost<List<Int>, List<Int>, Nothing> {
-        override val container: OrbitContainer<List<Int>, List<Int>, Nothing> = testScope.backgroundScope.container(listOf(42))
+        override val container: OrbitContainer<List<Int>, List<Int>, Nothing> = testScope.backgroundScope.orbitContainer(listOf(42))
 
         fun incrementForever() = intent {
             while (coroutineContext.isActive) {
