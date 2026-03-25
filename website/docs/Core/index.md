@@ -110,13 +110,13 @@ class ExampleViewModel(
 
 `OrbitContainerHost` supports separation between internal and external states
 via its third type parameter. This is useful whenever the raw internal state is
-not well suited to consumption outside of the host (e.g. by a UI).
+not well suited to consumption outside of the `OrbitContainerHost` (e.g. by a UI).
 
 Let's define an outside consumer as anything that consumes the state of the
 `OrbitContainerHost` and is external to it - e.g. a UI.
 
-Internal state is the raw host's state that is not well suited to
-consumption outside of the host. It may contain lots of unnecessary
+Internal state is the raw `OrbitContainerHost`'s state that is not well suited to
+consumption outside of the `OrbitContainerHost`. It may contain lots of unnecessary
 information and you may see the complexity bleeding into the UI. Ideally UIs
 should not contain any business logic.
 
