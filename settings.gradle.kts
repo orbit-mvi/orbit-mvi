@@ -21,10 +21,11 @@
 rootProject.name = "orbit-mvi"
 
 include(
+    "orbit-compose",
     "orbit-core",
+    "orbit-lint",
     "orbit-test",
     "orbit-viewmodel",
-    "orbit-compose",
     "samples:orbit-calculator",
     "samples:orbit-posts",
     "samples:orbit-posts-compose-multiplatform:composeApp",
