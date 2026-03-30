@@ -20,7 +20,7 @@ ensures predictable coroutine scoping and context through use of the
 ## Testing process
 
 1. Put the
-   [ContainerHost](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-container-host/)
+   [OrbitContainerHost](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-orbit-container-host/)
    in your chosen test mode using `test()`. You may optionally
    provide them with the initial state to seed the container with. This helps
    avoid having to call several intents just to get the container in the right
@@ -28,14 +28,14 @@ ensures predictable coroutine scoping and context through use of the
 2. (Optional) Run `runOnCreate()` within the test block to run the container
    create lambda.
 3. (Optional) Run `containerHost.foo()` to run the
-   [ContainerHost](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-container-host/)
+   [OrbitContainerHost](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-orbit-container-host/)
    intent of your choice.
 4. Await for side effects and states using `awaitSideEffect()`
    and `awaitState()`.
    `testContainerHost.assert { ... }`.
 
 Let's start and put our
-[ContainerHost](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-container-host/)
+[OrbitContainerHost](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-orbit-container-host/)
 into test mode. We pass in the test scope and initial state to seed the
 container with (you may omit it entirely to use the initial state from the real
 container).
@@ -65,8 +65,8 @@ fun exampleTest() = runTest {
 
 ### Run `onCreate`
 
-If the `Container` is created with `CoroutineScope.container()` or
-`ViewModel.container()` there is an option to provide the `onCreate` lambda.
+If the `OrbitContainer` is created with `CoroutineScope.orbitContainer()` or
+`ViewModel.orbitContainer()` there is an option to provide the `onCreate` lambda.
 In test mode this function must be run manually (if needed) by calling
 `runOnCreate`, so it's effectively isolated in the test; the other
 reason why is `onCreate` could include any number of `intent{}` calls, so it's
@@ -79,7 +79,7 @@ set a correct initial state instead.
 :::note
 
 `runOnCreate` can only be invoked once, before invoking any intents on
-`ContainerHost`.
+`OrbitContainerHost`.
 
 :::
 
@@ -290,11 +290,11 @@ fun exampleTest() = runTest {
 ## Testing intents that collect Flows
 
 We can run into situations where we subscribe
-our [ContainerHost](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-container-host/)
+our [OrbitContainerHost](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-orbit-container-host/)
 to an infinite (hot) flow of data like so:
 
 ```kotlin
-val container = scope.container<SomeState, Unit> {
+val container = scope.orbitContainer<SomeState, Unit> {
     intent {
         runOnSubscription {
             locationService.locationUpdates.collect {
@@ -351,8 +351,8 @@ to the test function.
 Consider the following example:
 
 ```kotlin
-class InfiniteFlowMiddleware : ContainerHost<List<Int>, Nothing> {
-    override val container: Container<List<Int>, Nothing> = someScope.container(listOf(42))
+class InfiniteFlowMiddleware : OrbitContainerHost<List<Int>, List<Int>, Nothing> {
+    override val container: OrbitContainer<List<Int>, List<Int>, Nothing> = someScope.orbitContainer(listOf(42))
 
     fun incrementForever() = intent {
         while (true) {
