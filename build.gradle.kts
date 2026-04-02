@@ -23,6 +23,7 @@ import com.appmattus.markdown.rules.LineLengthRule
 import com.appmattus.markdown.rules.ProperNamesRule
 import com.appmattus.markdown.rules.ProperNamesRule.Companion.DefaultNames
 import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
+import com.github.benmanes.gradle.versions.updates.resolutionstrategy.ComponentSelectionWithCurrent
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.time.ZonedDateTime
@@ -57,20 +58,22 @@ tasks.withType<DependencyUpdatesTask> {
     resolutionStrategy {
         componentSelection {
             all {
-                fun isNonStable(version: String) = listOf(
-                    "alpha",
-                    "beta",
-                    "rc",
-                    "cr",
-                    "m",
-                    "preview",
-                    "b",
-                    "ea"
-                ).any { qualifier ->
-                    version.matches(Regex("(?i).*[.-]$qualifier[.\\d-+]*"))
-                }
-                if (isNonStable(candidate.version) && !isNonStable(currentVersion)) {
-                    reject("Release candidate")
+                Action<ComponentSelectionWithCurrent> {
+                    fun isNonStable(version: String) = listOf(
+                        "alpha",
+                        "beta",
+                        "rc",
+                        "cr",
+                        "m",
+                        "preview",
+                        "b",
+                        "ea"
+                    ).any { qualifier ->
+                        version.matches(Regex("(?i).*[.-]$qualifier[.\\d-+]*"))
+                    }
+                    if (isNonStable(candidate.version) && !isNonStable(currentVersion)) {
+                        reject("Release candidate")
+                    }
                 }
             }
         }
