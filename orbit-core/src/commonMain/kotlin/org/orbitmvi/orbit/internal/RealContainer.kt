@@ -27,11 +27,14 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalForInheritanceCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.channels.produce
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.FlowCollector
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -42,8 +45,10 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
 import org.orbitmvi.orbit.OrbitContainer
 import org.orbitmvi.orbit.RealSettings
+import org.orbitmvi.orbit.SideEffectMode
 import org.orbitmvi.orbit.internal.repeatonsubscription.DelayingSubscribedCounter
 import org.orbitmvi.orbit.internal.repeatonsubscription.SubscribedCounter
+import org.orbitmvi.orbit.internal.repeatonsubscription.Subscription
 import org.orbitmvi.orbit.internal.repeatonsubscription.refCount
 import org.orbitmvi.orbit.syntax.ContainerContext
 import kotlin.concurrent.atomics.AtomicBoolean
@@ -66,11 +71,25 @@ public class RealContainer<INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFE
     private val initialised = AtomicBoolean(false)
     private val subscribedCounter = subscribedCounterOverride ?: DelayingSubscribedCounter(scope, settings.repeatOnSubscribedStopTimeout)
     private val internalStateFlow = MutableStateFlow(initialState)
-    private val sideEffectChannel = Channel<SIDE_EFFECT>(settings.sideEffectBufferSize)
     private val intentCounter = AtomicInt(0)
 
+    private val sideEffectSharedFlow: MutableSharedFlow<SIDE_EFFECT>? =
+        if (settings.sideEffectMode == SideEffectMode.BROADCAST) {
+            MutableSharedFlow(replay = resolveBufferSize(settings.sideEffectBufferSize), onBufferOverflow = BufferOverflow.SUSPEND)
+        } else {
+            null
+        }
+
+    private val sideEffectChannel: Channel<SIDE_EFFECT>? =
+        if (settings.sideEffectMode == SideEffectMode.FAN_OUT) {
+            Channel(settings.sideEffectBufferSize)
+        } else {
+            null
+        }
+
     override val stateFlow: StateFlow<INTERNAL_STATE> = internalStateFlow.asStateFlow()
-    override val sideEffectFlow: Flow<SIDE_EFFECT> = sideEffectChannel.receiveAsFlow()
+    override val sideEffectFlow: Flow<SIDE_EFFECT> =
+        sideEffectSharedFlow ?: sideEffectChannel!!.receiveAsFlow()
 
     override val refCountStateFlow: StateFlow<INTERNAL_STATE> = internalStateFlow.refCount(subscribedCounter)
     override val refCountSideEffectFlow: Flow<SIDE_EFFECT> = sideEffectFlow.refCount(subscribedCounter)
@@ -93,7 +112,7 @@ public class RealContainer<INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFE
 
     internal val pluginContext: ContainerContext<INTERNAL_STATE, SIDE_EFFECT> = ContainerContext(
         settings = settings,
-        postSideEffect = { sideEffectChannel.send(it) },
+        postSideEffect = { sideEffectSharedFlow?.emit(it) ?: sideEffectChannel!!.send(it) },
         reduce = { reducer -> internalStateFlow.update(reducer) },
         subscribedCounter = subscribedCounter,
         stateFlow = stateFlow,
@@ -134,12 +153,26 @@ public class RealContainer<INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFE
                     }.invokeOnCompletion { job.complete() }
                 }
             }
+
+            sideEffectSharedFlow?.let { sharedFlow ->
+                scope.launch(CoroutineName(COROUTINE_NAME_REPLAY_CACHE_CLEAR)) {
+                    var previousSubscription = Subscription.Unsubscribed
+                    subscribedCounter.subscribed.collect { subscription ->
+                        if (previousSubscription == Subscription.Unsubscribed && subscription == Subscription.Subscribed) {
+                            delay(settings.sideEffectReplayClearDelayMs)
+                            sharedFlow.resetReplayCache()
+                        }
+                        previousSubscription = subscription
+                    }
+                }
+            }
         }
     }
 
     private companion object {
         private const val COROUTINE_NAME_EVENT_LOOP = "orbit-event-loop"
         private const val COROUTINE_NAME_INTENT = "orbit-intent-"
+        private const val COROUTINE_NAME_REPLAY_CACHE_CLEAR = "orbit-replay-cache-clear"
     }
 }
 
@@ -169,3 +202,7 @@ internal class MappedStateFlow<T : Any, U : Any>(
 
 internal fun <T : Any, U : Any> StateFlow<T>.stateMap(transform: (T) -> U): StateFlow<U> =
     MappedStateFlow(this, transform)
+
+private const val DEFAULT_BUFFER_SIZE = 64
+
+private fun resolveBufferSize(size: Int): Int = if (size < 0) DEFAULT_BUFFER_SIZE else size
