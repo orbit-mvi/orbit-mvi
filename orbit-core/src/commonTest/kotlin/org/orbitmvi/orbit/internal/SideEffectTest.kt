@@ -22,13 +22,13 @@ package org.orbitmvi.orbit.internal
 
 import app.cash.turbine.test
 import kotlinx.coroutines.joinAll
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.runTest
 import org.orbitmvi.orbit.OrbitContainer
 import org.orbitmvi.orbit.orbitContainer
 import kotlin.random.Random
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertIs
 
 internal class SideEffectTest {
 
@@ -88,37 +88,21 @@ internal class SideEffectTest {
             ensureAllEventsConsumed()
             cancel()
         }
-
-        container.sideEffectFlow.test {
-            expectNoEvents()
-            cancel()
-        }
     }
 
     @Test
-    fun only_new_side_effects_are_emitted_when_resubscribing() = runTest {
-        val action = Random.nextInt()
+    fun collecting_side_effect_flow_more_than_once_throws() = runTest {
         val container = backgroundScope.orbitContainer<Unit, Int>(Unit)
 
         container.sideEffectFlow.test {
-            container.someFlow(action)
-            skipItems(1)
-            ensureAllEventsConsumed()
+            container.someFlow(1)
+            assertEquals(1, awaitItem())
             cancel()
-        }
-
-        launch {
-            repeat(100) {
-                container.someFlow(it)
-            }
         }
 
         container.sideEffectFlow.test {
-            repeat(100) {
-                assertEquals(it, awaitItem())
-            }
-            ensureAllEventsConsumed()
-            cancel()
+            val error = awaitError()
+            assertIs<IllegalStateException>(error)
         }
     }
 

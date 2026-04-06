@@ -35,7 +35,7 @@ import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
@@ -70,7 +70,7 @@ public class RealContainer<INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFE
     private val intentCounter = AtomicInt(0)
 
     override val stateFlow: StateFlow<INTERNAL_STATE> = internalStateFlow.asStateFlow()
-    override val sideEffectFlow: Flow<SIDE_EFFECT> = sideEffectChannel.receiveAsFlow()
+    override val sideEffectFlow: Flow<SIDE_EFFECT> = sideEffectChannel.consumeAsFlow()
 
     override val refCountStateFlow: StateFlow<INTERNAL_STATE> = internalStateFlow.refCount(subscribedCounter)
     override val refCountSideEffectFlow: Flow<SIDE_EFFECT> = sideEffectFlow.refCount(subscribedCounter)

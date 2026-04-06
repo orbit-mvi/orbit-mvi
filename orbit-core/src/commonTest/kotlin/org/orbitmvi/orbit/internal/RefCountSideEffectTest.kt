@@ -26,6 +26,7 @@ import org.orbitmvi.orbit.orbitContainer
 import kotlin.random.Random
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertIs
 
 internal class RefCountSideEffectTest {
 
@@ -77,30 +78,20 @@ internal class RefCountSideEffectTest {
             assertEquals(action2, awaitItem())
             assertEquals(action3, awaitItem())
         }
-
-        container.refCountSideEffectFlow.test {
-            expectNoEvents()
-        }
     }
 
     @Test
-    fun only_new_side_effects_are_emitted_when_resubscribing() = runTest {
+    fun collecting_ref_count_side_effect_flow_more_than_once_throws() = runTest {
         val container = backgroundScope.orbitContainer<Unit, Int>(Unit)
-        val action = Random.nextInt()
 
         container.refCountSideEffectFlow.test {
-            container.someFlow(action)
-            assertEquals(action, awaitItem())
-        }
-
-        repeat(1000) {
-            container.someFlow(it)
+            container.someFlow(1)
+            assertEquals(1, awaitItem())
         }
 
         container.refCountSideEffectFlow.test {
-            repeat(1000) {
-                assertEquals(it, awaitItem())
-            }
+            val error = awaitError()
+            assertIs<IllegalStateException>(error)
         }
     }
 
