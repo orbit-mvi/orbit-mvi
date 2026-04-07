@@ -184,6 +184,86 @@ internal class RunOnTest {
         }
     }
 
+    @Test
+    fun await_run_on_runs_immediately_when_state_already_matches() = runTest {
+        val middleware = Middleware(backgroundScope)
+
+        middleware.testWithInternalState(this, settings = TestSettings(autoCheckInitialState = false)) {
+            expectInternalState { TestState.Loading }
+
+            middleware.changeToState(TestState.Ready(42))
+            expectInternalState { TestState.Ready(42) }
+
+            middleware.awaitDoIfInReadyState()
+            expectInternalState { TestState.Ready(43) }
+        }
+    }
+
+    @Test
+    fun await_run_on_respects_predicate() = runTest {
+        val middleware = Middleware(backgroundScope)
+
+        middleware.testWithInternalState(this, settings = TestSettings(autoCheckInitialState = false)) {
+            expectInternalState { TestState.Loading }
+
+            middleware.changeToState(TestState.Ready(43))
+            expectInternalState { TestState.Ready(43) }
+
+            val job = middleware.awaitDoIfInReadyState(predicate = { it.id % 2 == 0 })
+
+            middleware.changeToState(TestState.Ready(42))
+            expectInternalState { TestState.Ready(42) }
+            expectInternalState { TestState.Ready(43) }
+
+            job.join()
+            expectNoItems()
+        }
+    }
+
+    @Test
+    fun await_run_on_cancels_when_state_leaves() = runTest {
+        val middleware = Middleware(backgroundScope)
+
+        middleware.testWithInternalState(this, settings = TestSettings(autoCheckInitialState = false)) {
+            expectInternalState { TestState.Loading }
+
+            val job = middleware.awaitCollectIfInReadyState()
+
+            middleware.changeToState(TestState.Ready(42))
+            expectInternalState { TestState.Ready(42) }
+
+            middleware.channel.send(123)
+            assertEquals(123, middleware.collectorChannel.receive())
+
+            middleware.changeToState(TestState.Loading)
+            expectInternalState { TestState.Loading }
+
+            job.join()
+        }
+    }
+
+    @Test
+    fun await_run_on_cancels_when_predicate_stops_matching() = runTest {
+        val middleware = Middleware(backgroundScope)
+
+        middleware.testWithInternalState(this, settings = TestSettings(autoCheckInitialState = false)) {
+            expectInternalState { TestState.Loading }
+
+            val job = middleware.awaitCollectIfInReadyState(predicate = { it.id % 2 == 0 })
+
+            middleware.changeToState(TestState.Ready(42))
+            expectInternalState { TestState.Ready(42) }
+
+            middleware.channel.send(123)
+            assertEquals(123, middleware.collectorChannel.receive())
+
+            middleware.changeToState(TestState.Ready(43))
+            expectInternalState { TestState.Ready(43) }
+
+            job.join()
+        }
+    }
+
     sealed interface TestState {
         object Loading : TestState
         data class Ready(val id: Int = 42) : TestState
