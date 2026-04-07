@@ -92,22 +92,7 @@ public suspend inline fun <S : Any, reified T : S> Flow<S>.awaitRunOn(
     crossinline block: suspend (capturedState: T) -> Unit
 ) {
     this.dropWhile { it !is T || !predicate(it) }
-        .transformWhile {
-            if (it is T && predicate(it)) {
-                emit(it)
-                true
-            } else {
-                emit(null)
-                false
-            }
-        }
-        .distinctUntilChangedBy { it != null }
-        .mapLatest {
-            if (it != null) {
-                block(it)
-            }
-        }
-        .firstOrNull()
+        .runOn(predicate, block)
 }
 
 @OrbitInternal
