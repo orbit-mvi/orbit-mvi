@@ -166,6 +166,24 @@ internal class RunOnTest {
         }
     }
 
+    @Test
+    fun await_run_on_suspends_until_state_matches() = runTest {
+        val middleware = Middleware(backgroundScope)
+
+        middleware.testWithInternalState(this, settings = TestSettings(autoCheckInitialState = false)) {
+            expectInternalState { TestState.Loading }
+
+            val job = middleware.awaitDoIfInReadyState()
+
+            middleware.changeToState(TestState.Ready(42))
+            expectInternalState { TestState.Ready(42) }
+            expectInternalState { TestState.Ready(43) }
+
+            job.join()
+            expectNoItems()
+        }
+    }
+
     sealed interface TestState {
         object Loading : TestState
         data class Ready(val id: Int = 42) : TestState
@@ -194,6 +212,21 @@ internal class RunOnTest {
 
         fun collectIfInReadyState(predicate: (TestState.Ready) -> Boolean = { true }) = intent {
             runOn<TestState.Ready>(predicate = predicate) {
+                channel.consumeAsFlow()
+                    .collect(collectorChannel::send)
+            }
+        }
+
+        fun awaitDoIfInReadyState(predicate: (TestState.Ready) -> Boolean = { true }) = intent {
+            awaitRunOn<TestState.Ready>(predicate = predicate) {
+                reduce {
+                    state.copy(id = state.id + 1)
+                }
+            }
+        }
+
+        fun awaitCollectIfInReadyState(predicate: (TestState.Ready) -> Boolean = { true }) = intent {
+            awaitRunOn<TestState.Ready>(predicate = predicate) {
                 channel.consumeAsFlow()
                     .collect(collectorChannel::send)
             }

@@ -112,4 +112,31 @@ public class Syntax<S : Any, SE : Any>(public val containerContext: ContainerCon
                 SubStateSyntax(containerContext.toSubclassContainerContext<_, _, T>(predicate, it)).block()
             }
     }
+
+    /**
+     * This API is intended to simplify and add type-safety to working with sealed class states.
+     *
+     * Suspends until the state becomes the given subtype and the given [predicate] matches, then executes the given block.
+     *
+     * The block will be cancelled as soon as the state changes to a different type or the predicate does not return true.
+     * Note that this does not guarantee the operation in the block is atomic.
+     *
+     * The state is captured and does not change within this block.
+     *
+     * Unlike [runOn], this function does not complete immediately if the current state does not match.
+     * Instead, it suspends until the state becomes the given subtype.
+     *
+     * @param predicate optional predicate to match the state against. Defaults to true.
+     */
+    @OrbitExperimental
+    @OrbitDsl
+    public suspend inline fun <reified T : S> awaitRunOn(
+        crossinline predicate: (T) -> Boolean = { true },
+        crossinline block: suspend SubStateSyntax<S, SE, T>.() -> Unit
+    ) {
+        containerContext.stateFlow
+            .awaitRunOn<S, T>(predicate) {
+                SubStateSyntax(containerContext.toSubclassContainerContext<_, _, T>(predicate, it)).block()
+            }
+    }
 }
