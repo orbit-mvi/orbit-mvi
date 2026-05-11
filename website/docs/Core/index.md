@@ -403,6 +403,28 @@ not to change.
 
 :::
 
+:::caution
+
+The `reduce` block does not support calling `suspend` functions. Since `reduce`
+is designed to be a pure, synchronous state transformation, all asynchronous
+work (e.g. API calls, database queries) must be performed **before** the
+`reduce` block.
+
+```kotlin
+// ✅ Correct - suspend call before reduce
+fun loadData() = intent {
+    val result = apiCall() // suspend call here
+    reduce { state.copy(data = result) }
+}
+
+// ❌ Wrong - suspend call inside reduce (compilation error)
+fun loadData() = intent {
+    reduce { state.copy(data = apiCall()) } // will not compile
+}
+```
+
+:::
+
 ## OrbitContainer factories
 
 ```kotlin
