@@ -19,6 +19,17 @@ open annotation class org.orbitmvi.orbit.annotation/OrbitInternal : kotlin/Annot
     constructor <init>() // org.orbitmvi.orbit.annotation/OrbitInternal.<init>|<init>(){}[0]
 }
 
+final enum class org.orbitmvi.orbit/SideEffectMode : kotlin/Enum<org.orbitmvi.orbit/SideEffectMode> { // org.orbitmvi.orbit/SideEffectMode|null[0]
+    enum entry BROADCAST // org.orbitmvi.orbit/SideEffectMode.BROADCAST|null[0]
+    enum entry FAN_OUT // org.orbitmvi.orbit/SideEffectMode.FAN_OUT|null[0]
+
+    final val entries // org.orbitmvi.orbit/SideEffectMode.entries|#static{}entries[0]
+        final fun <get-entries>(): kotlin.enums/EnumEntries<org.orbitmvi.orbit/SideEffectMode> // org.orbitmvi.orbit/SideEffectMode.entries.<get-entries>|<get-entries>#static(){}[0]
+
+    final fun valueOf(kotlin/String): org.orbitmvi.orbit/SideEffectMode // org.orbitmvi.orbit/SideEffectMode.valueOf|valueOf#static(kotlin.String){}[0]
+    final fun values(): kotlin/Array<org.orbitmvi.orbit/SideEffectMode> // org.orbitmvi.orbit/SideEffectMode.values|values#static(){}[0]
+}
+
 abstract interface <#A: kotlin/Any, #B: kotlin/Any, #C: kotlin/Any> org.orbitmvi.orbit/OrbitContainer { // org.orbitmvi.orbit/OrbitContainer|null[0]
     abstract val externalRefCountStateFlow // org.orbitmvi.orbit/OrbitContainer.externalRefCountStateFlow|{}externalRefCountStateFlow[0]
         abstract fun <get-externalRefCountStateFlow>(): kotlinx.coroutines.flow/StateFlow<#B> // org.orbitmvi.orbit/OrbitContainer.externalRefCountStateFlow.<get-externalRefCountStateFlow>|<get-externalRefCountStateFlow>(){}[0]
@@ -135,7 +146,7 @@ final class org.orbitmvi.orbit.idling/NoopIdlingResource : org.orbitmvi.orbit.id
 }
 
 final class org.orbitmvi.orbit/RealSettings { // org.orbitmvi.orbit/RealSettings|null[0]
-    constructor <init>(kotlin/Int = ..., org.orbitmvi.orbit.idling/IdlingResource = ..., kotlinx.coroutines/CoroutineDispatcher = ..., kotlinx.coroutines/CoroutineDispatcher = ..., kotlinx.coroutines/CoroutineExceptionHandler? = ..., kotlin/Long = ...) // org.orbitmvi.orbit/RealSettings.<init>|<init>(kotlin.Int;org.orbitmvi.orbit.idling.IdlingResource;kotlinx.coroutines.CoroutineDispatcher;kotlinx.coroutines.CoroutineDispatcher;kotlinx.coroutines.CoroutineExceptionHandler?;kotlin.Long){}[0]
+    constructor <init>(kotlin/Int = ..., org.orbitmvi.orbit.idling/IdlingResource = ..., kotlinx.coroutines/CoroutineDispatcher = ..., kotlinx.coroutines/CoroutineDispatcher = ..., kotlinx.coroutines/CoroutineExceptionHandler? = ..., kotlin/Long = ..., org.orbitmvi.orbit/SideEffectMode = ..., kotlin/Long = ...) // org.orbitmvi.orbit/RealSettings.<init>|<init>(kotlin.Int;org.orbitmvi.orbit.idling.IdlingResource;kotlinx.coroutines.CoroutineDispatcher;kotlinx.coroutines.CoroutineDispatcher;kotlinx.coroutines.CoroutineExceptionHandler?;kotlin.Long;org.orbitmvi.orbit.SideEffectMode;kotlin.Long){}[0]
 
     final val eventLoopDispatcher // org.orbitmvi.orbit/RealSettings.eventLoopDispatcher|{}eventLoopDispatcher[0]
         final fun <get-eventLoopDispatcher>(): kotlinx.coroutines/CoroutineDispatcher // org.orbitmvi.orbit/RealSettings.eventLoopDispatcher.<get-eventLoopDispatcher>|<get-eventLoopDispatcher>(){}[0]
@@ -149,6 +160,10 @@ final class org.orbitmvi.orbit/RealSettings { // org.orbitmvi.orbit/RealSettings
         final fun <get-repeatOnSubscribedStopTimeout>(): kotlin/Long // org.orbitmvi.orbit/RealSettings.repeatOnSubscribedStopTimeout.<get-repeatOnSubscribedStopTimeout>|<get-repeatOnSubscribedStopTimeout>(){}[0]
     final val sideEffectBufferSize // org.orbitmvi.orbit/RealSettings.sideEffectBufferSize|{}sideEffectBufferSize[0]
         final fun <get-sideEffectBufferSize>(): kotlin/Int // org.orbitmvi.orbit/RealSettings.sideEffectBufferSize.<get-sideEffectBufferSize>|<get-sideEffectBufferSize>(){}[0]
+    final val sideEffectMode // org.orbitmvi.orbit/RealSettings.sideEffectMode|{}sideEffectMode[0]
+        final fun <get-sideEffectMode>(): org.orbitmvi.orbit/SideEffectMode // org.orbitmvi.orbit/RealSettings.sideEffectMode.<get-sideEffectMode>|<get-sideEffectMode>(){}[0]
+    final val sideEffectReplayClearDelayMs // org.orbitmvi.orbit/RealSettings.sideEffectReplayClearDelayMs|{}sideEffectReplayClearDelayMs[0]
+        final fun <get-sideEffectReplayClearDelayMs>(): kotlin/Long // org.orbitmvi.orbit/RealSettings.sideEffectReplayClearDelayMs.<get-sideEffectReplayClearDelayMs>|<get-sideEffectReplayClearDelayMs>(){}[0]
 
     final fun component1(): kotlin/Int // org.orbitmvi.orbit/RealSettings.component1|component1(){}[0]
     final fun component2(): org.orbitmvi.orbit.idling/IdlingResource // org.orbitmvi.orbit/RealSettings.component2|component2(){}[0]
@@ -156,7 +171,9 @@ final class org.orbitmvi.orbit/RealSettings { // org.orbitmvi.orbit/RealSettings
     final fun component4(): kotlinx.coroutines/CoroutineDispatcher // org.orbitmvi.orbit/RealSettings.component4|component4(){}[0]
     final fun component5(): kotlinx.coroutines/CoroutineExceptionHandler? // org.orbitmvi.orbit/RealSettings.component5|component5(){}[0]
     final fun component6(): kotlin/Long // org.orbitmvi.orbit/RealSettings.component6|component6(){}[0]
-    final fun copy(kotlin/Int = ..., org.orbitmvi.orbit.idling/IdlingResource = ..., kotlinx.coroutines/CoroutineDispatcher = ..., kotlinx.coroutines/CoroutineDispatcher = ..., kotlinx.coroutines/CoroutineExceptionHandler? = ..., kotlin/Long = ...): org.orbitmvi.orbit/RealSettings // org.orbitmvi.orbit/RealSettings.copy|copy(kotlin.Int;org.orbitmvi.orbit.idling.IdlingResource;kotlinx.coroutines.CoroutineDispatcher;kotlinx.coroutines.CoroutineDispatcher;kotlinx.coroutines.CoroutineExceptionHandler?;kotlin.Long){}[0]
+    final fun component7(): org.orbitmvi.orbit/SideEffectMode // org.orbitmvi.orbit/RealSettings.component7|component7(){}[0]
+    final fun component8(): kotlin/Long // org.orbitmvi.orbit/RealSettings.component8|component8(){}[0]
+    final fun copy(kotlin/Int = ..., org.orbitmvi.orbit.idling/IdlingResource = ..., kotlinx.coroutines/CoroutineDispatcher = ..., kotlinx.coroutines/CoroutineDispatcher = ..., kotlinx.coroutines/CoroutineExceptionHandler? = ..., kotlin/Long = ..., org.orbitmvi.orbit/SideEffectMode = ..., kotlin/Long = ...): org.orbitmvi.orbit/RealSettings // org.orbitmvi.orbit/RealSettings.copy|copy(kotlin.Int;org.orbitmvi.orbit.idling.IdlingResource;kotlinx.coroutines.CoroutineDispatcher;kotlinx.coroutines.CoroutineDispatcher;kotlinx.coroutines.CoroutineExceptionHandler?;kotlin.Long;org.orbitmvi.orbit.SideEffectMode;kotlin.Long){}[0]
     final fun equals(kotlin/Any?): kotlin/Boolean // org.orbitmvi.orbit/RealSettings.equals|equals(kotlin.Any?){}[0]
     final fun hashCode(): kotlin/Int // org.orbitmvi.orbit/RealSettings.hashCode|hashCode(){}[0]
     final fun toString(): kotlin/String // org.orbitmvi.orbit/RealSettings.toString|toString(){}[0]
@@ -177,6 +194,12 @@ final class org.orbitmvi.orbit/SettingsBuilder { // org.orbitmvi.orbit/SettingsB
     final var sideEffectBufferSize // org.orbitmvi.orbit/SettingsBuilder.sideEffectBufferSize|{}sideEffectBufferSize[0]
         final fun <get-sideEffectBufferSize>(): kotlin/Int // org.orbitmvi.orbit/SettingsBuilder.sideEffectBufferSize.<get-sideEffectBufferSize>|<get-sideEffectBufferSize>(){}[0]
         final fun <set-sideEffectBufferSize>(kotlin/Int) // org.orbitmvi.orbit/SettingsBuilder.sideEffectBufferSize.<set-sideEffectBufferSize>|<set-sideEffectBufferSize>(kotlin.Int){}[0]
+    final var sideEffectMode // org.orbitmvi.orbit/SettingsBuilder.sideEffectMode|{}sideEffectMode[0]
+        final fun <get-sideEffectMode>(): org.orbitmvi.orbit/SideEffectMode // org.orbitmvi.orbit/SettingsBuilder.sideEffectMode.<get-sideEffectMode>|<get-sideEffectMode>(){}[0]
+        final fun <set-sideEffectMode>(org.orbitmvi.orbit/SideEffectMode) // org.orbitmvi.orbit/SettingsBuilder.sideEffectMode.<set-sideEffectMode>|<set-sideEffectMode>(org.orbitmvi.orbit.SideEffectMode){}[0]
+    final var sideEffectReplayClearDelayMs // org.orbitmvi.orbit/SettingsBuilder.sideEffectReplayClearDelayMs|{}sideEffectReplayClearDelayMs[0]
+        final fun <get-sideEffectReplayClearDelayMs>(): kotlin/Long // org.orbitmvi.orbit/SettingsBuilder.sideEffectReplayClearDelayMs.<get-sideEffectReplayClearDelayMs>|<get-sideEffectReplayClearDelayMs>(){}[0]
+        final fun <set-sideEffectReplayClearDelayMs>(kotlin/Long) // org.orbitmvi.orbit/SettingsBuilder.sideEffectReplayClearDelayMs.<set-sideEffectReplayClearDelayMs>|<set-sideEffectReplayClearDelayMs>(kotlin.Long){}[0]
 }
 
 final fun <#A: kotlin/Any, #B: kotlin/Any, #C: kotlin/Any> (kotlinx.coroutines/CoroutineScope).org.orbitmvi.orbit/container(#A, kotlin/Function1<#A, #B>, kotlin/Function1<org.orbitmvi.orbit/SettingsBuilder, kotlin/Unit> = ..., kotlin.coroutines/SuspendFunction1<org.orbitmvi.orbit.syntax/Syntax<#A, #C>, kotlin/Unit>? = ...): org.orbitmvi.orbit/OrbitContainer<#A, #B, #C> // org.orbitmvi.orbit/container|container@kotlinx.coroutines.CoroutineScope(0:0;kotlin.Function1<0:0,0:1>;kotlin.Function1<org.orbitmvi.orbit.SettingsBuilder,kotlin.Unit>;kotlin.coroutines.SuspendFunction1<org.orbitmvi.orbit.syntax.Syntax<0:0,0:2>,kotlin.Unit>?){0§<kotlin.Any>;1§<kotlin.Any>;2§<kotlin.Any>}[0]

@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-2025 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 2021-2026 Mikołaj Leszczyński & Appmattus Limited
  * Copyright 2020 Babylon Partners Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -35,7 +35,6 @@ import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
@@ -66,11 +65,12 @@ public class RealContainer<INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFE
     private val initialised = AtomicBoolean(false)
     private val subscribedCounter = subscribedCounterOverride ?: DelayingSubscribedCounter(scope, settings.repeatOnSubscribedStopTimeout)
     private val internalStateFlow = MutableStateFlow(initialState)
-    private val sideEffectChannel = Channel<SIDE_EFFECT>(settings.sideEffectBufferSize)
     private val intentCounter = AtomicInt(0)
 
+    private val sideEffectProvider: SideEffectProvider<SIDE_EFFECT> = SideEffectProvider.create(settings)
+
     override val stateFlow: StateFlow<INTERNAL_STATE> = internalStateFlow.asStateFlow()
-    override val sideEffectFlow: Flow<SIDE_EFFECT> = sideEffectChannel.receiveAsFlow()
+    override val sideEffectFlow: Flow<SIDE_EFFECT> = sideEffectProvider.sideEffectFlow
 
     override val refCountStateFlow: StateFlow<INTERNAL_STATE> = internalStateFlow.refCount(subscribedCounter)
     override val refCountSideEffectFlow: Flow<SIDE_EFFECT> = sideEffectFlow.refCount(subscribedCounter)
@@ -93,7 +93,7 @@ public class RealContainer<INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFE
 
     internal val pluginContext: ContainerContext<INTERNAL_STATE, SIDE_EFFECT> = ContainerContext(
         settings = settings,
-        postSideEffect = { sideEffectChannel.send(it) },
+        postSideEffect = sideEffectProvider::postSideEffect,
         reduce = { reducer -> internalStateFlow.update(reducer) },
         subscribedCounter = subscribedCounter,
         stateFlow = stateFlow,
@@ -134,12 +134,17 @@ public class RealContainer<INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFE
                     }.invokeOnCompletion { job.complete() }
                 }
             }
+
+            scope.launch(CoroutineName(COROUTINE_NAME_REPLAY_CACHE_CLEAR)) {
+                sideEffectProvider.initialise(subscribedCounter)
+            }
         }
     }
 
     private companion object {
         private const val COROUTINE_NAME_EVENT_LOOP = "orbit-event-loop"
         private const val COROUTINE_NAME_INTENT = "orbit-intent-"
+        private const val COROUTINE_NAME_REPLAY_CACHE_CLEAR = "orbit-replay-cache-clear"
     }
 }
 

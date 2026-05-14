@@ -241,13 +241,18 @@ Navigation, etc.
 Side effects are cached if there are no observers, guaranteeing critical
 events such as navigation are delivered after re-subscription.
 
-:::caution
+Delivery behaviour is controlled by `SettingsBuilder.sideEffectMode`:
 
-`OrbitContainer.sideEffectFlow` is designed for a single observer to ensure
-predictable side effect caching. If you need multiple observers, use `shareIn`,
-but note that caching may not apply to the resulting `SharedFlow`.
-
-:::
+- `SideEffectMode.BROADCAST` (default) — side effects are broadcast to all
+  active collectors, and cached side effects are replayed to every collector
+  that connects. Shortly after the first subscriber connects, the replay cache
+  is cleared so late joiners don't receive stale events. Collectors that take
+  a long time to process items will back-pressure the emitter (and the other
+  collectors) once the buffer fills.
+- `SideEffectMode.FAN_OUT` — legacy single-observer behaviour. Each side effect
+  is delivered to exactly one collector; cached side effects are consumed by
+  the first collector that connects. Use this when you specifically need
+  fan-out semantics.
 
 ### Repeat on subscription
 
