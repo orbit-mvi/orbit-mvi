@@ -7,18 +7,18 @@ import latestRelease from "@site/src/plugins/github-latest-release/generated/dat
 
 # Android and Common ViewModel
 
-The module provides [Container](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-container/)
+The module provides [OrbitContainer](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-orbit-container/)
 factory extensions on Android's [ViewModel](https://developer.android.com/topic/libraries/architecture/viewmodel) for:
 
 - Creating containers scoped with
   [ViewModelScope](https://developer.android.com/topic/libraries/architecture/coroutines#viewmodelscope)
   to automatically cancel the
-  [Container](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-container/)
+  [OrbitContainer](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-orbit-container/)
   whenever the `ViewModel` is cleared.
 - Saved state functionality via Jetpack's
   [Saved State module for ViewModel](https://developer.android.com/topic/libraries/architecture/viewmodel-savedstate)
   to automatically save and restore the
-  [Container](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-container/)
+  [OrbitContainer](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-orbit-container/)
   state on Activity or process death.
 
 :::caution
@@ -34,14 +34,14 @@ Common ViewModel (Multiplatform) support added in Orbit v10.0.0.
 ## Creating a container in a ViewModel
 
 This module contains a
-[Container](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-container/)
+[OrbitContainer](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-orbit-container/)
 factory extension function on `ViewModel` to facilitate creating a scoped
 container.
 
 ```kotlin
-class ExampleViewModel : ContainerHost<ExampleState, Nothing>, ViewModel() {
+class ExampleViewModel : OrbitContainerHost<ExampleState, ExampleState, Nothing>, ViewModel() {
 
-    override val container = container<ExampleState, Nothing>(ExampleState())
+    override val container = orbitContainer<ExampleState, Nothing>(ExampleState())
 
     ...
 }
@@ -56,7 +56,7 @@ must be met:
 1. You must provide a 
    [SavedStateHandle](https://developer.android.com/reference/androidx/lifecycle/SavedStateHandle)
    to the
-   [Container](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-container/)
+   [OrbitContainer](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-orbit-container/)
    factory function, along with the
    [serializer](https://github.com/Kotlin/kotlinx.serialization/blob/master/docs/serializers.md)
    for your state.
@@ -68,9 +68,9 @@ data class ExampleState(
 )
 
 // Pass the SavedStateHandle and serializer to your ViewModel
-class ExampleViewModel(savedStateHandle: SavedStateHandle) : ContainerHost<ExampleState, Nothing>, ViewModel() {
+class ExampleViewModel(savedStateHandle: SavedStateHandle) : OrbitContainerHost<ExampleState, ExampleState, Nothing>, ViewModel() {
 
-    override val container = container<ExampleState, Nothing>(
+    override val container = orbitContainer<ExampleState, Nothing>(
         initialState = ExampleState(),
         savedStateHandle = savedStateHandle,
         serializer = ExampleState.serializer()
@@ -93,7 +93,7 @@ conditions must be met:
 1. You must provide a
    [SavedStateHandle](https://developer.android.com/reference/androidx/lifecycle/SavedStateHandle)
    to the
-   [Container](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-container/)
+   [OrbitContainer](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-orbit-container/)
    factory function.
 
 ```kotlin
@@ -103,9 +103,9 @@ data class ExampleState(
 ) : Parcelable
 
 // Pass the SavedStateHandle to your ViewModel
-class ExampleViewModel(savedStateHandle: SavedStateHandle) : ContainerHost<ExampleState, Nothing>, ViewModel() {
+class ExampleViewModel(savedStateHandle: SavedStateHandle) : OrbitContainerHost<ExampleState, ExampleState, Nothing>, ViewModel() {
 
-    override val container = container<ExampleState, Nothing>(
+    override val container = orbitContainer<ExampleState, Nothing>(
         initialState = ExampleState(),
         savedStateHandle = savedStateHandle
     )
