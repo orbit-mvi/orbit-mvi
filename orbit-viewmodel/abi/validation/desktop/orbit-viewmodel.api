@@ -1,3 +1,14 @@
+public final class org/orbitmvi/orbit/viewmodel/CombineViewModelExtensionsKt {
+	public static final fun combine (Landroidx/lifecycle/ViewModel;Lorg/orbitmvi/orbit/OrbitContainerHost;Lorg/orbitmvi/orbit/OrbitContainerHost;Lkotlin/jvm/functions/Function2;)Lorg/orbitmvi/orbit/OrbitContainerHost;
+	public static final fun combine (Landroidx/lifecycle/ViewModel;Lorg/orbitmvi/orbit/OrbitContainerHost;Lorg/orbitmvi/orbit/OrbitContainerHost;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function4;)Lorg/orbitmvi/orbit/OrbitContainerHost;
+	public static final fun combine (Landroidx/lifecycle/ViewModel;Lorg/orbitmvi/orbit/OrbitContainerHost;Lorg/orbitmvi/orbit/OrbitContainerHost;Lorg/orbitmvi/orbit/OrbitContainerHost;Lkotlin/jvm/functions/Function3;)Lorg/orbitmvi/orbit/OrbitContainerHost;
+	public static final fun combine (Landroidx/lifecycle/ViewModel;Lorg/orbitmvi/orbit/OrbitContainerHost;Lorg/orbitmvi/orbit/OrbitContainerHost;Lorg/orbitmvi/orbit/OrbitContainerHost;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function5;)Lorg/orbitmvi/orbit/OrbitContainerHost;
+	public static final fun combine (Landroidx/lifecycle/ViewModel;Lorg/orbitmvi/orbit/OrbitContainerHost;Lorg/orbitmvi/orbit/OrbitContainerHost;Lorg/orbitmvi/orbit/OrbitContainerHost;Lorg/orbitmvi/orbit/OrbitContainerHost;Lkotlin/jvm/functions/Function4;)Lorg/orbitmvi/orbit/OrbitContainerHost;
+	public static final fun combine (Landroidx/lifecycle/ViewModel;Lorg/orbitmvi/orbit/OrbitContainerHost;Lorg/orbitmvi/orbit/OrbitContainerHost;Lorg/orbitmvi/orbit/OrbitContainerHost;Lorg/orbitmvi/orbit/OrbitContainerHost;Lkotlin/jvm/functions/Function4;Lkotlin/jvm/functions/Function6;)Lorg/orbitmvi/orbit/OrbitContainerHost;
+	public static final fun combine (Landroidx/lifecycle/ViewModel;Lorg/orbitmvi/orbit/OrbitContainerHost;Lorg/orbitmvi/orbit/OrbitContainerHost;Lorg/orbitmvi/orbit/OrbitContainerHost;Lorg/orbitmvi/orbit/OrbitContainerHost;Lorg/orbitmvi/orbit/OrbitContainerHost;Lkotlin/jvm/functions/Function5;)Lorg/orbitmvi/orbit/OrbitContainerHost;
+	public static final fun combine (Landroidx/lifecycle/ViewModel;Lorg/orbitmvi/orbit/OrbitContainerHost;Lorg/orbitmvi/orbit/OrbitContainerHost;Lorg/orbitmvi/orbit/OrbitContainerHost;Lorg/orbitmvi/orbit/OrbitContainerHost;Lorg/orbitmvi/orbit/OrbitContainerHost;Lkotlin/jvm/functions/Function5;Lkotlin/jvm/functions/Function7;)Lorg/orbitmvi/orbit/OrbitContainerHost;
+}
+
 public final class org/orbitmvi/orbit/viewmodel/ContainerHostExtensionsKt {
 	public static final fun observe (Lorg/orbitmvi/orbit/OrbitContainerHost;Landroidx/lifecycle/LifecycleOwner;Landroidx/lifecycle/Lifecycle$State;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;)V
 	public static synthetic fun observe$default (Lorg/orbitmvi/orbit/OrbitContainerHost;Landroidx/lifecycle/LifecycleOwner;Landroidx/lifecycle/Lifecycle$State;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;ILjava/lang/Object;)V
