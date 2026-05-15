@@ -22,15 +22,12 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.consumeAsFlow
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.receiveAsFlow
 import org.orbitmvi.orbit.RealSettings
 import org.orbitmvi.orbit.SideEffectMode
 import org.orbitmvi.orbit.internal.repeatonsubscription.SubscribedCounter
 import org.orbitmvi.orbit.internal.repeatonsubscription.Subscription
-import kotlin.concurrent.atomics.AtomicBoolean
 
 internal interface SideEffectProvider<SIDE_EFFECT> {
     val sideEffectFlow: Flow<SIDE_EFFECT>
