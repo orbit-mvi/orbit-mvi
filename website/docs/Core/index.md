@@ -251,8 +251,14 @@ Delivery behaviour is controlled by `SettingsBuilder.sideEffectMode`:
   collectors) once the buffer fills.
 - `SideEffectMode.FAN_OUT` — legacy single-observer behaviour. Each side effect
   is delivered to exactly one collector; cached side effects are consumed by
-  the first collector that connects. Use this when you specifically need
+  the first collector that connects. If multiple collectors are active, they
+  silently compete for events. Use this when you specifically need legacy
   fan-out semantics.
+- `SideEffectMode.FAN_OUT_STRICT` — strict single-observer fan-out behaviour.
+  Each side effect is delivered to exactly one collector, and cached side
+  effects are still consumed by the first collector that connects. A second
+  collector now gets an `IllegalStateException` instead of silently competing
+  for events.
 
 ### Repeat on subscription
 

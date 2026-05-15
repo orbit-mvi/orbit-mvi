@@ -81,7 +81,10 @@ public interface OrbitContainer<INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE
      * post a side effect.
      *
      * The delivery behavior depends on [SideEffectMode]:
-     * - [SideEffectMode.FAN_OUT]: Each side effect is delivered to exactly one collector. Designed for single-observer use.
+     * - [SideEffectMode.FAN_OUT]: Each side effect is delivered to exactly one collector. Multiple collectors compete
+     *   silently for events, so use this only when you intentionally want legacy fan-out behavior.
+     * - [SideEffectMode.FAN_OUT_STRICT]: Each side effect is delivered to exactly one collector. A second collector
+     *   fails with [IllegalStateException] instead of silently competing for events.
      * - [SideEffectMode.BROADCAST]: Side effects are broadcast to all active collectors. Cached side effects are replayed
      *   to all collectors when they reconnect. The replay cache is cleared shortly after subscribers reconnect.
      */
@@ -96,7 +99,10 @@ public interface OrbitContainer<INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE
      * post a side effect.
      *
      * The delivery behavior depends on [SideEffectMode]:
-     * - [SideEffectMode.FAN_OUT]: Each side effect is delivered to exactly one collector. Designed for single-observer use.
+     * - [SideEffectMode.FAN_OUT]: Each side effect is delivered to exactly one collector. Multiple collectors compete
+     *   silently for events, so use this only when you intentionally want legacy fan-out behavior.
+     * - [SideEffectMode.FAN_OUT_STRICT]: Each side effect is delivered to exactly one collector. A second collector
+     *   fails with [IllegalStateException] instead of silently competing for events.
      * - [SideEffectMode.BROADCAST]: Side effects are broadcast to all active collectors. Cached side effects are replayed
      *   to all collectors when they reconnect. The replay cache is cleared shortly after subscribers reconnect.
      */

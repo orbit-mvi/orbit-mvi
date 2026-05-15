@@ -22,6 +22,7 @@ open annotation class org.orbitmvi.orbit.annotation/OrbitInternal : kotlin/Annot
 final enum class org.orbitmvi.orbit/SideEffectMode : kotlin/Enum<org.orbitmvi.orbit/SideEffectMode> { // org.orbitmvi.orbit/SideEffectMode|null[0]
     enum entry BROADCAST // org.orbitmvi.orbit/SideEffectMode.BROADCAST|null[0]
     enum entry FAN_OUT // org.orbitmvi.orbit/SideEffectMode.FAN_OUT|null[0]
+    enum entry FAN_OUT_STRICT // org.orbitmvi.orbit/SideEffectMode.FAN_OUT_STRICT|null[0]
 
     final val entries // org.orbitmvi.orbit/SideEffectMode.entries|#static{}entries[0]
         final fun <get-entries>(): kotlin.enums/EnumEntries<org.orbitmvi.orbit/SideEffectMode> // org.orbitmvi.orbit/SideEffectMode.entries.<get-entries>|<get-entries>#static(){}[0]

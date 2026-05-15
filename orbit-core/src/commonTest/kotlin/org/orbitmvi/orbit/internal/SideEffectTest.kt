@@ -21,6 +21,8 @@
 package org.orbitmvi.orbit.internal
 
 import app.cash.turbine.test
+import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.runTest
@@ -30,6 +32,7 @@ import org.orbitmvi.orbit.orbitContainer
 import kotlin.random.Random
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 
 internal class SideEffectTest {
 
@@ -133,6 +136,24 @@ internal class SideEffectTest {
             ensureAllEventsConsumed()
             cancel()
         }
+    }
+
+    @Test
+    fun strict_fan_out_rejects_a_second_collector() = runTest {
+        val container = backgroundScope.orbitContainer<Unit, Int>(
+            initialState = Unit,
+            buildSettings = { sideEffectMode = SideEffectMode.FAN_OUT_STRICT }
+        )
+
+        val firstCollector = launch(start = CoroutineStart.UNDISPATCHED) {
+            container.sideEffectFlow.collect { }
+        }
+
+        assertFailsWith<IllegalStateException> {
+            container.sideEffectFlow.collect { }
+        }
+
+        firstCollector.cancelAndJoin()
     }
 
     private suspend fun OrbitContainer<Unit, Unit, Int>.someFlow(action: Int) = orbit {
