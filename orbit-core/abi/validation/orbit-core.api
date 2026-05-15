@@ -122,6 +122,7 @@ public final class org/orbitmvi/orbit/SettingsBuilder {
 public final class org/orbitmvi/orbit/SideEffectMode : java/lang/Enum {
 	public static final field BROADCAST Lorg/orbitmvi/orbit/SideEffectMode;
 	public static final field FAN_OUT Lorg/orbitmvi/orbit/SideEffectMode;
+	public static final field FAN_OUT_STRICT Lorg/orbitmvi/orbit/SideEffectMode;
 	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lorg/orbitmvi/orbit/SideEffectMode;
 	public static fun values ()[Lorg/orbitmvi/orbit/SideEffectMode;

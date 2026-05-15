@@ -29,8 +29,17 @@ public enum class SideEffectMode {
     /**
      * Each side effect is delivered to exactly one collector (fan-out).
      * Cached side effects are consumed by the first collector that connects.
+     * If multiple collectors are active at the same time they will silently compete for events.
      */
     FAN_OUT,
+
+    /**
+     * Each side effect is delivered to exactly one collector (fan-out).
+     * Cached side effects are consumed by the first collector that connects.
+     * Prevents multiple collectors from silently competing for side effect events:
+     * a second collector receives an [IllegalStateException].
+     */
+    FAN_OUT_STRICT,
 
     /**
      * Side effects are broadcast to all active collectors.

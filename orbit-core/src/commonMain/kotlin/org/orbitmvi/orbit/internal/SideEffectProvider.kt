@@ -22,6 +22,7 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import org.orbitmvi.orbit.RealSettings
 import org.orbitmvi.orbit.SideEffectMode
@@ -39,6 +40,7 @@ internal interface SideEffectProvider<SIDE_EFFECT> {
         fun <SIDE_EFFECT> create(settings: RealSettings): SideEffectProvider<SIDE_EFFECT> =
             when (settings.sideEffectMode) {
                 SideEffectMode.FAN_OUT -> FanOutSideEffectProvider(settings)
+                SideEffectMode.FAN_OUT_STRICT -> StrictFanOutSideEffectProvider(settings)
                 SideEffectMode.BROADCAST -> BroadcastSideEffectProvider(settings)
             }
     }
@@ -50,6 +52,20 @@ private class FanOutSideEffectProvider<SIDE_EFFECT>(
     private val channel = Channel<SIDE_EFFECT>(settings.sideEffectBufferSize)
 
     override val sideEffectFlow: Flow<SIDE_EFFECT> = channel.receiveAsFlow()
+
+    override suspend fun postSideEffect(sideEffect: SIDE_EFFECT) {
+        channel.send(sideEffect)
+    }
+
+    override suspend fun initialise(subscribedCounter: SubscribedCounter) = Unit
+}
+
+private class StrictFanOutSideEffectProvider<SIDE_EFFECT>(
+    settings: RealSettings,
+) : SideEffectProvider<SIDE_EFFECT> {
+    private val channel = Channel<SIDE_EFFECT>(settings.sideEffectBufferSize)
+
+    override val sideEffectFlow: Flow<SIDE_EFFECT> = channel.consumeAsFlow()
 
     override suspend fun postSideEffect(sideEffect: SIDE_EFFECT) {
         channel.send(sideEffect)
