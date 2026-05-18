@@ -58,7 +58,6 @@ public interface OrbitContainerHost<INTERNAL_STATE : Any, EXTERNAL_STATE : Any, 
      * @param registerIdling whether to register an idling resource when executing this intent. Defaults to true.
      * @param transformer lambda representing the transformer
      */
-    @OrbitDsl
     public fun intent(
         registerIdling: Boolean = true,
         transformer: suspend Syntax<INTERNAL_STATE, SIDE_EFFECT>.() -> Unit

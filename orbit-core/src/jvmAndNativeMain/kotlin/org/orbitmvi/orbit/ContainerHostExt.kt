@@ -17,7 +17,6 @@
 package org.orbitmvi.orbit
 
 import kotlinx.coroutines.runBlocking
-import org.orbitmvi.orbit.annotation.OrbitDsl
 import org.orbitmvi.orbit.idling.withIdling
 import org.orbitmvi.orbit.syntax.Syntax
 
@@ -29,7 +28,6 @@ import org.orbitmvi.orbit.syntax.Syntax
  * @param registerIdling whether to register an idling resource when executing this intent. Defaults to true.
  * @param transformer lambda representing the transformer
  */
-@OrbitDsl
 public fun <INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : Any>
     OrbitContainerHost<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>.blockingIntent(
         registerIdling: Boolean = true,

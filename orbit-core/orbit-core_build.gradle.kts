@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 
 /*
- * Copyright 2021-2025 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 2021-2026 Mikołaj Leszczyński & Appmattus Limited
  * Copyright 2020 Babylon Partners Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -45,23 +45,19 @@ kotlin {
 
     // Tier 1
     // Apple macOS hosts only:
-    macosX64() // Running tests
     macosArm64() // Running tests
     iosSimulatorArm64() // Running tests
-    iosX64() // Running tests
+    iosArm64()
 
     // Tier 2
     linuxX64() // Running tests
     linuxArm64()
     // Apple macOS hosts only:
     watchosSimulatorArm64() // Running tests
-    watchosX64() // Running tests
     watchosArm32()
     watchosArm64()
     tvosSimulatorArm64() // Running tests
-    tvosX64() // Running tests
     tvosArm64()
-    iosArm64()
 
     // Tier 3
     androidNativeArm32()
@@ -71,6 +67,7 @@ kotlin {
     mingwX64() // Running tests
     // Apple macOS hosts only:
     watchosDeviceArm64()
+    iosX64() // Running tests
 
     // Apply the default hierarchy again. It'll create, for example, the iosMain source set:
     applyDefaultHierarchyTemplate()

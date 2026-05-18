@@ -15,6 +15,7 @@ import org.orbitmvi.orbit.RealSettings
 import org.orbitmvi.orbit.test.ItemWithInternalAndExternalState.ExternalStateItem
 import org.orbitmvi.orbit.test.ItemWithInternalAndExternalState.InternalStateItem
 import org.orbitmvi.orbit.test.ItemWithInternalAndExternalState.SideEffectItem
+import kotlin.coroutines.ContinuationInterceptor
 import kotlin.test.assertEquals
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
@@ -44,7 +45,8 @@ public suspend fun <INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : An
     suspend OrbitScopedTestContextInternal<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT, CONTAINER_HOST>.() -> Unit
 ) {
     val containerHost = this
-    val testDispatcher = settings.dispatcherOverride ?: testScope.backgroundScope.coroutineContext[CoroutineDispatcher.Key]
+    val testDispatcher =
+        settings.dispatcherOverride ?: testScope.backgroundScope.coroutineContext[ContinuationInterceptor.Key] as? CoroutineDispatcher
 
     var caughtException: Throwable? = null
 
@@ -106,7 +108,8 @@ public suspend fun <INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : An
     suspend OrbitScopedTestContextExternal<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT, CONTAINER_HOST>.() -> Unit
 ) {
     val containerHost = this
-    val testDispatcher = settings.dispatcherOverride ?: testScope.backgroundScope.coroutineContext[CoroutineDispatcher.Key]
+    val testDispatcher =
+        settings.dispatcherOverride ?: testScope.backgroundScope.coroutineContext[ContinuationInterceptor.Key] as? CoroutineDispatcher
 
     var caughtException: Throwable? = null
 
@@ -168,7 +171,8 @@ public suspend fun <INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : An
     suspend OrbitScopedTestContextInternalAndExternal<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT, CONTAINER_HOST>.() -> Unit
 ) {
     val containerHost = this
-    val testDispatcher = settings.dispatcherOverride ?: testScope.backgroundScope.coroutineContext[CoroutineDispatcher.Key]
+    val testDispatcher =
+        settings.dispatcherOverride ?: testScope.backgroundScope.coroutineContext[ContinuationInterceptor.Key] as? CoroutineDispatcher
 
     var caughtException: Throwable? = null
 
