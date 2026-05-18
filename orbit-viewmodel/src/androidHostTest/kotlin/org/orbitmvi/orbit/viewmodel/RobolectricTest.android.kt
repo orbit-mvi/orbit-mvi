@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 202-2026 Mikołaj Leszczyński & Appmattus Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,9 @@ package org.orbitmvi.orbit.viewmodel
 
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.Config
 
 @Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
 @RunWith(RobolectricTestRunner::class)
+@Config(sdk = [35])
 public actual abstract class RobolectricTest actual constructor()
