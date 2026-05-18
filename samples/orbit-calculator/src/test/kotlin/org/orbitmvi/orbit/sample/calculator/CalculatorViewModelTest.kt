@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-2025 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 2021-2026 Mikołaj Leszczyński & Appmattus Limited
  * Copyright 2020 Babylon Partners Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -40,6 +40,7 @@ import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.Arguments.arguments
 import org.junit.jupiter.params.provider.ArgumentsProvider
 import org.junit.jupiter.params.provider.ArgumentsSource
+import org.junit.jupiter.params.support.ParameterDeclarations
 import org.orbitmvi.orbit.sample.calculator.CalculatorViewModel.InternalCalculatorState
 import org.orbitmvi.orbit.sample.calculator.livedata.InstantTaskExecutorExtension
 import org.orbitmvi.orbit.sample.calculator.livedata.MockLifecycleOwner
@@ -370,7 +371,7 @@ class CalculatorViewModelTest {
     }
 
     class DecimalNumberPairProvider : ArgumentsProvider {
-        override fun provideArguments(context: ExtensionContext?): Stream<out Arguments> {
+        override fun provideArguments(parameters: ParameterDeclarations, context: ExtensionContext): Stream<out Arguments> {
             return List(10) {
                 arguments(fixture(-10000..10000) / 100f, fixture(-10000..10000) / 100f)
             }.stream()
@@ -378,7 +379,7 @@ class CalculatorViewModelTest {
     }
 
     class WholeNumberPairProvider : ArgumentsProvider {
-        override fun provideArguments(context: ExtensionContext?): Stream<out Arguments> {
+        override fun provideArguments(parameters: ParameterDeclarations, context: ExtensionContext): Stream<out Arguments> {
             return List(10) {
                 arguments(fixture(-100..100), fixture(-100..100))
             }.stream()
