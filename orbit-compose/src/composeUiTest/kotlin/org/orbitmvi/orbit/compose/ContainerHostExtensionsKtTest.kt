@@ -1,5 +1,5 @@
 /*
- * Copyright 2022-2025 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 2022-2026 Mikołaj Leszczyński & Appmattus Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.test.ComposeUiTest
 import androidx.compose.ui.test.ExperimentalTestApi
-import androidx.compose.ui.test.runComposeUiTest
+import androidx.compose.ui.test.v2.runComposeUiTest
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import kotlinx.coroutines.CoroutineScope
@@ -90,6 +90,7 @@ class ContainerHostExtensionsKtTest : RobolectricTest() {
 
         // Start and ensure there is one subscriber
         mockLifecycleOwner.dispatchEvent(Lifecycle.Event.ON_START)
+        awaitIdle()
         assertEquals(1, testSubscribedCounter.counter)
     }
 
@@ -99,10 +100,12 @@ class ContainerHostExtensionsKtTest : RobolectricTest() {
 
         // Start and ensure there is one subscriber
         mockLifecycleOwner.dispatchEvent(Lifecycle.Event.ON_START)
+        awaitIdle()
         assertEquals(1, testSubscribedCounter.counter)
 
         // Stop and ensure there are no subscribers
         mockLifecycleOwner.dispatchEvent(Lifecycle.Event.ON_STOP)
+        awaitIdle()
         assertEquals(0, testSubscribedCounter.counter)
     }
 
@@ -112,14 +115,17 @@ class ContainerHostExtensionsKtTest : RobolectricTest() {
 
         // Start and ensure there is one subscriber
         mockLifecycleOwner.dispatchEvent(Lifecycle.Event.ON_START)
+        awaitIdle()
         assertEquals(1, testSubscribedCounter.counter)
 
         // Stop and ensure there are no subscribers
         mockLifecycleOwner.dispatchEvent(Lifecycle.Event.ON_STOP)
+        awaitIdle()
         assertEquals(0, testSubscribedCounter.counter)
 
         // Re-start and ensure there is one subscriber
         mockLifecycleOwner.dispatchEvent(Lifecycle.Event.ON_START)
+        awaitIdle()
         assertEquals(1, testSubscribedCounter.counter)
     }
 
@@ -132,6 +138,7 @@ class ContainerHostExtensionsKtTest : RobolectricTest() {
 
         // Start and ensure there is one subscriber
         mockLifecycleOwner.dispatchEvent(Lifecycle.Event.ON_RESUME)
+        awaitIdle()
         assertEquals(1, testSubscribedCounter.counter)
     }
 
@@ -141,10 +148,12 @@ class ContainerHostExtensionsKtTest : RobolectricTest() {
 
         // Start and ensure there is one subscriber
         mockLifecycleOwner.dispatchEvent(Lifecycle.Event.ON_RESUME)
+        awaitIdle()
         assertEquals(1, testSubscribedCounter.counter)
 
         // Stop and ensure there are no subscribers
         mockLifecycleOwner.dispatchEvent(Lifecycle.Event.ON_STOP)
+        awaitIdle()
         assertEquals(0, testSubscribedCounter.counter)
     }
 
@@ -154,14 +163,17 @@ class ContainerHostExtensionsKtTest : RobolectricTest() {
 
         // Start and ensure there is one subscriber
         mockLifecycleOwner.dispatchEvent(Lifecycle.Event.ON_RESUME)
+        awaitIdle()
         assertEquals(1, testSubscribedCounter.counter)
 
         // Stop and ensure there are no subscribers
         mockLifecycleOwner.dispatchEvent(Lifecycle.Event.ON_STOP)
+        awaitIdle()
         assertEquals(0, testSubscribedCounter.counter)
 
         // Re-start and ensure there is one subscriber
         mockLifecycleOwner.dispatchEvent(Lifecycle.Event.ON_RESUME)
+        awaitIdle()
         assertEquals(1, testSubscribedCounter.counter)
     }
 
@@ -174,6 +186,7 @@ class ContainerHostExtensionsKtTest : RobolectricTest() {
 
         // Start and ensure there is one subscriber
         mockLifecycleOwner.dispatchEvent(Lifecycle.Event.ON_START)
+        awaitIdle()
         assertEquals(1, testSubscribedCounter.counter)
     }
 
@@ -183,10 +196,12 @@ class ContainerHostExtensionsKtTest : RobolectricTest() {
 
         // Start and ensure there is one subscriber
         mockLifecycleOwner.dispatchEvent(Lifecycle.Event.ON_START)
+        awaitIdle()
         assertEquals(1, testSubscribedCounter.counter)
 
         // Stop and ensure there are no subscribers
         mockLifecycleOwner.dispatchEvent(Lifecycle.Event.ON_STOP)
+        awaitIdle()
         assertEquals(0, testSubscribedCounter.counter)
     }
 
@@ -196,14 +211,17 @@ class ContainerHostExtensionsKtTest : RobolectricTest() {
 
         // Start and ensure there is one subscriber
         mockLifecycleOwner.dispatchEvent(Lifecycle.Event.ON_START)
+        awaitIdle()
         assertEquals(1, testSubscribedCounter.counter)
 
         // Stop and ensure there are no subscribers
         mockLifecycleOwner.dispatchEvent(Lifecycle.Event.ON_STOP)
+        awaitIdle()
         assertEquals(0, testSubscribedCounter.counter)
 
         // Re-start and ensure there is one subscriber
         mockLifecycleOwner.dispatchEvent(Lifecycle.Event.ON_START)
+        awaitIdle()
         assertEquals(1, testSubscribedCounter.counter)
     }
 
@@ -216,6 +234,7 @@ class ContainerHostExtensionsKtTest : RobolectricTest() {
 
         // Start and ensure there is one subscriber
         mockLifecycleOwner.dispatchEvent(Lifecycle.Event.ON_RESUME)
+        awaitIdle()
         assertEquals(1, testSubscribedCounter.counter)
     }
 
@@ -225,10 +244,12 @@ class ContainerHostExtensionsKtTest : RobolectricTest() {
 
         // Start and ensure there is one subscriber
         mockLifecycleOwner.dispatchEvent(Lifecycle.Event.ON_RESUME)
+        awaitIdle()
         assertEquals(1, testSubscribedCounter.counter)
 
         // Stop and ensure there are no subscribers
         mockLifecycleOwner.dispatchEvent(Lifecycle.Event.ON_STOP)
+        awaitIdle()
         assertEquals(0, testSubscribedCounter.counter)
     }
 
@@ -238,14 +259,17 @@ class ContainerHostExtensionsKtTest : RobolectricTest() {
 
         // Start and ensure there is one subscriber
         mockLifecycleOwner.dispatchEvent(Lifecycle.Event.ON_RESUME)
+        awaitIdle()
         assertEquals(1, testSubscribedCounter.counter)
 
         // Stop and ensure there are no subscribers
         mockLifecycleOwner.dispatchEvent(Lifecycle.Event.ON_STOP)
+        awaitIdle()
         assertEquals(0, testSubscribedCounter.counter)
 
         // Re-start and ensure there is one subscriber
         mockLifecycleOwner.dispatchEvent(Lifecycle.Event.ON_RESUME)
+        awaitIdle()
         assertEquals(1, testSubscribedCounter.counter)
     }
 }
