@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-2025 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 2021-2026 Mikołaj Leszczyński & Appmattus Limited
  * Copyright 2020 Babylon Partners Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,17 +20,16 @@
 
 plugins {
     id("com.android.application")
-    kotlin("android")
     id("kotlin-parcelize")
     id("androidx.navigation.safeargs.kotlin")
 }
 
 android {
     namespace = "org.orbitmvi.orbit.sample.stocklist"
-    compileSdk = 35
+    compileSdk = 37
     defaultConfig {
         minSdk = 23
-        targetSdk = 35
+        targetSdk = 37
         versionCode = 1
         versionName = "1.0"
         applicationId = "org.orbitmvi.orbit.sample.stocklist"
@@ -88,7 +87,10 @@ dependencies {
     implementation(libs.androidxNavigationUiKtx)
     implementation(libs.lsAndroidClient)
     implementation(libs.groupie)
-    implementation(libs.groupieKotlinAndroidExtensions)
+    implementation(libs.groupieKotlinAndroidExtensions) {
+        // Exclude Parcelable as we use version added by plugin above
+        exclude(group = "org.jetbrains.kotlin")
+    }
     implementation(libs.groupieViewbinding)
     implementation(libs.koinAndroid)
     implementation(libs.androidxLifecycleCommonJava8)
