@@ -17,9 +17,14 @@
 package org.orbitmvi.orbit.sample.stocklist.list.ui
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.safeContent
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavController
 import org.orbitmvi.orbit.compose.collectAsState
@@ -31,14 +36,14 @@ import org.orbitmvi.orbit.sample.stocklist.list.business.ListViewModel
 
 @Composable
 fun ListScreen(navController: NavController, viewModel: ListViewModel) {
-    val state = viewModel.collectAsState()
+    val state by viewModel.collectAsState()
     viewModel.collectSideEffect { handleSideEffect(navController, it) }
 
-    Column {
+    Column(Modifier.windowInsetsPadding(WindowInsets.safeContent)) {
         AppBar(stringResource(id = R.string.app_name))
 
         LazyColumn {
-            items(state.value.stocks) { stock ->
+            items(state.stocks) { stock ->
                 StockItem(stock) {
                     viewModel.viewMarket(stock.itemName)
                 }

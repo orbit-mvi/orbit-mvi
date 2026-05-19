@@ -19,12 +19,16 @@ package org.orbitmvi.orbit.sample.stocklist.detail.ui
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeContent
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
@@ -41,9 +45,9 @@ import org.orbitmvi.orbit.sample.stocklist.detail.business.DetailViewModel
 @Composable
 @Suppress("LongMethod")
 fun DetailScreen(navController: NavController, viewModel: DetailViewModel) {
-    val state = viewModel.collectAsState().value
+    val state by viewModel.collectAsState()
 
-    Column {
+    Column(Modifier.windowInsetsPadding(WindowInsets.safeContent)) {
         AppBar(state.stock?.name ?: stringResource(id = R.string.app_name)) {
             navController.popBackStack()
         }

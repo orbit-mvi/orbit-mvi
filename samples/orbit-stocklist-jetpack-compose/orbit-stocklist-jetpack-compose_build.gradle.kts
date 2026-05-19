@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-2025 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 2021-2026 Mikołaj Leszczyński & Appmattus Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,20 +16,19 @@
 
 plugins {
     id("com.android.application")
-    kotlin("android")
     id("kotlin-parcelize")
     id("androidx.navigation.safeargs.kotlin")
     id("dagger.hilt.android.plugin")
-    kotlin("kapt")
+    id("com.google.devtools.ksp")
     alias(libs.plugins.compose.compiler)
 }
 
 android {
     namespace = "org.orbitmvi.orbit.sample.stocklist.compose"
-    compileSdk = 35
+    compileSdk = 37
     defaultConfig {
         minSdk = 23
-        targetSdk = 35
+        targetSdk = 37
         versionCode = 1
         versionName = "1.0"
         applicationId = "org.orbitmvi.orbit.sample.stocklist.compose"
@@ -63,11 +62,6 @@ android {
             )
         }
     }
-
-    sourceSets {
-        get("main").java.srcDir("src/main/kotlin")
-        get("test").java.srcDir("src/test/kotlin")
-    }
 }
 
 dependencies {
@@ -84,7 +78,7 @@ dependencies {
 
     // Dependency Injection
     implementation(libs.hiltAndroid)
-    kapt(libs.hiltAndroidCompiler)
+    ksp(libs.hiltAndroidCompiler)
 
     coreLibraryDesugaring(libs.desugar)
 

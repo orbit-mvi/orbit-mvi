@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-2025 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 2021-2026 Mikołaj Leszczyński & Appmattus Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import org.orbitmvi.orbit.OrbitContainerHost
+import org.orbitmvi.orbit.SideEffectMode
 import org.orbitmvi.orbit.sample.stocklist.streaming.stock.StockRepository
 import org.orbitmvi.orbit.viewmodel.orbitContainer
 import javax.inject.Inject
@@ -32,7 +33,13 @@ class DetailViewModel @Inject constructor(
 
     private val itemName = savedStateHandle.get<String>("itemName")!!
 
-    override val container = orbitContainer<DetailState, Nothing>(DetailState(), savedStateHandle) { requestStock() }
+    override val container = orbitContainer<DetailState, Nothing>(
+        initialState = DetailState(),
+        savedStateHandle = savedStateHandle,
+        buildSettings = { sideEffectMode = SideEffectMode.FAN_OUT }
+    ) {
+        requestStock()
+    }
 
     private fun requestStock() = intent(registerIdling = false) {
         repeatOnSubscription {
