@@ -135,7 +135,7 @@ kotlin {
 
         commonMain.dependencies {
             api(project(":orbit-core"))
-            api(libs.androidxLifecycleRuntimeCompose)
+            api(libs.jetbrainsLifecycleRuntimeCompose)
         }
 
         commonTest.dependencies {
@@ -147,7 +147,7 @@ kotlin {
         }
 
         composeUiTest.dependencies {
-            implementation(libs.androidxComposeUiTest)
+            implementation(libs.jetbrainsComposeUiTest)
         }
 
         jvmTest.dependencies {

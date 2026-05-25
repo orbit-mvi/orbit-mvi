@@ -111,9 +111,9 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             api(project(":orbit-core"))
-            api(libs.androidxLifecycleViewmodel)
-            api(libs.androidxLifecycleViewmodelSavedState)
-            api(libs.androidxLifecycleRuntime)
+            api(libs.jetbrainsLifecycleViewmodel)
+            api(libs.jetbrainsLifecycleViewmodelSavedState)
+            api(libs.jetbrainsLifecycleRuntime)
         }
 
         commonTest.dependencies {

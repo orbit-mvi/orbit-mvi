@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-2025 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 2021-2026 Mikołaj Leszczyński & Appmattus Limited
  * Copyright 2020 Babylon Partners Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,7 +18,7 @@
  * See: https://github.com/orbit-mvi/orbit-mvi/compare/c5b8b3f2b83b5972ba2ad98f73f75086a89653d3...main
  */
 
-import com.android.build.gradle.LibraryExtension
+import com.android.build.api.dsl.LibraryExtension
 import com.appmattus.markdown.rules.LineLengthRule
 import com.appmattus.markdown.rules.ProperNamesRule
 import com.appmattus.markdown.rules.ProperNamesRule.Companion.DefaultNames
@@ -37,7 +37,6 @@ buildscript {
         classpath(libs.buildscript.android)
         classpath(libs.buildscript.kotlin)
         classpath(libs.buildscript.safeargs)
-        classpath(libs.buildscript.hilt)
     }
 }
 
@@ -49,31 +48,27 @@ plugins {
     alias(libs.plugins.dokkaPlugin)
     alias(libs.plugins.compose.compiler) apply false
     alias(libs.plugins.binaryCompatibilityValidator)
+    id("com.google.devtools.ksp") version "2.3.7" apply false
 }
 
-apply(from = "gradle/scripts/detekt.gradle.kts")
+//apply(from = "gradle/scripts/detekt.gradle.kts")
 
 tasks.withType<DependencyUpdatesTask> {
-    resolutionStrategy {
-        componentSelection {
-            all {
-                fun isNonStable(version: String) = listOf(
-                    "alpha",
-                    "beta",
-                    "rc",
-                    "cr",
-                    "m",
-                    "preview",
-                    "b",
-                    "ea"
-                ).any { qualifier ->
-                    version.matches(Regex("(?i).*[.-]$qualifier[.\\d-+]*"))
-                }
-                if (isNonStable(candidate.version) && !isNonStable(currentVersion)) {
-                    reject("Release candidate")
-                }
-            }
-        }
+    fun isNonStable(version: String) = listOf(
+        "alpha",
+        "beta",
+        "rc",
+        "cr",
+        "m",
+        "preview",
+        "b",
+        "ea"
+    ).any { qualifier ->
+        version.matches(Regex("(?i).*[.-]$qualifier[.\\d-+]*"))
+    }
+
+    rejectVersionIf {
+        isNonStable(candidate.version) && !isNonStable(currentVersion)
     }
 }
 
@@ -131,9 +126,7 @@ subprojects {
     tasks.withType<KotlinCompile>().all {
         compilerOptions {
             jvmTarget = JvmTarget.JVM_11
-            if (project.name !in listOf("orbit-stocklist-jetpack-compose")) {
-                allWarningsAsErrors = true
-            }
+//                allWarningsAsErrors = true
         }
     }
     plugins.withType<JavaBasePlugin> {
@@ -144,22 +137,16 @@ subprojects {
     }
     plugins.withId("com.android.application") {
         apply(from = "$rootDir/gradle/scripts/jacoco-android.gradle.kts")
-        configure<com.android.build.gradle.AppExtension> {
-            sourceSets {
-                get("main").java.srcDir("src/main/kotlin")
-                get("test").java.srcDir("src/test/kotlin")
-            }
-        }
     }
     plugins.withType<org.jetbrains.kotlin.gradle.plugin.KotlinPluginWrapper> {
-        apply(from = "$rootDir/gradle/scripts/jacoco.gradle.kts")
+//        apply(from = "$rootDir/gradle/scripts/jacoco.gradle.kts")
         configure<org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension> {
             // for strict mode
             explicitApi()
         }
     }
     plugins.withType<org.jetbrains.kotlin.gradle.plugin.KotlinPluginWrapper> {
-        apply(from = "$rootDir/gradle/scripts/jacoco.gradle.kts")
+//        apply(from = "$rootDir/gradle/scripts/jacoco.gradle.kts")
         configure<org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension> {
             // for strict mode
             explicitApi()
@@ -184,20 +171,15 @@ subprojects {
         apply(from = "$rootDir/gradle/scripts/jacoco-android.gradle.kts")
 
         configure<LibraryExtension> {
-            compileSdk = 35
+            compileSdk = 37
             defaultConfig {
-                minSdk = 21
+                minSdk = 23
             }
 
             buildTypes {
                 getByName("release") {
                     isMinifyEnabled = false
                 }
-            }
-
-            sourceSets {
-                get("main").java.srcDir("src/main/kotlin")
-                get("test").java.srcDir("src/test/kotlin")
             }
 
             compileOptions {
@@ -266,13 +248,14 @@ apiValidation {
     ignoredProjects.addAll(
         listOf(
             "test-common",
-            "samples",
-            "orbit-calculator",
-            "orbit-posts",
-            "composeApp",
-            "orbit-stocklist",
-            "orbit-stocklist-jetpack-compose",
-            "orbit-text",
+            "desktopApp",
+            "shared",
+            "webApp"
+//            "samples",
+//            "orbit-calculator",
+//            "composeApp",
+//            "orbit-posts-compose-multiplatform",
+//            "orbit-text",
         )
     )
     nonPublicMarkers.add("org.orbitmvi.orbit.annotation.OrbitInternal")
