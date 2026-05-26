@@ -51,7 +51,7 @@ plugins {
     id("com.google.devtools.ksp") version "2.3.7" apply false
 }
 
-//apply(from = "gradle/scripts/detekt.gradle.kts")
+apply(from = "gradle/scripts/detekt.gradle.kts")
 
 tasks.withType<DependencyUpdatesTask> {
     fun isNonStable(version: String) = listOf(
