@@ -20,7 +20,7 @@ naming:
     MatchingDeclarationName:
         multiplatformTargets: [ 'ios', 'android', 'js', 'jvm', 'native', 'iosArm64', 'iosX64', 'macosX64', 'mingwX64', 'linuxX64', 'desktop' ]
     FunctionNaming:
-        excludes: [ '**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**', '**/androidUnitTest/**', '**/androidInstrumentedTest/**', '**/jsTest/**', '**/iosTest/**', '**/composeUiTest/**' ]
+        excludes: [ '**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**', '**/androidUnitTest/**', '**/androidInstrumentedTest/**', '**/androidHostTest/**', '**/jsTest/**', '**/iosTest/**', '**/composeUiTest/**' ]
         ignoreAnnotated: [ 'Composable' ]
 
 style:
@@ -35,4 +35,4 @@ complexity:
     LongMethod:
         excludes: "**/test/**,**/androidTest/**,**/*.Test.kt,**/*.Spec.kt,**/*.Spek.kt"
     TooManyFunctions:
-        excludes: [ '**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**', '**/androidUnitTest/**', '**/androidInstrumentedTest/**', '**/jsTest/**', '**/iosTest/**', '**/composeUiTest/**' ]
+        excludes: [ '**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**', '**/androidUnitTest/**', '**/androidInstrumentedTest/**', '**/androidHostTest/**', '**/jsTest/**', '**/iosTest/**', '**/composeUiTest/**' ]

@@ -19,7 +19,6 @@ package org.orbitmvi.orbit.compose
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
-import kotlin.intArrayOf
 
 @Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
 @RunWith(RobolectricTestRunner::class)

@@ -109,6 +109,8 @@ kotlin {
     applyDefaultHierarchyTemplate()
 
     sourceSets {
+        val androidHostTest by getting
+
         commonMain.dependencies {
             api(project(":orbit-core"))
             api(libs.jetbrainsLifecycleViewmodel)
@@ -135,13 +137,11 @@ kotlin {
             implementation(kotlin("test-junit"))
         }
 
-        val androidHostTest by getting {
-            dependencies {
-                implementation(kotlin("test-junit"))
-                implementation(libs.robolectric)
-                implementation(libs.androidxCoreTesting)
-                implementation(libs.androidxEspressoCore)
-            }
+        androidHostTest.dependencies {
+            implementation(kotlin("test-junit"))
+            implementation(libs.robolectric)
+            implementation(libs.androidxCoreTesting)
+            implementation(libs.androidxEspressoCore)
         }
     }
 }
