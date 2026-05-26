@@ -125,7 +125,7 @@ subprojects {
     tasks.withType<KotlinCompile>().all {
         compilerOptions {
             jvmTarget = JvmTarget.JVM_11
-//                allWarningsAsErrors = true
+            allWarningsAsErrors = true
         }
     }
     plugins.withType<JavaBasePlugin> {
