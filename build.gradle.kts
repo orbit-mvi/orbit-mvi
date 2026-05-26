@@ -48,7 +48,6 @@ plugins {
     alias(libs.plugins.dokkaPlugin)
     alias(libs.plugins.compose.compiler) apply false
     alias(libs.plugins.binaryCompatibilityValidator)
-    id("com.google.devtools.ksp") version "2.3.7" apply false
 }
 
 apply(from = "gradle/scripts/detekt.gradle.kts")
@@ -248,14 +247,13 @@ apiValidation {
     ignoredProjects.addAll(
         listOf(
             "test-common",
+            "samples",
+            "orbit-calculator",
+            "orbit-posts-compose-multiplatform",
+            "androidApp",
             "desktopApp",
             "shared",
             "webApp"
-//            "samples",
-//            "orbit-calculator",
-//            "composeApp",
-//            "orbit-posts-compose-multiplatform",
-//            "orbit-text",
         )
     )
     nonPublicMarkers.add("org.orbitmvi.orbit.annotation.OrbitInternal")
