@@ -59,5 +59,5 @@ tasks.withType<Test> {
 }
 
 configure<JacocoPluginExtension> {
-    toolVersion = "0.8.13"
+    toolVersion = "0.8.14"
 }
