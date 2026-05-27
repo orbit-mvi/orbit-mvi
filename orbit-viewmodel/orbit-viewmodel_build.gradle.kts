@@ -28,6 +28,7 @@ plugins {
     id(libs.plugins.dokkaPlugin.get().pluginId)
     kotlin("plugin.serialization")
     id("kotlin-parcelize")
+    alias(libs.plugins.koverPlugin)
 }
 
 kotlin {

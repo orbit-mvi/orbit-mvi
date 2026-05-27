@@ -24,6 +24,7 @@ plugins {
     kotlin("multiplatform")
     id(libs.plugins.gradleMavenPublishPlugin.get().pluginId)
     id(libs.plugins.dokkaPlugin.get().pluginId)
+    alias(libs.plugins.koverPlugin)
 }
 
 kotlin {

@@ -25,6 +25,7 @@ plugins {
     id(libs.plugins.dokkaPlugin.get().pluginId)
     alias(libs.plugins.compose.multiplatform)
     alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.koverPlugin)
 }
 
 kotlin {

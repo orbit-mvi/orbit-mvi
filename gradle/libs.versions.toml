@@ -28,6 +28,7 @@ markdownLintPlugin = "0.6.0"
 detektPlugin = "1.23.8"
 dokka = "2.2.0"
 compose-multiplatform = "1.11.0"
+koverPlugin = "0.9.8"
 
 # Androidx
 androidxActivityCompose = "1.13.0"
@@ -151,3 +152,4 @@ gradleMavenPublishPlugin = { id = "com.vanniktech.maven.publish", version.ref = 
 gradleVersionsPlugin = { id = "com.github.ben-manes.versions", version.ref = "gradleVersionsPlugin" }
 kotlin-pluginSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 markdownlintGradlePlugin = { id = "com.appmattus.markdown", version.ref = "markdownLintPlugin" }
+koverPlugin = { id = "org.jetbrains.kotlinx.kover", version.ref = "koverPlugin" }

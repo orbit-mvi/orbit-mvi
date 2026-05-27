@@ -48,6 +48,7 @@ plugins {
     alias(libs.plugins.dokkaPlugin)
     alias(libs.plugins.compose.compiler) apply false
     alias(libs.plugins.binaryCompatibilityValidator)
+    alias(libs.plugins.koverPlugin)
 }
 
 apply(from = "gradle/scripts/detekt.gradle.kts")
@@ -134,27 +135,19 @@ subprojects {
             targetCompatibility = JavaVersion.VERSION_11
         }
     }
-    plugins.withId("com.android.application") {
-        apply(from = "$rootDir/gradle/scripts/jacoco-android.gradle.kts")
-    }
     plugins.withType<org.jetbrains.kotlin.gradle.plugin.KotlinPluginWrapper> {
-        apply(from = "$rootDir/gradle/scripts/jacoco.gradle.kts")
         configure<org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension> {
             // for strict mode
             explicitApi()
         }
     }
     plugins.withType<org.jetbrains.kotlin.gradle.plugin.KotlinPluginWrapper> {
-        apply(from = "$rootDir/gradle/scripts/jacoco.gradle.kts")
         configure<org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension> {
             // for strict mode
             explicitApi()
         }
     }
     plugins.withType<org.jetbrains.kotlin.gradle.plugin.KotlinMultiplatformPluginWrapper> {
-        if (project.name !in listOf("orbit-viewmodel", "orbit-compose", "composeApp")) {
-            apply(from = "$rootDir/gradle/scripts/jacoco.gradle.kts")
-        }
         configure<org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension> {
             // for strict mode
             explicitApi()
@@ -167,7 +160,6 @@ subprojects {
                 explicitApi()
             }
         }
-        apply(from = "$rootDir/gradle/scripts/jacoco-android.gradle.kts")
 
         configure<LibraryExtension> {
             compileSdk = 37
@@ -209,10 +201,15 @@ val copyDokkaToWebsite by tasks.registering(Copy::class) {
 }
 
 dependencies {
-    dokka(project(":orbit-core:"))
-    dokka(project(":orbit-compose:"))
-    dokka(project(":orbit-viewmodel:"))
-    dokka(project(":orbit-test:"))
+    dokka(project(":orbit-core"))
+    dokka(project(":orbit-compose"))
+    dokka(project(":orbit-viewmodel"))
+    dokka(project(":orbit-test"))
+
+    kover(project(":orbit-core"))
+    kover(project(":orbit-compose"))
+    kover(project(":orbit-viewmodel"))
+    kover(project(":orbit-test"))
 }
 
 fun isMainModule(project: Project): Boolean {
