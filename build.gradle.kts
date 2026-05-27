@@ -138,14 +138,14 @@ subprojects {
         apply(from = "$rootDir/gradle/scripts/jacoco-android.gradle.kts")
     }
     plugins.withType<org.jetbrains.kotlin.gradle.plugin.KotlinPluginWrapper> {
-//        apply(from = "$rootDir/gradle/scripts/jacoco.gradle.kts")
+        apply(from = "$rootDir/gradle/scripts/jacoco.gradle.kts")
         configure<org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension> {
             // for strict mode
             explicitApi()
         }
     }
     plugins.withType<org.jetbrains.kotlin.gradle.plugin.KotlinPluginWrapper> {
-//        apply(from = "$rootDir/gradle/scripts/jacoco.gradle.kts")
+        apply(from = "$rootDir/gradle/scripts/jacoco.gradle.kts")
         configure<org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension> {
             // for strict mode
             explicitApi()
