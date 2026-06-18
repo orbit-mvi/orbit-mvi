@@ -20,8 +20,10 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalForInheritanceCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.awaitCancellation
+import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.FlowCollector
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -29,30 +31,68 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.flow.shareIn
 import org.orbitmvi.orbit.OrbitContainer
 import org.orbitmvi.orbit.RealSettings
 import org.orbitmvi.orbit.syntax.ContainerContext
 
-internal class CombinedContainer<R : Any, SE : Any>(
+/**
+ * Container backing the `combine` family of [OrbitContainer] overloads.
+ *
+ * When [master] is `null` the combined container is purely read-only (the top-level / view-model
+ * `combine` forms): its [stateFlow] is a constant [Unit] and [orbit] / [inlineOrbit] throw.
+ *
+ * When [master] is non-null (the receiver-form `combine` overloads) the combined container delegates
+ * intents to [master], so `intent { reduce { ... } }` mutates the master's internal state while the
+ * combined host still exposes the derived [externalStateFlow]. The master's internal state ([IS]) and
+ * intent dispatching come from [master]; the combined external state ([R]) is derived from all
+ * upstream hosts' external states.
+ *
+ * @param IS internal state type — the master's internal state, or [Unit] when there is no master.
+ * @param R combined external state type.
+ * @param SE the combined side-effect type exposed by this container.
+ * @param SEM the master's own side-effect type, used only to bridge delegated intents.
+ */
+@Suppress("LongParameterList")
+internal class CombinedContainer<IS : Any, R : Any, SE : Any, SEM : Any>(
     override val scope: CoroutineScope,
+    private val master: OrbitContainer<IS, *, SEM>?,
     upstreamStateFlows: List<StateFlow<Any>>,
     upstreamSideEffectFlows: List<Flow<Any>>,
     transformState: (List<Any>) -> R,
     override val settings: RealSettings,
-    transformSideEffects: (suspend FlowCollector<SE>.(List<Flow<Any>>) -> Unit)?,
-) : OrbitContainer<Unit, R, SE> {
+    private val transformSideEffects: (suspend FlowCollector<SE>.(List<Flow<Any>>) -> Unit)?,
+) : OrbitContainer<IS, R, SE> {
 
     private val unitStateFlow: StateFlow<Unit> = MutableStateFlow(Unit).asStateFlow()
     private val combinedStateFlow: StateFlow<R> = CombinedStateFlow(upstreamStateFlows, transformState)
 
-    override val stateFlow: StateFlow<Unit> = unitStateFlow
-    override val refCountStateFlow: StateFlow<Unit> = unitStateFlow
+    @Suppress("UNCHECKED_CAST")
+    override val stateFlow: StateFlow<IS> = master?.stateFlow ?: (unitStateFlow as StateFlow<IS>)
+
+    @Suppress("UNCHECKED_CAST")
+    override val refCountStateFlow: StateFlow<IS> = master?.refCountStateFlow ?: (unitStateFlow as StateFlow<IS>)
 
     override val externalStateFlow: StateFlow<R> = combinedStateFlow
     override val externalRefCountStateFlow: StateFlow<R> = combinedStateFlow
 
-    override val sideEffectFlow: Flow<SE> = if (transformSideEffects == null) {
+    /**
+     * Side effects of type [SE] posted by intents running on the combined host (only relevant when a
+     * [master] is present alongside a [transformSideEffects] lambda, which gives the combined host a
+     * side-effect type distinct from the master's).
+     */
+    private val intentPosts: MutableSharedFlow<SE> = MutableSharedFlow(
+        replay = 0,
+        extraBufferCapacity = resolveBufferSize(settings.sideEffectBufferSize),
+        onBufferOverflow = BufferOverflow.SUSPEND,
+    )
+
+    /**
+     * The user's [transformSideEffects] lambda applied to the upstream side-effect flows, gated on
+     * combined-host subscribers via [SharingStarted.WhileSubscribed].
+     */
+    private val transformedSideEffects: Flow<SE> = if (transformSideEffects == null) {
         emptyFlow()
     } else {
         channelFlow {
@@ -68,19 +108,62 @@ internal class CombinedContainer<R : Any, SE : Any>(
         )
     }
 
+    @Suppress("UNCHECKED_CAST")
+    override val sideEffectFlow: Flow<SE> = when {
+        // No transform: pass the master's own side effects straight through (SE == SEM here).
+        transformSideEffects == null -> master?.sideEffectFlow as Flow<SE>? ?: emptyFlow()
+        // Transform plus master: merge intent-posted side effects with the transformed upstream ones.
+        master != null -> merge(intentPosts, transformedSideEffects)
+        // Transform without master (top-level form): just the transformed upstream side effects.
+        else -> transformedSideEffects
+    }
+
     override val refCountSideEffectFlow: Flow<SE> = sideEffectFlow
 
-    override fun orbit(orbitIntent: suspend ContainerContext<Unit, SE>.() -> Unit): Job =
-        throw UnsupportedOperationException("CombinedContainer is read-only")
+    override fun orbit(orbitIntent: suspend ContainerContext<IS, SE>.() -> Unit): Job {
+        val master = master ?: throw UnsupportedOperationException(READ_ONLY_MESSAGE)
+        return master.orbit { orbitIntent(bridgeContext(this)) }
+    }
 
-    override suspend fun inlineOrbit(orbitIntent: suspend ContainerContext<Unit, SE>.() -> Unit): Unit =
-        throw UnsupportedOperationException("CombinedContainer is read-only")
+    override suspend fun inlineOrbit(orbitIntent: suspend ContainerContext<IS, SE>.() -> Unit) {
+        val master = master ?: throw UnsupportedOperationException(READ_ONLY_MESSAGE)
+        master.inlineOrbit { orbitIntent(bridgeContext(this)) }
+    }
+
+    /**
+     * Adapts the master's [ContainerContext] (typed in the master's side-effect type [SEM]) to the
+     * combined host's side-effect type [SE]. When there is no [transformSideEffects] lambda the two
+     * types are identical and the context is reused as-is; otherwise side effects posted from the
+     * intent are routed to [intentPosts] so they surface on the combined [sideEffectFlow].
+     */
+    @Suppress("UNCHECKED_CAST")
+    private fun bridgeContext(context: ContainerContext<IS, SEM>): ContainerContext<IS, SE> =
+        if (transformSideEffects == null) {
+            context as ContainerContext<IS, SE>
+        } else {
+            ContainerContext(
+                settings = context.settings,
+                postSideEffect = { intentPosts.emit(it) },
+                reduce = context.reduce,
+                subscribedCounter = context.subscribedCounter,
+                stateFlow = context.stateFlow,
+            )
+        }
 
     // Lifecycle is driven by the parent scope and the subscription count of [sideEffectFlow]; there
-    // is no per-instance Job to cancel.
+    // is no per-instance Job to cancel. Intents (when delegated) are owned by the master.
     override fun cancel(): Unit = Unit
 
-    override suspend fun joinIntents(): Unit = Unit
+    override suspend fun joinIntents() {
+        master?.joinIntents()
+    }
+
+    private companion object {
+        const val READ_ONLY_MESSAGE = "CombinedContainer without a master host is read-only"
+        const val DEFAULT_BUFFER_SIZE = 64
+
+        fun resolveBufferSize(size: Int): Int = if (size < 0) DEFAULT_BUFFER_SIZE else size
+    }
 }
 
 @OptIn(ExperimentalForInheritanceCoroutinesApi::class)

@@ -25,60 +25,94 @@ import kotlinx.coroutines.flow.StateFlow
 import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.internal.CombinedContainer
 
-// -------- Receiver-extension forms — use the receiver's container.scope --------
+// -------- Receiver-extension forms — the receiver is the "master" host --------
+//
+// These return a host whose internal state and intent dispatching come from the receiver (the
+// master), so `intent { reduce { ... } }` on the combined host mutates the master's own internal
+// state. The combined host exposes the derived [externalStateFlow] computed from every upstream
+// host's external state. The receiver's `container.scope` hosts the combined container.
 
 /**
- * Combines the receiver and [other] into a read-only [OrbitContainerHost] whose external state is
- * derived from both upstream hosts' external states.
+ * Combines the receiver (the "master") and [other] into an [OrbitContainerHost] whose external state
+ * is derived from both upstream hosts' external states.
  *
- * Side effects from upstream hosts are not forwarded. The returned host's side-effect type is
- * [Nothing] and its side-effect flows complete immediately on subscription.
- *
- * The receiver's `container.scope` is used to host the combined container.
+ * The combined host delegates intents to the master, so `intent { reduce { ... } }` mutates the
+ * master's internal state. The host's internal state type, side-effect type, and side-effect flows
+ * are the master's; the master's own side effects flow through unchanged. Child hosts' side effects
+ * are not forwarded — use the [transformSideEffects] overload to merge them.
  */
 @OrbitExperimental
-public fun <IS1 : Any, ES1 : Any, ES2 : Any, R : Any>
-    OrbitContainerHost<IS1, ES1, *>.combine(
+public fun <IS1 : Any, ES1 : Any, SE1 : Any, ES2 : Any, R : Any>
+    OrbitContainerHost<IS1, ES1, SE1>.combine(
         other: OrbitContainerHost<*, ES2, *>,
         transformState: (ES1, ES2) -> R,
-    ): OrbitContainerHost<Unit, R, Nothing> =
-    combine(container.scope, this, other, transformState)
+    ): OrbitContainerHost<IS1, R, SE1> =
+    createMasterCombinedHost(
+        master = container,
+        hosts = listOf(this, other),
+        transformState = { values -> transformState(values[0] as ES1, values[1] as ES2) },
+        transformSideEffects = null,
+    )
 
 @OrbitExperimental
-public fun <IS1 : Any, ES1 : Any, ES2 : Any, ES3 : Any, R : Any>
-    OrbitContainerHost<IS1, ES1, *>.combine(
+public fun <IS1 : Any, ES1 : Any, SE1 : Any, ES2 : Any, ES3 : Any, R : Any>
+    OrbitContainerHost<IS1, ES1, SE1>.combine(
         host2: OrbitContainerHost<*, ES2, *>,
         host3: OrbitContainerHost<*, ES3, *>,
         transformState: (ES1, ES2, ES3) -> R,
-    ): OrbitContainerHost<Unit, R, Nothing> =
-    combine(container.scope, this, host2, host3, transformState)
+    ): OrbitContainerHost<IS1, R, SE1> =
+    createMasterCombinedHost(
+        master = container,
+        hosts = listOf(this, host2, host3),
+        transformState = { values -> transformState(values[0] as ES1, values[1] as ES2, values[2] as ES3) },
+        transformSideEffects = null,
+    )
 
 @OrbitExperimental
-public fun <IS1 : Any, ES1 : Any, ES2 : Any, ES3 : Any, ES4 : Any, R : Any>
-    OrbitContainerHost<IS1, ES1, *>.combine(
+public fun <IS1 : Any, ES1 : Any, SE1 : Any, ES2 : Any, ES3 : Any, ES4 : Any, R : Any>
+    OrbitContainerHost<IS1, ES1, SE1>.combine(
         host2: OrbitContainerHost<*, ES2, *>,
         host3: OrbitContainerHost<*, ES3, *>,
         host4: OrbitContainerHost<*, ES4, *>,
         transformState: (ES1, ES2, ES3, ES4) -> R,
-    ): OrbitContainerHost<Unit, R, Nothing> =
-    combine(container.scope, this, host2, host3, host4, transformState)
+    ): OrbitContainerHost<IS1, R, SE1> =
+    createMasterCombinedHost(
+        master = container,
+        hosts = listOf(this, host2, host3, host4),
+        transformState = { values ->
+            transformState(values[0] as ES1, values[1] as ES2, values[2] as ES3, values[3] as ES4)
+        },
+        transformSideEffects = null,
+    )
 
 @OrbitExperimental
-public fun <IS1 : Any, ES1 : Any, ES2 : Any, ES3 : Any, ES4 : Any, ES5 : Any, R : Any>
-    OrbitContainerHost<IS1, ES1, *>.combine(
+public fun <IS1 : Any, ES1 : Any, SE1 : Any, ES2 : Any, ES3 : Any, ES4 : Any, ES5 : Any, R : Any>
+    OrbitContainerHost<IS1, ES1, SE1>.combine(
         host2: OrbitContainerHost<*, ES2, *>,
         host3: OrbitContainerHost<*, ES3, *>,
         host4: OrbitContainerHost<*, ES4, *>,
         host5: OrbitContainerHost<*, ES5, *>,
         transformState: (ES1, ES2, ES3, ES4, ES5) -> R,
-    ): OrbitContainerHost<Unit, R, Nothing> =
-    combine(container.scope, this, host2, host3, host4, host5, transformState)
+    ): OrbitContainerHost<IS1, R, SE1> =
+    createMasterCombinedHost(
+        master = container,
+        hosts = listOf(this, host2, host3, host4, host5),
+        transformState = { values ->
+            transformState(values[0] as ES1, values[1] as ES2, values[2] as ES3, values[3] as ES4, values[4] as ES5)
+        },
+        transformSideEffects = null,
+    )
 
 /**
- * Combines the receiver and [other] into a read-only [OrbitContainerHost]. State is derived via
+ * Combines the receiver (the "master") and [other] into an [OrbitContainerHost]. State is derived via
  * [transformState]; side effects are merged via [transformSideEffects], which is invoked while the
  * combined host has at least one subscriber to [OrbitContainer.sideEffectFlow] and emits values of
  * type [T] using the [FlowCollector] receiver.
+ *
+ * The combined host delegates intents to the master, so `intent { reduce { ... } }` mutates the
+ * master's internal state. Side effects posted from such intents (`postSideEffect`) are of the
+ * combined type [T] and surface directly on the combined [OrbitContainer.sideEffectFlow]; the
+ * master's own native side effects ([SE1]) reach [transformSideEffects] as the first upstream flow.
  *
  * Use [emitAll] with [kotlinx.coroutines.flow.merge] (or any custom transform) inside
  * [transformSideEffects] to forward upstream side effects. The lambda must not return early; once it
@@ -104,8 +138,15 @@ public fun <IS1 : Any, ES1 : Any, SE1 : Any, ES2 : Any, SE2 : Any, R : Any, T : 
         other: OrbitContainerHost<*, ES2, SE2>,
         transformState: (ES1, ES2) -> R,
         transformSideEffects: suspend FlowCollector<T>.(Flow<SE1>, Flow<SE2>) -> Unit,
-    ): OrbitContainerHost<Unit, R, T> =
-    combine(container.scope, this, other, transformState, transformSideEffects)
+    ): OrbitContainerHost<IS1, R, T> =
+    createMasterCombinedHost(
+        master = container,
+        hosts = listOf(this, other),
+        transformState = { values -> transformState(values[0] as ES1, values[1] as ES2) },
+        transformSideEffects = { flows ->
+            transformSideEffects(flows[0] as Flow<SE1>, flows[1] as Flow<SE2>)
+        },
+    )
 
 @OrbitExperimental
 public fun <IS1 : Any, ES1 : Any, SE1 : Any, ES2 : Any, SE2 : Any, ES3 : Any, SE3 : Any, R : Any, T : Any>
@@ -114,8 +155,15 @@ public fun <IS1 : Any, ES1 : Any, SE1 : Any, ES2 : Any, SE2 : Any, ES3 : Any, SE
         host3: OrbitContainerHost<*, ES3, SE3>,
         transformState: (ES1, ES2, ES3) -> R,
         transformSideEffects: suspend FlowCollector<T>.(Flow<SE1>, Flow<SE2>, Flow<SE3>) -> Unit,
-    ): OrbitContainerHost<Unit, R, T> =
-    combine(container.scope, this, host2, host3, transformState, transformSideEffects)
+    ): OrbitContainerHost<IS1, R, T> =
+    createMasterCombinedHost(
+        master = container,
+        hosts = listOf(this, host2, host3),
+        transformState = { values -> transformState(values[0] as ES1, values[1] as ES2, values[2] as ES3) },
+        transformSideEffects = { flows ->
+            transformSideEffects(flows[0] as Flow<SE1>, flows[1] as Flow<SE2>, flows[2] as Flow<SE3>)
+        },
+    )
 
 @OrbitExperimental
 public fun <
@@ -136,8 +184,17 @@ public fun <
     host4: OrbitContainerHost<*, ES4, SE4>,
     transformState: (ES1, ES2, ES3, ES4) -> R,
     transformSideEffects: suspend FlowCollector<T>.(Flow<SE1>, Flow<SE2>, Flow<SE3>, Flow<SE4>) -> Unit,
-): OrbitContainerHost<Unit, R, T> =
-    combine(container.scope, this, host2, host3, host4, transformState, transformSideEffects)
+): OrbitContainerHost<IS1, R, T> =
+    createMasterCombinedHost(
+        master = container,
+        hosts = listOf(this, host2, host3, host4),
+        transformState = { values ->
+            transformState(values[0] as ES1, values[1] as ES2, values[2] as ES3, values[3] as ES4)
+        },
+        transformSideEffects = { flows ->
+            transformSideEffects(flows[0] as Flow<SE1>, flows[1] as Flow<SE2>, flows[2] as Flow<SE3>, flows[3] as Flow<SE4>)
+        },
+    )
 
 @OrbitExperimental
 public fun <
@@ -161,8 +218,23 @@ public fun <
     host5: OrbitContainerHost<*, ES5, SE5>,
     transformState: (ES1, ES2, ES3, ES4, ES5) -> R,
     transformSideEffects: suspend FlowCollector<T>.(Flow<SE1>, Flow<SE2>, Flow<SE3>, Flow<SE4>, Flow<SE5>) -> Unit,
-): OrbitContainerHost<Unit, R, T> =
-    combine(container.scope, this, host2, host3, host4, host5, transformState, transformSideEffects)
+): OrbitContainerHost<IS1, R, T> =
+    createMasterCombinedHost(
+        master = container,
+        hosts = listOf(this, host2, host3, host4, host5),
+        transformState = { values ->
+            transformState(values[0] as ES1, values[1] as ES2, values[2] as ES3, values[3] as ES4, values[4] as ES5)
+        },
+        transformSideEffects = { flows ->
+            transformSideEffects(
+                flows[0] as Flow<SE1>,
+                flows[1] as Flow<SE2>,
+                flows[2] as Flow<SE3>,
+                flows[3] as Flow<SE4>,
+                flows[4] as Flow<SE5>,
+            )
+        },
+    )
 
 // -------- Top-level forms — caller provides the scope for the combined container --------
 
@@ -321,14 +393,19 @@ public fun <
     },
 )
 
+/**
+ * Builds a read-only combined host (top-level / view-model forms). There is no master, so the
+ * resulting host's internal state is [Unit] and intents throw.
+ */
 private fun <R : Any, SE : Any> createCombinedHost(
     scope: CoroutineScope,
     hosts: List<OrbitContainerHost<*, *, *>>,
     transformState: (List<Any>) -> R,
     transformSideEffects: (suspend FlowCollector<SE>.(List<Flow<Any>>) -> Unit)?,
 ): OrbitContainerHost<Unit, R, SE> {
-    val combinedContainer = CombinedContainer<R, SE>(
+    val combinedContainer = CombinedContainer<Unit, R, SE, Nothing>(
         scope = scope,
+        master = null,
         upstreamStateFlows = hosts.map { it.container.externalRefCountStateFlow as StateFlow<Any> },
         upstreamSideEffectFlows = hosts.map { it.container.refCountSideEffectFlow as Flow<Any> },
         transformState = transformState,
@@ -337,5 +414,30 @@ private fun <R : Any, SE : Any> createCombinedHost(
     )
     return object : OrbitContainerHost<Unit, R, SE> {
         override val container: OrbitContainer<Unit, R, SE> = combinedContainer
+    }
+}
+
+/**
+ * Builds a combined host backed by [master] (receiver forms). Intents are delegated to the master, so
+ * the combined host's internal state is the master's and `intent { reduce { ... } }` mutates it. The
+ * combined host is scoped to the master's `scope`.
+ */
+private fun <IS : Any, R : Any, SE : Any, SEM : Any> createMasterCombinedHost(
+    master: OrbitContainer<IS, *, SEM>,
+    hosts: List<OrbitContainerHost<*, *, *>>,
+    transformState: (List<Any>) -> R,
+    transformSideEffects: (suspend FlowCollector<SE>.(List<Flow<Any>>) -> Unit)?,
+): OrbitContainerHost<IS, R, SE> {
+    val combinedContainer = CombinedContainer<IS, R, SE, SEM>(
+        scope = master.scope,
+        master = master,
+        upstreamStateFlows = hosts.map { it.container.externalRefCountStateFlow as StateFlow<Any> },
+        upstreamSideEffectFlows = hosts.map { it.container.refCountSideEffectFlow as Flow<Any> },
+        transformState = transformState,
+        settings = master.settings,
+        transformSideEffects = transformSideEffects,
+    )
+    return object : OrbitContainerHost<IS, R, SE> {
+        override val container: OrbitContainer<IS, R, SE> = combinedContainer
     }
 }
