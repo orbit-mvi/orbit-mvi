@@ -139,10 +139,11 @@ internal class BroadcastSideEffectTest {
     }
 
     @Test
-    fun cached_side_effects_are_replayed_to_new_subscriber() = runTest {
+    fun live_side_effects_are_not_replayed_to_a_later_subscriber() = runTest {
         val action = Random.nextInt()
         val container = createContainer()
 
+        // Emitted while a subscriber is active, so it is a live effect and must not be cached for replay.
         container.sideEffectFlow.test {
             container.someFlow(action)
             assertEquals(action, awaitItem())
@@ -150,10 +151,29 @@ internal class BroadcastSideEffectTest {
             cancel()
         }
 
-        // In broadcast mode, the replay cache still contains the side effect
-        // (sideEffectFlow does not trigger ref-count, so no resetReplayCache)
+        // A later subscriber must not receive the already-delivered live effect.
         container.sideEffectFlow.test {
+            expectNoEvents()
+            cancel()
+        }
+    }
+
+    @Test
+    fun live_side_effect_is_not_replayed_after_resubscribe() = runTest {
+        val action = Random.nextInt()
+        val container = createContainer()
+
+        // First subscription receives the live effect (e.g. a navigation side effect).
+        container.refCountSideEffectFlow.test {
+            container.someFlow(action)
             assertEquals(action, awaitItem())
+            ensureAllEventsConsumed()
+            cancel()
+        }
+
+        // Re-subscribing (e.g. navigating back to the screen) must not replay the navigation side effect.
+        container.refCountSideEffectFlow.test {
+            expectNoEvents()
             cancel()
         }
     }
