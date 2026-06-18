@@ -25,6 +25,7 @@ import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.flow.onSubscription
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.sync.withLock
 import org.orbitmvi.orbit.RealSettings
 import org.orbitmvi.orbit.SideEffectMode
@@ -89,7 +90,11 @@ private class BroadcastSideEffectProvider<SIDE_EFFECT>(
 
     // Holds only effects emitted while there were no subscribers. Replayed to each collector as it subscribes
     // (so multiple consumers connecting in this window all receive them) and cleared once a subscription stabilises.
+    // Bounded to the configured buffer size: a producer reserves a [cacheSlots] permit before caching and
+    // suspends when the cache is full (matching FAN_OUT's lossless backpressure), and slots are returned on clear.
+    private val cacheCapacity = resolveBufferSize(settings.sideEffectBufferSize).coerceAtLeast(1)
     private val cacheMutex = Mutex()
+    private val cacheSlots = Semaphore(permits = cacheCapacity)
     private val pendingCache = ArrayDeque<SIDE_EFFECT>()
 
     override val sideEffectFlow: Flow<SIDE_EFFECT> = sharedFlow.onSubscription {
@@ -98,18 +103,26 @@ private class BroadcastSideEffectProvider<SIDE_EFFECT>(
     }
 
     override suspend fun postSideEffect(sideEffect: SIDE_EFFECT) {
-        // Decide broadcast-vs-cache atomically: an active collector registers (incrementing subscriptionCount)
-        // before its onSubscription block runs, so an effect is either broadcast live or cached, never both/neither.
-        val deliverLive = cacheMutex.withLock {
+        // Broadcast live to active collectors (never cached). An active collector registers (incrementing
+        // subscriptionCount) before its onSubscription block runs, so an effect is either broadcast or cached.
+        // Emit outside the lock so a suspending emit (backpressure) cannot block a subscribing collector's drain.
+        if (cacheMutex.withLock { sharedFlow.subscriptionCount.value > 0 }) {
+            sharedFlow.emit(sideEffect)
+            return
+        }
+        // No subscribers: reserve a cache slot, suspending here when the cache is full.
+        cacheSlots.acquire()
+        val cached = cacheMutex.withLock {
+            // Re-check: a collector may have appeared while we waited for a slot, in which case broadcast live.
             if (sharedFlow.subscriptionCount.value > 0) {
-                true
+                false
             } else {
                 pendingCache.add(sideEffect)
-                false
+                true
             }
         }
-        // Emit outside the lock so a suspending emit (backpressure) cannot block a subscribing collector's drain.
-        if (deliverLive) {
+        if (!cached) {
+            cacheSlots.release()
             sharedFlow.emit(sideEffect)
         }
     }
@@ -119,7 +132,10 @@ private class BroadcastSideEffectProvider<SIDE_EFFECT>(
         subscribedCounter.subscribed.collect { subscription ->
             if (previousSubscription == Subscription.Unsubscribed && subscription == Subscription.Subscribed) {
                 delay(settings.sideEffectReplayClearDelayMs)
-                cacheMutex.withLock { pendingCache.clear() }
+                cacheMutex.withLock {
+                    repeat(pendingCache.size) { cacheSlots.release() }
+                    pendingCache.clear()
+                }
             }
             previousSubscription = subscription
         }

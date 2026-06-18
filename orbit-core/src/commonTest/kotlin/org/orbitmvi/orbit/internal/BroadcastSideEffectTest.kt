@@ -32,6 +32,8 @@ import org.orbitmvi.orbit.orbitContainer
 import kotlin.random.Random
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 @OptIn(ExperimentalCoroutinesApi::class)
 internal class BroadcastSideEffectTest {
@@ -200,6 +202,35 @@ internal class BroadcastSideEffectTest {
             expectNoEvents()
             cancel()
         }
+    }
+
+    @Test
+    fun caching_suspends_when_the_cache_is_full() = runTest {
+        val container: OrbitContainer<Unit, Unit, Int> = backgroundScope.orbitContainer(
+            initialState = Unit,
+            buildSettings = {
+                sideEffectMode = SideEffectMode.BROADCAST
+                sideEffectBufferSize = 1
+            }
+        )
+
+        // Fills the single cache slot (no subscriber, so it is cached).
+        container.someFlow(1).join()
+
+        // No free slot and no subscriber, so the producing intent must suspend.
+        val blocked = container.someFlow(2)
+        withContext(Dispatchers.Default) { delay(200) }
+        assertTrue(blocked.isActive, "producer should suspend while the cache is full")
+
+        // A subscriber connecting drains the cache and, once stabilised, clears it - freeing the slot
+        // so the suspended producer can complete.
+        container.refCountSideEffectFlow.test {
+            assertEquals(1, awaitItem())
+            cancel()
+        }
+        withContext(Dispatchers.Default) { delay(300) }
+        blocked.join()
+        assertFalse(blocked.isActive)
     }
 
     private fun TestScope.createContainer(): OrbitContainer<Unit, Unit, Int> =
