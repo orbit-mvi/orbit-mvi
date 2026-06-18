@@ -222,15 +222,48 @@ internal class BroadcastSideEffectTest {
         withContext(Dispatchers.Default) { delay(200) }
         assertTrue(blocked.isActive, "producer should suspend while the cache is full")
 
-        // A subscriber connecting drains the cache and, once stabilised, clears it - freeing the slot
-        // so the suspended producer can complete.
+        // A subscriber connecting receives the cached effect and the suspended overflow effect (broadcast live),
+        // allowing the producer to complete.
         container.refCountSideEffectFlow.test {
             assertEquals(1, awaitItem())
+            assertEquals(2, awaitItem())
             cancel()
         }
         withContext(Dispatchers.Default) { delay(300) }
         blocked.join()
         assertFalse(blocked.isActive)
+    }
+
+    @Test
+    fun overflow_is_broadcast_live_not_recached() = runTest {
+        val container: OrbitContainer<Unit, Unit, Int> = backgroundScope.orbitContainer(
+            initialState = Unit,
+            buildSettings = {
+                sideEffectMode = SideEffectMode.BROADCAST
+                sideEffectBufferSize = 1
+            }
+        )
+
+        // Fill the single cache slot, then overflow with a second effect while nothing is connected.
+        container.someFlow(1).join()
+        val overflow = container.someFlow(2)
+        withContext(Dispatchers.Default) { delay(100) }
+        assertTrue(overflow.isActive, "overflow producer should suspend while the cache is full")
+
+        // A subscriber connecting receives the cached effect (1) and the overflow effect (2) broadcast live.
+        container.refCountSideEffectFlow.test {
+            assertEquals(1, awaitItem())
+            assertEquals(2, awaitItem())
+            cancel()
+        }
+        withContext(Dispatchers.Default) { delay(300) }
+        overflow.join()
+
+        // The overflow effect must NOT have been re-cached: a later subscriber sees nothing.
+        container.refCountSideEffectFlow.test {
+            expectNoEvents()
+            cancel()
+        }
     }
 
     private fun TestScope.createContainer(): OrbitContainer<Unit, Unit, Int> =
