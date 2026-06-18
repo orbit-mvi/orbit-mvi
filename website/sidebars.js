@@ -21,7 +21,7 @@ const sidebars = {
       type: 'category',
       label: 'Core',
       link: {type: 'doc', id: 'Core/index'},
-      items: ['Core/architecture'],
+      items: ['Core/architecture', 'Core/combining-hosts'],
     },
     'ViewModel/index',
     'Compose/index',

@@ -149,6 +149,13 @@ class ExampleViewModel(
 }
 ```
 
+### Combining hosts
+
+Several hosts can be combined into a single host whose external state (and,
+optionally, side effects) is derived from all of them. The receiver form keeps
+the receiver as a "master", letting intents on the combined host mutate the
+master's internal state. See [Combining hosts](combining-hosts.md).
+
 ## Core operators
 
 The Core module contains built-in Orbit operators. Here's how
