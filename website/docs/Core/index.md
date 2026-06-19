@@ -153,8 +153,8 @@ class ExampleViewModel(
 
 Several hosts can be combined into a single host whose external state (and,
 optionally, side effects) is derived from all of them. The receiver form keeps
-the receiver as a "master", letting intents on the combined host mutate the
-master's internal state. See [Combining hosts](combining-hosts.md).
+the receiver as a "main", letting intents on the combined host mutate the
+main's internal state. See [Combining hosts](combining-hosts.md).
 
 ## Core operators
 

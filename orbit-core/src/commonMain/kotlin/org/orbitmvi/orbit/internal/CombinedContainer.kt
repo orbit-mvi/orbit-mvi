@@ -40,24 +40,24 @@ import org.orbitmvi.orbit.syntax.ContainerContext
 /**
  * Container backing the `combine` family of [OrbitContainer] overloads.
  *
- * When [master] is `null` the combined container is purely read-only (the top-level / view-model
+ * When [main] is `null` the combined container is purely read-only (the top-level / view-model
  * `combine` forms): its [stateFlow] is a constant [Unit] and [orbit] / [inlineOrbit] throw.
  *
- * When [master] is non-null (the receiver-form `combine` overloads) the combined container delegates
- * intents to [master], so `intent { reduce { ... } }` mutates the master's internal state while the
- * combined host still exposes the derived [externalStateFlow]. The master's internal state ([IS]) and
- * intent dispatching come from [master]; the combined external state ([R]) is derived from all
+ * When [main] is non-null (the receiver-form `combine` overloads) the combined container delegates
+ * intents to [main], so `intent { reduce { ... } }` mutates the main's internal state while the
+ * combined host still exposes the derived [externalStateFlow]. The main's internal state ([IS]) and
+ * intent dispatching come from [main]; the combined external state ([R]) is derived from all
  * upstream hosts' external states.
  *
- * @param IS internal state type — the master's internal state, or [Unit] when there is no master.
+ * @param IS internal state type — the main's internal state, or [Unit] when there is no main.
  * @param R combined external state type.
  * @param SE the combined side-effect type exposed by this container.
- * @param SEM the master's own side-effect type, used only to bridge delegated intents.
+ * @param SEM the main's own side-effect type, used only to bridge delegated intents.
  */
 @Suppress("LongParameterList")
 internal class CombinedContainer<IS : Any, R : Any, SE : Any, SEM : Any>(
     override val scope: CoroutineScope,
-    private val master: OrbitContainer<IS, *, SEM>?,
+    private val main: OrbitContainer<IS, *, SEM>?,
     upstreamStateFlows: List<StateFlow<Any>>,
     upstreamSideEffectFlows: List<Flow<Any>>,
     transformState: (List<Any>) -> R,
@@ -69,18 +69,18 @@ internal class CombinedContainer<IS : Any, R : Any, SE : Any, SEM : Any>(
     private val combinedStateFlow: StateFlow<R> = CombinedStateFlow(upstreamStateFlows, transformState)
 
     @Suppress("UNCHECKED_CAST")
-    override val stateFlow: StateFlow<IS> = master?.stateFlow ?: (unitStateFlow as StateFlow<IS>)
+    override val stateFlow: StateFlow<IS> = main?.stateFlow ?: (unitStateFlow as StateFlow<IS>)
 
     @Suppress("UNCHECKED_CAST")
-    override val refCountStateFlow: StateFlow<IS> = master?.refCountStateFlow ?: (unitStateFlow as StateFlow<IS>)
+    override val refCountStateFlow: StateFlow<IS> = main?.refCountStateFlow ?: (unitStateFlow as StateFlow<IS>)
 
     override val externalStateFlow: StateFlow<R> = combinedStateFlow
     override val externalRefCountStateFlow: StateFlow<R> = combinedStateFlow
 
     /**
      * Side effects of type [SE] posted by intents running on the combined host (only relevant when a
-     * [master] is present alongside a [transformSideEffects] lambda, which gives the combined host a
-     * side-effect type distinct from the master's).
+     * [main] is present alongside a [transformSideEffects] lambda, which gives the combined host a
+     * side-effect type distinct from the main's).
      */
     private val intentPosts: MutableSharedFlow<SE> = MutableSharedFlow(
         replay = 0,
@@ -110,28 +110,28 @@ internal class CombinedContainer<IS : Any, R : Any, SE : Any, SEM : Any>(
 
     @Suppress("UNCHECKED_CAST")
     override val sideEffectFlow: Flow<SE> = when {
-        // No transform: pass the master's own side effects straight through (SE == SEM here).
-        transformSideEffects == null -> master?.sideEffectFlow as Flow<SE>? ?: emptyFlow()
-        // Transform plus master: merge intent-posted side effects with the transformed upstream ones.
-        master != null -> merge(intentPosts, transformedSideEffects)
-        // Transform without master (top-level form): just the transformed upstream side effects.
+        // No transform: pass the main's own side effects straight through (SE == SEM here).
+        transformSideEffects == null -> main?.sideEffectFlow as Flow<SE>? ?: emptyFlow()
+        // Transform plus main: merge intent-posted side effects with the transformed upstream ones.
+        main != null -> merge(intentPosts, transformedSideEffects)
+        // Transform without main (top-level form): just the transformed upstream side effects.
         else -> transformedSideEffects
     }
 
     override val refCountSideEffectFlow: Flow<SE> = sideEffectFlow
 
     override fun orbit(orbitIntent: suspend ContainerContext<IS, SE>.() -> Unit): Job {
-        val master = master ?: throw UnsupportedOperationException(READ_ONLY_MESSAGE)
-        return master.orbit { orbitIntent(bridgeContext(this)) }
+        val main = main ?: throw UnsupportedOperationException(READ_ONLY_MESSAGE)
+        return main.orbit { orbitIntent(bridgeContext(this)) }
     }
 
     override suspend fun inlineOrbit(orbitIntent: suspend ContainerContext<IS, SE>.() -> Unit) {
-        val master = master ?: throw UnsupportedOperationException(READ_ONLY_MESSAGE)
-        master.inlineOrbit { orbitIntent(bridgeContext(this)) }
+        val main = main ?: throw UnsupportedOperationException(READ_ONLY_MESSAGE)
+        main.inlineOrbit { orbitIntent(bridgeContext(this)) }
     }
 
     /**
-     * Adapts the master's [ContainerContext] (typed in the master's side-effect type [SEM]) to the
+     * Adapts the main's [ContainerContext] (typed in the main's side-effect type [SEM]) to the
      * combined host's side-effect type [SE]. When there is no [transformSideEffects] lambda the two
      * types are identical and the context is reused as-is; otherwise side effects posted from the
      * intent are routed to [intentPosts] so they surface on the combined [sideEffectFlow].
@@ -151,15 +151,15 @@ internal class CombinedContainer<IS : Any, R : Any, SE : Any, SEM : Any>(
         }
 
     // Lifecycle is driven by the parent scope and the subscription count of [sideEffectFlow]; there
-    // is no per-instance Job to cancel. Intents (when delegated) are owned by the master.
+    // is no per-instance Job to cancel. Intents (when delegated) are owned by the main.
     override fun cancel(): Unit = Unit
 
     override suspend fun joinIntents() {
-        master?.joinIntents()
+        main?.joinIntents()
     }
 
     private companion object {
-        const val READ_ONLY_MESSAGE = "CombinedContainer without a master host is read-only"
+        const val READ_ONLY_MESSAGE = "CombinedContainer without a main host is read-only"
         const val DEFAULT_BUFFER_SIZE = 64
 
         fun resolveBufferSize(size: Int): Int = if (size < 0) DEFAULT_BUFFER_SIZE else size

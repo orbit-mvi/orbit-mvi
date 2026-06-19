@@ -123,19 +123,19 @@ class CombineContainerHostTest {
     }
 
     @Test
-    fun `receiver no-side-effects overload forwards master side effects but not children`() = runTest {
-        val master = IntHost(backgroundScope, 0)
+    fun `receiver no-side-effects overload forwards main side effects but not children`() = runTest {
+        val main = IntHost(backgroundScope, 0)
         val child = IntHost(backgroundScope, 0)
 
-        val combined = master.combine(child) { x, y -> x + y }
+        val combined = main.combine(child) { x, y -> x + y }
 
         combined.container.sideEffectFlow.test {
-            master.postEffect(7)
+            main.postEffect(7)
             assertEquals(7, awaitItem())
             // The child's side effects are not forwarded in this overload.
             child.postEffect(9)
             expectNoEvents()
-            master.postEffect(8)
+            main.postEffect(8)
             assertEquals(8, awaitItem())
         }
     }
@@ -336,37 +336,37 @@ class CombineContainerHostTest {
     }
 
     @Test
-    fun `receiver combine intent reduces master internal state`() = runTest {
-        val master = IntHost(backgroundScope, 1)
+    fun `receiver combine intent reduces main internal state`() = runTest {
+        val main = IntHost(backgroundScope, 1)
         val child = IntHost(backgroundScope, 2)
 
-        val combined = master.combine(child) { x, y -> "$x-$y" }
+        val combined = main.combine(child) { x, y -> "$x-$y" }
 
         combined.container.externalStateFlow.test {
             assertEquals("1-2", awaitItem())
 
-            // Intent on the combined host mutates the master's internal state.
+            // Intent on the combined host mutates the main's internal state.
             combined.intent { reduce { state + 10 } }
 
             assertEquals("11-2", awaitItem())
         }
 
-        // The master's own internal state reflects the reduction.
-        assertEquals(11, master.container.stateFlow.value)
-        // The combined host exposes the master's internal state directly.
+        // The main's own internal state reflects the reduction.
+        assertEquals(11, main.container.stateFlow.value)
+        // The combined host exposes the main's internal state directly.
         assertEquals(11, combined.container.stateFlow.value)
     }
 
     @Test
     fun `receiver combine with side-effect transform posts intent side effects directly`() = runTest {
-        val master = IntHost(backgroundScope, 0)
+        val main = IntHost(backgroundScope, 0)
         val child = StringHost(backgroundScope, "")
 
-        val combined = master.combine(
+        val combined = main.combine(
             other = child,
             transformState = { x, y -> "$x|$y" },
             transformSideEffects = { se1, se2 ->
-                emitAll(merge(se1.map { "master:$it" }, se2.map { "child:$it" }))
+                emitAll(merge(se1.map { "main:$it" }, se2.map { "child:$it" }))
             }
         )
 
@@ -375,9 +375,9 @@ class CombineContainerHostTest {
             combined.intent { postSideEffect("direct:1") }
             assertEquals("direct:1", awaitItem())
 
-            // The master's own native side effects reach the transform as the first upstream flow.
-            master.postEffect(2)
-            assertEquals("master:2", awaitItem())
+            // The main's own native side effects reach the transform as the first upstream flow.
+            main.postEffect(2)
+            assertEquals("main:2", awaitItem())
 
             // The child's native side effects reach the transform as the second upstream flow.
             child.postEffect("hi")
@@ -386,37 +386,37 @@ class CombineContainerHostTest {
     }
 
     @Test
-    fun `receiver combine joinIntents awaits master intents`() = runTest {
-        val master = IntHost(backgroundScope, 0)
+    fun `receiver combine joinIntents awaits main intents`() = runTest {
+        val main = IntHost(backgroundScope, 0)
         val child = IntHost(backgroundScope, 0)
 
-        val combined = master.combine(child) { x, y -> x + y }
+        val combined = main.combine(child) { x, y -> x + y }
 
         combined.intent { reduce { state + 5 } }
         combined.container.joinIntents()
 
-        assertEquals(5, master.container.stateFlow.value)
+        assertEquals(5, main.container.stateFlow.value)
     }
 
     @Test
-    fun `chained receiver combine reduces master internal state`() = runTest {
-        val master = IntHost(backgroundScope, 1)
+    fun `chained receiver combine reduces main internal state`() = runTest {
+        val main = IntHost(backgroundScope, 1)
         val b = IntHost(backgroundScope, 2)
         val c = IntHost(backgroundScope, 3)
 
-        val combined = master.combine(b) { x, y -> x + y }
+        val combined = main.combine(b) { x, y -> x + y }
             .combine(c) { sum, z -> sum * z }
 
         combined.container.externalStateFlow.test {
             assertEquals(9, awaitItem()) // (1 + 2) * 3
 
-            // Intent on the chained combined host still reaches the original master.
+            // Intent on the chained combined host still reaches the original main.
             combined.intent { reduce { state + 9 } }
 
             assertEquals(36, awaitItem()) // (10 + 2) * 3
         }
 
-        assertEquals(10, master.container.stateFlow.value)
+        assertEquals(10, main.container.stateFlow.value)
     }
 
     @Test
@@ -491,7 +491,7 @@ class CombineContainerHostTest {
 
         val combined = combine(backgroundScope, a, b) { x, y -> x + y }
 
-        // No master in a top-level combined container — joinIntents is a no-op.
+        // No main in a top-level combined container — joinIntents is a no-op.
         combined.container.joinIntents()
     }
 

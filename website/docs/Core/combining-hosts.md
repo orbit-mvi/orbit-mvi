@@ -49,12 +49,12 @@ userCart.container.externalStateFlow.collect { (user, cart) -> render(user, cart
 The combined `externalStateFlow` re-emits whenever any upstream host's external
 state changes, serving only distinct values.
 
-## Master host (receiver form)
+## Main host (receiver form)
 
 When you call `combine` as an extension on an existing host, that **receiver**
-becomes the "master" of the combined host. The combined host keeps the master's
+becomes the "main" of the combined host. The combined host keeps the main's
 internal state and intent dispatching, so `intent { reduce { ... } }` on the
-combined host mutates the master's own internal state — while the combined host
+combined host mutates the main's own internal state — while the combined host
 still exposes the derived external state to the UI.
 
 This lets a parent host keep its own business logic and internal state, yet
@@ -74,13 +74,13 @@ class CheckoutContainerHost(
     private val cartHost: CartHost,
 ) : OrbitContainerHost<CheckoutState, CheckoutView, CheckoutEvent> {
 
-    // The receiver (checkoutHost) is the master. The combined host's internal
-    // state and side-effect type are the master's; the external state is derived.
+    // The receiver (checkoutHost) is the main. The combined host's internal
+    // state and side-effect type are the main's; the external state is derived.
     override val container = checkoutHost.combine(cartHost) { checkout, cart ->
         CheckoutView(checkout, cart)
     }.container
 
-    // Runs on the master — mutates CheckoutHost's internal state.
+    // Runs on the main — mutates CheckoutHost's internal state.
     fun applyPromo(code: String) = intent {
         reduce { state.copy(promo = code) }
     }
@@ -89,12 +89,12 @@ class CheckoutContainerHost(
 
 For the receiver form:
 
-- The combined host's internal state type and side-effect type are the master's.
-- `stateFlow` / `refCountStateFlow` are the master's; `externalStateFlow` is the
+- The combined host's internal state type and side-effect type are the main's.
+- `stateFlow` / `refCountStateFlow` are the main's; `externalStateFlow` is the
   derived combined state.
-- `intent`, `orbit`, `inlineOrbit` and `joinIntents` delegate to the master.
-- The combined host is scoped to the master's `container.scope`.
-- In the no-`transformSideEffects` overload above, the master's own side effects
+- `intent`, `orbit`, `inlineOrbit` and `joinIntents` delegate to the main.
+- The combined host is scoped to the main's `container.scope`.
+- In the no-`transformSideEffects` overload above, the main's own side effects
   flow straight through the combined `sideEffectFlow`; child hosts' side effects
   are **not** forwarded. Use the side-effect overload below to merge them.
 
@@ -127,14 +127,14 @@ val checkout = authHost.combine(
 checkout.container.sideEffectFlow.collect { event -> /* navigate, toast, etc. */ }
 ```
 
-In the receiver (master) form with a `transformSideEffects` lambda:
+In the receiver (main) form with a `transformSideEffects` lambda:
 
 - The combined side-effect type is the user-chosen type `T` produced by the
   lambda.
 - Side effects posted from intents on the combined host
   (`intent { postSideEffect(...) }`) surface directly on the combined
   `sideEffectFlow`.
-- The master's own native side effects reach `transformSideEffects` as the first
+- The main's own native side effects reach `transformSideEffects` as the first
   upstream flow, alongside the children.
 
 :::note
@@ -168,7 +168,7 @@ Both flavours are available at arities 2 to 5:
 val combined = a.combine(b, c, d, e) { sa, sb, sc, sd, se -> View(sa, sb, sc, sd, se) }
 ```
 
-`combine` calls can also be chained. In the receiver form the original master is
+`combine` calls can also be chained. In the receiver form the original main is
 preserved through the chain, so intents on the final combined host still reach
 it:
 
@@ -176,7 +176,7 @@ it:
 val abc = a.combine(b) { x, y -> x + y }
     .combine(c) { sum, z -> sum * z }
 
-// Still dispatches to `a` (the original master)
+// Still dispatches to `a` (the original main)
 abc.intent { reduce { state + 1 } }
 ```
 
@@ -211,5 +211,5 @@ class CheckoutViewModel(
 }
 ```
 
-These `ViewModel` forms are read-only (there is no master), exactly like the
+These `ViewModel` forms are read-only (there is no main), exactly like the
 top-level `combine(scope, ...)` forms.
