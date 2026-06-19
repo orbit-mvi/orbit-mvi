@@ -56,7 +56,7 @@ public data class RealSettings(
     public val intentLaunchingDispatcher: CoroutineDispatcher = Dispatchers.Unconfined,
     public val exceptionHandler: CoroutineExceptionHandler? = null,
     public val repeatOnSubscribedStopTimeout: Long = 100L,
-    public val sideEffectMode: SideEffectMode = SideEffectMode.BROADCAST,
+    public val sideEffectMode: SideEffectMode = SideEffectMode.FAN_OUT,
     public val sideEffectReplayClearDelayMs: Long = 100L,
 )
 
