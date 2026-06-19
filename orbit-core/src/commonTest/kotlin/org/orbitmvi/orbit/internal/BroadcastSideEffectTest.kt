@@ -266,6 +266,33 @@ internal class BroadcastSideEffectTest {
         }
     }
 
+    @Test
+    fun cache_is_replayed_before_the_overflow_emission() = runTest {
+        val container: OrbitContainer<Unit, Unit, Int> = backgroundScope.orbitContainer(
+            initialState = Unit,
+            buildSettings = {
+                sideEffectMode = SideEffectMode.BROADCAST
+                sideEffectBufferSize = 2
+            }
+        )
+
+        // Fill the two cache slots, then overflow with a third effect while nothing is connected.
+        container.someFlow(1).join()
+        container.someFlow(2).join()
+        val overflow = container.someFlow(3)
+        withContext(Dispatchers.Default) { delay(100) }
+        assertTrue(overflow.isActive)
+
+        // A connecting subscriber must receive the cached effects first, then the live overflow, in emission order.
+        container.refCountSideEffectFlow.test {
+            assertEquals(1, awaitItem())
+            assertEquals(2, awaitItem())
+            assertEquals(3, awaitItem())
+            cancel()
+        }
+        overflow.join()
+    }
+
     private fun TestScope.createContainer(): OrbitContainer<Unit, Unit, Int> =
         backgroundScope.orbitContainer(
             initialState = Unit,
