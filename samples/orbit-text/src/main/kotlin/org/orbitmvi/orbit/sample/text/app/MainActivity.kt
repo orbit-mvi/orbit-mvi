@@ -34,6 +34,7 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.material.rememberScaffoldState
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -93,31 +94,36 @@ class MainActivity : AppCompatActivity() {
                     Button(onClick = { viewModel.submit() }) { Text("Submit") }
                     Text(state.result)
 
-                    Box(
-                        modifier = Modifier
-                            .padding(vertical = 16.dp)
-                            .fillMaxWidth()
-                            .height(1.dp)
-                            .background(Color.Gray)
-                    )
-
-                    Text("Demonstration of awaitRunOn with sealed class state; validation starts after loading.")
-                    val awaitState by awaitRunOnViewModel.collectAsState()
-                    when (val s = awaitState) {
-                        is AwaitRunOnViewModel.UiState.Loading -> {
-                            CircularProgressIndicator(modifier = Modifier.padding(top = 8.dp))
-                        }
-                        is AwaitRunOnViewModel.UiState.Ready -> {
-                            TextField(
-                                label = { Text(if (s.validationError != null) "awaitRunOn: ${s.validationError}" else "awaitRunOn") },
-                                state = s.textFieldState,
-                                isError = s.validationError != null,
-                                modifier = Modifier.padding(top = 8.dp)
-                            )
-                        }
-                    }
+                    AwaitRunOnSection(awaitRunOnViewModel)
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun AwaitRunOnSection(viewModel: AwaitRunOnViewModel) {
+    Box(
+        modifier = Modifier
+            .padding(vertical = 16.dp)
+            .fillMaxWidth()
+            .height(1.dp)
+            .background(Color.Gray)
+    )
+
+    Text("Demonstration of awaitRunOn with sealed class state; validation starts after loading.")
+    val awaitState by viewModel.collectAsState()
+    when (val s = awaitState) {
+        is AwaitRunOnViewModel.UiState.Loading -> {
+            CircularProgressIndicator(modifier = Modifier.padding(top = 8.dp))
+        }
+        is AwaitRunOnViewModel.UiState.Ready -> {
+            TextField(
+                label = { Text(if (s.validationError != null) "awaitRunOn: ${s.validationError}" else "awaitRunOn") },
+                state = s.textFieldState,
+                isError = s.validationError != null,
+                modifier = Modifier.padding(top = 8.dp)
+            )
         }
     }
 }

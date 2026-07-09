@@ -18,6 +18,7 @@ package org.orbitmvi.orbit
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.runTest
+import org.orbitmvi.orbit.annotation.OrbitExperimental
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -49,6 +50,7 @@ class OrbitDefaultsTest {
     }
 
     @Test
+    @OptIn(OrbitExperimental::class)
     fun `per-container buildSettings overrides global default`() = runTest {
         Orbit.configureDefaults {
             sideEffectMode = SideEffectMode.FAN_OUT
