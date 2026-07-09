@@ -18,6 +18,13 @@ public final class org/orbitmvi/orbit/CoroutineScopeExtensionsKt {
 	public static synthetic fun orbitContainer$default (Lkotlinx/coroutines/CoroutineScope;Ljava/lang/Object;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;ILjava/lang/Object;)Lorg/orbitmvi/orbit/OrbitContainer;
 }
 
+public final class org/orbitmvi/orbit/Orbit {
+	public static final field INSTANCE Lorg/orbitmvi/orbit/Orbit;
+	public final fun configureDefaults (Lkotlin/jvm/functions/Function1;)V
+	public final fun getDefaultSettings ()Lorg/orbitmvi/orbit/RealSettings;
+	public final fun resetDefaults ()V
+}
+
 public abstract interface class org/orbitmvi/orbit/OrbitContainer {
 	public abstract fun cancel ()V
 	public abstract fun getExternalRefCountStateFlow ()Lkotlinx/coroutines/flow/StateFlow;
@@ -105,14 +112,18 @@ public final class org/orbitmvi/orbit/RealSettings {
 
 public final class org/orbitmvi/orbit/SettingsBuilder {
 	public fun <init> ()V
+	public final fun getEventLoopDispatcher ()Lkotlinx/coroutines/CoroutineDispatcher;
 	public final fun getExceptionHandler ()Lkotlinx/coroutines/CoroutineExceptionHandler;
 	public final fun getIdlingRegistry ()Lorg/orbitmvi/orbit/idling/IdlingResource;
+	public final fun getIntentLaunchingDispatcher ()Lkotlinx/coroutines/CoroutineDispatcher;
 	public final fun getRepeatOnSubscribedStopTimeout ()J
 	public final fun getSideEffectBufferSize ()I
 	public final fun getSideEffectMode ()Lorg/orbitmvi/orbit/SideEffectMode;
 	public final fun getSideEffectReplayClearDelayMs ()J
+	public final fun setEventLoopDispatcher (Lkotlinx/coroutines/CoroutineDispatcher;)V
 	public final fun setExceptionHandler (Lkotlinx/coroutines/CoroutineExceptionHandler;)V
 	public final fun setIdlingRegistry (Lorg/orbitmvi/orbit/idling/IdlingResource;)V
+	public final fun setIntentLaunchingDispatcher (Lkotlinx/coroutines/CoroutineDispatcher;)V
 	public final fun setRepeatOnSubscribedStopTimeout (J)V
 	public final fun setSideEffectBufferSize (I)V
 	public final fun setSideEffectMode (Lorg/orbitmvi/orbit/SideEffectMode;)V

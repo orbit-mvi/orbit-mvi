@@ -62,14 +62,28 @@ public data class RealSettings(
     public val sideEffectReplayClearDelayMs: Long = 100L,
 )
 
-public class SettingsBuilder {
-    internal var settings = RealSettings()
+public class SettingsBuilder internal constructor(baseline: RealSettings) {
+    public constructor() : this(Orbit.defaultSettings)
+
+    internal var settings = baseline
         private set
 
     public var idlingRegistry: IdlingResource
         get() = settings.idlingRegistry
         public set(value) {
             settings = settings.copy(idlingRegistry = value)
+        }
+
+    public var eventLoopDispatcher: CoroutineDispatcher
+        get() = settings.eventLoopDispatcher
+        public set(value) {
+            settings = settings.copy(eventLoopDispatcher = value)
+        }
+
+    public var intentLaunchingDispatcher: CoroutineDispatcher
+        get() = settings.intentLaunchingDispatcher
+        public set(value) {
+            settings = settings.copy(intentLaunchingDispatcher = value)
         }
 
     public var exceptionHandler: CoroutineExceptionHandler?

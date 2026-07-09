@@ -43,12 +43,49 @@ internal class ContainerLifecycleTest {
         }
     }
 
+    @Test
+    fun on_create_is_called_when_subscribing_to_external_state_flow() = runTest {
+        val initialState = TestState()
+        val middleware = ExternalStateMiddleware(this, initialState)
+        middleware.container.externalStateFlow.test {
+            assertEquals(ExternalState(initialState.id.toString()), awaitItem())
+            assertEquals(ExternalState(ON_CREATE_ID.toString()), awaitItem())
+        }
+    }
+
+    @Test
+    fun on_create_is_called_when_subscribing_to_external_ref_count_state_flow() = runTest {
+        val initialState = TestState()
+        val middleware = ExternalStateMiddleware(this, initialState)
+        middleware.container.externalRefCountStateFlow.test {
+            assertEquals(ExternalState(initialState.id.toString()), awaitItem())
+            assertEquals(ExternalState(ON_CREATE_ID.toString()), awaitItem())
+        }
+    }
+
     private data class TestState(val id: Int = Random.nextInt())
+
+    private data class ExternalState(val id: String)
 
     private inner class Middleware(scope: TestScope, initialState: TestState) : OrbitContainerHost<TestState, TestState, String> {
 
         override val container = scope.backgroundScope.orbitContainer(initialState) {
             postSideEffect(state.id.toString())
         }
+    }
+
+    private inner class ExternalStateMiddleware(scope: TestScope, initialState: TestState) :
+        OrbitContainerHost<TestState, ExternalState, String> {
+
+        override val container = scope.backgroundScope.orbitContainer<TestState, ExternalState, String>(
+            initialState = initialState,
+            transformState = { ExternalState(it.id.toString()) }
+        ) {
+            reduce { state.copy(id = ON_CREATE_ID) }
+        }
+    }
+
+    private companion object {
+        private const val ON_CREATE_ID = -1
     }
 }

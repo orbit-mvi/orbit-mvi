@@ -29,6 +29,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material.Button
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
@@ -42,6 +43,7 @@ import org.orbitmvi.orbit.compose.collectAsState
 class MainActivity : AppCompatActivity() {
 
     private val viewModel = TextViewModel()
+    private val awaitRunOnViewModel = AwaitRunOnViewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -90,6 +92,30 @@ class MainActivity : AppCompatActivity() {
 
                     Button(onClick = { viewModel.submit() }) { Text("Submit") }
                     Text(state.result)
+
+                    Box(
+                        modifier = Modifier
+                            .padding(vertical = 16.dp)
+                            .fillMaxWidth()
+                            .height(1.dp)
+                            .background(Color.Gray)
+                    )
+
+                    Text("Demonstration of awaitRunOn with sealed class state; validation starts after loading.")
+                    val awaitState by awaitRunOnViewModel.collectAsState()
+                    when (val s = awaitState) {
+                        is AwaitRunOnViewModel.UiState.Loading -> {
+                            CircularProgressIndicator(modifier = Modifier.padding(top = 8.dp))
+                        }
+                        is AwaitRunOnViewModel.UiState.Ready -> {
+                            TextField(
+                                label = { Text(if (s.validationError != null) "awaitRunOn: ${s.validationError}" else "awaitRunOn") },
+                                state = s.textFieldState,
+                                isError = s.validationError != null,
+                                modifier = Modifier.padding(top = 8.dp)
+                            )
+                        }
+                    }
                 }
             }
         }

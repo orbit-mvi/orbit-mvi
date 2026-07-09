@@ -485,6 +485,39 @@ Extra
 factory functionality is provided via extension functions. One example is
 `ViewModel` saved state support via a `SavedStateHandle`.
 
+## Global default settings
+
+Every container's settings start from the Orbit library defaults and can be
+overridden per-container via the `buildSettings { }` block. If you want a
+particular setting (for example a `sideEffectMode` or a dispatcher) to apply
+across your whole app without repeating it at every call site, configure the
+global defaults once:
+
+```kotlin
+Orbit.configureDefaults {
+    sideEffectMode = SideEffectMode.FAN_OUT
+    intentLaunchingDispatcher = Dispatchers.Default
+}
+```
+
+Settings are layered as:
+
+1. Orbit library defaults
+2. `Orbit.configureDefaults { }` global overrides
+3. per-container `buildSettings { }` overrides (always win)
+
+`Orbit.configureDefaults` should be called **once at app startup, before any
+containers are created**. The global default is held in a single `@Volatile`
+field with no further synchronization, so configuring it after containers exist
+leads to undefined behaviour. Each call starts from the library defaults, so
+repeated calls are idempotent rather than cumulative. `Orbit.resetDefaults()`
+restores the library defaults and is mainly useful in tests.
+
+:::note
+Containers created through `orbit-test`'s `test()` helper deliberately ignore
+the global defaults to keep tests deterministic.
+:::
+
 ## Threading
 
 Orbit is designed to provide a sane default threading model to cater for most of
