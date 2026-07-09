@@ -19,6 +19,7 @@ package org.orbitmvi.orbit.syntax
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChangedBy
+import kotlinx.coroutines.flow.dropWhile
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.transformWhile
@@ -64,6 +65,34 @@ public suspend inline fun <S : Any, reified T : S> Flow<S>.runOn(
             }
         }
         .firstOrNull()
+}
+
+/**
+ * This API is intended to simplify and add type-safety to working with sealed class states.
+ * This can be applied to any [Flow] of states, not just the [OrbitContainer]'s own. The main purpose of this API is to help you
+ * work with child container states.
+ *
+ * Suspends until the state becomes the given subtype and the given [predicate] matches, then executes the given block.
+ *
+ * The block will be cancelled as soon as the state changes to a different type or the predicate does not return true.
+ * Note that this does not guarantee the operation in the block is atomic.
+ *
+ * The state is captured and does not change within this block.
+ *
+ * Unlike [runOn], this function does not complete immediately if the current state does not match.
+ * Instead, it suspends until the state becomes the given subtype.
+ *
+ * @param predicate optional predicate to match the state against. Defaults to true.
+ */
+@OptIn(ExperimentalCoroutinesApi::class)
+@OrbitExperimental
+@OrbitDsl
+public suspend inline fun <S : Any, reified T : S> Flow<S>.awaitRunOn(
+    crossinline predicate: (T) -> Boolean = { true },
+    crossinline block: suspend (capturedState: T) -> Unit
+) {
+    this.dropWhile { it !is T || !predicate(it) }
+        .runOn(predicate, block)
 }
 
 @OrbitInternal
