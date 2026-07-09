@@ -183,12 +183,18 @@ final class org.orbitmvi.orbit/RealSettings { // org.orbitmvi.orbit/RealSettings
 final class org.orbitmvi.orbit/SettingsBuilder { // org.orbitmvi.orbit/SettingsBuilder|null[0]
     constructor <init>() // org.orbitmvi.orbit/SettingsBuilder.<init>|<init>(){}[0]
 
+    final var eventLoopDispatcher // org.orbitmvi.orbit/SettingsBuilder.eventLoopDispatcher|{}eventLoopDispatcher[0]
+        final fun <get-eventLoopDispatcher>(): kotlinx.coroutines/CoroutineDispatcher // org.orbitmvi.orbit/SettingsBuilder.eventLoopDispatcher.<get-eventLoopDispatcher>|<get-eventLoopDispatcher>(){}[0]
+        final fun <set-eventLoopDispatcher>(kotlinx.coroutines/CoroutineDispatcher) // org.orbitmvi.orbit/SettingsBuilder.eventLoopDispatcher.<set-eventLoopDispatcher>|<set-eventLoopDispatcher>(kotlinx.coroutines.CoroutineDispatcher){}[0]
     final var exceptionHandler // org.orbitmvi.orbit/SettingsBuilder.exceptionHandler|{}exceptionHandler[0]
         final fun <get-exceptionHandler>(): kotlinx.coroutines/CoroutineExceptionHandler? // org.orbitmvi.orbit/SettingsBuilder.exceptionHandler.<get-exceptionHandler>|<get-exceptionHandler>(){}[0]
         final fun <set-exceptionHandler>(kotlinx.coroutines/CoroutineExceptionHandler?) // org.orbitmvi.orbit/SettingsBuilder.exceptionHandler.<set-exceptionHandler>|<set-exceptionHandler>(kotlinx.coroutines.CoroutineExceptionHandler?){}[0]
     final var idlingRegistry // org.orbitmvi.orbit/SettingsBuilder.idlingRegistry|{}idlingRegistry[0]
         final fun <get-idlingRegistry>(): org.orbitmvi.orbit.idling/IdlingResource // org.orbitmvi.orbit/SettingsBuilder.idlingRegistry.<get-idlingRegistry>|<get-idlingRegistry>(){}[0]
         final fun <set-idlingRegistry>(org.orbitmvi.orbit.idling/IdlingResource) // org.orbitmvi.orbit/SettingsBuilder.idlingRegistry.<set-idlingRegistry>|<set-idlingRegistry>(org.orbitmvi.orbit.idling.IdlingResource){}[0]
+    final var intentLaunchingDispatcher // org.orbitmvi.orbit/SettingsBuilder.intentLaunchingDispatcher|{}intentLaunchingDispatcher[0]
+        final fun <get-intentLaunchingDispatcher>(): kotlinx.coroutines/CoroutineDispatcher // org.orbitmvi.orbit/SettingsBuilder.intentLaunchingDispatcher.<get-intentLaunchingDispatcher>|<get-intentLaunchingDispatcher>(){}[0]
+        final fun <set-intentLaunchingDispatcher>(kotlinx.coroutines/CoroutineDispatcher) // org.orbitmvi.orbit/SettingsBuilder.intentLaunchingDispatcher.<set-intentLaunchingDispatcher>|<set-intentLaunchingDispatcher>(kotlinx.coroutines.CoroutineDispatcher){}[0]
     final var repeatOnSubscribedStopTimeout // org.orbitmvi.orbit/SettingsBuilder.repeatOnSubscribedStopTimeout|{}repeatOnSubscribedStopTimeout[0]
         final fun <get-repeatOnSubscribedStopTimeout>(): kotlin/Long // org.orbitmvi.orbit/SettingsBuilder.repeatOnSubscribedStopTimeout.<get-repeatOnSubscribedStopTimeout>|<get-repeatOnSubscribedStopTimeout>(){}[0]
         final fun <set-repeatOnSubscribedStopTimeout>(kotlin/Long) // org.orbitmvi.orbit/SettingsBuilder.repeatOnSubscribedStopTimeout.<set-repeatOnSubscribedStopTimeout>|<set-repeatOnSubscribedStopTimeout>(kotlin.Long){}[0]
@@ -201,6 +207,14 @@ final class org.orbitmvi.orbit/SettingsBuilder { // org.orbitmvi.orbit/SettingsB
     final var sideEffectReplayClearDelayMs // org.orbitmvi.orbit/SettingsBuilder.sideEffectReplayClearDelayMs|{}sideEffectReplayClearDelayMs[0]
         final fun <get-sideEffectReplayClearDelayMs>(): kotlin/Long // org.orbitmvi.orbit/SettingsBuilder.sideEffectReplayClearDelayMs.<get-sideEffectReplayClearDelayMs>|<get-sideEffectReplayClearDelayMs>(){}[0]
         final fun <set-sideEffectReplayClearDelayMs>(kotlin/Long) // org.orbitmvi.orbit/SettingsBuilder.sideEffectReplayClearDelayMs.<set-sideEffectReplayClearDelayMs>|<set-sideEffectReplayClearDelayMs>(kotlin.Long){}[0]
+}
+
+final object org.orbitmvi.orbit/Orbit { // org.orbitmvi.orbit/Orbit|null[0]
+    final var defaultSettings // org.orbitmvi.orbit/Orbit.defaultSettings|{}defaultSettings[0]
+        final fun <get-defaultSettings>(): org.orbitmvi.orbit/RealSettings // org.orbitmvi.orbit/Orbit.defaultSettings.<get-defaultSettings>|<get-defaultSettings>(){}[0]
+
+    final fun configureDefaults(kotlin/Function1<org.orbitmvi.orbit/SettingsBuilder, kotlin/Unit>) // org.orbitmvi.orbit/Orbit.configureDefaults|configureDefaults(kotlin.Function1<org.orbitmvi.orbit.SettingsBuilder,kotlin.Unit>){}[0]
+    final fun resetDefaults() // org.orbitmvi.orbit/Orbit.resetDefaults|resetDefaults(){}[0]
 }
 
 final fun <#A: kotlin/Any, #B: kotlin/Any, #C: kotlin/Any> (kotlinx.coroutines/CoroutineScope).org.orbitmvi.orbit/container(#A, kotlin/Function1<#A, #B>, kotlin/Function1<org.orbitmvi.orbit/SettingsBuilder, kotlin/Unit> = ..., kotlin.coroutines/SuspendFunction1<org.orbitmvi.orbit.syntax/Syntax<#A, #C>, kotlin/Unit>? = ...): org.orbitmvi.orbit/OrbitContainer<#A, #B, #C> // org.orbitmvi.orbit/container|container@kotlinx.coroutines.CoroutineScope(0:0;kotlin.Function1<0:0,0:1>;kotlin.Function1<org.orbitmvi.orbit.SettingsBuilder,kotlin.Unit>;kotlin.coroutines.SuspendFunction1<org.orbitmvi.orbit.syntax.Syntax<0:0,0:2>,kotlin.Unit>?){0§<kotlin.Any>;1§<kotlin.Any>;2§<kotlin.Any>}[0]
