@@ -28,6 +28,7 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.withContext
 import org.orbitmvi.orbit.OrbitContainer
 import org.orbitmvi.orbit.SideEffectMode
+import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.orbitContainer
 import kotlin.random.Random
 import kotlin.test.Test
@@ -35,7 +36,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-@OptIn(ExperimentalCoroutinesApi::class)
+@OptIn(ExperimentalCoroutinesApi::class, OrbitExperimental::class)
 internal class BroadcastSideEffectTest {
 
     @Test

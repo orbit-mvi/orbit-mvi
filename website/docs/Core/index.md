@@ -247,12 +247,12 @@ Delivery behaviour is controlled by `SettingsBuilder.sideEffectMode`:
   effect is delivered to exactly one collector; cached side effects are consumed
   by the first collector that connects. If multiple collectors are active, they
   silently compete for events.
-- `SideEffectMode.BROADCAST` — side effects are broadcast to all
-  active collectors, and cached side effects are replayed to every collector
-  that connects. Shortly after the first subscriber connects, the replay cache
-  is cleared so late joiners don't receive stale events. Collectors that take
-  a long time to process items will back-pressure the emitter (and the other
-  collectors) once the buffer fills.
+- `SideEffectMode.BROADCAST` (experimental, opt-in via `@OrbitExperimental`) —
+  side effects are broadcast to all active collectors, and cached side effects
+  are replayed to every collector that connects. Shortly after the first
+  subscriber connects, the replay cache is cleared so late joiners don't receive
+  stale events. Collectors that take a long time to process items will
+  back-pressure the emitter (and the other collectors) once the buffer fills.
 - `SideEffectMode.FAN_OUT_STRICT` — strict single-observer fan-out behaviour.
   Each side effect is delivered to exactly one collector, and cached side
   effects are still consumed by the first collector that connects. A second

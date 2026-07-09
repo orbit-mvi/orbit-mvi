@@ -30,6 +30,7 @@ import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.sync.withLock
 import org.orbitmvi.orbit.RealSettings
 import org.orbitmvi.orbit.SideEffectMode
+import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.internal.repeatonsubscription.SubscribedCounter
 import org.orbitmvi.orbit.internal.repeatonsubscription.Subscription
 
@@ -41,6 +42,7 @@ internal interface SideEffectProvider<SIDE_EFFECT> {
     suspend fun initialise(subscribedCounter: SubscribedCounter)
 
     companion object {
+        @OptIn(OrbitExperimental::class)
         fun <SIDE_EFFECT> create(settings: RealSettings): SideEffectProvider<SIDE_EFFECT> =
             when (settings.sideEffectMode) {
                 SideEffectMode.FAN_OUT -> FanOutSideEffectProvider(settings)

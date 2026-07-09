@@ -17,5 +17,5 @@ package org.orbitmvi.orbit.annotation
 
 @RequiresOptIn(message = "This is an experimental API and may be subject to change.", level = RequiresOptIn.Level.WARNING)
 @Retention(AnnotationRetention.BINARY)
-@Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION)
+@Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY, AnnotationTarget.FIELD)
 public annotation class OrbitExperimental
