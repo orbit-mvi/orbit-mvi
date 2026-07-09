@@ -28,12 +28,15 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.withContext
 import org.orbitmvi.orbit.OrbitContainer
 import org.orbitmvi.orbit.SideEffectMode
+import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.orbitContainer
 import kotlin.random.Random
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
-@OptIn(ExperimentalCoroutinesApi::class)
+@OptIn(ExperimentalCoroutinesApi::class, OrbitExperimental::class)
 internal class BroadcastSideEffectTest {
 
     @Test
@@ -139,10 +142,11 @@ internal class BroadcastSideEffectTest {
     }
 
     @Test
-    fun cached_side_effects_are_replayed_to_new_subscriber() = runTest {
+    fun live_side_effects_are_not_replayed_to_a_later_subscriber() = runTest {
         val action = Random.nextInt()
         val container = createContainer()
 
+        // Emitted while a subscriber is active, so it is a live effect and must not be cached for replay.
         container.sideEffectFlow.test {
             container.someFlow(action)
             assertEquals(action, awaitItem())
@@ -150,10 +154,29 @@ internal class BroadcastSideEffectTest {
             cancel()
         }
 
-        // In broadcast mode, the replay cache still contains the side effect
-        // (sideEffectFlow does not trigger ref-count, so no resetReplayCache)
+        // A later subscriber must not receive the already-delivered live effect.
         container.sideEffectFlow.test {
+            expectNoEvents()
+            cancel()
+        }
+    }
+
+    @Test
+    fun live_side_effect_is_not_replayed_after_resubscribe() = runTest {
+        val action = Random.nextInt()
+        val container = createContainer()
+
+        // First subscription receives the live effect (e.g. a navigation side effect).
+        container.refCountSideEffectFlow.test {
+            container.someFlow(action)
             assertEquals(action, awaitItem())
+            ensureAllEventsConsumed()
+            cancel()
+        }
+
+        // Re-subscribing (e.g. navigating back to the screen) must not replay the navigation side effect.
+        container.refCountSideEffectFlow.test {
+            expectNoEvents()
             cancel()
         }
     }
@@ -180,6 +203,95 @@ internal class BroadcastSideEffectTest {
             expectNoEvents()
             cancel()
         }
+    }
+
+    @Test
+    fun caching_suspends_when_the_cache_is_full() = runTest {
+        val container: OrbitContainer<Unit, Unit, Int> = backgroundScope.orbitContainer(
+            initialState = Unit,
+            buildSettings = {
+                sideEffectMode = SideEffectMode.BROADCAST
+                sideEffectBufferSize = 1
+            }
+        )
+
+        // Fills the single cache slot (no subscriber, so it is cached).
+        container.someFlow(1).join()
+
+        // No free slot and no subscriber, so the producing intent must suspend.
+        val blocked = container.someFlow(2)
+        withContext(Dispatchers.Default) { delay(200) }
+        assertTrue(blocked.isActive, "producer should suspend while the cache is full")
+
+        // A subscriber connecting receives the cached effect and the suspended overflow effect (broadcast live),
+        // allowing the producer to complete.
+        container.refCountSideEffectFlow.test {
+            assertEquals(1, awaitItem())
+            assertEquals(2, awaitItem())
+            cancel()
+        }
+        withContext(Dispatchers.Default) { delay(300) }
+        blocked.join()
+        assertFalse(blocked.isActive)
+    }
+
+    @Test
+    fun overflow_is_broadcast_live_not_recached() = runTest {
+        val container: OrbitContainer<Unit, Unit, Int> = backgroundScope.orbitContainer(
+            initialState = Unit,
+            buildSettings = {
+                sideEffectMode = SideEffectMode.BROADCAST
+                sideEffectBufferSize = 1
+            }
+        )
+
+        // Fill the single cache slot, then overflow with a second effect while nothing is connected.
+        container.someFlow(1).join()
+        val overflow = container.someFlow(2)
+        withContext(Dispatchers.Default) { delay(100) }
+        assertTrue(overflow.isActive, "overflow producer should suspend while the cache is full")
+
+        // A subscriber connecting receives the cached effect (1) and the overflow effect (2) broadcast live.
+        container.refCountSideEffectFlow.test {
+            assertEquals(1, awaitItem())
+            assertEquals(2, awaitItem())
+            cancel()
+        }
+        withContext(Dispatchers.Default) { delay(300) }
+        overflow.join()
+
+        // The overflow effect must NOT have been re-cached: a later subscriber sees nothing.
+        container.refCountSideEffectFlow.test {
+            expectNoEvents()
+            cancel()
+        }
+    }
+
+    @Test
+    fun cache_is_replayed_before_the_overflow_emission() = runTest {
+        val container: OrbitContainer<Unit, Unit, Int> = backgroundScope.orbitContainer(
+            initialState = Unit,
+            buildSettings = {
+                sideEffectMode = SideEffectMode.BROADCAST
+                sideEffectBufferSize = 2
+            }
+        )
+
+        // Fill the two cache slots, then overflow with a third effect while nothing is connected.
+        container.someFlow(1).join()
+        container.someFlow(2).join()
+        val overflow = container.someFlow(3)
+        withContext(Dispatchers.Default) { delay(100) }
+        assertTrue(overflow.isActive)
+
+        // A connecting subscriber must receive the cached effects first, then the live overflow, in emission order.
+        container.refCountSideEffectFlow.test {
+            assertEquals(1, awaitItem())
+            assertEquals(2, awaitItem())
+            assertEquals(3, awaitItem())
+            cancel()
+        }
+        overflow.join()
     }
 
     private fun TestScope.createContainer(): OrbitContainer<Unit, Unit, Int> =

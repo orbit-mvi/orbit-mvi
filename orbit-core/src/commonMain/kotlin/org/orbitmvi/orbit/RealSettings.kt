@@ -19,6 +19,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
+import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.idling.IdlingResource
 import org.orbitmvi.orbit.idling.NoopIdlingResource
 
@@ -46,6 +47,7 @@ public enum class SideEffectMode {
      * Cached side effects are replayed to all collectors when they reconnect.
      * The replay cache is cleared shortly after subscribers reconnect to prevent stale replay.
      */
+    @OrbitExperimental
     BROADCAST
 }
 
@@ -56,7 +58,7 @@ public data class RealSettings(
     public val intentLaunchingDispatcher: CoroutineDispatcher = Dispatchers.Unconfined,
     public val exceptionHandler: CoroutineExceptionHandler? = null,
     public val repeatOnSubscribedStopTimeout: Long = 100L,
-    public val sideEffectMode: SideEffectMode = SideEffectMode.BROADCAST,
+    public val sideEffectMode: SideEffectMode = SideEffectMode.FAN_OUT,
     public val sideEffectReplayClearDelayMs: Long = 100L,
 )
 
