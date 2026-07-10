@@ -163,6 +163,7 @@ they map to MVI concepts:
 | -                  | `repeatOnSubscription { ... }` | Helps collect infinite flows only when there are active subscribers                                       |
 | -                  | `subIntent { ... }`            | Use this to break big `intent` blocks into smaller parts, or for parallel decomposition.                  |
 | -                  | `runOn { ... }`                | Useful for working with sealed class states. The block is only executed if (and while) the state matches. |
+| -                  | `awaitRunOn { ... }`           | Like `runOn`, but suspends until the state matches instead of completing immediately.                     |
 
 Operators are invoked through the `intent` block in a
 [OrbitContainerHost](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-orbit-container-host/).
@@ -368,7 +369,7 @@ class Example : OrbitContainerHost<ExampleSealedClassState, ExampleSealedClassSt
     }
 
      fun withRunOn() = intent {
-        runOn(ExampleSealedClassState.Ready::class) {
+        runOn<ExampleSealedClassState.Ready> {
             ... run some operations with the captured state
         }
     }
@@ -384,6 +385,42 @@ matches the provided type or predicate.
 
 Note that there are no atomicity guarantees when using `runOn`. The block may
 get executed partially.
+
+### AwaitRunOn
+
+```kotlin
+class Example : OrbitContainerHost<ExampleSealedClassState, ExampleSealedClassState, ExampleSideEffect> {
+    ...
+    
+    override val container = 
+        scope.orbitContainer<ExampleSealedClassState, ExampleSideEffect>(
+            ExampleSealedClassState.Loading
+        ) {
+            onCreate {
+                awaitRunOn<ExampleSealedClassState.Ready> {
+                    ... run some operations once the state becomes Ready
+                }
+            }
+        }
+}
+```
+
+`awaitRunOn` behaves like [runOn](#runon), with one difference: when the
+current state does not match the provided type and optional predicate, it
+suspends until it does, rather than completing immediately.
+
+This is useful when you want to start work as soon as the container reaches a
+particular state — for example, awaiting a `Ready` state in `onCreate` before
+collecting a flow.
+
+As with `runOn`, the block is automatically cancelled when the state no longer
+matches the provided type or predicate, and there are no atomicity guarantees.
+
+:::note
+
+`awaitRunOn` is experimental and requires opting in to `@OrbitExperimental`.
+
+:::
 
 ### Operator context
 

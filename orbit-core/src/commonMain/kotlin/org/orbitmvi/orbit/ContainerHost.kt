@@ -24,7 +24,6 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.annotation.OrbitDsl
-import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.syntax.Syntax
 import org.orbitmvi.orbit.syntax.intent
 
@@ -85,14 +84,12 @@ public interface OrbitContainerHost<INTERNAL_STATE : Any, EXTERNAL_STATE : Any, 
      *             }
      *         }
      *
-     * @OptIn(OrbitExperimental::class)
      * private suspend fun sendSideEffect1() = subIntent {
      *     flow1.collect {
      *         postSideEffect(it)
      *     }
      * }
      *
-     * @OptIn(OrbitExperimental::class)
      * private suspend fun sendSideEffect1() = subIntent {
      *     flow2.collect {
      *         postSideEffect(it)
@@ -104,7 +101,6 @@ public interface OrbitContainerHost<INTERNAL_STATE : Any, EXTERNAL_STATE : Any, 
      * @param transformer lambda representing the transformer
      */
     @OrbitDsl
-    @OrbitExperimental
     public suspend fun subIntent(
         transformer: suspend Syntax<INTERNAL_STATE, SIDE_EFFECT>.() -> Unit,
     ): Unit = container.inlineOrbit {

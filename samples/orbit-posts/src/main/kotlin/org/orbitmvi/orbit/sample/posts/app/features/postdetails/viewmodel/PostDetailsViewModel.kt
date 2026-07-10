@@ -23,7 +23,6 @@ package org.orbitmvi.orbit.sample.posts.app.features.postdetails.viewmodel
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import org.orbitmvi.orbit.OrbitContainerHost
-import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.sample.posts.domain.repositories.PostOverview
 import org.orbitmvi.orbit.sample.posts.domain.repositories.PostRepository
 import org.orbitmvi.orbit.sample.posts.domain.repositories.Status
@@ -41,7 +40,6 @@ class PostDetailsViewModel(
         }
     }
 
-    @OptIn(OrbitExperimental::class)
     private suspend fun loadDetails() = subIntent {
         val status = postRepository.getDetail(postOverview.id)
 

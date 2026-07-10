@@ -21,7 +21,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.test.runTest
-import org.orbitmvi.orbit.annotation.OrbitExperimental
 import kotlin.random.Random
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -127,7 +126,6 @@ class ContainerHostWithExternalStateTest {
 
         fun newSideEffect(action: Int) = intent { postSideEffect(action) }
 
-        @OptIn(OrbitExperimental::class)
         private suspend fun subIntent(action: Int) = subIntent { reduce { action } }
 
         private fun transformState(internalState: Int): String {
