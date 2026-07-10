@@ -21,6 +21,7 @@
 package org.orbitmvi.orbit.internal
 
 import app.cash.turbine.test
+import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
 import org.orbitmvi.orbit.OrbitContainerHost
@@ -77,9 +78,12 @@ internal class ContainerLifecycleTest {
     private inner class ExternalStateMiddleware(scope: TestScope, initialState: TestState) :
         OrbitContainerHost<TestState, ExternalState, String> {
 
+        // The event loop is pinned to the test scheduler so that the onCreate intent triggered on
+        // subscription cannot reduce the state before the subscriber sees the initial state.
         override val container = scope.backgroundScope.orbitContainer<TestState, ExternalState, String>(
             initialState = initialState,
-            transformState = { ExternalState(it.id.toString()) }
+            transformState = { ExternalState(it.id.toString()) },
+            buildSettings = { eventLoopDispatcher = StandardTestDispatcher(scope.testScheduler) }
         ) {
             reduce { state.copy(id = ON_CREATE_ID) }
         }
