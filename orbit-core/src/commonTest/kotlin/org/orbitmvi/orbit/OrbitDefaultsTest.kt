@@ -40,13 +40,13 @@ class OrbitDefaultsTest {
     fun `configureDefaults changes settings of subsequently created containers`() = runTest {
         Orbit.configureDefaults {
             sideEffectMode = SideEffectMode.FAN_OUT
-            eventLoopDispatcher = Dispatchers.Unconfined
+            eventLoopDispatcher = { Dispatchers.Unconfined }
         }
 
         val container = backgroundScope.orbitContainer<Unit, Nothing>(Unit)
 
         assertEquals(SideEffectMode.FAN_OUT, container.settings.sideEffectMode)
-        assertEquals(Dispatchers.Unconfined, container.settings.eventLoopDispatcher)
+        assertEquals(Dispatchers.Unconfined, container.settings.eventLoopDispatcher())
     }
 
     @Test
@@ -93,11 +93,52 @@ class OrbitDefaultsTest {
     @Test
     fun `SettingsBuilder dispatcher properties round-trip into RealSettings`() {
         val settings = SettingsBuilder().apply {
-            eventLoopDispatcher = Dispatchers.Unconfined
-            intentLaunchingDispatcher = Dispatchers.Default
+            eventLoopDispatcher = { Dispatchers.Unconfined }
+            intentLaunchingDispatcher = { Dispatchers.Default }
         }.settings
 
-        assertEquals(Dispatchers.Unconfined, settings.eventLoopDispatcher)
-        assertEquals(Dispatchers.Default, settings.intentLaunchingDispatcher)
+        assertEquals(Dispatchers.Unconfined, settings.eventLoopDispatcher())
+        assertEquals(Dispatchers.Default, settings.intentLaunchingDispatcher())
+    }
+
+    @Test
+    fun `dispatcher factories are invoked once per container`() = runTest {
+        var eventLoopFactoryInvocations = 0
+        var intentLaunchingFactoryInvocations = 0
+        Orbit.configureDefaults {
+            eventLoopDispatcher = {
+                eventLoopFactoryInvocations++
+                Dispatchers.Unconfined
+            }
+            intentLaunchingDispatcher = {
+                intentLaunchingFactoryInvocations++
+                Dispatchers.Unconfined
+            }
+        }
+
+        backgroundScope.orbitContainer<Unit, Nothing>(Unit)
+        backgroundScope.orbitContainer<Unit, Nothing>(Unit)
+
+        assertEquals(2, eventLoopFactoryInvocations)
+        assertEquals(2, intentLaunchingFactoryInvocations)
+    }
+
+    @Test
+    fun `intent launching dispatcher factory is not re-invoked per intent`() = runTest {
+        var intentLaunchingFactoryInvocations = 0
+        Orbit.configureDefaults {
+            intentLaunchingDispatcher = {
+                intentLaunchingFactoryInvocations++
+                Dispatchers.Unconfined
+            }
+        }
+
+        val container = backgroundScope.orbitContainer<Unit, Nothing>(Unit)
+        repeat(3) {
+            container.orbit { }
+        }
+        container.joinIntents()
+
+        assertEquals(1, intentLaunchingFactoryInvocations)
     }
 }

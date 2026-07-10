@@ -496,9 +496,14 @@ global defaults once:
 ```kotlin
 Orbit.configureDefaults {
     sideEffectMode = SideEffectMode.FAN_OUT
-    intentLaunchingDispatcher = Dispatchers.Default
+    intentLaunchingDispatcher = { Dispatchers.Default.limitedParallelism(1) }
 }
 ```
+
+The dispatcher settings are factories, invoked **once per container**. This
+means each container gets its own dispatcher instance — in the example above,
+every container gets its own `limitedParallelism(1)` view, so intents are
+serialized within each container rather than across the whole app.
 
 Settings are layered as:
 

@@ -108,8 +108,8 @@ internal fun createRealSettings(testDispatcher: CoroutineDispatcher?, testExcept
     val dispatcher = testDispatcher ?: StandardTestDispatcher()
 
     return RealSettings(
-        eventLoopDispatcher = dispatcher,
-        intentLaunchingDispatcher = dispatcher,
+        eventLoopDispatcher = { dispatcher },
+        intentLaunchingDispatcher = { dispatcher },
         exceptionHandler = testExceptionHandler,
         repeatOnSubscribedStopTimeout = 0L
     )
