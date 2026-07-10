@@ -10,6 +10,10 @@ build
 supervisord.pid
 supervisord.log
 dokka
+versions.json
+versioned_docs
+versioned_sidebars
+src/plugins/github-latest-release/generated
 
 # Misc
 .DS_Store

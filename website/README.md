@@ -3,6 +3,27 @@
 This website is built using [Docusaurus 2](https://docusaurus.io/), a modern
 static website generator.
 
+## Doc versioning
+
+Doc versions are generated from git release tags at build time — nothing is
+committed to the repository:
+
+- The site root serves the docs from the **latest release tag**, so the
+  published docs always match the latest release.
+- `/next/` serves the working `docs/` directory (docs for unreleased changes).
+- Older majors are served at `/11.x/`, `/10.x/`, etc. — one version per major,
+  taken from the latest release tag of that major.
+
+`scripts/generate-versions.mjs` produces `versions.json`, `versioned_docs/` and
+`versioned_sidebars/` (all gitignored) and is run by CI before the site build.
+Releasing works as usual: tag a commit and CI regenerates the site — a new
+major tag automatically becomes the root version. To retire a version from the
+selector, raise `MIN_MAJOR` in the script.
+
+To preview the versioned site locally, run `yarn generate-versions` (requires
+git and node on the host) before building. Without it, the working `docs/` are
+served at the root as before.
+
 ## Preparations
 
 Before running any website commands, build the bundled docusaurus dockerfile and

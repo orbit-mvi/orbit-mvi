@@ -44,6 +44,14 @@ const config = {
                 docs: {
                     routeBasePath: '/',
                     sidebarPath: './sidebars.js',
+                    // Versions are generated at build time from release tags
+                    // by scripts/generate-versions.mjs; the newest generated
+                    // version is served at the site root and `docs/` (the
+                    // "current" version) at /next/. Without generated
+                    // versions, `docs/` is served at the root as before.
+                    versions: {
+                        current: {label: 'Next'},
+                    },
                 },
                 theme: {
                     customCss: './src/css/custom.css',
@@ -62,6 +70,11 @@ const config = {
                     src: 'img/orbit.svg',
                 },
                 items: [
+                    {
+                        type: 'docsVersionDropdown',
+                        position: 'right',
+                        dropdownActiveClassDisabled: true,
+                    },
                     {
                         href: 'https://github.com/orbit-mvi/orbit-mvi',
                         label: 'GitHub',
