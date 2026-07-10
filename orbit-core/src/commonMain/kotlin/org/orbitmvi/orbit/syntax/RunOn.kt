@@ -43,7 +43,6 @@ import org.orbitmvi.orbit.annotation.OrbitInternal
  * @param predicate optional predicate to match the state against. Defaults to true.
  */
 @OptIn(ExperimentalCoroutinesApi::class)
-@OrbitExperimental
 @OrbitDsl
 public suspend inline fun <S : Any, reified T : S> Flow<S>.runOn(
     crossinline predicate: (T) -> Boolean = { true },

@@ -21,7 +21,6 @@ import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.Job
 import org.orbitmvi.orbit.OrbitContainer
 import org.orbitmvi.orbit.OrbitContainerHost
-import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.sample.posts.compose.multiplatform.domain.repositories.PostOverview
 import org.orbitmvi.orbit.sample.posts.compose.multiplatform.domain.repositories.PostRepository
 import org.orbitmvi.orbit.viewmodel.orbitContainer
@@ -41,7 +40,6 @@ public class PostDetailsViewModel(
             }
         }
 
-    @OptIn(OrbitExperimental::class)
     private suspend fun loadDetails() = subIntent {
         runCatching {
             postRepository.getDetail(postOverview.id)

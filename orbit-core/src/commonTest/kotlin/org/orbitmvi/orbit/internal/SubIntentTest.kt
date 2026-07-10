@@ -28,7 +28,6 @@ import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.runTest
 import org.orbitmvi.orbit.OrbitContainerHost
-import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.orbitContainer
 import org.orbitmvi.orbit.test.testWithInternalState
 import kotlin.random.Random
@@ -81,14 +80,12 @@ internal class SubIntentTest {
             }
         }
 
-        @OptIn(OrbitExperimental::class)
         private suspend fun sendSideEffect1() = subIntent {
             flow1.collect {
                 postSideEffect(it)
             }
         }
 
-        @OptIn(OrbitExperimental::class)
         private suspend fun sendSideEffect2() = subIntent {
             flow2.collect {
                 postSideEffect(it)

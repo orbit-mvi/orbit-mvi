@@ -23,7 +23,6 @@ package org.orbitmvi.orbit.sample.posts.app.features.postlist.viewmodel
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import org.orbitmvi.orbit.OrbitContainerHost
-import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.sample.posts.app.common.NavigationEvent
 import org.orbitmvi.orbit.sample.posts.domain.repositories.PostOverview
 import org.orbitmvi.orbit.sample.posts.domain.repositories.PostRepository
@@ -43,7 +42,6 @@ class PostListViewModel(
         }
     }
 
-    @OptIn(OrbitExperimental::class)
     private suspend fun loadOverviews() = subIntent {
         runCatching {
             val overviews = postRepository.getOverviews()
