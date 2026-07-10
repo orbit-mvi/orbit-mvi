@@ -57,6 +57,7 @@ public class RealContainer<INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFE
     subscribedCounterOverride: SubscribedCounter? = null
 ) : OrbitContainer<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT> {
     override val scope: CoroutineScope = parentScope + settings.eventLoopDispatcher()
+
     // Resolved once per container so limitedParallelism views are scoped to the container, not to each intent
     private val intentLaunchingDispatcher = settings.intentLaunchingDispatcher()
     private val intentJob = Job(scope.coroutineContext[Job])
