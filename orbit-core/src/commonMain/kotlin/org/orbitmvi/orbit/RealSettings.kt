@@ -54,8 +54,8 @@ public enum class SideEffectMode {
 public data class RealSettings(
     public val sideEffectBufferSize: Int = Channel.BUFFERED,
     public val idlingRegistry: IdlingResource = NoopIdlingResource(),
-    public val eventLoopDispatcher: CoroutineDispatcher = Dispatchers.Default,
-    public val intentLaunchingDispatcher: CoroutineDispatcher = Dispatchers.Unconfined,
+    public val eventLoopDispatcher: () -> CoroutineDispatcher = { Dispatchers.Default },
+    public val intentLaunchingDispatcher: () -> CoroutineDispatcher = { Dispatchers.Unconfined },
     public val exceptionHandler: CoroutineExceptionHandler? = null,
     public val repeatOnSubscribedStopTimeout: Long = 100L,
     public val sideEffectMode: SideEffectMode = SideEffectMode.FAN_OUT,
@@ -74,13 +74,24 @@ public class SettingsBuilder internal constructor(baseline: RealSettings) {
             settings = settings.copy(idlingRegistry = value)
         }
 
-    public var eventLoopDispatcher: CoroutineDispatcher
+    /**
+     * Factory for the dispatcher the container's event loop runs on. Invoked once per container,
+     * so each container gets its own dispatcher instance — e.g. its own
+     * [kotlinx.coroutines.CoroutineDispatcher.limitedParallelism] view.
+     */
+    public var eventLoopDispatcher: () -> CoroutineDispatcher
         get() = settings.eventLoopDispatcher
         public set(value) {
             settings = settings.copy(eventLoopDispatcher = value)
         }
 
-    public var intentLaunchingDispatcher: CoroutineDispatcher
+    /**
+     * Factory for the dispatcher intents are launched on. Invoked once per container,
+     * so each container gets its own dispatcher instance — e.g. its own
+     * [kotlinx.coroutines.CoroutineDispatcher.limitedParallelism] view, giving per-container
+     * (not app-wide) parallelism limits.
+     */
+    public var intentLaunchingDispatcher: () -> CoroutineDispatcher
         get() = settings.intentLaunchingDispatcher
         public set(value) {
             settings = settings.copy(intentLaunchingDispatcher = value)

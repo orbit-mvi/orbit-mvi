@@ -56,7 +56,9 @@ public class RealContainer<INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFE
     internal val transformState: (INTERNAL_STATE) -> EXTERNAL_STATE,
     subscribedCounterOverride: SubscribedCounter? = null
 ) : OrbitContainer<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT> {
-    override val scope: CoroutineScope = parentScope + settings.eventLoopDispatcher
+    override val scope: CoroutineScope = parentScope + settings.eventLoopDispatcher()
+    // Resolved once per container so limitedParallelism views are scoped to the container, not to each intent
+    private val intentLaunchingDispatcher = settings.intentLaunchingDispatcher()
     private val intentJob = Job(scope.coroutineContext[Job])
     private val dispatchChannel =
         Channel<Pair<CompletableJob, suspend ContainerContext<INTERNAL_STATE, SIDE_EFFECT>.() -> Unit>>(
@@ -126,7 +128,7 @@ public class RealContainer<INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFE
                     val exceptionHandlerContext =
                         CoroutineName("$COROUTINE_NAME_INTENT${intentCounter.fetchAndIncrement()}") +
                             job +
-                            settings.intentLaunchingDispatcher
+                            intentLaunchingDispatcher
                     launch(exceptionHandlerContext) {
                         runCatching { pluginContext.intent() }.onFailure { e ->
                             settings.exceptionHandler?.handleException(coroutineContext, e) ?: throw e
