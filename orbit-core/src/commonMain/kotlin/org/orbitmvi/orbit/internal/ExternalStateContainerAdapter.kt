@@ -33,7 +33,7 @@ import org.orbitmvi.orbit.syntax.ContainerContext
 @OrbitInternal
 public class ExternalStateContainerAdapter<INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : Any>(
     public val delegate: OrbitContainer<INTERNAL_STATE, INTERNAL_STATE, SIDE_EFFECT>,
-    private val externalTransformState: (INTERNAL_STATE) -> EXTERNAL_STATE
+    public val externalTransformState: (INTERNAL_STATE) -> EXTERNAL_STATE
 ) : OrbitContainer<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT> {
 
     override val scope: CoroutineScope get() = delegate.scope

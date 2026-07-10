@@ -37,7 +37,7 @@ public class OrbitScopedTestContextInternalAndExternal<
     internal var currentConsumedInternalState: INTERNAL_STATE = resolvedInitialState
 
     @PublishedApi
-    internal var currentConsumedExternalState: EXTERNAL_STATE = containerHost.container.findTestContainer().originalTransformState(
+    internal var currentConsumedExternalState: EXTERNAL_STATE = containerHost.container.findTransformState()(
         resolvedInitialState
     )
 

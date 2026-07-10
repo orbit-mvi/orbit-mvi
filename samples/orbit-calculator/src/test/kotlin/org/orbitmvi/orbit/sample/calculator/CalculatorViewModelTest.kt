@@ -134,7 +134,10 @@ class CalculatorViewModelTest {
 
             viewModel.equals()
 
-            assertEquals(a + b, awaitExternalState().digitalDisplay.toDouble(), 0.00001)
+            // The display only updates if the last value and the result of the calculation are different
+            if (a + b != b) {
+                assertEquals(a + b, awaitExternalState().digitalDisplay.toDouble(), 0.00001)
+            }
         }
     }
 
@@ -173,7 +176,10 @@ class CalculatorViewModelTest {
 
             viewModel.equals()
 
-            assertEquals(a - b, awaitExternalState().digitalDisplay.toDouble(), 0.00001)
+            // The display only updates if the last value and the result of the calculation are different
+            if (a - b != b) {
+                assertEquals(a - b, awaitExternalState().digitalDisplay.toDouble(), 0.00001)
+            }
         }
     }
 
@@ -191,7 +197,10 @@ class CalculatorViewModelTest {
 
             viewModel.equals()
 
-            assertEquals(a - b, awaitExternalState().digitalDisplay.toInt())
+            // The display only updates if the last value and the result of the calculation are different
+            if (a - b != b) {
+                assertEquals(a - b, awaitExternalState().digitalDisplay.toInt())
+            }
         }
     }
 
@@ -222,7 +231,10 @@ class CalculatorViewModelTest {
 
             viewModel.equals()
 
-            assertEquals(a * b, awaitExternalState().digitalDisplay.toDouble(), 0.00001)
+            // The display only updates if the last value and the result of the calculation are different
+            if (a * b != b) {
+                assertEquals(a * b, awaitExternalState().digitalDisplay.toDouble(), 0.00001)
+            }
         }
     }
 

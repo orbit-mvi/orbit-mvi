@@ -38,6 +38,19 @@ internal fun <INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : Any>
 @Suppress("DEPRECATION", "UNCHECKED_CAST")
 @OptIn(OrbitInternal::class)
 internal fun <INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : Any>
+    OrbitContainer<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>.findTransformState(): (INTERNAL_STATE) -> EXTERNAL_STATE {
+    return when (this) {
+        is TestContainerDecorator<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT> -> originalTransformState
+        is ExternalStateContainerAdapter<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT> ->
+            { state -> externalTransformState(delegate.findTransformState()(state)) }
+        is OrbitContainerDecorator<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT> -> actual.findTransformState()
+        else -> error("No transformState found!")
+    }
+}
+
+@Suppress("DEPRECATION", "UNCHECKED_CAST")
+@OptIn(OrbitInternal::class)
+internal fun <INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : Any>
     OrbitContainer<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>.findTestContainer():
     TestContainerDecorator<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT> {
     return (this as? TestContainerDecorator<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>)
