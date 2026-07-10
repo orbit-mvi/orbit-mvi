@@ -90,6 +90,45 @@ class DeprecatedWithExternalStateTest {
         assertEquals(initialState, testContainer.originalInitialState)
     }
 
+    @Test
+    fun external_state_test_seeds_initial_external_state_through_adapter() = runTest {
+        MiddlewareWithDeprecatedExternalState(this).testWithExternalState(
+            this,
+            settings = TestSettings(autoCheckInitialState = false)
+        ) {
+            expectExternalState { this }
+        }
+    }
+
+    @Test
+    fun external_state_test_auto_checks_initial_state_through_adapter() = runTest {
+        MiddlewareWithDeprecatedExternalState(this).testWithExternalState(this) {
+            containerHost.newCount(42)
+            expectExternalState { ExternalState("42") }
+        }
+    }
+
+    @Test
+    fun internal_and_external_state_test_auto_checks_initial_state_through_adapter() = runTest {
+        MiddlewareWithDeprecatedExternalState(this).testWithInternalAndExternalState(this) {
+            containerHost.newCount(42)
+            expectInternalState { copy(count = 42) }
+            expectExternalState { ExternalState("42") }
+        }
+    }
+
+    @Test
+    fun external_state_test_with_on_create_through_adapter() = runTest {
+        MiddlewareWithDeprecatedExternalStateAndOnCreate(this).testWithExternalState(
+            this,
+            settings = TestSettings(autoCheckInitialState = false)
+        ) {
+            expectExternalState { this }
+            runOnCreate()
+            expectExternalState { ExternalState("-1") }
+        }
+    }
+
     private inner class MiddlewareWithDeprecatedExternalState(scope: TestScope) :
         OrbitContainerHost<InternalState, ExternalState, Int> {
         override val container: OrbitContainer<InternalState, ExternalState, Int> =
