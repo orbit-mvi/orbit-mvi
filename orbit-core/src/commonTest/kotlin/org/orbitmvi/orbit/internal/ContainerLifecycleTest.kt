@@ -83,7 +83,7 @@ internal class ContainerLifecycleTest {
         override val container = scope.backgroundScope.orbitContainer<TestState, ExternalState, String>(
             initialState = initialState,
             transformState = { ExternalState(it.id.toString()) },
-            buildSettings = { eventLoopDispatcher = StandardTestDispatcher(scope.testScheduler) }
+            buildSettings = { eventLoopDispatcher = { StandardTestDispatcher(scope.testScheduler) } }
         ) {
             reduce { state.copy(id = ON_CREATE_ID) }
         }
