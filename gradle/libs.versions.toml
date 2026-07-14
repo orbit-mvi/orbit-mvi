@@ -47,6 +47,7 @@ androidxNavigationMultiplatform = "2.9.0-beta02"
 googleMaterial = "1.12.0"
 
 # Misc
+androidLint = "31.10.1"
 coil = "3.2.0"
 desugar = "2.1.5"
 glide = "4.16.0"
@@ -62,8 +63,8 @@ retrofit = "3.0.0"
 androidxCoreTesting = "2.2.0"
 androidxEspresso = "3.6.1"
 junit4 = "4.13.2"
-junitJupiterEngine = "5.12.2"
-junitPlatformConsole = "1.12.2"
+junitJupiterEngine = "5.13.0"
+junitPlatformConsole = "1.13.0"
 kotlinFixture = "1.2.0"
 mockito = "5.18.0"
 mockitoKotlin = "5.4.0"
@@ -110,6 +111,8 @@ androidxNavigationUiKtx = { module = "androidx.navigation:navigation-ui-ktx", ve
 googleMaterial = { module = "com.google.android.material:material", version.ref = "googleMaterial" }
 
 # Misc
+androidLintApi = { module = "com.android.tools.lint:lint-api", version.ref = "androidLint" }
+androidLintChecks = { module = "com.android.tools.lint:lint-checks", version.ref = "androidLint" }
 coilCompose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil" }
 coilNetworkKtor3 = { module = "io.coil-kt.coil3:coil-network-ktor3", version.ref = "coil" }
 desugar = { module = "com.android.tools:desugar_jdk_libs", version.ref = "desugar" }
@@ -138,6 +141,7 @@ retrofitConverterJackson = { module = "com.squareup.retrofit2:converter-jackson"
 androidxComposeUiTestJunit4 = { module = "androidx.compose.ui:ui-test-junit4", version.ref = "androidxCompose" }
 androidxComposeUiTestManifest = { module = "androidx.compose.ui:ui-test-manifest", version.ref = "androidxCompose" }
 androidxCoreTesting = { module = "androidx.arch.core:core-testing", version.ref = "androidxCoreTesting" }
+androidLintTests = { module = "com.android.tools.lint:lint-tests", version.ref = "androidLint" }
 junit4 = { module = "junit:junit", version.ref = "junit4" }
 junitJupiterApi = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junitJupiterEngine" }
 junitJupiterEngine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junitJupiterEngine" }

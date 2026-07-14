@@ -117,7 +117,7 @@ subprojects {
         ?.replaceFirst("refs/tags/", "") ?: "unspecified"
 
     tasks.withType<Test> {
-        if (project.name !in listOf("orbit-core", "orbit-test", "orbit-viewmodel", "orbit-compose")) {
+        if (project.name !in listOf("orbit-core", "orbit-test", "orbit-viewmodel", "orbit-compose", "orbit-lint")) {
             useJUnitPlatform {
                 includeEngines(
                     "junit-jupiter"
@@ -152,21 +152,19 @@ subprojects {
         }
     }
     plugins.withType<org.jetbrains.kotlin.gradle.plugin.KotlinPluginWrapper> {
-        apply(from = "$rootDir/gradle/scripts/jacoco.gradle.kts")
         configure<org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension> {
             // for strict mode
             explicitApi()
         }
     }
     plugins.withType<org.jetbrains.kotlin.gradle.plugin.KotlinPluginWrapper> {
-        apply(from = "$rootDir/gradle/scripts/jacoco.gradle.kts")
         configure<org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension> {
             // for strict mode
             explicitApi()
         }
     }
     plugins.withType<org.jetbrains.kotlin.gradle.plugin.KotlinMultiplatformPluginWrapper> {
-        if (project.name !in listOf("orbit-viewmodel", "orbit-compose", "composeApp")) {
+        if (project.name !in listOf("orbit-viewmodel", "orbit-compose", "composeApp", "orbit-lint")) {
             apply(from = "$rootDir/gradle/scripts/jacoco.gradle.kts")
         }
         configure<org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension> {

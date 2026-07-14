@@ -11,7 +11,7 @@ trim_trailing_whitespace = true
 [*.gradle]
 ij_continuation_indent_size = 8
 
-[{*.kt, *.kts}]
+[{*.kt,*.kts}]
 ij_continuation_indent_size = 8
 ij_kotlin_assignment_wrap = normal
 ij_kotlin_call_parameters_new_line_after_left_paren = true
