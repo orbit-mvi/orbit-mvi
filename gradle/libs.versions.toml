@@ -16,13 +16,13 @@
 
 [versions]
 
-kotlin = "2.3.21"
+kotlin = "2.4.10"
 coroutines = "1.11.0"
 
 # Plugins
 binaryCompatibilityValidator = "0.18.1"
 gradleVersionsPlugin = "0.54.0"
-gradleAndroidPlugin = "9.2.1"
+gradleAndroidPlugin = "9.3.0"
 gradleMavenPublishPlugin = "0.37.0"
 markdownLintPlugin = "0.6.0"
 detektPlugin = "1.23.8"
