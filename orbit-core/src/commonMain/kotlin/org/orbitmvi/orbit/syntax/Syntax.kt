@@ -98,7 +98,6 @@ public class Syntax<S : Any, SE : Any>(public val containerContext: ContainerCon
      *
      * @param predicate optional predicate to match the state against. Defaults to true.
      */
-    @OrbitDsl
     public suspend inline fun <reified T : S> runOn(
         crossinline predicate: (T) -> Boolean = { true },
         crossinline block: suspend SubStateSyntax<S, SE, T>.() -> Unit
@@ -125,7 +124,6 @@ public class Syntax<S : Any, SE : Any>(public val containerContext: ContainerCon
      * @param predicate optional predicate to match the state against. Defaults to true.
      */
     @OrbitExperimental
-    @OrbitDsl
     public suspend inline fun <reified T : S> awaitRunOn(
         crossinline predicate: (T) -> Boolean = { true },
         crossinline block: suspend SubStateSyntax<S, SE, T>.() -> Unit

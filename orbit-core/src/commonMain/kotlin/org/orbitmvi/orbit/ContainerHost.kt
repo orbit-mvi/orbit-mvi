@@ -23,7 +23,6 @@ package org.orbitmvi.orbit
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
-import org.orbitmvi.orbit.annotation.OrbitDsl
 import org.orbitmvi.orbit.syntax.Syntax
 import org.orbitmvi.orbit.syntax.intent
 
@@ -99,7 +98,6 @@ public interface OrbitContainerHost<INTERNAL_STATE : Any, EXTERNAL_STATE : Any, 
      *
      * @param transformer lambda representing the transformer
      */
-    @OrbitDsl
     public suspend fun subIntent(
         transformer: suspend Syntax<INTERNAL_STATE, SIDE_EFFECT>.() -> Unit,
     ): Unit = container.inlineOrbit {

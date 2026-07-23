@@ -24,7 +24,6 @@ import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.transformWhile
 import org.orbitmvi.orbit.OrbitContainer
-import org.orbitmvi.orbit.annotation.OrbitDsl
 import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.annotation.OrbitInternal
 
@@ -43,7 +42,6 @@ import org.orbitmvi.orbit.annotation.OrbitInternal
  * @param predicate optional predicate to match the state against. Defaults to true.
  */
 @OptIn(ExperimentalCoroutinesApi::class)
-@OrbitDsl
 public suspend inline fun <S : Any, reified T : S> Flow<S>.runOn(
     crossinline predicate: (T) -> Boolean = { true },
     crossinline block: suspend (capturedState: T) -> Unit
@@ -85,7 +83,6 @@ public suspend inline fun <S : Any, reified T : S> Flow<S>.runOn(
  */
 @OptIn(ExperimentalCoroutinesApi::class)
 @OrbitExperimental
-@OrbitDsl
 public suspend inline fun <S : Any, reified T : S> Flow<S>.awaitRunOn(
     crossinline predicate: (T) -> Boolean = { true },
     crossinline block: suspend (capturedState: T) -> Unit
