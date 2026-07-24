@@ -17,7 +17,6 @@
 package org.orbitmvi.orbit.test
 
 import app.cash.turbine.test
-import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.map
@@ -66,15 +65,8 @@ public suspend fun <STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : OrbitContai
     val testDispatcher =
         settings.dispatcherOverride ?: testScope.backgroundScope.coroutineContext[ContinuationInterceptor.Key] as? CoroutineDispatcher
 
-    var caughtException: Throwable? = null
-
-    val testExceptionHandler = settings.exceptionHandlerOverride
-        ?: containerHost.container.settings.exceptionHandler
-        ?: CoroutineExceptionHandler { _, exception ->
-            if (exception !is CancellationException) {
-                caughtException = exception
-            }
-        }
+    val exceptionCatcher = OrbitTestExceptionCatcher()
+    val testExceptionHandler = exceptionCatcher.resolveHandler(settings, containerHost.container.settings.exceptionHandler)
 
     container.findTestContainer().test(
         initialState = initialState,
@@ -84,23 +76,25 @@ public suspend fun <STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : OrbitContai
 
     val resolvedInitialState: STATE = initialState ?: containerHost.container.findTestContainer().originalInitialState
 
-    merge(
-        container.stateFlow.map<STATE, Item<STATE, SIDE_EFFECT>> { Item.StateItem(it) },
-        container.sideEffectFlow.map<SIDE_EFFECT, Item<STATE, SIDE_EFFECT>> { Item.SideEffectItem(it) }
-    ).test(timeout = timeout) {
-        OrbitTestContext(
-            containerHost,
-            resolvedInitialState,
-            this,
-            settings
-        ).apply {
-            if (settings.autoCheckInitialState) {
-                assertEquals(resolvedInitialState, awaitState())
-            }
-            validate(this)
-            caughtException?.let { throw it }
-            withAppropriateTimeout(timeout ?: 1.seconds) {
-                container.findTestContainer().joinIntents()
+    exceptionCatcher.runFailingFast {
+        merge(
+            container.stateFlow.map<STATE, Item<STATE, SIDE_EFFECT>> { Item.StateItem(it) },
+            container.sideEffectFlow.map<SIDE_EFFECT, Item<STATE, SIDE_EFFECT>> { Item.SideEffectItem(it) }
+        ).test(timeout = timeout) {
+            OrbitTestContext(
+                containerHost,
+                resolvedInitialState,
+                this,
+                settings
+            ).apply {
+                if (settings.autoCheckInitialState) {
+                    assertEquals(resolvedInitialState, awaitState())
+                }
+                validate(this)
+                exceptionCatcher.caughtException?.let { throw it }
+                withAppropriateTimeout(timeout ?: 1.seconds) {
+                    container.findTestContainer().joinIntents()
+                }
             }
         }
     }
