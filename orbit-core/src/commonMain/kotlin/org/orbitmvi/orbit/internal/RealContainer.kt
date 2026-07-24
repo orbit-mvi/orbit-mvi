@@ -23,19 +23,17 @@ package org.orbitmvi.orbit.internal
 import kotlinx.coroutines.CompletableJob
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalForInheritanceCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.channels.produce
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.job
 import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
@@ -115,13 +113,14 @@ public class RealContainer<INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFE
         pluginContext.orbitIntent()
     }
 
-    @OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
     private fun initialiseIfNeeded() {
         if (initialised.compareAndSet(expectedValue = false, newValue = true)) {
-            scope.produce<Unit>(Dispatchers.Unconfined) {
-                awaitClose {
-                    settings.idlingRegistry.close()
-                }
+            // Tie idling registry teardown to scope cancellation. Registered synchronously here (no
+            // coroutine/dispatcher) so it can't be lost if the scope is cancelled before a dispatched
+            // coroutine would have started, and so it doesn't install an unconfined event loop on the
+            // caller's thread (see https://github.com/orbit-mvi/orbit-mvi/issues/328).
+            scope.coroutineContext.job.invokeOnCompletion {
+                settings.idlingRegistry.close()
             }
 
             scope.launch(CoroutineName(COROUTINE_NAME_EVENT_LOOP)) {
