@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-2025 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 2021-2026 Mikołaj Leszczyński & Appmattus Limited
  * Copyright 2020 Babylon Partners Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -26,10 +26,10 @@ include(
     "orbit-viewmodel",
     "orbit-compose",
     "samples:orbit-calculator",
-    "samples:orbit-posts",
-    "samples:orbit-posts-compose-multiplatform:composeApp",
-    "samples:orbit-stocklist",
-    "samples:orbit-stocklist-jetpack-compose",
+    "samples:orbit-posts-compose-multiplatform:androidApp",
+    "samples:orbit-posts-compose-multiplatform:desktopApp",
+    "samples:orbit-posts-compose-multiplatform:shared",
+    "samples:orbit-posts-compose-multiplatform:webApp",
     "samples:orbit-text",
     "test-common"
 )
@@ -44,7 +44,7 @@ fun renameBuildFileToModuleName(project: ProjectDescriptor) {
 rootProject.children.forEach { subproject -> renameBuildFileToModuleName(subproject) }
 
 plugins {
-    id("com.gradle.develocity") version "4.0.2"
+    id("com.gradle.develocity") version "4.4.1"
 }
 
 develocity {

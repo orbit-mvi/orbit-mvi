@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-2025 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 2021-2026 Mikołaj Leszczyński & Appmattus Limited
  * Copyright 2020 Babylon Partners Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -40,8 +40,9 @@ public class LazyCreateContainerDecorator<INTERNAL_STATE : Any, EXTERNAL_STATE :
     override val stateFlow: StateFlow<INTERNAL_STATE> = actual.stateFlow.onSubscribe { runOnCreate() }
     override val refCountStateFlow: StateFlow<INTERNAL_STATE> = actual.refCountStateFlow.onSubscribe { runOnCreate() }
     override val externalStateFlow: StateFlow<EXTERNAL_STATE> = actual.externalStateFlow.onSubscribe { runOnCreate() }
-    override val externalRefCountStateFlow: StateFlow<EXTERNAL_STATE> =
-        actual.externalRefCountStateFlow.onSubscribe { runOnCreate() }
+    override val externalRefCountStateFlow: StateFlow<EXTERNAL_STATE> = actual.externalRefCountStateFlow.onSubscribe {
+        runOnCreate()
+    }
     override val sideEffectFlow: Flow<SIDE_EFFECT> = flow {
         runOnCreate()
         emitAll(actual.sideEffectFlow)

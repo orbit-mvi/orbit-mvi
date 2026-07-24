@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 2024-2026 Mikołaj Leszczyński & Appmattus Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,7 +41,6 @@ public class SubStateSyntax<S : Any, SE : Any, T : S>(private val containerConte
      *
      * @param sideEffect the side effect to post through the side effect flow
      */
-    @OrbitDsl
     public suspend fun postSideEffect(sideEffect: SE) {
         containerContext.postSideEffect(sideEffect)
     }
@@ -51,7 +50,6 @@ public class SubStateSyntax<S : Any, SE : Any, T : S>(private val containerConte
      *
      * @param reducer the lambda reducing the current state and incoming event to produce a new state
      */
-    @OrbitDsl
     public suspend fun reduce(reducer: IntentContext<T>.() -> S) {
         containerContext.reduce { reducerState ->
             IntentContext(reducerState).reducer()
@@ -71,7 +69,6 @@ public class SubStateSyntax<S : Any, SE : Any, T : S>(private val containerConte
      * @param block the lambda to run when we have active subscribers.
      */
     @OptIn(ExperimentalCoroutinesApi::class)
-    @OrbitDsl
     public suspend fun repeatOnSubscription(
         block: suspend CoroutineScope.() -> Unit
     ) {

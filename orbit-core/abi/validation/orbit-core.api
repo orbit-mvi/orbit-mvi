@@ -41,19 +41,19 @@ public abstract interface class org/orbitmvi/orbit/OrbitContainer {
 }
 
 public abstract interface class org/orbitmvi/orbit/OrbitContainerDecorator : org/orbitmvi/orbit/OrbitContainer {
-	public abstract fun cancel ()V
+	public fun cancel ()V
 	public abstract fun getActual ()Lorg/orbitmvi/orbit/OrbitContainer;
-	public abstract fun getExternalRefCountStateFlow ()Lkotlinx/coroutines/flow/StateFlow;
-	public abstract fun getExternalStateFlow ()Lkotlinx/coroutines/flow/StateFlow;
-	public abstract fun getRefCountSideEffectFlow ()Lkotlinx/coroutines/flow/Flow;
-	public abstract fun getRefCountStateFlow ()Lkotlinx/coroutines/flow/StateFlow;
-	public abstract fun getScope ()Lkotlinx/coroutines/CoroutineScope;
-	public abstract fun getSettings ()Lorg/orbitmvi/orbit/RealSettings;
-	public abstract fun getSideEffectFlow ()Lkotlinx/coroutines/flow/Flow;
-	public abstract fun getStateFlow ()Lkotlinx/coroutines/flow/StateFlow;
-	public abstract fun inlineOrbit (Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public abstract fun joinIntents (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public abstract fun orbit (Lkotlin/jvm/functions/Function2;)Lkotlinx/coroutines/Job;
+	public fun getExternalRefCountStateFlow ()Lkotlinx/coroutines/flow/StateFlow;
+	public fun getExternalStateFlow ()Lkotlinx/coroutines/flow/StateFlow;
+	public fun getRefCountSideEffectFlow ()Lkotlinx/coroutines/flow/Flow;
+	public fun getRefCountStateFlow ()Lkotlinx/coroutines/flow/StateFlow;
+	public fun getScope ()Lkotlinx/coroutines/CoroutineScope;
+	public fun getSettings ()Lorg/orbitmvi/orbit/RealSettings;
+	public fun getSideEffectFlow ()Lkotlinx/coroutines/flow/Flow;
+	public fun getStateFlow ()Lkotlinx/coroutines/flow/StateFlow;
+	public fun inlineOrbit (Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun joinIntents (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun orbit (Lkotlin/jvm/functions/Function2;)Lkotlinx/coroutines/Job;
 }
 
 public final class org/orbitmvi/orbit/OrbitContainerDecorator$DefaultImpls {
@@ -73,8 +73,9 @@ public final class org/orbitmvi/orbit/OrbitContainerDecorator$DefaultImpls {
 
 public abstract interface class org/orbitmvi/orbit/OrbitContainerHost {
 	public abstract fun getContainer ()Lorg/orbitmvi/orbit/OrbitContainer;
-	public abstract fun intent (ZLkotlin/jvm/functions/Function2;)Lkotlinx/coroutines/Job;
-	public abstract fun subIntent (Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun intent (ZLkotlin/jvm/functions/Function2;)Lkotlinx/coroutines/Job;
+	public static synthetic fun intent$default (Lorg/orbitmvi/orbit/OrbitContainerHost;ZLkotlin/jvm/functions/Function2;ILjava/lang/Object;)Lkotlinx/coroutines/Job;
+	public fun subIntent (Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
 public final class org/orbitmvi/orbit/OrbitContainerHost$DefaultImpls {

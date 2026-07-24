@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-2025 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 2021-2026 Mikołaj Leszczyński & Appmattus Limited
  * Copyright 2020 Babylon Partners Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,7 +22,6 @@ package org.orbitmvi.orbit.syntax
 
 import kotlinx.coroutines.Job
 import org.orbitmvi.orbit.OrbitContainer
-import org.orbitmvi.orbit.annotation.OrbitDsl
 import org.orbitmvi.orbit.idling.withIdling
 
 /**
@@ -31,7 +30,6 @@ import org.orbitmvi.orbit.idling.withIdling
  * @param registerIdling whether to register an idling resource when executing this intent. Defaults to true.
  * @param transformer lambda representing the transformer
  */
-@OrbitDsl
 internal fun <INTERNAL_STATE : Any, SIDE_EFFECT : Any> OrbitContainer<INTERNAL_STATE, *, SIDE_EFFECT>.intent(
     registerIdling: Boolean = true,
     transformer: suspend ContainerContext<INTERNAL_STATE, SIDE_EFFECT>.() -> Unit

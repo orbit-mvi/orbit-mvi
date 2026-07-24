@@ -1,3 +1,7 @@
 TEAM_ID=
-BUNDLE_ID=org.orbitmvi.orbit.sample.posts.compose.multiplatform.orbit-posts-compose-multiplatform
-APP_NAME=Orbit Posts CMP
+
+PRODUCT_NAME=Posts
+PRODUCT_BUNDLE_IDENTIFIER=org.orbitmvi.orbit.sample.posts.compose.multiplatform.Posts$(TEAM_ID)
+
+CURRENT_PROJECT_VERSION=1
+MARKETING_VERSION=1.0

@@ -1,7 +1,5 @@
-import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
-
 /*
- * Copyright 2021-2025 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 2021-2026 Mikołaj Leszczyński & Appmattus Limited
  * Copyright 2020 Babylon Partners Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,21 +18,37 @@ import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
  * See: https://github.com/orbit-mvi/orbit-mvi/compare/c5b8b3f2b83b5972ba2ad98f73f75086a89653d3...main
  */
 
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
-    // We should really be using the com.android.kotlin.multiplatform.library plugin and an androidLibrary block, however, this has issues with
-    // AGP 8.9.0, and with 8.10.0-alpha08 no way to resolve packaging options such as META-INF conflicts.
-    id("com.android.library")
     kotlin("multiplatform")
+    id("com.android.kotlin.multiplatform.library")
     id(libs.plugins.gradleMavenPublishPlugin.get().pluginId)
     id(libs.plugins.dokkaPlugin.get().pluginId)
     kotlin("plugin.serialization")
     id("kotlin-parcelize")
+    alias(libs.plugins.koverPlugin)
 }
 
 kotlin {
-    // Note no mingw support in lifecycle-viewmodel
+    jvm()
 
-    androidTarget()
+    android {
+        namespace = "org.orbitmvi.orbit.viewmodel"
+        compileSdk = 37
+        minSdk = 23
+
+        compilerOptions {
+            jvmTarget = JvmTarget.JVM_11
+        }
+        androidResources {
+            enable = true
+        }
+        withHostTest {
+            isIncludeAndroidResources = true
+        }
+    }
 
     js {
         browser()
@@ -46,32 +60,45 @@ kotlin {
         nodejs()
     }
 
-    macosX64()
-    macosArm64()
-    iosX64()
+    // Tier 1
+    // Apple macOS hosts only:
+    macosArm64() // Running tests
+    iosSimulatorArm64() // Running tests
     iosArm64()
-    iosSimulatorArm64()
-    watchosSimulatorArm64()
-    watchosX64()
+
+    // Tier 2
+    linuxX64() // Running tests
+    linuxArm64()
+    // Apple macOS hosts only:
+    watchosSimulatorArm64() // Running tests
     watchosArm32()
     watchosArm64()
-    tvosSimulatorArm64()
-    tvosX64()
+    tvosSimulatorArm64() // Running tests
     tvosArm64()
 
+    // Tier 3
+    // No androidNative support
+//    androidNativeArm32()
+//    androidNativeArm64()
+//    androidNativeX86()
+//    androidNativeX64()
+    mingwX64() // Running tests
+    // Apple macOS hosts only:
+    // No watchosDeviceArm64 support
+//    watchosDeviceArm64()
+    iosX64() // Running tests
+
     listOf(
-        iosX64(),
-        iosArm64(),
-        iosSimulatorArm64(),
-        macosX64(),
         macosArm64(),
+        iosSimulatorArm64(),
+        iosArm64(),
         watchosSimulatorArm64(),
-        watchosX64(),
         watchosArm32(),
         watchosArm64(),
         tvosSimulatorArm64(),
-        tvosX64(),
-        tvosArm64()
+        tvosArm64(),
+//        watchosDeviceArm64(),
+        iosX64()
     ).forEach { iosTarget ->
         iosTarget.binaries.framework {
             baseName = "orbit-viewmodel"
@@ -79,17 +106,17 @@ kotlin {
         }
     }
 
-    linuxX64()
-    linuxArm64()
-
-    jvm("desktop")
+    // Apply the default hierarchy again. It'll create, for example, the iosMain source set:
+    applyDefaultHierarchyTemplate()
 
     sourceSets {
+        val androidHostTest by getting
+
         commonMain.dependencies {
             api(project(":orbit-core"))
-            api(libs.androidxLifecycleViewmodel)
-            api(libs.androidxLifecycleViewmodelSavedState)
-            api(libs.androidxLifecycleRuntime)
+            api(libs.jetbrainsLifecycleViewmodel)
+            api(libs.jetbrainsLifecycleViewmodelSavedState)
+            api(libs.jetbrainsLifecycleRuntime)
         }
 
         commonTest.dependencies {
@@ -107,20 +134,15 @@ kotlin {
             implementation(libs.androidxEspressoIdlingResource)
         }
 
-        androidUnitTest.dependencies {
+        jvmTest.dependencies {
+            implementation(kotlin("test-junit"))
+        }
+
+        androidHostTest.dependencies {
+            implementation(kotlin("test-junit"))
             implementation(libs.robolectric)
             implementation(libs.androidxCoreTesting)
             implementation(libs.androidxEspressoCore)
         }
     }
-}
-
-android {
-    namespace = "org.orbitmvi.orbit.viewmodel"
-    compileSdk = 35
-    defaultConfig {
-        minSdk = 21
-    }
-
-    testOptions.unitTests.isIncludeAndroidResources = true
 }

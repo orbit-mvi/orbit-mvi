@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-2025 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 2021-2026 Mikołaj Leszczyński & Appmattus Limited
  * Copyright 2020 Babylon Partners Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -44,7 +44,6 @@ public class Syntax<S : Any, SE : Any>(public val containerContext: ContainerCon
      *
      * @param reducer the lambda reducing the current state and incoming event to produce a new state
      */
-    @OrbitDsl
     public suspend fun reduce(reducer: IntentContext<S>.() -> S) {
         containerContext.reduce { reducerState ->
             IntentContext(reducerState).reducer()
@@ -58,7 +57,6 @@ public class Syntax<S : Any, SE : Any>(public val containerContext: ContainerCon
      *
      * @param sideEffect the side effect to post through the side effect flow
      */
-    @OrbitDsl
     public suspend fun postSideEffect(sideEffect: SE) {
         containerContext.postSideEffect(sideEffect)
     }
@@ -76,7 +74,6 @@ public class Syntax<S : Any, SE : Any>(public val containerContext: ContainerCon
      * @param block the lambda to run when we have active subscribers.
      */
     @OptIn(ExperimentalCoroutinesApi::class)
-    @OrbitDsl
     public suspend fun repeatOnSubscription(
         block: suspend CoroutineScope.() -> Unit
     ) {
@@ -101,7 +98,6 @@ public class Syntax<S : Any, SE : Any>(public val containerContext: ContainerCon
      *
      * @param predicate optional predicate to match the state against. Defaults to true.
      */
-    @OrbitDsl
     public suspend inline fun <reified T : S> runOn(
         crossinline predicate: (T) -> Boolean = { true },
         crossinline block: suspend SubStateSyntax<S, SE, T>.() -> Unit
@@ -128,7 +124,6 @@ public class Syntax<S : Any, SE : Any>(public val containerContext: ContainerCon
      * @param predicate optional predicate to match the state against. Defaults to true.
      */
     @OrbitExperimental
-    @OrbitDsl
     public suspend inline fun <reified T : S> awaitRunOn(
         crossinline predicate: (T) -> Boolean = { true },
         crossinline block: suspend SubStateSyntax<S, SE, T>.() -> Unit

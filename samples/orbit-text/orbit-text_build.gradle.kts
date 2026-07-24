@@ -1,5 +1,5 @@
 /*
- * Copyright 2022-2025 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 2022-2026 Mikołaj Leszczyński & Appmattus Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 
 plugins {
     id("com.android.application")
-    kotlin("android")
     id("kotlin-parcelize")
     id("androidx.navigation.safeargs.kotlin")
     alias(libs.plugins.compose.compiler)
@@ -30,10 +29,10 @@ android {
         targetCompatibility = JavaVersion.VERSION_11
     }
 
-    compileSdk = 35
+    compileSdk = 37
     defaultConfig {
-        minSdk = 21
-        targetSdk = 35
+        minSdk = 23
+        targetSdk = 37
         applicationId = "org.orbitmvi.orbit.sample.text"
         versionCode = 1
         versionName = "1.0"

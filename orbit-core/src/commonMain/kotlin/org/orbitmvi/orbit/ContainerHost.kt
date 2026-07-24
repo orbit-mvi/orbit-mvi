@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-2025 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 2021-2026 Mikołaj Leszczyński & Appmattus Limited
  * Copyright 2020 Babylon Partners Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,7 +23,6 @@ package org.orbitmvi.orbit
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
-import org.orbitmvi.orbit.annotation.OrbitDsl
 import org.orbitmvi.orbit.syntax.Syntax
 import org.orbitmvi.orbit.syntax.intent
 
@@ -58,7 +57,6 @@ public interface OrbitContainerHost<INTERNAL_STATE : Any, EXTERNAL_STATE : Any, 
      * @param registerIdling whether to register an idling resource when executing this intent. Defaults to true.
      * @param transformer lambda representing the transformer
      */
-    @OrbitDsl
     public fun intent(
         registerIdling: Boolean = true,
         transformer: suspend Syntax<INTERNAL_STATE, SIDE_EFFECT>.() -> Unit
@@ -100,7 +98,6 @@ public interface OrbitContainerHost<INTERNAL_STATE : Any, EXTERNAL_STATE : Any, 
      *
      * @param transformer lambda representing the transformer
      */
-    @OrbitDsl
     public suspend fun subIntent(
         transformer: suspend Syntax<INTERNAL_STATE, SIDE_EFFECT>.() -> Unit,
     ): Unit = container.inlineOrbit {

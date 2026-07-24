@@ -1,5 +1,5 @@
 /*
- * Copyright 2023-2025 Mikołaj Leszczyński & Appmattus Limited
+ * Copyright 2023-2026 Mikołaj Leszczyński & Appmattus Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,6 +28,7 @@ import kotlinx.coroutines.test.runTest
 import org.orbitmvi.orbit.OrbitContainer
 import org.orbitmvi.orbit.OrbitContainerHost
 import org.orbitmvi.orbit.RealSettings
+import kotlin.coroutines.ContinuationInterceptor
 import kotlin.test.assertEquals
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
@@ -62,7 +63,8 @@ public suspend fun <STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : OrbitContai
     validate: suspend OrbitTestContext<STATE, SIDE_EFFECT, CONTAINER_HOST>.() -> Unit
 ) {
     val containerHost = this
-    val testDispatcher = settings.dispatcherOverride ?: testScope.backgroundScope.coroutineContext[CoroutineDispatcher.Key]
+    val testDispatcher =
+        settings.dispatcherOverride ?: testScope.backgroundScope.coroutineContext[ContinuationInterceptor.Key] as? CoroutineDispatcher
 
     var caughtException: Throwable? = null
 
