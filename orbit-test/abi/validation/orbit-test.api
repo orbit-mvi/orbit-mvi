@@ -103,6 +103,7 @@ public final class org/orbitmvi/orbit/test/OrbitScopedTestContextInternalAndExte
 	public fun <init> (Lorg/orbitmvi/orbit/OrbitContainerHost;Ljava/lang/Object;Lapp/cash/turbine/ReceiveTurbine;)V
 	public final fun awaitExternalState (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public final fun awaitInternalState (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun awaitItem (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public final fun expectExternalState (Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public final fun expectExternalState (Lkotlin/jvm/functions/Function1;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public final fun expectInternalState (Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;

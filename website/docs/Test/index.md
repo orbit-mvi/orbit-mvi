@@ -264,6 +264,11 @@ states until the side effect you care about arrives. Consuming a state via
 `awaitItem()` advances the state used by subsequent relative assertions
 (e.g. `expectState`), just like `awaitState()`.
 
+`awaitItem()` is available on all of the single- and combined-state test
+contexts. On `testWithInternalAndExternalState` it returns an
+`ItemWithInternalAndExternalState`, which additionally distinguishes internal
+from external states.
+
 ```kotlin
 @Test
 fun exampleTest() = runTest {

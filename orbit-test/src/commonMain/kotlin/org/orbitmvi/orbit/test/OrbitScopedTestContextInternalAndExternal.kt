@@ -138,4 +138,22 @@ public class OrbitScopedTestContextInternalAndExternal<
         return (item as? ItemWithInternalAndExternalState.ExternalStateItem)?.value?.also { currentConsumedExternalState = it }
             ?: fail("Expected External State but got $item")
     }
+
+    /**
+     * Return the next item received as an internal state, external state, or side effect.
+     * This function will suspend if no items have been received.
+     *
+     * Useful when the ordering of states and side effects is not deterministic and you need to
+     * drain items until a particular one arrives. Consuming a state advances the state used for
+     * subsequent relative assertions (e.g. [expectInternalState], [expectExternalState]).
+     */
+    public suspend fun awaitItem(): ItemWithInternalAndExternalState<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT> {
+        return awaitRawItem().also { item ->
+            when (item) {
+                is ItemWithInternalAndExternalState.InternalStateItem -> currentConsumedInternalState = item.value
+                is ItemWithInternalAndExternalState.ExternalStateItem -> currentConsumedExternalState = item.value
+                is ItemWithInternalAndExternalState.SideEffectItem -> Unit
+            }
+        }
+    }
 }

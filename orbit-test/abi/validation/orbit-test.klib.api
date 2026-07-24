@@ -60,6 +60,7 @@ final class <#A: kotlin/Any, #B: kotlin/Any, #C: kotlin/Any, #D: org.orbitmvi.or
 
     final suspend fun awaitExternalState(): #B // org.orbitmvi.orbit.test/OrbitScopedTestContextInternalAndExternal.awaitExternalState|awaitExternalState(){}[0]
     final suspend fun awaitInternalState(): #A // org.orbitmvi.orbit.test/OrbitScopedTestContextInternalAndExternal.awaitInternalState|awaitInternalState(){}[0]
+    final suspend fun awaitItem(): org.orbitmvi.orbit.test/ItemWithInternalAndExternalState<#A, #B, #C> // org.orbitmvi.orbit.test/OrbitScopedTestContextInternalAndExternal.awaitItem|awaitItem(){}[0]
     final suspend fun expectExternalState(#B) // org.orbitmvi.orbit.test/OrbitScopedTestContextInternalAndExternal.expectExternalState|expectExternalState(1:1){}[0]
     final suspend fun expectExternalState(kotlin/Function1<#B, #B>) // org.orbitmvi.orbit.test/OrbitScopedTestContextInternalAndExternal.expectExternalState|expectExternalState(kotlin.Function1<1:1,1:1>){}[0]
     final suspend fun expectInternalState(#A) // org.orbitmvi.orbit.test/OrbitScopedTestContextInternalAndExternal.expectInternalState|expectInternalState(1:0){}[0]
