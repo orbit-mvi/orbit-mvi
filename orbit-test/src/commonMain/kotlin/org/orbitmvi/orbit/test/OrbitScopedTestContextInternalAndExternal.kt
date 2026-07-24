@@ -122,7 +122,7 @@ public class OrbitScopedTestContextInternalAndExternal<
      * @throws AssertionError if the most recent item was not an internal state.
      */
     public suspend fun awaitInternalState(): INTERNAL_STATE {
-        val item = awaitItem()
+        val item = awaitRawItem()
         return (item as? ItemWithInternalAndExternalState.InternalStateItem)?.value?.also { currentConsumedInternalState = it }
             ?: fail("Expected Internal State but got $item")
     }
@@ -134,7 +134,7 @@ public class OrbitScopedTestContextInternalAndExternal<
      * @throws AssertionError if the most recent item was not an external state.
      */
     public suspend fun awaitExternalState(): EXTERNAL_STATE {
-        val item = awaitItem()
+        val item = awaitRawItem()
         return (item as? ItemWithInternalAndExternalState.ExternalStateItem)?.value?.also { currentConsumedExternalState = it }
             ?: fail("Expected External State but got $item")
     }

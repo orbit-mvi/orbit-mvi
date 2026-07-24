@@ -25,6 +25,7 @@ import kotlin.random.Random
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFails
+import kotlin.test.fail
 
 class ItemsWithExternalStateTest {
 
@@ -97,10 +98,10 @@ class ItemsWithExternalStateTest {
             containerHost.newState(state2)
             containerHost.newSideEffect(sideEffect2)
 
-            assertEquals(ItemWithInternalAndExternalState.InternalStateItem(InternalState(1)), awaitItem())
-            assertEquals(ItemWithInternalAndExternalState.SideEffectItem(3), awaitItem())
-            assertEquals(ItemWithInternalAndExternalState.InternalStateItem(InternalState(2)), awaitItem())
-            assertEquals(ItemWithInternalAndExternalState.SideEffectItem(4), awaitItem())
+            assertEquals(Item.StateItem(InternalState(1)), awaitItem())
+            assertEquals(Item.SideEffectItem(3), awaitItem())
+            assertEquals(Item.StateItem(InternalState(2)), awaitItem())
+            assertEquals(Item.SideEffectItem(4), awaitItem())
         }
     }
 
@@ -117,10 +118,10 @@ class ItemsWithExternalStateTest {
             containerHost.newState(state2)
             containerHost.newSideEffect(sideEffect2)
 
-            assertEquals(ItemWithInternalAndExternalState.ExternalStateItem(ExternalState("1")), awaitItem())
-            assertEquals(ItemWithInternalAndExternalState.SideEffectItem(3), awaitItem())
-            assertEquals(ItemWithInternalAndExternalState.ExternalStateItem(ExternalState("2")), awaitItem())
-            assertEquals(ItemWithInternalAndExternalState.SideEffectItem(4), awaitItem())
+            assertEquals(Item.StateItem(ExternalState("1")), awaitItem())
+            assertEquals(Item.SideEffectItem(3), awaitItem())
+            assertEquals(Item.StateItem(ExternalState("2")), awaitItem())
+            assertEquals(Item.SideEffectItem(4), awaitItem())
         }
     }
 
@@ -137,12 +138,80 @@ class ItemsWithExternalStateTest {
             containerHost.newState(state2)
             containerHost.newSideEffect(sideEffect2)
 
-            assertEquals(ItemWithInternalAndExternalState.InternalStateItem(InternalState(1)), awaitItem())
-            assertEquals(ItemWithInternalAndExternalState.ExternalStateItem(ExternalState("1")), awaitItem())
-            assertEquals(ItemWithInternalAndExternalState.SideEffectItem(3), awaitItem())
-            assertEquals(ItemWithInternalAndExternalState.InternalStateItem(InternalState(2)), awaitItem())
-            assertEquals(ItemWithInternalAndExternalState.ExternalStateItem(ExternalState("2")), awaitItem())
-            assertEquals(ItemWithInternalAndExternalState.SideEffectItem(4), awaitItem())
+            assertEquals(ItemWithInternalAndExternalState.InternalStateItem(InternalState(1)), awaitRawItem())
+            assertEquals(ItemWithInternalAndExternalState.ExternalStateItem(ExternalState("1")), awaitRawItem())
+            assertEquals(ItemWithInternalAndExternalState.SideEffectItem(3), awaitRawItem())
+            assertEquals(ItemWithInternalAndExternalState.InternalStateItem(InternalState(2)), awaitRawItem())
+            assertEquals(ItemWithInternalAndExternalState.ExternalStateItem(ExternalState("2")), awaitRawItem())
+            assertEquals(ItemWithInternalAndExternalState.SideEffectItem(4), awaitRawItem())
+        }
+    }
+
+    @Test
+    fun internal_items_can_be_drained_until_a_side_effect() = runTest {
+        ItemTestMiddleware(this).testWithInternalState(this) {
+            containerHost.newState(1)
+            containerHost.newState(2)
+            containerHost.newSideEffect(3)
+
+            var latest: InternalState? = null
+            repeat(10) {
+                when (val item = awaitItem()) {
+                    is Item.StateItem -> latest = item.value
+                    is Item.SideEffectItem -> {
+                        assertEquals(3, item.value)
+                        assertEquals(InternalState(2), latest)
+                        return@testWithInternalState
+                    }
+                }
+            }
+            fail("Expected a side effect but none was received")
+        }
+    }
+
+    @Test
+    fun external_items_can_be_drained_until_a_side_effect() = runTest {
+        ItemTestMiddleware(this).testWithExternalState(this) {
+            containerHost.newState(1)
+            containerHost.newState(2)
+            containerHost.newSideEffect(3)
+
+            var latest: ExternalState? = null
+            repeat(10) {
+                when (val item = awaitItem()) {
+                    is Item.StateItem -> latest = item.value
+                    is Item.SideEffectItem -> {
+                        assertEquals(3, item.value)
+                        assertEquals(ExternalState("2"), latest)
+                        return@testWithExternalState
+                    }
+                }
+            }
+            fail("Expected a side effect but none was received")
+        }
+    }
+
+    @Test
+    fun await_item_advances_internal_state_for_relative_assertions() = runTest {
+        ItemTestMiddleware(this).testWithInternalState(this) {
+            containerHost.newState(1)
+            containerHost.newState(2)
+
+            // Consuming a state via awaitItem must advance the baseline used by relative assertions
+            assertEquals(Item.StateItem(InternalState(1)), awaitItem())
+            expectInternalState { copy(count = count + 1) }
+        }
+    }
+
+    @Test
+    fun await_item_advances_external_state_for_relative_assertions() = runTest {
+        ItemTestMiddleware(this).testWithExternalState(this) {
+            containerHost.newState(1)
+            containerHost.newState(2)
+
+            // Consuming a state via awaitItem must advance the baseline used by relative assertions
+            assertEquals(Item.StateItem(ExternalState("1")), awaitItem())
+            expectExternalState { copy(count = (count.toInt() + 1).toString()) }
         }
     }
 

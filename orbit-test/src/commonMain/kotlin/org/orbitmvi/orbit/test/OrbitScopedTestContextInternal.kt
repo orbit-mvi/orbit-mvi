@@ -79,8 +79,28 @@ public class OrbitScopedTestContextInternal<
      * @throws AssertionError if the most recent item was not an internal state.
      */
     public suspend fun awaitInternalState(): INTERNAL_STATE {
-        val item = awaitItem()
+        val item = awaitRawItem()
         return (item as? ItemWithInternalAndExternalState.InternalStateItem)?.value?.also { currentConsumedInternalState = it }
             ?: fail("Expected Internal State but got $item")
+    }
+
+    /**
+     * Return the next item received as either an internal state or a side effect.
+     * This function will suspend if no items have been received.
+     *
+     * Useful when the ordering of states and side effects is not deterministic and you need to
+     * drain items until a particular one arrives. Consuming an internal state advances the state
+     * used for subsequent relative assertions (e.g. [expectInternalState]).
+     */
+    public suspend fun awaitItem(): Item<INTERNAL_STATE, SIDE_EFFECT> {
+        return when (val item = awaitRawItem()) {
+            is ItemWithInternalAndExternalState.InternalStateItem ->
+                Item.StateItem(item.value.also { currentConsumedInternalState = it })
+
+            is ItemWithInternalAndExternalState.SideEffectItem -> Item.SideEffectItem(item.value)
+
+            is ItemWithInternalAndExternalState.ExternalStateItem ->
+                fail("Expected an internal state or side effect but got $item")
+        }
     }
 }

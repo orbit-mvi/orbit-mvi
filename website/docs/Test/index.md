@@ -250,6 +250,41 @@ fun exampleTest() = runTest {
     }
 ```
 
+### Draining items of an unknown type
+
+`awaitState` / `awaitInternalState` / `awaitExternalState` and `awaitSideEffect`
+fail if the next emission isn't the type you asked for. When the ordering of
+states and side effects isn't deterministic - for example several
+`repeatOnSubscription` collectors and a background coroutine all updating state
+while a side effect fires - you can't assert a fixed sequence.
+
+For these cases `awaitItem()` returns the next emission as an `Item`, letting you
+branch on whether it's a state or a side effect. This is handy for draining past
+states until the side effect you care about arrives. Consuming a state via
+`awaitItem()` advances the state used by subsequent relative assertions
+(e.g. `expectState`), just like `awaitState()`.
+
+```kotlin
+@Test
+fun exampleTest() = runTest {
+        ExampleViewModel().testWithInternalState(this) {
+            runOnCreate()
+            containerHost.refresh()
+
+            var latest: State? = null
+            repeat(50) {
+                when (val item = awaitItem()) {
+                    is Item.StateItem -> latest = item.value
+                    is Item.SideEffectItem -> {
+                        assertEquals(SideEffect.ScrollToTop, item.value)
+                        return@testWithInternalState
+                    }
+                }
+            }
+        }
+    }
+```
+
 ### Unfinished intents
 
 Any intents that are still running at the end of the test will cause the test to

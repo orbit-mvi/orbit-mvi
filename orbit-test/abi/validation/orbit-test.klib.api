@@ -28,6 +28,7 @@ final class <#A: kotlin/Any, #B: kotlin/Any, #C: kotlin/Any, #D: org.orbitmvi.or
         final fun <set-currentConsumedExternalState>(#B) // org.orbitmvi.orbit.test/OrbitScopedTestContextExternal.currentConsumedExternalState.<set-currentConsumedExternalState>|<set-currentConsumedExternalState>(1:1){}[0]
 
     final suspend fun awaitExternalState(): #B // org.orbitmvi.orbit.test/OrbitScopedTestContextExternal.awaitExternalState|awaitExternalState(){}[0]
+    final suspend fun awaitItem(): org.orbitmvi.orbit.test/Item<#B, #C> // org.orbitmvi.orbit.test/OrbitScopedTestContextExternal.awaitItem|awaitItem(){}[0]
     final suspend fun expectExternalState(#B) // org.orbitmvi.orbit.test/OrbitScopedTestContextExternal.expectExternalState|expectExternalState(1:1){}[0]
     final suspend fun expectExternalState(kotlin/Function1<#B, #B>) // org.orbitmvi.orbit.test/OrbitScopedTestContextExternal.expectExternalState|expectExternalState(kotlin.Function1<1:1,1:1>){}[0]
     final suspend inline fun <#A1: reified #B> expectExternalStateOn(kotlin/Function1<#A1, #B>) // org.orbitmvi.orbit.test/OrbitScopedTestContextExternal.expectExternalStateOn|expectExternalStateOn(kotlin.Function1<0:0,1:1>){0§<1:1>}[0]
@@ -41,6 +42,7 @@ final class <#A: kotlin/Any, #B: kotlin/Any, #C: kotlin/Any, #D: org.orbitmvi.or
         final fun <set-currentConsumedInternalState>(#A) // org.orbitmvi.orbit.test/OrbitScopedTestContextInternal.currentConsumedInternalState.<set-currentConsumedInternalState>|<set-currentConsumedInternalState>(1:0){}[0]
 
     final suspend fun awaitInternalState(): #A // org.orbitmvi.orbit.test/OrbitScopedTestContextInternal.awaitInternalState|awaitInternalState(){}[0]
+    final suspend fun awaitItem(): org.orbitmvi.orbit.test/Item<#A, #C> // org.orbitmvi.orbit.test/OrbitScopedTestContextInternal.awaitItem|awaitItem(){}[0]
     final suspend fun expectInternalState(#A) // org.orbitmvi.orbit.test/OrbitScopedTestContextInternal.expectInternalState|expectInternalState(1:0){}[0]
     final suspend fun expectInternalState(kotlin/Function1<#A, #A>) // org.orbitmvi.orbit.test/OrbitScopedTestContextInternal.expectInternalState|expectInternalState(kotlin.Function1<1:0,1:0>){}[0]
     final suspend inline fun <#A1: reified #A> expectInternalStateOn(kotlin/Function1<#A1, #A>) // org.orbitmvi.orbit.test/OrbitScopedTestContextInternal.expectInternalStateOn|expectInternalStateOn(kotlin.Function1<0:0,1:0>){0§<1:0>}[0]
