@@ -20,6 +20,7 @@
 
 package org.orbitmvi.orbit.internal
 
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CompletableJob
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
@@ -132,6 +133,7 @@ public class RealContainer<INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFE
                             intentLaunchingDispatcher
                     launch(exceptionHandlerContext) {
                         runCatching { pluginContext.intent() }.onFailure { e ->
+                            if (e is CancellationException) throw e
                             settings.exceptionHandler?.handleException(coroutineContext, e) ?: throw e
                         }
                     }.invokeOnCompletion { job.complete() }
