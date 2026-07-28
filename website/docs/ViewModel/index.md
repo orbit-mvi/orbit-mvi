@@ -41,11 +41,16 @@ container.
 ```kotlin
 class ExampleViewModel : OrbitContainerHost<ExampleState, ExampleState, Nothing>, ViewModel() {
 
-    override val container = orbitContainer<ExampleState, Nothing>(ExampleState())
+    override val container = orbitContainer(ExampleState())
 
     ...
 }
 ```
+
+When the `ViewModel` implements
+[OrbitContainerHost](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-orbit-container-host/),
+the state and side effect types are inferred from the class declaration, so no
+type arguments are needed at the call site.
 
 ## Saved state functionality with Kotlinx Serialization (Multiplatform)
 
@@ -70,7 +75,7 @@ data class ExampleState(
 // Pass the SavedStateHandle and serializer to your ViewModel
 class ExampleViewModel(savedStateHandle: SavedStateHandle) : OrbitContainerHost<ExampleState, ExampleState, Nothing>, ViewModel() {
 
-    override val container = orbitContainer<ExampleState, Nothing>(
+    override val container = orbitContainer(
         initialState = ExampleState(),
         savedStateHandle = savedStateHandle,
         serializer = ExampleState.serializer()
@@ -105,7 +110,7 @@ data class ExampleState(
 // Pass the SavedStateHandle to your ViewModel
 class ExampleViewModel(savedStateHandle: SavedStateHandle) : OrbitContainerHost<ExampleState, ExampleState, Nothing>, ViewModel() {
 
-    override val container = orbitContainer<ExampleState, Nothing>(
+    override val container = orbitContainer(
         initialState = ExampleState(),
         savedStateHandle = savedStateHandle
     )
