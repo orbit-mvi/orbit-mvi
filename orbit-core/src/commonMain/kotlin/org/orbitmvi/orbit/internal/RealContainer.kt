@@ -20,6 +20,7 @@
 
 package org.orbitmvi.orbit.internal
 
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CompletableJob
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
@@ -41,13 +42,21 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
 import org.orbitmvi.orbit.OrbitContainer
 import org.orbitmvi.orbit.RealSettings
+import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.internal.repeatonsubscription.DelayingSubscribedCounter
 import org.orbitmvi.orbit.internal.repeatonsubscription.SubscribedCounter
 import org.orbitmvi.orbit.internal.repeatonsubscription.refCount
+import org.orbitmvi.orbit.observer.ContainerInfo
+import org.orbitmvi.orbit.observer.IntentResult
+import org.orbitmvi.orbit.observer.OrbitEventObserver
 import org.orbitmvi.orbit.syntax.ContainerContext
 import kotlin.concurrent.atomics.AtomicBoolean
 import kotlin.concurrent.atomics.AtomicInt
+import kotlin.concurrent.atomics.AtomicLong
+import kotlin.concurrent.atomics.AtomicReference
 import kotlin.concurrent.atomics.fetchAndIncrement
+import kotlin.coroutines.CoroutineContext
+import kotlin.coroutines.coroutineContext
 
 public class RealContainer<INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : Any>(
     initialState: INTERNAL_STATE,
@@ -60,9 +69,18 @@ public class RealContainer<INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFE
 
     // Resolved once per container so limitedParallelism views are scoped to the container, not to each intent
     private val intentLaunchingDispatcher = settings.intentLaunchingDispatcher()
+    private val eventObserver: OrbitEventObserver? = settings.eventObserver
+
+    /**
+     * Identifies this container in [OrbitEventObserver] callbacks. Unique for the lifetime of
+     * the process.
+     */
+    @OrbitExperimental
+    public val containerId: Long = containerIdCounter.fetchAndIncrement()
+
     private val intentJob = Job(scope.coroutineContext[Job])
     private val dispatchChannel =
-        Channel<Pair<CompletableJob, suspend ContainerContext<INTERNAL_STATE, SIDE_EFFECT>.() -> Unit>>(
+        Channel<IntentDispatch<INTERNAL_STATE, SIDE_EFFECT>>(
             Channel.UNLIMITED
         )
     private val initialised = AtomicBoolean(false)
@@ -96,17 +114,31 @@ public class RealContainer<INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFE
 
     internal val pluginContext: ContainerContext<INTERNAL_STATE, SIDE_EFFECT> = ContainerContext(
         settings = settings,
-        postSideEffect = sideEffectProvider::postSideEffect,
-        reduce = { reducer -> internalStateFlow.update(reducer) },
+        postSideEffect = if (eventObserver == null) {
+            sideEffectProvider::postSideEffect
+        } else {
+            { sideEffect ->
+                eventObserver.onSideEffect(containerId, currentIntentId(), sideEffect)
+                sideEffectProvider.postSideEffect(sideEffect)
+            }
+        },
+        reduce = if (eventObserver == null) {
+            { reducer -> internalStateFlow.update(reducer) }
+        } else {
+            { reducer -> observedReduce(eventObserver, reducer) }
+        },
         subscribedCounter = subscribedCounter,
         stateFlow = stateFlow,
     )
 
-    override fun orbit(orbitIntent: suspend ContainerContext<INTERNAL_STATE, SIDE_EFFECT>.() -> Unit): Job {
+    override fun orbit(orbitIntent: suspend ContainerContext<INTERNAL_STATE, SIDE_EFFECT>.() -> Unit): Job =
+        orbit(null, orbitIntent)
+
+    override fun orbit(name: String?, orbitIntent: suspend ContainerContext<INTERNAL_STATE, SIDE_EFFECT>.() -> Unit): Job {
         initialiseIfNeeded()
 
         val job = Job(intentJob)
-        dispatchChannel.trySend(job to orbitIntent)
+        dispatchChannel.trySend(IntentDispatch(job, name, orbitIntent))
         return job
     }
 
@@ -125,16 +157,21 @@ public class RealContainer<INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFE
             }
 
             scope.launch(CoroutineName(COROUTINE_NAME_EVENT_LOOP)) {
-                for ((job, intent) in dispatchChannel) {
+                for (dispatch in dispatchChannel) {
+                    val intentId = intentCounter.fetchAndIncrement()
                     val exceptionHandlerContext =
-                        CoroutineName("$COROUTINE_NAME_INTENT${intentCounter.fetchAndIncrement()}") +
-                            job +
+                        CoroutineName("$COROUTINE_NAME_INTENT$intentId") +
+                            dispatch.job +
                             intentLaunchingDispatcher
-                    launch(exceptionHandlerContext) {
-                        runCatching { pluginContext.intent() }.onFailure { e ->
-                            settings.exceptionHandler?.handleException(coroutineContext, e) ?: throw e
-                        }
-                    }.invokeOnCompletion { job.complete() }
+                    if (eventObserver == null) {
+                        launch(exceptionHandlerContext) {
+                            runCatching { dispatch.orbitIntent(pluginContext) }.onFailure { e ->
+                                settings.exceptionHandler?.handleException(coroutineContext, e) ?: throw e
+                            }
+                        }.invokeOnCompletion { dispatch.job.complete() }
+                    } else {
+                        launchObserved(eventObserver, intentId.toLong(), exceptionHandlerContext, dispatch)
+                    }
                 }
             }
 
@@ -144,12 +181,68 @@ public class RealContainer<INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFE
         }
     }
 
+    private fun CoroutineScope.launchObserved(
+        observer: OrbitEventObserver,
+        intentId: Long,
+        context: CoroutineContext,
+        dispatch: IntentDispatch<INTERNAL_STATE, SIDE_EFFECT>
+    ) {
+        observer.onIntentDispatched(containerId, intentId, dispatch.name)
+        // Records a failure consumed by the exception handler, which invokeOnCompletion cannot see
+        val failure = AtomicReference<Throwable?>(null)
+        launch(context + OrbitIntentElement(containerId, intentId, dispatch.name)) {
+            runCatching { dispatch.orbitIntent(pluginContext) }.onFailure { e ->
+                failure.store(e)
+                settings.exceptionHandler?.handleException(coroutineContext, e) ?: throw e
+            }
+        }.invokeOnCompletion { cause ->
+            val e = failure.load() ?: cause
+            val result = when {
+                e == null -> IntentResult.Completed
+                e is CancellationException -> IntentResult.Cancelled
+                else -> IntentResult.Failed(e)
+            }
+            observer.onIntentCompleted(containerId, intentId, result)
+            dispatch.job.complete()
+        }
+    }
+
+    private suspend fun observedReduce(observer: OrbitEventObserver, reducer: (INTERNAL_STATE) -> INTERNAL_STATE) {
+        var oldState = internalStateFlow.value
+        var newState = oldState
+        internalStateFlow.update { current ->
+            reducer(current).also {
+                // The last execution before update returns is the one whose CAS won
+                oldState = current
+                newState = it
+            }
+        }
+        observer.onReduction(containerId, currentIntentId(), oldState, newState)
+    }
+
+    private suspend fun currentIntentId(): Long? =
+        coroutineContext[OrbitIntentElement]?.takeIf { it.containerId == containerId }?.intentId
+
+    init {
+        if (eventObserver != null) {
+            eventObserver.onContainerCreated(ContainerInfo(containerId, settings.containerName, initialState))
+            scope.coroutineContext[Job]?.invokeOnCompletion { eventObserver.onContainerClosed(containerId) }
+        }
+    }
+
     private companion object {
         private const val COROUTINE_NAME_EVENT_LOOP = "orbit-event-loop"
         private const val COROUTINE_NAME_INTENT = "orbit-intent-"
         private const val COROUTINE_NAME_REPLAY_CACHE_CLEAR = "orbit-replay-cache-clear"
+        private val containerIdCounter = AtomicLong(0L)
     }
 }
+
+private class IntentDispatch<S : Any, SE : Any>(
+    val job: CompletableJob,
+    val name: String?,
+    val orbitIntent: suspend ContainerContext<S, SE>.() -> Unit,
+)
 
 @OptIn(ExperimentalForInheritanceCoroutinesApi::class)
 internal class MappedStateFlow<T : Any, U : Any>(

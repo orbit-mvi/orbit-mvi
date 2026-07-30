@@ -32,6 +32,7 @@ import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
 import org.orbitmvi.orbit.OrbitContainerHost
 import org.orbitmvi.orbit.RealSettings
+import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.internal.RealContainer
 import kotlin.random.Random
 import kotlin.test.AfterTest
@@ -39,7 +40,7 @@ import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-@OptIn(ExperimentalTestApi::class)
+@OptIn(ExperimentalTestApi::class, OrbitExperimental::class)
 @ExperimentalCoroutinesApi
 class ContainerHostExtensionsKtTest : RobolectricTest() {
 

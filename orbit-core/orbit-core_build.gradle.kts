@@ -89,6 +89,7 @@ kotlin {
         all {
             languageSettings.optIn("kotlin.RequiresOptIn")
             languageSettings.optIn("org.orbitmvi.orbit.annotation.OrbitInternal")
+            languageSettings.optIn("org.orbitmvi.orbit.annotation.OrbitExperimental")
             languageSettings.optIn("kotlin.concurrent.atomics.ExperimentalAtomicApi")
         }
 

@@ -24,6 +24,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
+import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.syntax.ContainerContext
 import org.orbitmvi.orbit.syntax.Syntax
 
@@ -114,6 +115,19 @@ public interface OrbitContainer<INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE
      * @param orbitIntent lambda returning the suspend function representing the intent
      */
     public fun orbit(orbitIntent: suspend ContainerContext<INTERNAL_STATE, SIDE_EFFECT>.() -> Unit): Job
+
+    /**
+     * Executes an orbit intent, associating a display [name] with it for reporting via
+     * [org.orbitmvi.orbit.observer.OrbitEventObserver].
+     *
+     * The default implementation ignores the name and delegates to [orbit].
+     *
+     * @param name a display name for the intent, or null when unavailable
+     * @param orbitIntent lambda returning the suspend function representing the intent
+     */
+    @OrbitExperimental
+    public fun orbit(name: String?, orbitIntent: suspend ContainerContext<INTERNAL_STATE, SIDE_EFFECT>.() -> Unit): Job =
+        orbit(orbitIntent)
 
     /**
      * Executes an orbit intent inline, circumventing orbit's dispatching.

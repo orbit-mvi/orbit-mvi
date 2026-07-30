@@ -64,13 +64,14 @@ public fun <INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : Any> Corou
     buildSettings: SettingsBuilder.() -> Unit = {},
     onCreate: (suspend Syntax<INTERNAL_STATE, SIDE_EFFECT>.() -> Unit)? = null
 ): OrbitContainer<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT> {
+    val settings = SettingsBuilder().apply { buildSettings() }.settings
     val realContainer = RealContainer<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>(
         initialState = initialState,
-        settings = SettingsBuilder().apply { buildSettings() }.settings,
+        settings = settings,
         parentScope = this,
         transformState = transformState
     )
-    return if (onCreate == null) {
+    val container = if (onCreate == null) {
         TestContainerDecorator(
             initialState,
             realContainer,
@@ -85,6 +86,7 @@ public fun <INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : Any> Corou
             transformState
         )
     }
+    return settings.containerDecoration?.decorate(container) ?: container
 }
 
 /**

@@ -18,6 +18,7 @@ package org.orbitmvi.orbit.test
 
 import kotlinx.coroutines.test.runTest
 import org.orbitmvi.orbit.RealSettings
+import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.annotation.OrbitInternal
 import org.orbitmvi.orbit.internal.LazyCreateContainerDecorator
 import org.orbitmvi.orbit.internal.RealContainer
@@ -27,7 +28,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
-@OptIn(OrbitInternal::class)
+@OptIn(OrbitInternal::class, OrbitExperimental::class)
 class ContainerExtTest {
 
     @Test

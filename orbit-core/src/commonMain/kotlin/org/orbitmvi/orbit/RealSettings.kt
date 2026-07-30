@@ -22,6 +22,7 @@ import kotlinx.coroutines.channels.Channel
 import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.idling.IdlingResource
 import org.orbitmvi.orbit.idling.NoopIdlingResource
+import org.orbitmvi.orbit.observer.OrbitEventObserver
 
 /**
  * Controls how side effects are delivered to collectors.
@@ -60,6 +61,12 @@ public data class RealSettings(
     public val repeatOnSubscribedStopTimeout: Long = 100L,
     public val sideEffectMode: SideEffectMode = SideEffectMode.FAN_OUT,
     public val sideEffectReplayClearDelayMs: Long = 100L,
+    @OrbitExperimental
+    public val containerName: String? = null,
+    @OrbitExperimental
+    public val eventObserver: OrbitEventObserver? = null,
+    @OrbitExperimental
+    public val containerDecoration: ContainerDecoration? = null,
 )
 
 public class SettingsBuilder internal constructor(baseline: RealSettings) {
@@ -125,5 +132,43 @@ public class SettingsBuilder internal constructor(baseline: RealSettings) {
         get() = settings.sideEffectReplayClearDelayMs
         public set(value) {
             settings = settings.copy(sideEffectReplayClearDelayMs = value)
+        }
+
+    /**
+     * A human-readable display name for the container, reported to the installed
+     * [org.orbitmvi.orbit.observer.OrbitEventObserver]. Names are display-only and need not
+     * be unique. Defaults to `null`.
+     */
+    @OrbitExperimental
+    public var containerName: String?
+        get() = settings.containerName
+        public set(value) {
+            settings = settings.copy(containerName = value)
+        }
+
+    /**
+     * Observes container lifecycle events for diagnostic purposes. When `null` (the default)
+     * containers skip all instrumentation.
+     *
+     * See [org.orbitmvi.orbit.observer.OrbitEventObserver] for the threading contract.
+     */
+    @OrbitExperimental
+    public var eventObserver: OrbitEventObserver?
+        get() = settings.eventObserver
+        public set(value) {
+            settings = settings.copy(eventObserver = value)
+        }
+
+    /**
+     * Decorates every container created through [kotlinx.coroutines.CoroutineScope.orbitContainer].
+     * When `null` (the default) containers are returned undecorated.
+     *
+     * See [ContainerDecoration].
+     */
+    @OrbitExperimental
+    public var containerDecoration: ContainerDecoration?
+        get() = settings.containerDecoration
+        public set(value) {
+            settings = settings.copy(containerDecoration = value)
         }
 }

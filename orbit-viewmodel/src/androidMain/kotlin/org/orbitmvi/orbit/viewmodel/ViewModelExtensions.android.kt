@@ -83,7 +83,7 @@ public fun <INTERNAL_STATE : Parcelable, EXTERNAL_STATE : Any, SIDE_EFFECT : Any
     val state = savedState ?: initialState
 
     val realContainer: OrbitContainer<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT> =
-        viewModelScope.orbitContainer(state, transformState, buildSettings, onCreate)
+        viewModelScope.orbitContainer(state, transformState, withDefaultContainerName(buildSettings), onCreate)
 
     return SavedStateContainerDecoratorParcelable(
         realContainer,

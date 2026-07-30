@@ -23,18 +23,29 @@ package org.orbitmvi.orbit.syntax
 import kotlinx.coroutines.Job
 import org.orbitmvi.orbit.OrbitContainer
 import org.orbitmvi.orbit.idling.withIdling
+import org.orbitmvi.orbit.observer.intentNameOf
 
 /**
  * Build and execute an intent on [OrbitContainer].
  *
  * @param registerIdling whether to register an idling resource when executing this intent. Defaults to true.
+ * @param name a display name for the intent, reported via [org.orbitmvi.orbit.observer.OrbitEventObserver]
  * @param transformer lambda representing the transformer
  */
 internal fun <INTERNAL_STATE : Any, SIDE_EFFECT : Any> OrbitContainer<INTERNAL_STATE, *, SIDE_EFFECT>.intent(
     registerIdling: Boolean = true,
+    name: String? = null,
     transformer: suspend ContainerContext<INTERNAL_STATE, SIDE_EFFECT>.() -> Unit
-): Job = orbit {
+): Job = orbit(name) {
     withIdling(registerIdling) {
         transformer()
     }
 }
+
+/**
+ * Resolves a display name for [transformer], but only when an
+ * [org.orbitmvi.orbit.observer.OrbitEventObserver] is installed — the unobserved path must not
+ * pay for name resolution.
+ */
+internal fun OrbitContainer<*, *, *>.intentNameOrNull(transformer: Any): String? =
+    if (settings.eventObserver != null) intentNameOf(transformer) else null

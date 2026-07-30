@@ -25,6 +25,7 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.syntax.Syntax
 import org.orbitmvi.orbit.syntax.intent
+import org.orbitmvi.orbit.syntax.intentNameOrNull
 
 /**
  * Apply this interface to anything you want to become an orbit container host.
@@ -60,7 +61,7 @@ public interface OrbitContainerHost<INTERNAL_STATE : Any, EXTERNAL_STATE : Any, 
     public fun intent(
         registerIdling: Boolean = true,
         transformer: suspend Syntax<INTERNAL_STATE, SIDE_EFFECT>.() -> Unit
-    ): Job = container.intent(registerIdling) { Syntax(this).transformer() }
+    ): Job = container.intent(registerIdling, container.intentNameOrNull(transformer)) { Syntax(this).transformer() }
 
     /**
      * Used for parallel decomposition or subdivision of a larger intent into smaller parts.
