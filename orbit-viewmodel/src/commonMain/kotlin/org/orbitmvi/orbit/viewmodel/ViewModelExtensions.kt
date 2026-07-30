@@ -46,7 +46,7 @@ public fun <STATE : Any, SIDE_EFFECT : Any> ViewModel.orbitContainer(
     buildSettings: SettingsBuilder.() -> Unit = {},
     onCreate: (suspend Syntax<STATE, SIDE_EFFECT>.() -> Unit)? = null
 ): OrbitContainer<STATE, STATE, SIDE_EFFECT> {
-    return viewModelScope.orbitContainer(initialState, buildSettings, onCreate)
+    return viewModelScope.orbitContainer(initialState, withDefaultContainerName(buildSettings), onCreate)
 }
 
 /**
@@ -64,7 +64,7 @@ public fun <INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : Any> ViewM
     buildSettings: SettingsBuilder.() -> Unit = {},
     onCreate: (suspend Syntax<INTERNAL_STATE, SIDE_EFFECT>.() -> Unit)? = null
 ): OrbitContainer<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT> {
-    return viewModelScope.orbitContainer(initialState, transformState, buildSettings, onCreate)
+    return viewModelScope.orbitContainer(initialState, transformState, withDefaultContainerName(buildSettings), onCreate)
 }
 
 /**
@@ -133,7 +133,7 @@ public fun <INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : Any> ViewM
     val state = savedState ?: initialState
 
     val realContainer: OrbitContainer<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT> =
-        viewModelScope.orbitContainer(state, transformState, buildSettings, onCreate)
+        viewModelScope.orbitContainer(state, transformState, withDefaultContainerName(buildSettings), onCreate)
 
     return SavedStateContainerDecorator(
         realContainer,

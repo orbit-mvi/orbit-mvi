@@ -24,6 +24,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
+import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.syntax.ContainerContext
 
 /**
@@ -62,6 +63,11 @@ public interface OrbitContainerDecorator<INTERNAL_STATE : Any, EXTERNAL_STATE : 
 
     override fun orbit(orbitIntent: suspend ContainerContext<INTERNAL_STATE, SIDE_EFFECT>.() -> Unit): Job {
         return actual.orbit(orbitIntent)
+    }
+
+    @OrbitExperimental
+    override fun orbit(name: String?, orbitIntent: suspend ContainerContext<INTERNAL_STATE, SIDE_EFFECT>.() -> Unit): Job {
+        return actual.orbit(name, orbitIntent)
     }
 
     override suspend fun inlineOrbit(orbitIntent: suspend ContainerContext<INTERNAL_STATE, SIDE_EFFECT>.() -> Unit) {

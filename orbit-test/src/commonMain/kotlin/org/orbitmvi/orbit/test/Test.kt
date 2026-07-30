@@ -28,6 +28,7 @@ import kotlinx.coroutines.test.runTest
 import org.orbitmvi.orbit.OrbitContainer
 import org.orbitmvi.orbit.OrbitContainerHost
 import org.orbitmvi.orbit.RealSettings
+import org.orbitmvi.orbit.annotation.OrbitExperimental
 import kotlin.coroutines.ContinuationInterceptor
 import kotlin.test.assertEquals
 import kotlin.time.Duration
@@ -106,6 +107,8 @@ public suspend fun <STATE : Any, SIDE_EFFECT : Any, CONTAINER_HOST : OrbitContai
     }
 }
 
+// RealSettings' constructor mentions @OrbitExperimental observer types in its signature
+@OptIn(OrbitExperimental::class)
 internal fun createRealSettings(testDispatcher: CoroutineDispatcher?, testExceptionHandler: CoroutineExceptionHandler?): RealSettings {
     val dispatcher = testDispatcher ?: StandardTestDispatcher()
 
