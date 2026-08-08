@@ -18,9 +18,7 @@ package org.orbitmvi.orbit.test
 
 import app.cash.turbine.ReceiveTurbine
 import app.cash.turbine.test
-import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.test.TestScope
@@ -64,15 +62,8 @@ public suspend fun <INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : An
     val testDispatcher =
         settings.dispatcherOverride ?: testScope.backgroundScope.coroutineContext[ContinuationInterceptor.Key] as? CoroutineDispatcher
 
-    var caughtException: Throwable? = null
-
-    val testExceptionHandler = settings.exceptionHandlerOverride
-        ?: containerHost.container.settings.exceptionHandler
-        ?: CoroutineExceptionHandler { _, exception ->
-            if (exception !is CancellationException) {
-                caughtException = exception
-            }
-        }
+    val exceptionCatcher = OrbitTestExceptionCatcher()
+    val testExceptionHandler = exceptionCatcher.resolveHandler(settings, containerHost.container.settings.exceptionHandler)
 
     container.findTestContainer().test(
         initialState = initialState,
@@ -83,31 +74,33 @@ public suspend fun <INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : An
     val resolvedInitialState: INTERNAL_STATE =
         initialState ?: containerHost.container.findTestContainer().originalInitialState
 
-    buildList {
-        add(
-            container.stateFlow
-                .map<INTERNAL_STATE, ItemWithInternalAndExternalState<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>> {
-                    InternalStateItem(it)
-                }
-        )
+    exceptionCatcher.runFailingFast {
+        buildList {
+            add(
+                container.stateFlow
+                    .map<INTERNAL_STATE, ItemWithInternalAndExternalState<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>> {
+                        InternalStateItem(it)
+                    }
+            )
 
-        add(
-            container.sideEffectFlow
-                .map<SIDE_EFFECT, ItemWithInternalAndExternalState<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>> { SideEffectItem(it) }
-        )
-    }.merge().test(timeout = timeout) {
-        OrbitScopedTestContextInternal(
-            containerHost,
-            resolvedInitialState,
-            this as ReceiveTurbine<ItemWithInternalAndExternalState<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>>,
-        ).apply {
-            if (settings.autoCheckInitialState) {
-                assertEquals(resolvedInitialState, awaitInternalState())
-            }
-            validate(this)
-            caughtException?.let { throw it }
-            withAppropriateTimeout(timeout ?: 1.seconds) {
-                container.findTestContainer().joinIntents()
+            add(
+                container.sideEffectFlow
+                    .map<SIDE_EFFECT, ItemWithInternalAndExternalState<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>> { SideEffectItem(it) }
+            )
+        }.merge().test(timeout = timeout) {
+            OrbitScopedTestContextInternal(
+                containerHost,
+                resolvedInitialState,
+                this as ReceiveTurbine<ItemWithInternalAndExternalState<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>>,
+            ).apply {
+                if (settings.autoCheckInitialState) {
+                    assertEquals(resolvedInitialState, awaitInternalState())
+                }
+                validate(this)
+                exceptionCatcher.caughtException?.let { throw it }
+                withAppropriateTimeout(timeout ?: 1.seconds) {
+                    container.findTestContainer().joinIntents()
+                }
             }
         }
     }
@@ -127,15 +120,8 @@ public suspend fun <INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : An
     val testDispatcher =
         settings.dispatcherOverride ?: testScope.backgroundScope.coroutineContext[ContinuationInterceptor.Key] as? CoroutineDispatcher
 
-    var caughtException: Throwable? = null
-
-    val testExceptionHandler = settings.exceptionHandlerOverride
-        ?: containerHost.container.settings.exceptionHandler
-        ?: CoroutineExceptionHandler { _, exception ->
-            if (exception !is CancellationException) {
-                caughtException = exception
-            }
-        }
+    val exceptionCatcher = OrbitTestExceptionCatcher()
+    val testExceptionHandler = exceptionCatcher.resolveHandler(settings, containerHost.container.settings.exceptionHandler)
 
     container.findTestContainer().test(
         initialState = initialState,
@@ -146,31 +132,33 @@ public suspend fun <INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : An
     val resolvedInitialState: INTERNAL_STATE =
         initialState ?: containerHost.container.findTestContainer().originalInitialState
 
-    buildList {
-        add(
-            container.externalStateFlow
-                .map<EXTERNAL_STATE, ItemWithInternalAndExternalState<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>> {
-                    ExternalStateItem(it)
-                }
-        )
+    exceptionCatcher.runFailingFast {
+        buildList {
+            add(
+                container.externalStateFlow
+                    .map<EXTERNAL_STATE, ItemWithInternalAndExternalState<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>> {
+                        ExternalStateItem(it)
+                    }
+            )
 
-        add(
-            container.sideEffectFlow
-                .map<SIDE_EFFECT, ItemWithInternalAndExternalState<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>> { SideEffectItem(it) }
-        )
-    }.merge().test(timeout = timeout) {
-        OrbitScopedTestContextExternal(
-            containerHost,
-            resolvedInitialState,
-            this as ReceiveTurbine<ItemWithInternalAndExternalState<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>>,
-        ).apply {
-            if (settings.autoCheckInitialState) {
-                assertEquals(container.findTransformState()(resolvedInitialState), awaitExternalState())
-            }
-            validate(this)
-            caughtException?.let { throw it }
-            withAppropriateTimeout(timeout ?: 1.seconds) {
-                container.findTestContainer().joinIntents()
+            add(
+                container.sideEffectFlow
+                    .map<SIDE_EFFECT, ItemWithInternalAndExternalState<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>> { SideEffectItem(it) }
+            )
+        }.merge().test(timeout = timeout) {
+            OrbitScopedTestContextExternal(
+                containerHost,
+                resolvedInitialState,
+                this as ReceiveTurbine<ItemWithInternalAndExternalState<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>>,
+            ).apply {
+                if (settings.autoCheckInitialState) {
+                    assertEquals(container.findTransformState()(resolvedInitialState), awaitExternalState())
+                }
+                validate(this)
+                exceptionCatcher.caughtException?.let { throw it }
+                withAppropriateTimeout(timeout ?: 1.seconds) {
+                    container.findTestContainer().joinIntents()
+                }
             }
         }
     }
@@ -190,15 +178,8 @@ public suspend fun <INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : An
     val testDispatcher =
         settings.dispatcherOverride ?: testScope.backgroundScope.coroutineContext[ContinuationInterceptor.Key] as? CoroutineDispatcher
 
-    var caughtException: Throwable? = null
-
-    val testExceptionHandler = settings.exceptionHandlerOverride
-        ?: containerHost.container.settings.exceptionHandler
-        ?: CoroutineExceptionHandler { _, exception ->
-            if (exception !is CancellationException) {
-                caughtException = exception
-            }
-        }
+    val exceptionCatcher = OrbitTestExceptionCatcher()
+    val testExceptionHandler = exceptionCatcher.resolveHandler(settings, containerHost.container.settings.exceptionHandler)
 
     container.findTestContainer().test(
         initialState = initialState,
@@ -209,37 +190,39 @@ public suspend fun <INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : An
     val resolvedInitialState: INTERNAL_STATE =
         initialState ?: containerHost.container.findTestContainer().originalInitialState
 
-    buildList {
-        add(
-            container.stateFlow
-                .map<INTERNAL_STATE, ItemWithInternalAndExternalState<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>> {
-                    InternalStateItem(it)
+    exceptionCatcher.runFailingFast {
+        buildList {
+            add(
+                container.stateFlow
+                    .map<INTERNAL_STATE, ItemWithInternalAndExternalState<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>> {
+                        InternalStateItem(it)
+                    }
+            )
+            add(
+                container.externalStateFlow
+                    .map<EXTERNAL_STATE, ItemWithInternalAndExternalState<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>> {
+                        ExternalStateItem(it)
+                    }
+            )
+            add(
+                container.sideEffectFlow
+                    .map<SIDE_EFFECT, ItemWithInternalAndExternalState<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>> { SideEffectItem(it) }
+            )
+        }.merge().test(timeout = timeout) {
+            OrbitScopedTestContextInternalAndExternal(
+                containerHost,
+                resolvedInitialState,
+                this as ReceiveTurbine<ItemWithInternalAndExternalState<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>>,
+            ).apply {
+                if (settings.autoCheckInitialState) {
+                    assertEquals(resolvedInitialState, awaitInternalState())
+                    assertEquals(container.findTransformState()(resolvedInitialState), awaitExternalState())
                 }
-        )
-        add(
-            container.externalStateFlow
-                .map<EXTERNAL_STATE, ItemWithInternalAndExternalState<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>> {
-                    ExternalStateItem(it)
+                validate(this)
+                exceptionCatcher.caughtException?.let { throw it }
+                withAppropriateTimeout(timeout ?: 1.seconds) {
+                    container.findTestContainer().joinIntents()
                 }
-        )
-        add(
-            container.sideEffectFlow
-                .map<SIDE_EFFECT, ItemWithInternalAndExternalState<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>> { SideEffectItem(it) }
-        )
-    }.merge().test(timeout = timeout) {
-        OrbitScopedTestContextInternalAndExternal(
-            containerHost,
-            resolvedInitialState,
-            this as ReceiveTurbine<ItemWithInternalAndExternalState<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>>,
-        ).apply {
-            if (settings.autoCheckInitialState) {
-                assertEquals(resolvedInitialState, awaitInternalState())
-                assertEquals(container.findTransformState()(resolvedInitialState), awaitExternalState())
-            }
-            validate(this)
-            caughtException?.let { throw it }
-            withAppropriateTimeout(timeout ?: 1.seconds) {
-                container.findTestContainer().joinIntents()
             }
         }
     }
