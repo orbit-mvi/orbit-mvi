@@ -27,7 +27,9 @@ public suspend fun <STATE : Any, SIDE_EFFECT : Any> ContainerContext<STATE, SIDE
     block: suspend ContainerContext<STATE, SIDE_EFFECT>.() -> Unit
 ) {
     if (registerIdling) settings.idlingRegistry.increment()
-    return block().also {
+    return try {
+        block()
+    } finally {
         if (registerIdling) settings.idlingRegistry.decrement()
     }
 }

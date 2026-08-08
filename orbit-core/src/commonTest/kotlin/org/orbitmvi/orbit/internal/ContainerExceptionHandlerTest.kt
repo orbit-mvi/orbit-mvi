@@ -17,6 +17,7 @@
 package org.orbitmvi.orbit.internal
 
 import app.cash.turbine.test
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -92,6 +93,36 @@ internal class ContainerExceptionHandlerTest {
                 cancel()
             }
             cancelAndIgnoreRemainingItems()
+        }
+    }
+
+    @Test
+    fun cancellation_exception_thrown_inside_intent_is_not_forwarded_to_handler() = runTest {
+        val exceptions = Channel<Throwable>(capacity = Channel.BUFFERED)
+        val exceptionHandler = CoroutineExceptionHandler { _, throwable -> exceptions.trySend(throwable) }
+
+        val container = backgroundScope.orbitContainer<Int, Nothing>(
+            initialState = Random.nextInt(),
+            buildSettings = {
+                this.exceptionHandler = exceptionHandler
+            }
+        )
+
+        // A CancellationException raised inside an intent must be re-thrown to honour structured
+        // concurrency, not swallowed by being routed through the exception handler.
+        container.orbit {
+            throw CancellationException("cancelled inside intent")
+        }.join()
+
+        // A genuine failure raised afterwards must still reach the handler. As it arrives second,
+        // observing it first proves the CancellationException was never forwarded.
+        container.orbit {
+            throw IllegalStateException()
+        }.join()
+
+        exceptions.consumeAsFlow().test {
+            assertIs<IllegalStateException>(awaitItem())
+            cancel()
         }
     }
 

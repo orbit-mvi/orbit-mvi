@@ -31,7 +31,9 @@ public suspend fun <O : Operator<*, *>, T> ContainerContext<*, *>.withIdling(
     block: suspend O.() -> T
 ): T {
     if (operator.registerIdling) settings.idlingRegistry.increment()
-    return block(operator).also {
+    return try {
+        block(operator)
+    } finally {
         if (operator.registerIdling) settings.idlingRegistry.decrement()
     }
 }
