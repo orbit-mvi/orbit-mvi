@@ -55,15 +55,16 @@ private suspend fun <T> withWallClockTimeout(
     @OptIn(DelicateCoroutinesApi::class)
     val timeoutJob = GlobalScope.launch(Dispatchers.Default) { delay(timeout) }
 
-    select {
-        blockDeferred.onAwait { result ->
-            timeoutJob.cancel()
-            result
+    try {
+        select {
+            blockDeferred.onAwait { result -> result }
+            timeoutJob.onJoin {
+                blockDeferred.cancel()
+                throw OrbitTimeoutCancellationException("Timed out waiting for remaining intents to complete for $timeout")
+            }
         }
-        timeoutJob.onJoin {
-            blockDeferred.cancel()
-            throw OrbitTimeoutCancellationException("Timed out waiting for remaining intents to complete for $timeout")
-        }
+    } finally {
+        timeoutJob.cancel()
     }
 }
 

@@ -20,6 +20,7 @@
 
 package org.orbitmvi.orbit.syntax.simple
 
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -109,12 +110,38 @@ internal class SimpleDslIdlingTest {
         }
     }
 
-    private fun CoroutineScope.createContainerHost(): OrbitContainerHost<TestState, TestState, Int> {
+    @Test
+    fun idle_after_running_when_intent_throws() = runTest {
+        val containerHost = backgroundScope.createContainerHost(
+            exceptionHandler = CoroutineExceptionHandler { _, _ -> }
+        )
+
+        val mutex = Mutex(locked = true)
+
+        containerHost.intent {
+            try {
+                error("boom")
+            } finally {
+                mutex.unlock()
+            }
+        }
+
+        mutex.withLock {
+            assertEventually {
+                assertTrue { testIdlingResource.isIdle() }
+            }
+        }
+    }
+
+    private fun CoroutineScope.createContainerHost(
+        exceptionHandler: CoroutineExceptionHandler? = null
+    ): OrbitContainerHost<TestState, TestState, Int> {
         return object : OrbitContainerHost<TestState, TestState, Int> {
             override val container: OrbitContainer<TestState, TestState, Int> = orbitContainer(
                 initialState = TestState(0),
                 buildSettings = {
                     idlingRegistry = testIdlingResource
+                    this.exceptionHandler = exceptionHandler
                 },
             )
         }
