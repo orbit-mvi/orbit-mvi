@@ -314,6 +314,9 @@ class AndroidIdlingResourceTest {
 
             scope.cancel()
 
+            // Teardown fires when the container scope's job completes (on its event loop dispatcher),
+            // shortly after cancellation rather than synchronously on the cancelling thread.
+            awaitIdlingResourceUnregistration()
             assertEquals(0, IdlingRegistry.getInstance().resources.size)
         }
     }
