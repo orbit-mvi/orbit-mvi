@@ -82,8 +82,28 @@ public class OrbitScopedTestContextExternal<
      * @throws AssertionError if the most recent item was not an external state.
      */
     public suspend fun awaitExternalState(): EXTERNAL_STATE {
-        val item = awaitItem()
+        val item = awaitRawItem()
         return (item as? ItemWithInternalAndExternalState.ExternalStateItem)?.value?.also { currentConsumedExternalState = it }
             ?: fail("Expected External State but got $item")
+    }
+
+    /**
+     * Return the next item received as either an external state or a side effect.
+     * This function will suspend if no items have been received.
+     *
+     * Useful when the ordering of states and side effects is not deterministic and you need to
+     * drain items until a particular one arrives. Consuming an external state advances the state
+     * used for subsequent relative assertions (e.g. [expectExternalState]).
+     */
+    public suspend fun awaitItem(): Item<EXTERNAL_STATE, SIDE_EFFECT> {
+        return when (val item = awaitRawItem()) {
+            is ItemWithInternalAndExternalState.ExternalStateItem ->
+                Item.StateItem(item.value.also { currentConsumedExternalState = it })
+
+            is ItemWithInternalAndExternalState.SideEffectItem -> Item.SideEffectItem(item.value)
+
+            is ItemWithInternalAndExternalState.InternalStateItem ->
+                fail("Expected an external state or side effect but got $item")
+        }
     }
 }

@@ -64,7 +64,7 @@ public abstract class OrbitScopedTestContextBase<
         emissions.expectNoEvents()
     }
 
-    internal suspend fun awaitItem(): ItemWithInternalAndExternalState<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT> {
+    internal suspend fun awaitRawItem(): ItemWithInternalAndExternalState<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT> {
         return emissions.awaitItem()
     }
 
@@ -75,7 +75,7 @@ public abstract class OrbitScopedTestContextBase<
      * @throws AssertionError if the most recent item was not a side effect.
      */
     public suspend fun awaitSideEffect(): SIDE_EFFECT {
-        val item = awaitItem()
+        val item = awaitRawItem()
 
         return (item as? ItemWithInternalAndExternalState.SideEffectItem)?.value ?: fail("Expected Side Effect but got $item")
     }
