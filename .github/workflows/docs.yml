@@ -13,6 +13,12 @@ on:
       - main
       - orbit/main
       - feature/**
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'rsync --dry-run (log changes, upload nothing)'
+        type: boolean
+        default: false
 
 jobs:
   build:
@@ -59,3 +65,41 @@ jobs:
           name: website
           path: |
             website/build
+
+  deploy:
+    name: Deploy to Dreamhost
+    needs: build
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'push' &&
+        (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/')))
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: https://orbit-mvi.org
+    concurrency:
+      group: docs-deploy
+      cancel-in-progress: false
+    steps:
+      - name: Download website artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: website
+          path: website/build
+
+      - name: Set up SSH
+        run: |
+          mkdir -p ~/.ssh
+          printf '%s\n' "${{ secrets.DEPLOY_SSH_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          printf '%s\n' "${{ secrets.DEPLOY_KNOWN_HOSTS }}" > ~/.ssh/known_hosts
+
+      - name: Deploy via rsync
+        run: |
+          rsync -az --delete \
+            ${{ inputs.dry_run && '--dry-run --verbose' || '' }} \
+            --exclude '.well-known' \
+            --exclude '.htaccess' \
+            -e "ssh -o StrictHostKeyChecking=yes" \
+            website/build/ \
+            "${{ secrets.DEPLOY_SSH_USER }}@${{ secrets.DEPLOY_SSH_HOST }}:${{ secrets.DEPLOY_PATH }}/"
