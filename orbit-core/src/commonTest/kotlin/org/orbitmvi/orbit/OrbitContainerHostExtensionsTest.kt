@@ -18,11 +18,15 @@ package org.orbitmvi.orbit
 
 import app.cash.turbine.test
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancelAndJoin
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.test.runTest
 import org.orbitmvi.orbit.annotation.OrbitExperimental
 import kotlin.random.Random
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 
 @OptIn(OrbitExperimental::class)
 class OrbitContainerHostExtensionsTest {
@@ -68,6 +72,22 @@ class OrbitContainerHostExtensionsTest {
     }
 
     @Test
+    fun `the container is scoped to the scope passed as an argument`() = runTest {
+        // The scope moved from receiver to parameter, so pin down that the container really is a
+        // child of the scope handed to the factory.
+        val scopeJob = SupervisorJob()
+        val containerScope = CoroutineScope(scopeJob)
+        val host = TestHost(containerScope)
+
+        val job = host.newSideEffect(Random.nextInt(1, 65535))
+
+        scopeJob.cancelAndJoin()
+
+        assertFalse(containerScope.isActive)
+        assertFalse(job.isActive)
+    }
+
+    @Test
     fun `internal and external state types are inferred from the host`() = runTest {
         val host = ExternalStateTestHost(backgroundScope)
 
@@ -80,6 +100,36 @@ class OrbitContainerHostExtensionsTest {
             host.newState(42)
 
             assertEquals("42", awaitItem())
+        }
+    }
+
+    @Test
+    fun `a host with matching state types can still use the transformState overload`() = runTest {
+        // Both overloads look applicable when INTERNAL_STATE == EXTERNAL_STATE. A non-identity
+        // transform proves the transformState overload is the one selected, and that the call is
+        // not ambiguous. Note that transformState has to be passed by name here: as a trailing
+        // lambda it binds to the other overload's onCreate instead.
+        val host = SameTypeTransformHost(backgroundScope)
+
+        host.container.externalStateFlow.test {
+            assertEquals(0, awaitItem())
+
+            host.newState(21)
+
+            assertEquals(42, awaitItem())
+        }
+        assertEquals(21, host.container.stateFlow.value)
+    }
+
+    @Test
+    fun `settings and onCreate are applied for the external state host overload`() = runTest {
+        val host = ExternalStateOnCreateHost(backgroundScope)
+
+        assertEquals(SideEffectMode.BROADCAST, host.container.settings.sideEffectMode)
+
+        host.container.externalStateFlow.test {
+            assertEquals("0", awaitItem())
+            assertEquals("1", awaitItem())
         }
     }
 
@@ -101,6 +151,23 @@ class OrbitContainerHostExtensionsTest {
     private class OnCreateHost(scope: CoroutineScope) : OrbitContainerHost<TestState, TestState, Int> {
         override val container = orbitContainer(scope, TestState(0)) {
             reduce { TestState(1) }
+        }
+    }
+
+    private class SameTypeTransformHost(scope: CoroutineScope) : OrbitContainerHost<Int, Int, Int> {
+        override val container = orbitContainer(scope, 0, transformState = { it * 2 })
+
+        fun newState(action: Int) = intent { reduce { action } }
+    }
+
+    private class ExternalStateOnCreateHost(scope: CoroutineScope) : OrbitContainerHost<Int, String, Int> {
+        override val container = orbitContainer(
+            scope = scope,
+            initialState = 0,
+            transformState = Int::toString,
+            buildSettings = { sideEffectMode = SideEffectMode.BROADCAST }
+        ) {
+            reduce { 1 }
         }
     }
 
