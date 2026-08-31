@@ -33,7 +33,7 @@ internal class InfiniteFlowTest {
 
     @Test
     fun infinite_flow_can_be_tested_with_delay_skipping() = runTest {
-        InfiniteFlowMiddleware(this).testWithInternalState(this) {
+        InfiniteFlowMiddleware(this).testWithInternalState {
             containerHost.incrementForever()
 
             // Assert the first three states

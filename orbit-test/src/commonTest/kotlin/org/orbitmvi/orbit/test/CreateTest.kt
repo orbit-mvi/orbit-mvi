@@ -32,7 +32,7 @@ internal class CreateTest {
     fun created_is_not_invoked_by_default() = runTest {
         val testSubject = GeneralTestMiddleware(this)
 
-        testSubject.testWithInternalState(this, initialState = initialState) {
+        testSubject.testWithInternalState(initialState = initialState) {
             testSubject.container.joinIntents()
 
             assertEquals(false, testSubject.createCalled)
@@ -43,7 +43,7 @@ internal class CreateTest {
     fun created_is_invoked_upon_request() = runTest {
         val testSubject = GeneralTestMiddleware(this)
 
-        testSubject.testWithInternalState(this, initialState = initialState) {
+        testSubject.testWithInternalState(initialState = initialState) {
             val job = runOnCreate()
 
             job.join()
@@ -55,7 +55,7 @@ internal class CreateTest {
     @Test
     fun initial_state_can_be_omitted_from_test() = runTest {
         val testSubject = GeneralTestMiddleware(this)
-        testSubject.testWithInternalState(this, settings = TestSettings(autoCheckInitialState = false)) {
+        testSubject.testWithInternalState(settings = TestSettings(autoCheckInitialState = false)) {
             expectInternalState(initialState)
         }
     }

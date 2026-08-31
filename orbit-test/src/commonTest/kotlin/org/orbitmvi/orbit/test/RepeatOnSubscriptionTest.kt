@@ -29,7 +29,7 @@ class RepeatOnSubscriptionTest {
 
     @Test
     fun test_does_not_hang_when_using_repeat_on_subscription() = runTest {
-        TestMiddleware(this).testWithInternalState(this, initialState = initialState) {
+        TestMiddleware(this).testWithInternalState(initialState = initialState) {
             containerHost.callOnSubscription { 42 }
 
             assertEquals(State(42), awaitInternalState())

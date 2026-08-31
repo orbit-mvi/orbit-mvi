@@ -62,7 +62,7 @@ class OrbitContainerHostViewModelExtensionsKtKmpTest : RobolectricTest() {
 
         Middleware(initialState) {
             assertEquals(initialState, state)
-        }.testWithInternalState(this) {
+        }.testWithInternalState {
             runOnCreate()
         }
     }

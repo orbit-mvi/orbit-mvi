@@ -49,7 +49,7 @@ internal class ContainerExceptionHandlerTest {
     @Test
     fun by_default_exceptions_are_uncaught() = runTest {
         assertFailsWith<IllegalStateException> {
-            ExceptionTestMiddleware(this).testWithInternalState(this) {
+            ExceptionTestMiddleware(this).testWithInternalState {
                 containerHost.exceptionIntent().join()
             }
         }
@@ -85,7 +85,7 @@ internal class ContainerExceptionHandlerTest {
         val initState = Random.nextInt()
         val exceptions = Channel<Throwable>(capacity = Channel.BUFFERED)
         val exceptionHandler = CoroutineExceptionHandler { _, throwable -> exceptions.trySend(throwable) }
-        ExceptionTestMiddleware(this, exceptionHandler).testWithInternalState(this, initState) {
+        ExceptionTestMiddleware(this, exceptionHandler).testWithInternalState(initState) {
             containerHost.exceptionIntent()
 
             exceptions.consumeAsFlow().test {
@@ -173,7 +173,7 @@ internal class ContainerExceptionHandlerTest {
     @Test
     fun without_exception_handler_test_does_break() = runTest {
         assertFailsWith<IllegalStateException> {
-            ExceptionTestMiddleware(this).testWithInternalState(this) {
+            ExceptionTestMiddleware(this).testWithInternalState {
                 containerHost.exceptionIntent().join()
             }
         }

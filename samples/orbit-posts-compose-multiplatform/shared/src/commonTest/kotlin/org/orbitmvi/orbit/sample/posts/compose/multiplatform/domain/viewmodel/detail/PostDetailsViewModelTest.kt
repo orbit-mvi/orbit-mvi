@@ -47,7 +47,6 @@ class PostDetailsViewModelTest : RobolectricTest() {
         }
 
         PostDetailsViewModel(SavedStateHandle(), repository, overview).testWithInternalState(
-            this,
             initialState = initialState,
         ) {
             // When we run onCreate
@@ -69,7 +68,6 @@ class PostDetailsViewModelTest : RobolectricTest() {
         }
 
         PostDetailsViewModel(SavedStateHandle(), repository, overview).testWithInternalState(
-            this,
             initialState = initialState
         ) {
             // When we run onCreate
@@ -91,7 +89,6 @@ class PostDetailsViewModelTest : RobolectricTest() {
         }
 
         PostDetailsViewModel(SavedStateHandle(), repository, overview).testWithInternalState(
-            this,
             initialState = initialState
         ) {
             // When we run onCreate
@@ -114,7 +111,6 @@ class PostDetailsViewModelTest : RobolectricTest() {
         }
 
         PostDetailsViewModel(SavedStateHandle(), repository, overview).testWithInternalState(
-            this,
             initialState = initialState
         ) {
             // And we run onCreate
