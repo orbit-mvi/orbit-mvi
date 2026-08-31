@@ -36,7 +36,7 @@ internal class SimpleDslBehaviourTest {
     @Test
     fun reducer_produces_new_states() = runTest {
         val action = Random.nextInt()
-        BaseDslMiddleware(this).testWithInternalState(this, initialState) {
+        BaseDslMiddleware(this).testWithInternalState(initialState) {
             containerHost.reducer(action)
 
             expectInternalState { TestState(action) }
@@ -46,7 +46,7 @@ internal class SimpleDslBehaviourTest {
     @Test
     fun transformer_maps_values() = runTest {
         val action = Random.nextInt()
-        BaseDslMiddleware(this).testWithInternalState(this, initialState) {
+        BaseDslMiddleware(this).testWithInternalState(initialState) {
             containerHost.transformer(action)
 
             expectInternalState { TestState(action + 5) }
@@ -56,7 +56,7 @@ internal class SimpleDslBehaviourTest {
     @Test
     fun posting_side_effects_emit_side_effects() = runTest {
         val action = Random.nextInt()
-        BaseDslMiddleware(this).testWithInternalState(this, initialState) {
+        BaseDslMiddleware(this).testWithInternalState(initialState) {
             containerHost.postingSideEffect(action)
 
             expectSideEffect(action.toString())

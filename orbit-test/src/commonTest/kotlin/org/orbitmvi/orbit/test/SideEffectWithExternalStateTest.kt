@@ -35,7 +35,7 @@ class SideEffectWithExternalStateTest {
     fun succeeds_if_posted_side_effects_match_expected_side_effects() = runTest {
         val sideEffects = List(Random.nextInt(1, 5)) { Random.nextInt() }
 
-        SideEffectTestMiddleware(this).testWithExternalState(this) {
+        SideEffectTestMiddleware(this).testWithExternalState {
             sideEffects.forEach { containerHost.something(it) }
 
             assertEquals(
@@ -53,7 +53,7 @@ class SideEffectWithExternalStateTest {
     fun succeeds_if_posted_side_effects_match_expected_side_effects__shorthand_syntax() = runTest {
         val sideEffects = List(Random.nextInt(1, 5)) { Random.nextInt() }
 
-        SideEffectTestMiddleware(this).testWithExternalState(this) {
+        SideEffectTestMiddleware(this).testWithExternalState {
             sideEffects.forEach { containerHost.something(it) }
 
             sideEffects.forEach {
@@ -68,7 +68,7 @@ class SideEffectWithExternalStateTest {
         val sideEffects2 = List(Random.nextInt(1, 5)) { Random.nextInt() }
 
         assertFailsWith<AssertionError> {
-            SideEffectTestMiddleware(this).testWithExternalState(this) {
+            SideEffectTestMiddleware(this).testWithExternalState {
                 sideEffects.forEach { containerHost.something(it) }
 
                 assertEquals(
@@ -90,7 +90,7 @@ class SideEffectWithExternalStateTest {
         val sideEffect = Random.nextInt()
 
         assertFailsWith<AssertionError> {
-            SideEffectTestMiddleware(this).testWithInternalState(this) {
+            SideEffectTestMiddleware(this).testWithInternalState {
                 containerHost.newState(sideEffect)
                 containerHost.something(sideEffect)
 
@@ -107,7 +107,7 @@ class SideEffectWithExternalStateTest {
         val sideEffect = Random.nextInt()
 
         assertFailsWith<AssertionError> {
-            SideEffectTestMiddleware(this).testWithExternalState(this) {
+            SideEffectTestMiddleware(this).testWithExternalState {
                 containerHost.newState(sideEffect)
                 containerHost.something(sideEffect)
 

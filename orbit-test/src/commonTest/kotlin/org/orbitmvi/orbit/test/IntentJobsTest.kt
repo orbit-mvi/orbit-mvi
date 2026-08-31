@@ -37,7 +37,7 @@ class IntentJobsTest {
     @Test
     fun unfinished_intents_at_the_end_of_the_test_cause_the_test_to_fail() = runTest {
         assertFails {
-            IntentJobsMiddleware(this).testWithInternalState(this) {
+            IntentJobsMiddleware(this).testWithInternalState {
                 containerHost.infiniteIntent()
             }
         }
@@ -45,7 +45,7 @@ class IntentJobsTest {
 
     @Test
     fun unfinished_intents_at_the_end_of_the_test_may_be_ignored() = runTest {
-        IntentJobsMiddleware(this).testWithInternalState(this) {
+        IntentJobsMiddleware(this).testWithInternalState {
             containerHost.infiniteIntent()
             cancelAndIgnoreRemainingItems()
         }
@@ -53,7 +53,7 @@ class IntentJobsTest {
 
     @Test
     fun intents_may_be_cancelled() = runTest {
-        IntentJobsMiddleware(this).testWithInternalState(this) {
+        IntentJobsMiddleware(this).testWithInternalState {
             val job = containerHost.infiniteIntent()
 
             job.cancel()

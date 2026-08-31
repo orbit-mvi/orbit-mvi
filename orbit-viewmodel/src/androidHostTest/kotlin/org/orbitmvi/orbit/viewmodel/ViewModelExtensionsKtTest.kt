@@ -97,7 +97,7 @@ class ViewModelExtensionsKtTest {
 
         Middleware(savedStateHandle, initialState) {
             assertEquals(savedState, state)
-        }.testWithInternalState(this) {
+        }.testWithInternalState {
             runOnCreate()
         }
     }
@@ -109,7 +109,7 @@ class ViewModelExtensionsKtTest {
 
         Middleware(savedStateHandle, initialState) {
             assertEquals(initialState, state)
-        }.testWithInternalState(this) {
+        }.testWithInternalState {
             runOnCreate()
         }
     }

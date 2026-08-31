@@ -107,14 +107,14 @@ class CalculatorViewModelTest {
 
     @Test
     fun `empty initial value displays as '0'`() = runTest {
-        viewModel.testWithExternalState(this, settings = TestSettings(autoCheckInitialState = false)) {
+        viewModel.testWithExternalState(settings = TestSettings(autoCheckInitialState = false)) {
             assertEquals("0", awaitExternalState().digitalDisplay)
         }
     }
 
     @Test
     fun `negated empty initial value displays as '-0'`() = runTest {
-        viewModel.testWithExternalState(this) {
+        viewModel.testWithExternalState {
             viewModel.plusMinus()
 
             assertEquals("-0", awaitExternalState().digitalDisplay)
@@ -124,7 +124,7 @@ class CalculatorViewModelTest {
     @ParameterizedTest(name = "{0} + {1}")
     @ArgumentsSource(DecimalNumberPairProvider::class)
     fun `add decimal numbers`(a: Double, b: Double) = runTest {
-        viewModel.testWithExternalState(this) {
+        viewModel.testWithExternalState {
             viewModel.enterNumber(a)
             awaitEntry(a)
 
@@ -145,7 +145,7 @@ class CalculatorViewModelTest {
     @ParameterizedTest(name = "{0} + {1}")
     @ArgumentsSource(WholeNumberPairProvider::class)
     fun `add whole numbers`(a: Int, b: Int) = runTest {
-        viewModel.testWithExternalState(this) {
+        viewModel.testWithExternalState {
             viewModel.enterNumber(a)
             awaitEntry(a)
 
@@ -166,7 +166,7 @@ class CalculatorViewModelTest {
     @ParameterizedTest(name = "{0} − {1}")
     @ArgumentsSource(DecimalNumberPairProvider::class)
     fun `subtract decimal numbers`(a: Double, b: Double) = runTest {
-        viewModel.testWithExternalState(this) {
+        viewModel.testWithExternalState {
             viewModel.enterNumber(a)
             awaitEntry(a)
 
@@ -187,7 +187,7 @@ class CalculatorViewModelTest {
     @ParameterizedTest(name = "{0} − {1}")
     @ArgumentsSource(WholeNumberPairProvider::class)
     fun `subtract whole numbers`(a: Int, b: Int) = runTest {
-        viewModel.testWithExternalState(this) {
+        viewModel.testWithExternalState {
             viewModel.enterNumber(a)
             awaitEntry(a)
 
@@ -221,7 +221,7 @@ class CalculatorViewModelTest {
     @ParameterizedTest(name = "{0} × {1}")
     @ArgumentsSource(DecimalNumberPairProvider::class)
     fun `multiply decimal numbers`(a: Double, b: Double) = runTest {
-        viewModel.testWithExternalState(this) {
+        viewModel.testWithExternalState {
             viewModel.enterNumber(a)
             awaitEntry(a)
 
@@ -242,7 +242,7 @@ class CalculatorViewModelTest {
     @ParameterizedTest(name = "{0} × {1}")
     @ArgumentsSource(WholeNumberPairProvider::class)
     fun `multiply whole numbers`(a: Int, b: Int) = runTest {
-        viewModel.testWithExternalState(this) {
+        viewModel.testWithExternalState {
             viewModel.enterNumber(a)
             awaitEntry(a)
 
@@ -263,7 +263,7 @@ class CalculatorViewModelTest {
     @ParameterizedTest(name = "{0} ÷ {1}")
     @ArgumentsSource(DecimalNumberPairProvider::class)
     fun `divide decimal numbers`(a: Double, b: Double) = runTest {
-        viewModel.testWithExternalState(this) {
+        viewModel.testWithExternalState {
             viewModel.enterNumber(a)
             awaitEntry(a)
 
@@ -286,7 +286,7 @@ class CalculatorViewModelTest {
     @ParameterizedTest(name = "{0} ÷ {1}")
     @ArgumentsSource(WholeNumberPairProvider::class)
     fun `divide whole numbers`(a: Int, b: Int) = runTest {
-        viewModel.testWithExternalState(this) {
+        viewModel.testWithExternalState {
             viewModel.enterNumber(a)
             awaitEntry(a)
 
@@ -309,7 +309,7 @@ class CalculatorViewModelTest {
     @ParameterizedTest(name = "{0}")
     @ArgumentsSource(DecimalNumberPairProvider::class)
     fun `percentage decimal number`(a: Double) = runTest {
-        viewModel.testWithExternalState(this) {
+        viewModel.testWithExternalState {
             viewModel.enterNumber(a)
             awaitEntry(a)
 
@@ -325,7 +325,7 @@ class CalculatorViewModelTest {
     @ParameterizedTest(name = "{0}")
     @ArgumentsSource(WholeNumberPairProvider::class)
     fun `percentage whole number`(a: Int) = runTest {
-        viewModel.testWithExternalState(this) {
+        viewModel.testWithExternalState {
             viewModel.enterNumber(a)
             awaitEntry(a)
 
@@ -340,7 +340,7 @@ class CalculatorViewModelTest {
 
     @RepeatedTest(10)
     fun `clears values`() = runTest {
-        viewModel.testWithExternalState(this) {
+        viewModel.testWithExternalState {
             repeat(fixture(0..15)) {
                 when (fixture(0..8)) {
                     0 -> viewModel.digit(fixture(0..9))

@@ -45,9 +45,7 @@ internal class SubIntentTest {
             initialState = initialState,
             flow1 = channel1.consumeAsFlow(),
             flow2 = channel2.consumeAsFlow()
-        ).testWithInternalState(
-            this,
-        ) {
+        ).testWithInternalState {
             val job = runOnCreate()
 
             val str1 = Random.nextInt().toString()

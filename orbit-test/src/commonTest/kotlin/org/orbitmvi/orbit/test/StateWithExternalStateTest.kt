@@ -34,14 +34,14 @@ class StateWithExternalStateTest {
 
     @Test
     fun internal_succeeds_if_initial_state_matches_expected_state_with_expectState() = runTest {
-        StateTestMiddleware(this).testWithInternalState(this, settings = TestSettings(autoCheckInitialState = false)) {
+        StateTestMiddleware(this).testWithInternalState(settings = TestSettings(autoCheckInitialState = false)) {
             expectInternalState { initialState }
         }
     }
 
     @Test
     fun external_succeeds_if_initial_state_matches_expected_state_with_expectState() = runTest {
-        StateTestMiddleware(this).testWithExternalState(this, settings = TestSettings(autoCheckInitialState = false)) {
+        StateTestMiddleware(this).testWithExternalState(settings = TestSettings(autoCheckInitialState = false)) {
             expectExternalState { containerHost.container.findTestContainer().originalTransformState(initialState) }
         }
     }
@@ -49,7 +49,6 @@ class StateWithExternalStateTest {
     @Test
     fun internal_and_external_succeeds_if_initial_state_matches_expected_state_with_expectState() = runTest {
         StateTestMiddleware(this).testWithInternalAndExternalState(
-            this,
             settings = TestSettings(autoCheckInitialState = false)
         ) {
             expectInternalState { initialState }
@@ -62,7 +61,7 @@ class StateWithExternalStateTest {
         val someRandomState = InternalState()
 
         assertFailsWith<AssertionError> {
-            StateTestMiddleware(this).testWithInternalState(this, settings = TestSettings(autoCheckInitialState = false)) {
+            StateTestMiddleware(this).testWithInternalState(settings = TestSettings(autoCheckInitialState = false)) {
                 assertEquals(someRandomState, awaitInternalState())
             }
         }.also {
@@ -75,7 +74,7 @@ class StateWithExternalStateTest {
         val someRandomState = InternalState()
 
         assertFailsWith<AssertionError> {
-            StateTestMiddleware(this).testWithExternalState(this, settings = TestSettings(autoCheckInitialState = false)) {
+            StateTestMiddleware(this).testWithExternalState(settings = TestSettings(autoCheckInitialState = false)) {
                 assertEquals(containerHost.container.findTestContainer().originalTransformState(someRandomState), awaitExternalState())
             }
         }.also {
@@ -89,7 +88,6 @@ class StateWithExternalStateTest {
 
         assertFailsWith<AssertionError> {
             StateTestMiddleware(this).testWithInternalAndExternalState(
-                this,
                 settings = TestSettings(autoCheckInitialState = false)
             ) {
                 assertEquals(someRandomState, awaitInternalState())
@@ -105,7 +103,6 @@ class StateWithExternalStateTest {
 
         assertFailsWith<AssertionError> {
             StateTestMiddleware(this).testWithInternalAndExternalState(
-                this,
                 settings = TestSettings(autoCheckInitialState = false)
             ) {
                 assertEquals(initialState, awaitInternalState())
@@ -121,7 +118,7 @@ class StateWithExternalStateTest {
         val action = Random.nextInt()
         val action2 = Random.nextInt()
 
-        StateTestMiddleware(this).testWithInternalState(this) {
+        StateTestMiddleware(this).testWithInternalState {
             containerHost.newCount(action)
             containerHost.newCount(action2)
             assertEquals(InternalState(count = action), awaitInternalState())
@@ -134,7 +131,7 @@ class StateWithExternalStateTest {
         val action = Random.nextInt()
         val action2 = Random.nextInt()
 
-        StateTestMiddleware(this).testWithExternalState(this) {
+        StateTestMiddleware(this).testWithExternalState {
             containerHost.newCount(action)
             containerHost.newCount(action2)
             assertEquals(ExternalState(count = action.toString()), awaitExternalState())
@@ -147,7 +144,7 @@ class StateWithExternalStateTest {
         val action = Random.nextInt()
         val action2 = Random.nextInt()
 
-        StateTestMiddleware(this).testWithInternalAndExternalState(this) {
+        StateTestMiddleware(this).testWithInternalAndExternalState {
             containerHost.newCount(action)
             containerHost.newCount(action2)
             assertEquals(InternalState(count = action), awaitInternalState())
@@ -164,7 +161,7 @@ class StateWithExternalStateTest {
         val action3 = Random.nextInt()
 
         assertFailsWith<AssertionError> {
-            StateTestMiddleware(this).testWithInternalState(this) {
+            StateTestMiddleware(this).testWithInternalState {
                 containerHost.newCount(action)
                 containerHost.newCount(action2)
                 containerHost.newCount(action3)
@@ -183,7 +180,7 @@ class StateWithExternalStateTest {
         val action3 = Random.nextInt()
 
         assertFailsWith<AssertionError> {
-            StateTestMiddleware(this).testWithExternalState(this) {
+            StateTestMiddleware(this).testWithExternalState {
                 containerHost.newCount(action)
                 containerHost.newCount(action2)
                 containerHost.newCount(action3)
@@ -202,7 +199,7 @@ class StateWithExternalStateTest {
         val action3 = Random.nextInt()
 
         assertFailsWith<AssertionError> {
-            StateTestMiddleware(this).testWithInternalAndExternalState(this) {
+            StateTestMiddleware(this).testWithInternalAndExternalState {
                 containerHost.newCount(action)
                 containerHost.newCount(action2)
                 containerHost.newCount(action3)
@@ -223,7 +220,7 @@ class StateWithExternalStateTest {
         val action3 = Random.nextInt()
 
         assertFailsWith<AssertionError> {
-            StateTestMiddleware(this).testWithInternalAndExternalState(this) {
+            StateTestMiddleware(this).testWithInternalAndExternalState {
                 containerHost.newCount(action)
                 containerHost.newCount(action2)
                 containerHost.newCount(action3)
@@ -245,7 +242,7 @@ class StateWithExternalStateTest {
         val action3 = Random.nextInt()
 
         assertFailsWith<AssertionError> {
-            StateTestMiddleware(this).testWithInternalState(this, timeout = 500.milliseconds) {
+            StateTestMiddleware(this).testWithInternalState(timeout = 500.milliseconds) {
                 containerHost.newCount(action)
                 containerHost.newCount(action2)
                 assertEquals(InternalState(count = action), awaitInternalState())
@@ -264,7 +261,7 @@ class StateWithExternalStateTest {
         val action3 = Random.nextInt()
 
         assertFailsWith<AssertionError> {
-            StateTestMiddleware(this).testWithExternalState(this, timeout = 500.milliseconds) {
+            StateTestMiddleware(this).testWithExternalState(timeout = 500.milliseconds) {
                 containerHost.newCount(action)
                 containerHost.newCount(action2)
                 assertEquals(ExternalState(count = action.toString()), awaitExternalState())
@@ -284,7 +281,6 @@ class StateWithExternalStateTest {
 
         assertFailsWith<AssertionError> {
             StateTestMiddleware(this).testWithInternalAndExternalState(
-                this,
                 timeout = 500.milliseconds,
             ) {
                 containerHost.newCount(action)
@@ -308,7 +304,6 @@ class StateWithExternalStateTest {
 
         assertFailsWith<AssertionError> {
             StateTestMiddleware(this).testWithInternalAndExternalState(
-                this,
                 timeout = 500.milliseconds,
             ) {
                 containerHost.newCount(action)
@@ -330,7 +325,7 @@ class StateWithExternalStateTest {
         val action2 = Random.nextInt()
 
         assertFailsWith<AssertionError> {
-            StateTestMiddleware(this).testWithInternalState(this) {
+            StateTestMiddleware(this).testWithInternalState {
                 containerHost.newCount(action)
                 containerHost.newCount(action2)
                 assertEquals(InternalState(count = action2), awaitInternalState())
@@ -346,7 +341,7 @@ class StateWithExternalStateTest {
         val action2 = Random.nextInt()
 
         assertFailsWith<AssertionError> {
-            StateTestMiddleware(this).testWithExternalState(this) {
+            StateTestMiddleware(this).testWithExternalState {
                 containerHost.newCount(action)
                 containerHost.newCount(action2)
                 assertEquals(ExternalState(count = action2.toString()), awaitExternalState())
@@ -362,7 +357,7 @@ class StateWithExternalStateTest {
         val action2 = Random.nextInt()
 
         assertFailsWith<AssertionError> {
-            StateTestMiddleware(this).testWithInternalAndExternalState(this) {
+            StateTestMiddleware(this).testWithInternalAndExternalState {
                 containerHost.newCount(action)
                 containerHost.newCount(action2)
                 assertEquals(InternalState(count = action2), awaitInternalState())
@@ -378,7 +373,7 @@ class StateWithExternalStateTest {
         val action2 = Random.nextInt()
 
         assertFailsWith<AssertionError> {
-            StateTestMiddleware(this).testWithInternalAndExternalState(this) {
+            StateTestMiddleware(this).testWithInternalAndExternalState {
                 containerHost.newCount(action)
                 containerHost.newCount(action2)
                 awaitInternalState()
@@ -396,7 +391,7 @@ class StateWithExternalStateTest {
         val action3 = Random.nextInt()
 
         assertFailsWith<AssertionError> {
-            StateTestMiddleware(this).testWithInternalState(this) {
+            StateTestMiddleware(this).testWithInternalState {
                 containerHost.newCount(action)
                 containerHost.newCount(action2)
                 assertEquals(InternalState(count = action), awaitInternalState())
@@ -414,7 +409,7 @@ class StateWithExternalStateTest {
         val action3 = Random.nextInt()
 
         assertFailsWith<AssertionError> {
-            StateTestMiddleware(this).testWithExternalState(this) {
+            StateTestMiddleware(this).testWithExternalState {
                 containerHost.newCount(action)
                 containerHost.newCount(action2)
                 assertEquals(ExternalState(count = action.toString()), awaitExternalState())
@@ -432,7 +427,7 @@ class StateWithExternalStateTest {
         val action3 = Random.nextInt()
 
         assertFailsWith<AssertionError> {
-            StateTestMiddleware(this).testWithInternalAndExternalState(this) {
+            StateTestMiddleware(this).testWithInternalAndExternalState {
                 containerHost.newCount(action)
                 containerHost.newCount(action2)
                 assertEquals(InternalState(count = action), awaitInternalState())
@@ -452,7 +447,7 @@ class StateWithExternalStateTest {
         val action3 = Random.nextInt()
 
         assertFailsWith<AssertionError> {
-            StateTestMiddleware(this).testWithInternalAndExternalState(this) {
+            StateTestMiddleware(this).testWithInternalAndExternalState {
                 containerHost.newCount(action)
                 containerHost.newCount(action2)
                 assertEquals(InternalState(count = action), awaitInternalState())
@@ -470,7 +465,7 @@ class StateWithExternalStateTest {
         val sideEffect = Random.nextInt()
 
         assertFailsWith<AssertionError> {
-            StateTestMiddleware(this).testWithInternalState(this) {
+            StateTestMiddleware(this).testWithInternalState {
                 containerHost.newSideEffect(sideEffect)
                 containerHost.newCount(sideEffect)
 
@@ -487,7 +482,7 @@ class StateWithExternalStateTest {
         val sideEffect = Random.nextInt()
 
         assertFailsWith<AssertionError> {
-            StateTestMiddleware(this).testWithExternalState(this) {
+            StateTestMiddleware(this).testWithExternalState {
                 containerHost.newSideEffect(sideEffect)
                 containerHost.newCount(sideEffect)
 
@@ -504,7 +499,7 @@ class StateWithExternalStateTest {
         val sideEffect = Random.nextInt()
 
         assertFailsWith<AssertionError> {
-            StateTestMiddleware(this).testWithInternalAndExternalState(this) {
+            StateTestMiddleware(this).testWithInternalAndExternalState {
                 containerHost.newSideEffect(sideEffect)
                 containerHost.newCount(sideEffect)
 
@@ -521,7 +516,7 @@ class StateWithExternalStateTest {
         val sideEffect = Random.nextInt()
 
         assertFailsWith<AssertionError> {
-            StateTestMiddleware(this).testWithInternalAndExternalState(this) {
+            StateTestMiddleware(this).testWithInternalAndExternalState {
                 containerHost.newSideEffect(sideEffect)
                 containerHost.newCount(sideEffect)
 
@@ -539,7 +534,7 @@ class StateWithExternalStateTest {
         val action2 = Random.nextInt()
         val action3 = Random.nextInt()
 
-        StateTestMiddleware(this).testWithInternalState(this) {
+        StateTestMiddleware(this).testWithInternalState {
             containerHost.newList(action)
             containerHost.newList(action2)
             containerHost.newList(action3)
@@ -555,7 +550,7 @@ class StateWithExternalStateTest {
         val action2 = Random.nextInt()
         val action3 = Random.nextInt()
 
-        StateTestMiddleware(this).testWithExternalState(this) {
+        StateTestMiddleware(this).testWithExternalState {
             containerHost.newList(action)
             containerHost.newList(action2)
             containerHost.newList(action3)
@@ -571,7 +566,7 @@ class StateWithExternalStateTest {
         val action2 = Random.nextInt()
         val action3 = Random.nextInt()
 
-        StateTestMiddleware(this).testWithInternalState(this) {
+        StateTestMiddleware(this).testWithInternalState {
             containerHost.newList(action)
             containerHost.newList(action2)
             containerHost.newList(action3)
@@ -587,7 +582,7 @@ class StateWithExternalStateTest {
         val action2 = Random.nextInt()
         val action3 = Random.nextInt()
 
-        StateTestMiddleware(this).testWithExternalState(this) {
+        StateTestMiddleware(this).testWithExternalState {
             containerHost.newList(action)
             containerHost.newList(action2)
             containerHost.newList(action3)
@@ -609,7 +604,7 @@ class StateWithExternalStateTest {
         val action3 = Random.nextInt()
 
         assertFailsWith<AssertionError> {
-            StateTestMiddleware(this).testWithInternalState(this) {
+            StateTestMiddleware(this).testWithInternalState {
                 containerHost.newList(action)
                 containerHost.newList(action2)
                 containerHost.newList(action3)
@@ -626,7 +621,7 @@ class StateWithExternalStateTest {
         val action3 = Random.nextInt()
 
         assertFailsWith<AssertionError> {
-            StateTestMiddleware(this).testWithExternalState(this) {
+            StateTestMiddleware(this).testWithExternalState {
                 containerHost.newList(action)
                 containerHost.newList(action2)
                 containerHost.newList(action3)
@@ -643,7 +638,7 @@ class StateWithExternalStateTest {
         val action3 = Random.nextInt()
 
         assertFailsWith<AssertionError> {
-            StateTestMiddleware(this).testWithInternalState(this) {
+            StateTestMiddleware(this).testWithInternalState {
                 containerHost.newList(action)
                 containerHost.newList(action2)
                 containerHost.newList(action3)
@@ -660,7 +655,7 @@ class StateWithExternalStateTest {
         val action3 = Random.nextInt()
 
         assertFailsWith<AssertionError> {
-            StateTestMiddleware(this).testWithExternalState(this) {
+            StateTestMiddleware(this).testWithExternalState {
                 containerHost.newList(action)
                 containerHost.newList(action2)
                 containerHost.newList(action3)

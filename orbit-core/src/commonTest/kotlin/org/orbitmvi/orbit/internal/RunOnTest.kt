@@ -38,7 +38,7 @@ internal class RunOnTest {
     fun run_on_does_not_run_when_state_does_not_match_expected() = runTest {
         val middleware = Middleware(backgroundScope)
 
-        middleware.testWithInternalState(this, settings = TestSettings(autoCheckInitialState = false)) {
+        middleware.testWithInternalState(settings = TestSettings(autoCheckInitialState = false)) {
             expectInternalState { TestState.Loading }
 
             val job = middleware.doIfInReadyState()
@@ -53,7 +53,7 @@ internal class RunOnTest {
     fun run_on_runs_when_state_matches_expected() = runTest {
         val middleware = Middleware(backgroundScope)
 
-        middleware.testWithInternalState(this, settings = TestSettings(autoCheckInitialState = false)) {
+        middleware.testWithInternalState(settings = TestSettings(autoCheckInitialState = false)) {
             expectInternalState { TestState.Loading }
 
             middleware.changeToState(TestState.Ready(42))
@@ -68,7 +68,7 @@ internal class RunOnTest {
     fun run_on_does_not_run_when_state_matches_expected_but_predicate_does_not_match() = runTest {
         val middleware = Middleware(backgroundScope)
 
-        middleware.testWithInternalState(this, settings = TestSettings(autoCheckInitialState = false)) {
+        middleware.testWithInternalState(settings = TestSettings(autoCheckInitialState = false)) {
             expectInternalState { TestState.Loading }
 
             middleware.changeToState(TestState.Ready(42))
@@ -85,7 +85,7 @@ internal class RunOnTest {
     fun run_on_runs_when_state_matches_expected_and_predicate_matches() = runTest {
         val middleware = Middleware(backgroundScope)
 
-        middleware.testWithInternalState(this, settings = TestSettings(autoCheckInitialState = false)) {
+        middleware.testWithInternalState(settings = TestSettings(autoCheckInitialState = false)) {
             expectInternalState { TestState.Loading }
 
             middleware.changeToState(TestState.Ready(42))
@@ -103,7 +103,7 @@ internal class RunOnTest {
     fun run_on_cancels_when_state_stops_matching_expected() = runTest {
         val middleware = Middleware(backgroundScope)
 
-        middleware.testWithInternalState(this, settings = TestSettings(autoCheckInitialState = false)) {
+        middleware.testWithInternalState(settings = TestSettings(autoCheckInitialState = false)) {
             expectInternalState { TestState.Loading }
 
             middleware.changeToState(TestState.Ready(42))
@@ -125,7 +125,7 @@ internal class RunOnTest {
     fun run_on_cancels_when_predicate_stops_matching() = runTest {
         val middleware = Middleware(backgroundScope)
 
-        middleware.testWithInternalState(this, settings = TestSettings(autoCheckInitialState = false)) {
+        middleware.testWithInternalState(settings = TestSettings(autoCheckInitialState = false)) {
             expectInternalState { TestState.Loading }
 
             middleware.changeToState(TestState.Ready(42))
@@ -147,7 +147,7 @@ internal class RunOnTest {
     fun run_on_does_not_cancel_when_predicate_keeps_matching_on_subsequent_emissions() = runTest {
         val middleware = Middleware(backgroundScope)
 
-        middleware.testWithInternalState(this, settings = TestSettings(autoCheckInitialState = false)) {
+        middleware.testWithInternalState(settings = TestSettings(autoCheckInitialState = false)) {
             expectInternalState { TestState.Loading }
 
             middleware.changeToState(TestState.Ready(42))
@@ -170,7 +170,7 @@ internal class RunOnTest {
     fun await_run_on_suspends_until_state_matches() = runTest {
         val middleware = Middleware(backgroundScope)
 
-        middleware.testWithInternalState(this, settings = TestSettings(autoCheckInitialState = false)) {
+        middleware.testWithInternalState(settings = TestSettings(autoCheckInitialState = false)) {
             expectInternalState { TestState.Loading }
 
             val job = middleware.awaitDoIfInReadyState()
@@ -188,7 +188,7 @@ internal class RunOnTest {
     fun await_run_on_runs_immediately_when_state_already_matches() = runTest {
         val middleware = Middleware(backgroundScope)
 
-        middleware.testWithInternalState(this, settings = TestSettings(autoCheckInitialState = false)) {
+        middleware.testWithInternalState(settings = TestSettings(autoCheckInitialState = false)) {
             expectInternalState { TestState.Loading }
 
             middleware.changeToState(TestState.Ready(42))
@@ -203,7 +203,7 @@ internal class RunOnTest {
     fun await_run_on_respects_predicate() = runTest {
         val middleware = Middleware(backgroundScope)
 
-        middleware.testWithInternalState(this, settings = TestSettings(autoCheckInitialState = false)) {
+        middleware.testWithInternalState(settings = TestSettings(autoCheckInitialState = false)) {
             expectInternalState { TestState.Loading }
 
             middleware.changeToState(TestState.Ready(43))
@@ -224,7 +224,7 @@ internal class RunOnTest {
     fun await_run_on_cancels_when_state_leaves() = runTest {
         val middleware = Middleware(backgroundScope)
 
-        middleware.testWithInternalState(this, settings = TestSettings(autoCheckInitialState = false)) {
+        middleware.testWithInternalState(settings = TestSettings(autoCheckInitialState = false)) {
             expectInternalState { TestState.Loading }
 
             val job = middleware.awaitCollectIfInReadyState()
@@ -246,7 +246,7 @@ internal class RunOnTest {
     fun await_run_on_cancels_when_predicate_stops_matching() = runTest {
         val middleware = Middleware(backgroundScope)
 
-        middleware.testWithInternalState(this, settings = TestSettings(autoCheckInitialState = false)) {
+        middleware.testWithInternalState(settings = TestSettings(autoCheckInitialState = false)) {
             expectInternalState { TestState.Loading }
 
             val job = middleware.awaitCollectIfInReadyState(predicate = { it.id % 2 == 0 })

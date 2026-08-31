@@ -36,7 +36,7 @@ class ItemsTest {
         val sideEffect1 = 3
         val sideEffect2 = 4
 
-        ItemTestMiddleware(this).testWithInternalState(this) {
+        ItemTestMiddleware(this).testWithInternalState {
             containerHost.newState(state1)
             containerHost.newSideEffect(sideEffect1)
             containerHost.newState(state2)
@@ -54,7 +54,7 @@ class ItemsTest {
         val sideEffect1 = 3
         val sideEffect2 = 4
 
-        ItemTestMiddleware(this).testWithInternalState(this) {
+        ItemTestMiddleware(this).testWithInternalState {
             containerHost.newState(state1)
             containerHost.newSideEffect(sideEffect1)
             containerHost.newState(state2)
@@ -69,14 +69,14 @@ class ItemsTest {
 
     @Test
     fun correctly_expects_no_items() = runTest {
-        ItemTestMiddleware(this).testWithInternalState(this) {
+        ItemTestMiddleware(this).testWithInternalState {
             expectNoItems()
         }
     }
 
     @Test
     fun expects_no_items_fails_when_there_are_unconsumed_items() = runTest {
-        ItemTestMiddleware(this).testWithInternalState(this, settings = TestSettings(autoCheckInitialState = false)) {
+        ItemTestMiddleware(this).testWithInternalState(settings = TestSettings(autoCheckInitialState = false)) {
             assertFails { expectNoItems() }
         }
     }

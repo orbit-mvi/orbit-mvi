@@ -31,7 +31,7 @@ class ExceptionTest {
     @Test
     fun exceptions_thrown_during_test_can_be_asserted_on() = runTest {
         assertFails {
-            ExceptionTestMiddleware(this).testWithInternalState(this) {
+            ExceptionTestMiddleware(this).testWithInternalState {
                 val job = containerHost.boom()
 
                 job.join()

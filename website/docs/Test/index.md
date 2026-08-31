@@ -21,7 +21,7 @@ ensures predictable coroutine scoping and context through use of the
 
 1. Put the
    [OrbitContainerHost](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-orbit-container-host/)
-   in your chosen test mode using `test()`. You may optionally
+   in your chosen test mode using `testWithInternalState()`. You may optionally
    provide them with the initial state to seed the container with. This helps
    avoid having to call several intents just to get the container in the right
    state for the test.
@@ -31,20 +31,28 @@ ensures predictable coroutine scoping and context through use of the
    [OrbitContainerHost](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-orbit-container-host/)
    intent of your choice.
 4. Await for side effects and states using `awaitSideEffect()`
-   and `awaitState()`.
-   `testContainerHost.assert { ... }`.
+   and `awaitInternalState()`.
 
 Let's start and put our
 [OrbitContainerHost](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-orbit-container-host/)
-into test mode. We pass in the test scope and initial state to seed the
-container with (you may omit it entirely to use the initial state from the real
-container).
+into test mode. We pass in the initial state to seed the container with (you may
+omit it entirely to use the initial state from the real container).
+
+:::note
+
+The container runs in the `TestScope` of the enclosing `runTest` block, which is
+picked up automatically as a Kotlin context parameter (requires Kotlin 2.4 or
+later). If you need the container to run in a different scope - see
+[Control over virtual time](#control-over-virtual-time) - use the overload that
+takes an explicit `testScope` parameter.
+
+:::
 
 :::note
 
 The initial state is automatically verified, however, auto-check can be disabled with 
-`settings = TestSettings(autoCheckInitialState = false)` and the state verified using `awaitState`
-or `expectState`.
+`settings = TestSettings(autoCheckInitialState = false)` and the state verified using
+`awaitInternalState` or `expectInternalState`.
 
 :::
 
@@ -55,13 +63,23 @@ data class State(val count: Int = 0)
 
 @Test
 fun exampleTest() = runTest {
-    ExampleViewModel().test(this, State()) {
+    ExampleViewModel().testWithInternalState(State()) {
         containerHost.countToFour()
 
         // await states and side effects, perform assertions
     }
 }
 ```
+
+:::tip
+
+`testWithInternalState` asserts on the container's internal state. If your
+container transforms its internal state into a separate external state, use
+`testWithExternalState` or `testWithInternalAndExternalState` instead - they
+follow exactly the same shape, exposing `expectExternalState` /
+`awaitExternalState`.
+
+:::
 
 ### Run `onCreate`
 
@@ -86,7 +104,7 @@ set a correct initial state instead.
 ```kotlin
 @Test
 fun exampleTest() = runTest {
-        ExampleViewModel().test(this) {
+        ExampleViewModel().testWithInternalState {
             runOnCreate()
             containerHost.countToFour()
         }
@@ -100,14 +118,14 @@ Having done the above, we can move to assertions.
 ```kotlin
 @Test
 fun exampleTest() = runTest {
-        ExampleViewModel().test(this) {
+        ExampleViewModel().testWithInternalState {
             containerHost.countToFour()
 
-            expectState { copy(count = 1) }
-            // alternatively assertEquals(State(count = 1), awaitState())
-            expectState { copy(count = 2) }
-            expectState { copy(count = 3) }
-            expectState { copy(count = 4) }
+            expectInternalState { copy(count = 1) }
+            // alternatively assertEquals(State(count = 1), awaitInternalState())
+            expectInternalState { copy(count = 2) }
+            expectInternalState { copy(count = 3) }
+            expectInternalState { copy(count = 4) }
         }
     }
 ```
@@ -118,7 +136,7 @@ ensure no unwanted extra states or side effects are emitted.
 
 #### Sealed class/interface states
 
-If you model state as a sealed class/interface, you can use the `expectStateOn`
+If you model state as a sealed class/interface, you can use the `expectInternalStateOn`
 function to avoid type-casting when asserting changes.
 
 ```kotlin
@@ -129,13 +147,13 @@ sealed interface State {
 
 @Test
 fun exampleTest() = runTest {
-    ExampleViewModel().test(this) {
+    ExampleViewModel().testWithInternalState {
         containerHost.countToTwo()
 
-        expectState { State.Ready(count = 1) }
-        // Use expectStateOn to avoid type-casting, this is equivalent to
-        //   expectState { (this as State.Ready).copy(count = 2) }
-        expectStateOn<State.Ready> { copy(count = 2) }
+        expectInternalState { State.Ready(count = 1) }
+        // Use expectInternalStateOn to avoid type-casting, this is equivalent to
+        //   expectInternalState { (this as State.Ready).copy(count = 2) }
+        expectInternalStateOn<State.Ready> { copy(count = 2) }
     }
 }
 ```
@@ -145,7 +163,7 @@ fun exampleTest() = runTest {
 ```kotlin
 @Test
 fun exampleTest() = runTest {
-        ExampleViewModel().test(this) {
+        ExampleViewModel().testWithInternalState {
             containerHost.countToFour()
 
             expectSideEffect(Toast(1))
@@ -163,17 +181,17 @@ Here's what it looks like once we put it together.
 ```kotlin
 @Test
 fun exampleTest() = runTest {
-        ExampleViewModel().test(this) {
+        ExampleViewModel().testWithInternalState {
             runOnCreate()
             containerHost.countToFour()
 
-            expectState { copy(count = 1) }
+            expectInternalState { copy(count = 1) }
             expectSideEffect(Toast(1))
-            expectState { copy(count = 2) }
+            expectInternalState { copy(count = 2) }
             expectSideEffect(Toast(2))
-            expectState { copy(count = 3) }
+            expectInternalState { copy(count = 3) }
             expectSideEffect(Toast(3))
-            expectState { copy(count = 4) }
+            expectInternalState { copy(count = 4) }
             expectSideEffect(Toast(4))
         }
     }
@@ -195,7 +213,7 @@ This can be done using coroutine
 fun exampleTest() = runTest {
         val dependency = SomeDependency()
         
-        ExampleViewModel(dependency).test(this) {
+        ExampleViewModel(dependency).testWithInternalState {
             val job = runOnCreate()
             // OR
             val job = containerHost.doSomeWorkOnDependency()
@@ -228,22 +246,22 @@ This is to ensure you check all the states and side effects that are the result
 of your intent calls - and that you don't end up in a state you didn't expect.
 
 Ideally you would assert on all states and side effects, but if this is not
-convenient, you can use `skip(n)` or `cancelAndIgnoreRemainingItems()` to
+convenient, you can use `skipItems(n)` or `cancelAndIgnoreRemainingItems()` to
 explicitly mark that you are not interested in testing the remaining items.
 Typically, `cancelAndIgnoreRemainingItems` would be used as a last resort.
 
 ```kotlin
 @Test
 fun exampleTest() = runTest {
-        ExampleViewModel().test(this) {
+        ExampleViewModel().testWithInternalState {
             runOnCreate()
             containerHost.countToFour()
 
-            expectState { copy(count = 1) }
+            expectInternalState { copy(count = 1) }
             expectSideEffect(Toast(1))
             
             // Deal with unconsumed items that were emitted by the container
-            skip(4)
+            skipItems(4)
             // OR ignore all unconsumed items
             cancelAndIgnoreRemainingItems()
         }
@@ -252,7 +270,7 @@ fun exampleTest() = runTest {
 
 ### Draining items of an unknown type
 
-`awaitState` / `awaitInternalState` / `awaitExternalState` and `awaitSideEffect`
+`awaitInternalState` / `awaitExternalState` and `awaitSideEffect`
 fail if the next emission isn't the type you asked for. When the ordering of
 states and side effects isn't deterministic - for example several
 `repeatOnSubscription` collectors and a background coroutine all updating state
@@ -262,7 +280,7 @@ For these cases `awaitItem()` returns the next emission as an `Item`, letting yo
 branch on whether it's a state or a side effect. This is handy for draining past
 states until the side effect you care about arrives. Consuming a state via
 `awaitItem()` advances the state used by subsequent relative assertions
-(e.g. `expectState`), just like `awaitState()`.
+(e.g. `expectInternalState`), just like `awaitInternalState()`.
 
 `awaitItem()` is available on all of the single- and combined-state test
 contexts. On `testWithInternalAndExternalState` it returns an
@@ -272,7 +290,7 @@ from external states.
 ```kotlin
 @Test
 fun exampleTest() = runTest {
-        ExampleViewModel().testWithInternalState(this) {
+        ExampleViewModel().testWithInternalState {
             runOnCreate()
             containerHost.refresh()
 
@@ -310,7 +328,7 @@ See below example for options to deal with this. Typically,
 ```kotlin
 @Test
 fun exampleTest() = runTest {
-        ExampleViewModel().test(this) {
+        ExampleViewModel().testWithInternalState {
             val job = runOnCreate()
             // OR
             val job = containerHost.doSomeWork()
@@ -365,12 +383,12 @@ fun exampleTest() = runTest {
         // Fake returning a cold, finite flow.
         val fakeLocationService = FakeLocationService()
 
-        ExampleViewModel(fakeLocationService).test(this) {
+        ExampleViewModel(fakeLocationService).testWithInternalState {
             val job = runOnCreate()
 
-            expectState { copy(lng = 1, lat = 1) }
-            expectState { copy(lng = 2, lat = 2) }
-            expectState { copy(lng = 3, lat = 3) }
+            expectInternalState { copy(lng = 1, lat = 1) }
+            expectInternalState { copy(lng = 2, lat = 2) }
+            expectInternalState { copy(lng = 3, lat = 3) }
             
             // If the flow is infinite, we must ensure the intent is finished
             // at the end of the test.
@@ -383,10 +401,10 @@ fun exampleTest() = runTest {
 
 ## Control over virtual time
 
-By default, and by virtue of running within the `runTest` block internally,
-the tests will skip any delays. When this is not desirable and we want granular
-control over virtual time, we need to create a separate `TestScope` and pass it
-to the test function.
+By default the container runs in the `TestScope` of the enclosing `runTest`
+block, so the tests will skip any delays. When this is not desirable and we want
+granular control over virtual time, we need to create a separate `TestScope` and
+pass it to the test function explicitly, as its first parameter.
 
 Consider the following example:
 
@@ -411,13 +429,13 @@ coroutine being tested in `runTest`.
 ```kotlin
 @Test
 fun delaySkipping() = runTest {
-        InfiniteFlowMiddleware().test(this) {
+        InfiniteFlowMiddleware().testWithInternalState {
             val job = containerHost.incrementForever()
 
             // Assert the first three states
-            expectState(listOf(42, 43))
-            expectState(listOf(42, 43, 44))
-            expectState(listOf(42, 43, 44, 45))
+            expectInternalState(listOf(42, 43))
+            expectInternalState(listOf(42, 43, 44))
+            expectInternalState(listOf(42, 43, 44, 45))
 
             // If the flow is infinite, we must ensure the intent is finished
             // at the end of the test.
@@ -431,23 +449,23 @@ fun delaySkipping() = runTest {
 ### Without delay skipping
 
 If we wish to control the virtual time, we must create a separate `TestScope`
-and pass it to the container.
+and pass it to the test function explicitly.
 
 ```kotlin
 @Test
 fun noDelaySkipping() = runTest {
         val scope = TestScope()
 
-        InfiniteFlowMiddleware().test(scope) {
+        InfiniteFlowMiddleware().testWithInternalState(scope) {
             val job = containerHost.incrementForever()
 
             // Assert the first three states
             scope.advanceTimeBy(30_001)
-            expectState(listOf(42, 43))
+            expectInternalState(listOf(42, 43))
             scope.advanceTimeBy(30_001)
-            expectState(listOf(42, 43, 44))
+            expectInternalState(listOf(42, 43, 44))
             scope.advanceTimeBy(30_001)
-            expectState(listOf(42, 43, 44, 45))
+            expectInternalState(listOf(42, 43, 44, 45))
 
             // If the flow is infinite, we must ensure the intent is finished
             // at the end of the test.

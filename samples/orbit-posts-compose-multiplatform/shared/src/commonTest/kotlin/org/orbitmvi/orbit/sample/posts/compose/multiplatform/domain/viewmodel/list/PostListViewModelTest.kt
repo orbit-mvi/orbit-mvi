@@ -43,7 +43,6 @@ class PostListViewModelTest {
         }
 
         PostListViewModel(SavedStateHandle(), repository).testWithInternalState(
-            this,
             initialState = initialState,
         ) {
             // When we run onCreate
@@ -65,7 +64,6 @@ class PostListViewModelTest {
         }
 
         PostListViewModel(SavedStateHandle(), repository).testWithInternalState(
-            this,
             initialState = initialState,
         ) {
             // When we run onCreate
@@ -87,7 +85,6 @@ class PostListViewModelTest {
         }
 
         PostListViewModel(SavedStateHandle(), repository).testWithInternalState(
-            this,
             initialState = initialState
         ) {
             // And we run onCreate
@@ -114,7 +111,6 @@ class PostListViewModelTest {
         }
 
         PostListViewModel(SavedStateHandle(), repository).testWithInternalState(
-            this,
             initialState = initialState,
         ) {
             // When we run onCreate
@@ -136,7 +132,6 @@ class PostListViewModelTest {
         }
 
         PostListViewModel(SavedStateHandle(), repository).testWithInternalState(
-            this,
             initialState = initialState,
         ) {
             // When we click a random post

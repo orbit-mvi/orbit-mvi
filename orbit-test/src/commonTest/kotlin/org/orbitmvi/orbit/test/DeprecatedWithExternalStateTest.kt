@@ -48,7 +48,7 @@ class DeprecatedWithExternalStateTest {
 
     @Test
     fun internal_state_flows_through_adapter() = runTest {
-        MiddlewareWithDeprecatedExternalState(this).testWithInternalState(this) {
+        MiddlewareWithDeprecatedExternalState(this).testWithInternalState {
             containerHost.newCount(42)
             expectInternalState { copy(count = 42) }
         }
@@ -64,7 +64,7 @@ class DeprecatedWithExternalStateTest {
 
     @Test
     fun side_effects_flow_through_adapter() = runTest {
-        MiddlewareWithDeprecatedExternalState(this).testWithInternalState(this) {
+        MiddlewareWithDeprecatedExternalState(this).testWithInternalState {
             containerHost.newSideEffect(99)
             expectSideEffect(99)
         }
@@ -73,7 +73,6 @@ class DeprecatedWithExternalStateTest {
     @Test
     fun on_create_is_found_through_adapter() = runTest {
         MiddlewareWithDeprecatedExternalStateAndOnCreate(this).testWithInternalState(
-            this,
             initialState = initialState,
             settings = TestSettings(autoCheckInitialState = false)
         ) {
@@ -93,7 +92,6 @@ class DeprecatedWithExternalStateTest {
     @Test
     fun external_state_test_seeds_initial_external_state_through_adapter() = runTest {
         MiddlewareWithDeprecatedExternalState(this).testWithExternalState(
-            this,
             settings = TestSettings(autoCheckInitialState = false)
         ) {
             expectExternalState { this }
@@ -102,7 +100,7 @@ class DeprecatedWithExternalStateTest {
 
     @Test
     fun external_state_test_auto_checks_initial_state_through_adapter() = runTest {
-        MiddlewareWithDeprecatedExternalState(this).testWithExternalState(this) {
+        MiddlewareWithDeprecatedExternalState(this).testWithExternalState {
             containerHost.newCount(42)
             expectExternalState { ExternalState("42") }
         }
@@ -110,7 +108,7 @@ class DeprecatedWithExternalStateTest {
 
     @Test
     fun internal_and_external_state_test_auto_checks_initial_state_through_adapter() = runTest {
-        MiddlewareWithDeprecatedExternalState(this).testWithInternalAndExternalState(this) {
+        MiddlewareWithDeprecatedExternalState(this).testWithInternalAndExternalState {
             containerHost.newCount(42)
             expectInternalState { copy(count = 42) }
             expectExternalState { ExternalState("42") }
@@ -120,7 +118,6 @@ class DeprecatedWithExternalStateTest {
     @Test
     fun external_state_test_with_on_create_through_adapter() = runTest {
         MiddlewareWithDeprecatedExternalStateAndOnCreate(this).testWithExternalState(
-            this,
             settings = TestSettings(autoCheckInitialState = false)
         ) {
             expectExternalState { this }

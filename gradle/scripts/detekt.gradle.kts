@@ -48,6 +48,8 @@ tasks.named("detekt", Detekt::class.java).configure {
     exclude("**/resources/**")
     exclude("**/build/**")
     exclude("**/.gradle/**")
+    // detekt 1.23.8 cannot parse Kotlin context parameters, see https://github.com/detekt/detekt/issues/8140
+    exclude("**/ContextualTest.kt")
 
     parallel = true
 
