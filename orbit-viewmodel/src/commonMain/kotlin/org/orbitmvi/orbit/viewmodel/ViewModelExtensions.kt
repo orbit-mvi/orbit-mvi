@@ -18,6 +18,10 @@
  * See: https://github.com/orbit-mvi/orbit-mvi/compare/c5b8b3f2b83b5972ba2ad98f73f75086a89653d3...main
  */
 
+// Two thirds of the functions in this file are deprecated shims that will be deleted, at which
+// point the file drops back under the threshold.
+@file:Suppress("TooManyFunctions")
+
 package org.orbitmvi.orbit.viewmodel
 
 import androidx.lifecycle.SavedStateHandle
@@ -27,9 +31,9 @@ import androidx.savedstate.SavedState
 import androidx.savedstate.serialization.decodeFromSavedState
 import kotlinx.serialization.KSerializer
 import org.orbitmvi.orbit.OrbitContainer
+import org.orbitmvi.orbit.OrbitContainerHost
 import org.orbitmvi.orbit.SettingsBuilder
 import org.orbitmvi.orbit.createOrbitContainer
-import org.orbitmvi.orbit.orbitContainer
 import org.orbitmvi.orbit.syntax.Syntax
 
 private const val SAVED_STATE_KMP_KEY = "state-kmp"
@@ -37,12 +41,15 @@ private const val SAVED_STATE_KMP_KEY = "state-kmp"
 /**
  * Creates a container scoped with ViewModelScope.
  *
+ * All type arguments have to be provided explicitly as there is no [OrbitContainerHost] to infer
+ * them from. When the [ViewModel] also implements [OrbitContainerHost], prefer [orbitContainer].
+ *
  * @param initialState The initial state of the container.
  * @param buildSettings This builder can be used to change the container's settings.
  * @param onCreate The intent to execute when the container is created
  * @return An [OrbitContainer] implementation
  */
-public fun <STATE : Any, SIDE_EFFECT : Any> ViewModel.orbitContainer(
+public fun <STATE : Any, SIDE_EFFECT : Any> ViewModel.createOrbitContainer(
     initialState: STATE,
     buildSettings: SettingsBuilder.() -> Unit = {},
     onCreate: (suspend Syntax<STATE, SIDE_EFFECT>.() -> Unit)? = null
@@ -53,13 +60,16 @@ public fun <STATE : Any, SIDE_EFFECT : Any> ViewModel.orbitContainer(
 /**
  * Creates a container scoped with ViewModelScope with external state transformation.
  *
+ * All type arguments have to be provided explicitly as there is no [OrbitContainerHost] to infer
+ * them from. When the [ViewModel] also implements [OrbitContainerHost], prefer [orbitContainer].
+ *
  * @param initialState The initial state of the container.
  * @param transformState The function that transforms the internal state to the external state.
  * @param buildSettings This builder can be used to change the container's settings.
  * @param onCreate The intent to execute when the container is created
  * @return An [OrbitContainer] implementation
  */
-public fun <INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : Any> ViewModel.orbitContainer(
+public fun <INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : Any> ViewModel.createOrbitContainer(
     initialState: INTERNAL_STATE,
     transformState: (INTERNAL_STATE) -> EXTERNAL_STATE,
     buildSettings: SettingsBuilder.() -> Unit = {},
@@ -70,6 +80,9 @@ public fun <INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : Any> ViewM
 
 /**
  * Creates a container scoped with ViewModelScope with saved state support.
+ *
+ * All type arguments have to be provided explicitly as there is no [OrbitContainerHost] to infer
+ * them from. When the [ViewModel] also implements [OrbitContainerHost], prefer [orbitContainer].
  *
  * Provide a [SavedStateHandle] in order for your state to be automatically saved as
  * you use the container.
@@ -82,14 +95,14 @@ public fun <INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : Any> ViewM
  * @param onCreate The intent to execute when the container is created
  * @return An [OrbitContainer] implementation
  */
-public fun <STATE : Any, SIDE_EFFECT : Any> ViewModel.orbitContainer(
+public fun <STATE : Any, SIDE_EFFECT : Any> ViewModel.createOrbitContainer(
     initialState: STATE,
     savedStateHandle: SavedStateHandle,
     serializer: KSerializer<STATE>,
     buildSettings: SettingsBuilder.() -> Unit = {},
     onCreate: (suspend Syntax<STATE, SIDE_EFFECT>.() -> Unit)? = null
 ): OrbitContainer<STATE, STATE, SIDE_EFFECT> {
-    return orbitContainer(
+    return createOrbitContainer(
         initialState = initialState,
         savedStateHandle = savedStateHandle,
         serializer = serializer,
@@ -103,6 +116,9 @@ public fun <STATE : Any, SIDE_EFFECT : Any> ViewModel.orbitContainer(
  * Creates a container scoped with ViewModelScope with external state transformation and
  * saved state support.
  *
+ * All type arguments have to be provided explicitly as there is no [OrbitContainerHost] to infer
+ * them from. When the [ViewModel] also implements [OrbitContainerHost], prefer [orbitContainer].
+ *
  * Provide a [SavedStateHandle] in order for your state to be automatically saved as
  * you use the container.
  *
@@ -115,7 +131,7 @@ public fun <STATE : Any, SIDE_EFFECT : Any> ViewModel.orbitContainer(
  * @return An [OrbitContainer] implementation
  */
 @Suppress("LongParameterList")
-public fun <INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : Any> ViewModel.orbitContainer(
+public fun <INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : Any> ViewModel.createOrbitContainer(
     initialState: INTERNAL_STATE,
     savedStateHandle: SavedStateHandle,
     serializer: KSerializer<INTERNAL_STATE>,
@@ -146,25 +162,94 @@ public fun <INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : Any> ViewM
 
 // region Deprecated
 
+private const val ORBIT_CONTAINER_DEPRECATION =
+    "Use the OrbitContainerHost.orbitContainer factory, which infers the state and side effect types " +
+        "from the host declaration, or createOrbitContainer when the ViewModel is not a host."
+
 /**
  * Creates a container scoped with ViewModelScope.
  */
 @Deprecated(
-    "Use orbitContainer instead",
-    ReplaceWith("orbitContainer(initialState, buildSettings, onCreate)")
+    ORBIT_CONTAINER_DEPRECATION,
+    ReplaceWith("createOrbitContainer(initialState, buildSettings, onCreate)")
 )
-public fun <STATE : Any, SIDE_EFFECT : Any> ViewModel.container(
+public fun <STATE : Any, SIDE_EFFECT : Any> ViewModel.orbitContainer(
     initialState: STATE,
     buildSettings: SettingsBuilder.() -> Unit = {},
     onCreate: (suspend Syntax<STATE, SIDE_EFFECT>.() -> Unit)? = null
-): OrbitContainer<STATE, STATE, SIDE_EFFECT> = orbitContainer(initialState, buildSettings, onCreate)
+): OrbitContainer<STATE, STATE, SIDE_EFFECT> = createOrbitContainer(initialState, buildSettings, onCreate)
 
 /**
  * Creates a container scoped with ViewModelScope with external state transformation.
  */
 @Deprecated(
-    "Use orbitContainer instead",
-    ReplaceWith("orbitContainer(initialState, transformState, buildSettings, onCreate)")
+    ORBIT_CONTAINER_DEPRECATION,
+    ReplaceWith("createOrbitContainer(initialState, transformState, buildSettings, onCreate)")
+)
+public fun <INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : Any> ViewModel.orbitContainer(
+    initialState: INTERNAL_STATE,
+    transformState: (INTERNAL_STATE) -> EXTERNAL_STATE,
+    buildSettings: SettingsBuilder.() -> Unit = {},
+    onCreate: (suspend Syntax<INTERNAL_STATE, SIDE_EFFECT>.() -> Unit)? = null
+): OrbitContainer<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT> =
+    createOrbitContainer(initialState, transformState, buildSettings, onCreate)
+
+/**
+ * Creates a container scoped with ViewModelScope with saved state support.
+ */
+@Deprecated(
+    ORBIT_CONTAINER_DEPRECATION,
+    ReplaceWith("createOrbitContainer(initialState, savedStateHandle, serializer, buildSettings, onCreate)")
+)
+public fun <STATE : Any, SIDE_EFFECT : Any> ViewModel.orbitContainer(
+    initialState: STATE,
+    savedStateHandle: SavedStateHandle,
+    serializer: KSerializer<STATE>,
+    buildSettings: SettingsBuilder.() -> Unit = {},
+    onCreate: (suspend Syntax<STATE, SIDE_EFFECT>.() -> Unit)? = null
+): OrbitContainer<STATE, STATE, SIDE_EFFECT> =
+    createOrbitContainer(initialState, savedStateHandle, serializer, buildSettings, onCreate)
+
+/**
+ * Creates a container scoped with ViewModelScope with external state transformation and
+ * saved state support.
+ */
+@Suppress("LongParameterList")
+@Deprecated(
+    ORBIT_CONTAINER_DEPRECATION,
+    ReplaceWith(
+        "createOrbitContainer(initialState, savedStateHandle, serializer, transformState, buildSettings, onCreate)"
+    )
+)
+public fun <INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : Any> ViewModel.orbitContainer(
+    initialState: INTERNAL_STATE,
+    savedStateHandle: SavedStateHandle,
+    serializer: KSerializer<INTERNAL_STATE>,
+    transformState: (INTERNAL_STATE) -> EXTERNAL_STATE,
+    buildSettings: SettingsBuilder.() -> Unit = {},
+    onCreate: (suspend Syntax<INTERNAL_STATE, SIDE_EFFECT>.() -> Unit)? = null
+): OrbitContainer<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT> =
+    createOrbitContainer(initialState, savedStateHandle, serializer, transformState, buildSettings, onCreate)
+
+/**
+ * Creates a container scoped with ViewModelScope.
+ */
+@Deprecated(
+    ORBIT_CONTAINER_DEPRECATION,
+    ReplaceWith("createOrbitContainer(initialState, buildSettings, onCreate)")
+)
+public fun <STATE : Any, SIDE_EFFECT : Any> ViewModel.container(
+    initialState: STATE,
+    buildSettings: SettingsBuilder.() -> Unit = {},
+    onCreate: (suspend Syntax<STATE, SIDE_EFFECT>.() -> Unit)? = null
+): OrbitContainer<STATE, STATE, SIDE_EFFECT> = createOrbitContainer(initialState, buildSettings, onCreate)
+
+/**
+ * Creates a container scoped with ViewModelScope with external state transformation.
+ */
+@Deprecated(
+    ORBIT_CONTAINER_DEPRECATION,
+    ReplaceWith("createOrbitContainer(initialState, transformState, buildSettings, onCreate)")
 )
 public fun <INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : Any> ViewModel.container(
     initialState: INTERNAL_STATE,
@@ -172,14 +257,14 @@ public fun <INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : Any> ViewM
     buildSettings: SettingsBuilder.() -> Unit = {},
     onCreate: (suspend Syntax<INTERNAL_STATE, SIDE_EFFECT>.() -> Unit)? = null
 ): OrbitContainer<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT> =
-    orbitContainer(initialState, transformState, buildSettings, onCreate)
+    createOrbitContainer(initialState, transformState, buildSettings, onCreate)
 
 /**
  * Creates a container scoped with ViewModelScope with saved state support.
  */
 @Deprecated(
-    "Use orbitContainer instead",
-    ReplaceWith("orbitContainer(initialState, savedStateHandle, serializer, buildSettings, onCreate)")
+    ORBIT_CONTAINER_DEPRECATION,
+    ReplaceWith("createOrbitContainer(initialState, savedStateHandle, serializer, buildSettings, onCreate)")
 )
 public fun <STATE : Any, SIDE_EFFECT : Any> ViewModel.container(
     initialState: STATE,
@@ -188,7 +273,7 @@ public fun <STATE : Any, SIDE_EFFECT : Any> ViewModel.container(
     buildSettings: SettingsBuilder.() -> Unit = {},
     onCreate: (suspend Syntax<STATE, SIDE_EFFECT>.() -> Unit)? = null
 ): OrbitContainer<STATE, STATE, SIDE_EFFECT> =
-    orbitContainer(initialState, savedStateHandle, serializer, buildSettings, onCreate)
+    createOrbitContainer(initialState, savedStateHandle, serializer, buildSettings, onCreate)
 
 /**
  * Creates a container scoped with ViewModelScope with external state transformation and
@@ -196,9 +281,9 @@ public fun <STATE : Any, SIDE_EFFECT : Any> ViewModel.container(
  */
 @Suppress("LongParameterList")
 @Deprecated(
-    "Use orbitContainer instead",
+    ORBIT_CONTAINER_DEPRECATION,
     ReplaceWith(
-        "orbitContainer(initialState, savedStateHandle, serializer, transformState, buildSettings, onCreate)"
+        "createOrbitContainer(initialState, savedStateHandle, serializer, transformState, buildSettings, onCreate)"
     )
 )
 public fun <INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : Any> ViewModel.container(
@@ -209,6 +294,6 @@ public fun <INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : Any> ViewM
     buildSettings: SettingsBuilder.() -> Unit = {},
     onCreate: (suspend Syntax<INTERNAL_STATE, SIDE_EFFECT>.() -> Unit)? = null
 ): OrbitContainer<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT> =
-    orbitContainer(initialState, savedStateHandle, serializer, transformState, buildSettings, onCreate)
+    createOrbitContainer(initialState, savedStateHandle, serializer, transformState, buildSettings, onCreate)
 
 // endregion

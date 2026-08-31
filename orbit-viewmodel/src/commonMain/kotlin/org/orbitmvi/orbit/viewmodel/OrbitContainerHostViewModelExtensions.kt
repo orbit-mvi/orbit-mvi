@@ -25,7 +25,6 @@ import org.orbitmvi.orbit.OrbitContainerHost
 import org.orbitmvi.orbit.SettingsBuilder
 import org.orbitmvi.orbit.orbitContainer
 import org.orbitmvi.orbit.syntax.Syntax
-import kotlin.jvm.JvmName
 
 /**
  * Creates a container scoped with ViewModelScope.
@@ -39,7 +38,6 @@ import kotlin.jvm.JvmName
  * @param onCreate The intent to execute when the container is created
  * @return An [OrbitContainer] implementation
  */
-@JvmName("containerHostOrbitContainer")
 public fun <T, STATE : Any, SIDE_EFFECT : Any> T.orbitContainer(
     initialState: STATE,
     buildSettings: SettingsBuilder.() -> Unit = {},
@@ -61,7 +59,6 @@ public fun <T, STATE : Any, SIDE_EFFECT : Any> T.orbitContainer(
  * @param onCreate The intent to execute when the container is created
  * @return An [OrbitContainer] implementation
  */
-@JvmName("containerHostOrbitContainer")
 public fun <T, INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : Any> T.orbitContainer(
     initialState: INTERNAL_STATE,
     transformState: (INTERNAL_STATE) -> EXTERNAL_STATE,
@@ -90,7 +87,6 @@ public fun <T, INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : Any> T.
  * @param onCreate The intent to execute when the container is created
  * @return An [OrbitContainer] implementation
  */
-@JvmName("containerHostOrbitContainer")
 public fun <T, STATE : Any, SIDE_EFFECT : Any> T.orbitContainer(
     initialState: STATE,
     savedStateHandle: SavedStateHandle,
@@ -98,7 +94,7 @@ public fun <T, STATE : Any, SIDE_EFFECT : Any> T.orbitContainer(
     buildSettings: SettingsBuilder.() -> Unit = {},
     onCreate: (suspend Syntax<STATE, SIDE_EFFECT>.() -> Unit)? = null
 ): OrbitContainer<STATE, STATE, SIDE_EFFECT> where T : OrbitContainerHost<STATE, STATE, SIDE_EFFECT>, T : ViewModel {
-    return orbitContainer<STATE, SIDE_EFFECT>(
+    return createOrbitContainer<STATE, SIDE_EFFECT>(
         initialState = initialState,
         savedStateHandle = savedStateHandle,
         serializer = serializer,
@@ -127,7 +123,6 @@ public fun <T, STATE : Any, SIDE_EFFECT : Any> T.orbitContainer(
  * @return An [OrbitContainer] implementation
  */
 @Suppress("LongParameterList")
-@JvmName("containerHostOrbitContainer")
 public fun <T, INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : Any> T.orbitContainer(
     initialState: INTERNAL_STATE,
     savedStateHandle: SavedStateHandle,
@@ -137,7 +132,7 @@ public fun <T, INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : Any> T.
     onCreate: (suspend Syntax<INTERNAL_STATE, SIDE_EFFECT>.() -> Unit)? = null
 ): OrbitContainer<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>
     where T : OrbitContainerHost<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>, T : ViewModel {
-    return orbitContainer<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>(
+    return createOrbitContainer<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>(
         initialState = initialState,
         savedStateHandle = savedStateHandle,
         serializer = serializer,
