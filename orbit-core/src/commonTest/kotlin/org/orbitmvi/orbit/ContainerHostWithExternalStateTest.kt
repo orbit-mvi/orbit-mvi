@@ -120,7 +120,7 @@ class ContainerHostWithExternalStateTest {
 
     class TestHost(backgroundScope: CoroutineScope) : OrbitContainerHost<Int, String, Int> {
         override val container: OrbitContainer<Int, String, Int> =
-            backgroundScope.orbitContainer(initialState = 0, transformState = ::transformState)
+            orbitContainer(backgroundScope, initialState = 0, transformState = ::transformState)
 
         fun newState(action: Int) = intent { subIntent(action) }
 

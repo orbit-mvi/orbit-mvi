@@ -29,7 +29,7 @@ internal class CoroutineNameTest {
 
     private inner class Middleware(scope: TestScope) : OrbitContainerHost<TestState, TestState, String> {
 
-        override val container = scope.backgroundScope.orbitContainer(TestState()) {
+        override val container = orbitContainer(scope.backgroundScope, TestState()) {
             postSideEffect(coroutineContext[CoroutineName]?.name ?: "unknown")
         }
 

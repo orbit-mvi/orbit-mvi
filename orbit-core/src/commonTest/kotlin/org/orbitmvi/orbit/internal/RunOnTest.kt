@@ -271,7 +271,7 @@ internal class RunOnTest {
 
     @OptIn(OrbitExperimental::class)
     private inner class Middleware(scope: CoroutineScope) : OrbitContainerHost<TestState, TestState, String> {
-        override val container = scope.orbitContainer<TestState, String>(TestState.Loading)
+        override val container = orbitContainer(scope, TestState.Loading)
 
         val channel: Channel<Int> = Channel()
         val collectorChannel: Channel<Int> = Channel()

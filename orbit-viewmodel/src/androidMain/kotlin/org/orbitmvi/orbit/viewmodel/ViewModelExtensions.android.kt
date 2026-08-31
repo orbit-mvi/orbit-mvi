@@ -25,6 +25,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import org.orbitmvi.orbit.OrbitContainer
 import org.orbitmvi.orbit.SettingsBuilder
+import org.orbitmvi.orbit.createOrbitContainer
 import org.orbitmvi.orbit.orbitContainer
 import org.orbitmvi.orbit.syntax.Syntax
 
@@ -83,7 +84,7 @@ public fun <INTERNAL_STATE : Parcelable, EXTERNAL_STATE : Any, SIDE_EFFECT : Any
     val state = savedState ?: initialState
 
     val realContainer: OrbitContainer<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT> =
-        viewModelScope.orbitContainer(state, transformState, buildSettings, onCreate)
+        viewModelScope.createOrbitContainer(state, transformState, buildSettings, onCreate)
 
     return SavedStateContainerDecoratorParcelable(
         realContainer,

@@ -46,7 +46,7 @@ public interface OrbitContainerHost<INTERNAL_STATE : Any, EXTERNAL_STATE : Any, 
      * Use factory functions to easily obtain an [OrbitContainer] instance.
      *
      * ```
-     * override val container = scope.orbitContainer<MyState, MySideEffect>(initialState)
+     * override val container = orbitContainer(scope, initialState)
      * ```
      */
     public val container: OrbitContainer<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>
@@ -71,7 +71,7 @@ public interface OrbitContainerHost<INTERNAL_STATE : Any, EXTERNAL_STATE : Any, 
      * For example, when listening to multiple flows from the [OrbitContainer] `onCreate` lambda.
      *
      * ```
-     * override val container = scope.orbitContainer<TestState, String>(initialState) {
+     * override val container = orbitContainer(scope, initialState) {
      *             coroutineScope {
      *                 launch {
      *                     sendSideEffect1()

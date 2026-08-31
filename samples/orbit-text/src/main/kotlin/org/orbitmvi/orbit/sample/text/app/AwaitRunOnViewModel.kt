@@ -41,7 +41,7 @@ class AwaitRunOnViewModel : OrbitContainerHost<AwaitRunOnViewModel.UiState, Awai
     private val scope = CoroutineScope(Dispatchers.Main)
 
     @OptIn(OrbitExperimental::class)
-    override val container: OrbitContainer<UiState, UiState, Nothing> = scope.orbitContainer(UiState.Loading) {
+    override val container: OrbitContainer<UiState, UiState, Nothing> = orbitContainer(scope, UiState.Loading) {
         coroutineScope {
             // Simulate loading data before the form is ready
             launch {

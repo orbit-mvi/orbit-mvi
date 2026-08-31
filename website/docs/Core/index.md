@@ -45,7 +45,7 @@ sealed class ExampleSideEffect {
 class ExampleContainerHost(scope: CoroutineScope) : OrbitContainerHost<ExampleState, ExampleState, ExampleSideEffect> {
 
     // create a container
-    override val container = scope.orbitContainer<ExampleState, ExampleSideEffect>(ExampleState())
+    override val container = orbitContainer(scope, ExampleState())
 
     fun doSomethingUseful() = intent {
         ...
@@ -100,11 +100,42 @@ class ExampleViewModel(
     savedStateHandle: SavedStateHandle
 ) : ViewModel(), OrbitContainerHost<ExampleState, ExampleState, ExampleSideEffect> {
     // create a container
-    val container = orbitContainer<ExampleState, ExampleSideEffect>(ExampleState(), savedStateHandle)
+    val container = orbitContainer(ExampleState(), savedStateHandle)
 
     …
 }
 ```
+
+### Container factories
+
+Inside an `OrbitContainerHost`, create the container with `orbitContainer(scope, …)`.
+It is an extension on `OrbitContainerHost`, so it reads the state and side effect
+types straight off your host declaration — they can never drift out of sync with
+it, and they do not have to be repeated at the call site.
+
+```kotlin
+class ExampleContainerHost(scope: CoroutineScope) : OrbitContainerHost<ExampleState, ExampleState, ExampleSideEffect> {
+
+    override val container = orbitContainer(scope, ExampleState())
+}
+```
+
+For the rarer case of a container that is not owned by an `OrbitContainerHost`,
+for example in tests, use `CoroutineScope.createOrbitContainer(…)`. Because there
+is no host to infer from, all type arguments have to be provided explicitly.
+
+```kotlin
+val container = scope.createOrbitContainer<ExampleState, ExampleSideEffect>(ExampleState())
+```
+
+`CoroutineScope.orbitContainer(…)` is deprecated in favour of these two. Its
+`ReplaceWith` quick fix rewrites the call to the host form, which is the right
+answer inside a host — if the container has no host, switch to
+`createOrbitContainer` instead.
+
+On Android, the `orbit-viewmodel` module provides equivalent factories that infer
+the scope from `viewModelScope`, so neither the scope nor the type arguments need
+to be repeated. See [ViewModel](../ViewModel).
 
 ### External state
 
@@ -134,7 +165,7 @@ class ExampleViewModel(
     savedStateHandle: SavedStateHandle
 ) : ViewModel(), OrbitContainerHost<ExampleState, ExampleExtState, ExampleSideEffect> {
     // create a container with external state transformation
-    override val container = orbitContainer<ExampleState, ExampleExtState, ExampleSideEffect>(
+    override val container = orbitContainer(
         ExampleState(),
         savedStateHandle,
         ::transformState
@@ -298,7 +329,8 @@ is no longer the case.
 class Example : OrbitContainerHost<ExampleState, ExampleState, ExampleSideEffect> {
     ...
     
-    override val container = scope.orbitContainer<ExampleState, ExampleSideEffect>(
+    override val container = orbitContainer(
+        scope,
         ExampleState()
     ) {
         // Remember that this `onCreate` block is an implicit `intent`.
@@ -358,7 +390,8 @@ class Example : OrbitContainerHost<ExampleSealedClassState, ExampleSealedClassSt
     ...
     
     override val container = 
-        scope.orbitContainer<ExampleSealedClassState, ExampleSideEffect>(
+        orbitContainer(
+            scope,
             ExampleSealedClassState.Loading
         )
 
@@ -393,7 +426,8 @@ class Example : OrbitContainerHost<ExampleSealedClassState, ExampleSealedClassSt
     ...
     
     override val container = 
-        scope.orbitContainer<ExampleSealedClassState, ExampleSideEffect>(
+        orbitContainer(
+            scope,
             ExampleSealedClassState.Loading
         ) {
             onCreate {

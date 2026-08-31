@@ -33,7 +33,7 @@ import kotlin.random.Random
 @Suppress("MagicNumber")
 class TextViewModel : OrbitContainerHost<TextViewModel.State, TextViewModel.State, Nothing> {
     private val scope = CoroutineScope(Dispatchers.Main)
-    override val container: OrbitContainer<State, State, Nothing> = scope.orbitContainer(State()) {
+    override val container: OrbitContainer<State, State, Nothing> = orbitContainer(scope, State()) {
         coroutineScope {
             launch {
                 snapshotFlow { state.textFieldState.text }.collectLatest { text ->

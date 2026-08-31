@@ -102,7 +102,7 @@ class SideEffectTest {
     }
 
     private inner class SideEffectTestMiddleware(scope: TestScope) : OrbitContainerHost<State, State, Int> {
-        override val container = scope.backgroundScope.orbitContainer<State, Int>(initialState)
+        override val container = orbitContainer(scope.backgroundScope, initialState)
 
         fun newState(count: Int) = intent {
             reduce { state.copy(count = count) }

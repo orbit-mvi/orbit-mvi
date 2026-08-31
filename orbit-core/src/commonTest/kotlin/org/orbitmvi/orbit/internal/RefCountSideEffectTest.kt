@@ -26,7 +26,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.runTest
 import org.orbitmvi.orbit.OrbitContainer
 import org.orbitmvi.orbit.SideEffectMode
-import org.orbitmvi.orbit.orbitContainer
+import org.orbitmvi.orbit.createOrbitContainer
 import kotlin.random.Random
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -36,7 +36,7 @@ internal class RefCountSideEffectTest {
 
     @Test
     fun side_effects_are_emitted_in_order() = runTest {
-        val container = backgroundScope.orbitContainer<Unit, Int>(
+        val container = backgroundScope.createOrbitContainer<Unit, Int>(
             initialState = Unit,
             buildSettings = { sideEffectMode = SideEffectMode.FAN_OUT }
         )
@@ -54,7 +54,7 @@ internal class RefCountSideEffectTest {
 
     @Test
     fun side_effects_are_cached_when_there_are_no_subscribers() = runTest {
-        val container = backgroundScope.orbitContainer<Unit, Int>(
+        val container = backgroundScope.createOrbitContainer<Unit, Int>(
             initialState = Unit,
             buildSettings = { sideEffectMode = SideEffectMode.FAN_OUT }
         )
@@ -75,7 +75,7 @@ internal class RefCountSideEffectTest {
 
     @Test
     fun consumed_side_effects_are_not_resent() = runTest {
-        val container = backgroundScope.orbitContainer<Unit, Int>(
+        val container = backgroundScope.createOrbitContainer<Unit, Int>(
             initialState = Unit,
             buildSettings = { sideEffectMode = SideEffectMode.FAN_OUT }
         )
@@ -99,7 +99,7 @@ internal class RefCountSideEffectTest {
 
     @Test
     fun only_new_side_effects_are_emitted_when_resubscribing() = runTest {
-        val container = backgroundScope.orbitContainer<Unit, Int>(
+        val container = backgroundScope.createOrbitContainer<Unit, Int>(
             initialState = Unit,
             buildSettings = { sideEffectMode = SideEffectMode.FAN_OUT }
         )
@@ -123,7 +123,7 @@ internal class RefCountSideEffectTest {
 
     @Test
     fun strict_fan_out_rejects_a_second_collector() = runTest {
-        val container = backgroundScope.orbitContainer<Unit, Int>(
+        val container = backgroundScope.createOrbitContainer<Unit, Int>(
             initialState = Unit,
             buildSettings = { sideEffectMode = SideEffectMode.FAN_OUT_STRICT }
         )

@@ -70,7 +70,7 @@ internal class ContainerLifecycleTest {
 
     private inner class Middleware(scope: TestScope, initialState: TestState) : OrbitContainerHost<TestState, TestState, String> {
 
-        override val container = scope.backgroundScope.orbitContainer(initialState) {
+        override val container = orbitContainer(scope.backgroundScope, initialState) {
             postSideEffect(state.id.toString())
         }
     }
@@ -80,7 +80,8 @@ internal class ContainerLifecycleTest {
 
         // The event loop is pinned to the test scheduler so that the onCreate intent triggered on
         // subscription cannot reduce the state before the subscriber sees the initial state.
-        override val container = scope.backgroundScope.orbitContainer<TestState, ExternalState, String>(
+        override val container = orbitContainer(
+            scope.backgroundScope,
             initialState = initialState,
             transformState = { ExternalState(it.id.toString()) },
             buildSettings = { eventLoopDispatcher = { StandardTestDispatcher(scope.testScheduler) } }

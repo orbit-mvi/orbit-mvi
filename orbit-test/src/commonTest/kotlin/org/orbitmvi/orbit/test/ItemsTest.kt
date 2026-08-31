@@ -83,7 +83,7 @@ class ItemsTest {
 
     private inner class ItemTestMiddleware(scope: TestScope) :
         OrbitContainerHost<State, State, Int> {
-        override val container = scope.backgroundScope.orbitContainer<State, Int>(initialState)
+        override val container = orbitContainer(scope.backgroundScope, initialState)
 
         fun newState(action: Int) = intent {
             reduce {

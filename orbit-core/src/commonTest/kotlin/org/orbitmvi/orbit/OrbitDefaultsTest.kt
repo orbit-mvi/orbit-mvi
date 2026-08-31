@@ -43,7 +43,7 @@ class OrbitDefaultsTest {
             eventLoopDispatcher = { Dispatchers.Unconfined }
         }
 
-        val container = backgroundScope.orbitContainer<Unit, Nothing>(Unit)
+        val container = backgroundScope.createOrbitContainer<Unit, Nothing>(Unit)
 
         assertEquals(SideEffectMode.FAN_OUT, container.settings.sideEffectMode)
         assertEquals(Dispatchers.Unconfined, container.settings.eventLoopDispatcher())
@@ -56,7 +56,7 @@ class OrbitDefaultsTest {
             sideEffectMode = SideEffectMode.FAN_OUT
         }
 
-        val container = backgroundScope.orbitContainer<Unit, Nothing>(
+        val container = backgroundScope.createOrbitContainer<Unit, Nothing>(
             initialState = Unit,
             buildSettings = { sideEffectMode = SideEffectMode.BROADCAST }
         )
@@ -116,8 +116,8 @@ class OrbitDefaultsTest {
             }
         }
 
-        backgroundScope.orbitContainer<Unit, Nothing>(Unit)
-        backgroundScope.orbitContainer<Unit, Nothing>(Unit)
+        backgroundScope.createOrbitContainer<Unit, Nothing>(Unit)
+        backgroundScope.createOrbitContainer<Unit, Nothing>(Unit)
 
         assertEquals(2, eventLoopFactoryInvocations)
         assertEquals(2, intentLaunchingFactoryInvocations)
@@ -133,7 +133,7 @@ class OrbitDefaultsTest {
             }
         }
 
-        val container = backgroundScope.orbitContainer<Unit, Nothing>(Unit)
+        val container = backgroundScope.createOrbitContainer<Unit, Nothing>(Unit)
         repeat(3) {
             container.orbit { }
         }
