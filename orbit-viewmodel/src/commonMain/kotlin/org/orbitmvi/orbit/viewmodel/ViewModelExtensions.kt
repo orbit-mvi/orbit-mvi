@@ -28,6 +28,7 @@ import androidx.savedstate.serialization.decodeFromSavedState
 import kotlinx.serialization.KSerializer
 import org.orbitmvi.orbit.OrbitContainer
 import org.orbitmvi.orbit.SettingsBuilder
+import org.orbitmvi.orbit.createOrbitContainer
 import org.orbitmvi.orbit.orbitContainer
 import org.orbitmvi.orbit.syntax.Syntax
 
@@ -46,7 +47,7 @@ public fun <STATE : Any, SIDE_EFFECT : Any> ViewModel.orbitContainer(
     buildSettings: SettingsBuilder.() -> Unit = {},
     onCreate: (suspend Syntax<STATE, SIDE_EFFECT>.() -> Unit)? = null
 ): OrbitContainer<STATE, STATE, SIDE_EFFECT> {
-    return viewModelScope.orbitContainer(initialState, buildSettings, onCreate)
+    return viewModelScope.createOrbitContainer(initialState, buildSettings, onCreate)
 }
 
 /**
@@ -64,7 +65,7 @@ public fun <INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : Any> ViewM
     buildSettings: SettingsBuilder.() -> Unit = {},
     onCreate: (suspend Syntax<INTERNAL_STATE, SIDE_EFFECT>.() -> Unit)? = null
 ): OrbitContainer<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT> {
-    return viewModelScope.orbitContainer(initialState, transformState, buildSettings, onCreate)
+    return viewModelScope.createOrbitContainer(initialState, transformState, buildSettings, onCreate)
 }
 
 /**
@@ -133,7 +134,7 @@ public fun <INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : Any> ViewM
     val state = savedState ?: initialState
 
     val realContainer: OrbitContainer<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT> =
-        viewModelScope.orbitContainer(state, transformState, buildSettings, onCreate)
+        viewModelScope.createOrbitContainer(state, transformState, buildSettings, onCreate)
 
     return SavedStateContainerDecorator(
         realContainer,

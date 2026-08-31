@@ -67,7 +67,7 @@ objects.
 class CalculatorViewModel: OrbitContainerHost<CalculatorState, CalculatorState, CalculatorSideEffect>, ViewModel() {
 
     // Include `orbit-viewmodel` for the factory function
-    override val container = orbitContainer<CalculatorState, CalculatorSideEffect>(CalculatorState())
+    override val container = orbitContainer(CalculatorState())
 
     fun add(number: Int) = intent {
         postSideEffect(CalculatorSideEffect.Toast("Adding $number to ${state.total}!"))

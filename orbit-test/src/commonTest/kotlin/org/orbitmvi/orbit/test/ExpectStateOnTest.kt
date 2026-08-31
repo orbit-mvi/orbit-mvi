@@ -223,7 +223,7 @@ class ExpectStateOnTest {
 
     private inner class StateTestMiddleware(scope: TestScope) :
         OrbitContainerHost<State, State, Int> {
-        override val container = scope.backgroundScope.orbitContainer<State, Int>(initialState)
+        override val container = orbitContainer(scope.backgroundScope, initialState)
 
         fun newCount(action: Int) = intent {
             reduce {

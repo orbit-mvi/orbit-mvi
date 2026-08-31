@@ -19,9 +19,9 @@ package org.orbitmvi.orbit.test
 import kotlinx.coroutines.test.runTest
 import org.orbitmvi.orbit.RealSettings
 import org.orbitmvi.orbit.annotation.OrbitInternal
+import org.orbitmvi.orbit.createOrbitContainer
 import org.orbitmvi.orbit.internal.LazyCreateContainerDecorator
 import org.orbitmvi.orbit.internal.RealContainer
-import org.orbitmvi.orbit.orbitContainer
 import org.orbitmvi.orbit.withExternalState
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -32,7 +32,7 @@ class ContainerExtTest {
 
     @Test
     fun find_transform_state_returns_the_test_container_transform() = runTest {
-        val container = backgroundScope.orbitContainer<Int, String, Int>(
+        val container = backgroundScope.createOrbitContainer<Int, String, Int>(
             initialState = 1,
             transformState = { it.toString() }
         )
@@ -43,7 +43,7 @@ class ContainerExtTest {
     @Suppress("DEPRECATION")
     @Test
     fun find_transform_state_composes_the_adapter_transform() = runTest {
-        val container = backgroundScope.orbitContainer<Int, Int>(initialState = 1)
+        val container = backgroundScope.createOrbitContainer<Int, Int>(initialState = 1)
             .withExternalState { it.toString() }
 
         assertEquals("42", container.findTransformState()(42))
@@ -52,7 +52,7 @@ class ContainerExtTest {
     @Test
     fun find_transform_state_unwraps_container_decorators() = runTest {
         val container = LazyCreateContainerDecorator<Int, String, Int>(
-            actual = backgroundScope.orbitContainer(
+            actual = backgroundScope.createOrbitContainer(
                 initialState = 1,
                 transformState = { it.toString() }
             )

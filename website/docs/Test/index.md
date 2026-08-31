@@ -65,7 +65,7 @@ fun exampleTest() = runTest {
 
 ### Run `onCreate`
 
-If the `OrbitContainer` is created with `CoroutineScope.orbitContainer()` or
+If the `OrbitContainer` is created with `OrbitContainerHost.orbitContainer()` or
 `ViewModel.orbitContainer()` there is an option to provide the `onCreate` lambda.
 In test mode this function must be run manually (if needed) by calling
 `runOnCreate`, so it's effectively isolated in the test; the other
@@ -334,7 +334,7 @@ our [OrbitContainerHost](pathname:///dokka/orbit-core/org.orbitmvi.orbit/-orbit-
 to an infinite (hot) flow of data like so:
 
 ```kotlin
-val container = scope.orbitContainer<SomeState, Unit> {
+val container = scope.createOrbitContainer<SomeState, Unit> {
     intent {
         runOnSubscription {
             locationService.locationUpdates.collect {
@@ -392,7 +392,7 @@ Consider the following example:
 
 ```kotlin
 class InfiniteFlowMiddleware : OrbitContainerHost<List<Int>, List<Int>, Nothing> {
-    override val container: OrbitContainer<List<Int>, List<Int>, Nothing> = someScope.orbitContainer(listOf(42))
+    override val container: OrbitContainer<List<Int>, List<Int>, Nothing> = orbitContainer(someScope, listOf(42))
 
     fun incrementForever() = intent {
         while (true) {

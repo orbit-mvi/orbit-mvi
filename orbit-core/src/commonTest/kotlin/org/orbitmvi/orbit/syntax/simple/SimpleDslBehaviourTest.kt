@@ -66,7 +66,7 @@ internal class SimpleDslBehaviourTest {
     private data class TestState(val id: Int = Random.nextInt())
 
     private inner class BaseDslMiddleware(scope: TestScope) : OrbitContainerHost<TestState, TestState, String> {
-        override val container = scope.backgroundScope.orbitContainer<TestState, String>(TestState(42))
+        override val container = orbitContainer(scope.backgroundScope, TestState(42))
 
         fun reducer(action: Int) = intent {
             reduce {

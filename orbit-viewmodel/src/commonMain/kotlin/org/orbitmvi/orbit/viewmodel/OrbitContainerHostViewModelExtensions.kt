@@ -45,7 +45,7 @@ public fun <T, STATE : Any, SIDE_EFFECT : Any> T.orbitContainer(
     buildSettings: SettingsBuilder.() -> Unit = {},
     onCreate: (suspend Syntax<STATE, SIDE_EFFECT>.() -> Unit)? = null
 ): OrbitContainer<STATE, STATE, SIDE_EFFECT> where T : OrbitContainerHost<STATE, STATE, SIDE_EFFECT>, T : ViewModel {
-    return viewModelScope.orbitContainer(initialState, buildSettings, onCreate)
+    return orbitContainer(viewModelScope, initialState, buildSettings, onCreate)
 }
 
 /**
@@ -69,7 +69,7 @@ public fun <T, INTERNAL_STATE : Any, EXTERNAL_STATE : Any, SIDE_EFFECT : Any> T.
     onCreate: (suspend Syntax<INTERNAL_STATE, SIDE_EFFECT>.() -> Unit)? = null
 ): OrbitContainer<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>
     where T : OrbitContainerHost<INTERNAL_STATE, EXTERNAL_STATE, SIDE_EFFECT>, T : ViewModel {
-    return viewModelScope.orbitContainer(initialState, transformState, buildSettings, onCreate)
+    return orbitContainer(viewModelScope, initialState, transformState, buildSettings, onCreate)
 }
 
 /**

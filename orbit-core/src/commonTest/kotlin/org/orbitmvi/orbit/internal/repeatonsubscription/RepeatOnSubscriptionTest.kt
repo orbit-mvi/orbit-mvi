@@ -83,7 +83,7 @@ internal class RepeatOnSubscriptionTest {
     }
 
     private inner class TestMiddleware(testScope: TestScope) : OrbitContainerHost<State, State, Int> {
-        override val container = testScope.backgroundScope.orbitContainer<State, Int>(initialState)
+        override val container = orbitContainer(testScope.backgroundScope, initialState)
 
         fun updateState(externalCall: suspend () -> Int) = intent {
             repeatOnSubscription {

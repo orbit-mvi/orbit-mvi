@@ -63,7 +63,7 @@ internal class CreateTest {
     private inner class GeneralTestMiddleware(scope: TestScope) :
         OrbitContainerHost<State, State, Nothing> {
         var createCalled = false
-        override val container = scope.backgroundScope.orbitContainer<State, Nothing>(initialState) {
+        override val container = orbitContainer(scope.backgroundScope, initialState) {
             createCalled = true
         }
     }

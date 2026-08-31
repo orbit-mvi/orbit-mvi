@@ -69,7 +69,7 @@ internal class SubIntentTest {
         private val flow1: Flow<String>,
         private val flow2: Flow<String>
     ) : OrbitContainerHost<TestState, TestState, String> {
-        override val container = scope.orbitContainer<TestState, String>(initialState) {
+        override val container = orbitContainer(scope, initialState) {
             coroutineScope {
                 launch {
                     sendSideEffect1()

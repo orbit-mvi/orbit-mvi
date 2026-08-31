@@ -112,7 +112,7 @@ class IntentJobsTest {
     }
 
     private inner class IntentJobsMiddleware(scope: TestScope) : OrbitContainerHost<Int, Int, Int> {
-        override val container = scope.backgroundScope.orbitContainer<Int, Int>(initialState) {
+        override val container = orbitContainer(scope.backgroundScope, initialState) {
             delay(300)
             reduce { state + 2 }
         }

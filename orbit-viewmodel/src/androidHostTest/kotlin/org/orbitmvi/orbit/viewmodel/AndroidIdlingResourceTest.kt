@@ -324,6 +324,7 @@ class AndroidIdlingResourceTest {
     private fun CoroutineScope.createContainerHost(): OrbitContainerHost<TestState, TestState, Int> {
         return object : OrbitContainerHost<TestState, TestState, Int> {
             override val container: OrbitContainer<TestState, TestState, Int> = orbitContainer(
+                this@createContainerHost,
                 initialState = TestState(0),
                 buildSettings = { idlingRegistry = AndroidIdlingResource() }
             )

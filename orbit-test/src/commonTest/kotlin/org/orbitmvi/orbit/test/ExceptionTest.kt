@@ -40,7 +40,7 @@ class ExceptionTest {
     }
 
     private inner class ExceptionTestMiddleware(scope: TestScope) : OrbitContainerHost<State, State, Int> {
-        override val container = scope.backgroundScope.orbitContainer<State, Int>(initialState)
+        override val container = orbitContainer(scope.backgroundScope, initialState)
 
         fun boom() = intent {
             throw IllegalStateException("Boom!")

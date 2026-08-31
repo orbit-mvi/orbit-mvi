@@ -29,7 +29,7 @@ import kotlinx.coroutines.withContext
 import org.orbitmvi.orbit.OrbitContainer
 import org.orbitmvi.orbit.SideEffectMode
 import org.orbitmvi.orbit.annotation.OrbitExperimental
-import org.orbitmvi.orbit.orbitContainer
+import org.orbitmvi.orbit.createOrbitContainer
 import kotlin.random.Random
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -207,7 +207,7 @@ internal class BroadcastSideEffectTest {
 
     @Test
     fun caching_suspends_when_the_cache_is_full() = runTest {
-        val container: OrbitContainer<Unit, Unit, Int> = backgroundScope.orbitContainer(
+        val container: OrbitContainer<Unit, Unit, Int> = backgroundScope.createOrbitContainer(
             initialState = Unit,
             buildSettings = {
                 sideEffectMode = SideEffectMode.BROADCAST
@@ -237,7 +237,7 @@ internal class BroadcastSideEffectTest {
 
     @Test
     fun overflow_is_broadcast_live_not_recached() = runTest {
-        val container: OrbitContainer<Unit, Unit, Int> = backgroundScope.orbitContainer(
+        val container: OrbitContainer<Unit, Unit, Int> = backgroundScope.createOrbitContainer(
             initialState = Unit,
             buildSettings = {
                 sideEffectMode = SideEffectMode.BROADCAST
@@ -269,7 +269,7 @@ internal class BroadcastSideEffectTest {
 
     @Test
     fun cache_is_replayed_before_the_overflow_emission() = runTest {
-        val container: OrbitContainer<Unit, Unit, Int> = backgroundScope.orbitContainer(
+        val container: OrbitContainer<Unit, Unit, Int> = backgroundScope.createOrbitContainer(
             initialState = Unit,
             buildSettings = {
                 sideEffectMode = SideEffectMode.BROADCAST
@@ -295,7 +295,7 @@ internal class BroadcastSideEffectTest {
     }
 
     private fun TestScope.createContainer(): OrbitContainer<Unit, Unit, Int> =
-        backgroundScope.orbitContainer(
+        backgroundScope.createOrbitContainer(
             initialState = Unit,
             buildSettings = { sideEffectMode = SideEffectMode.BROADCAST }
         )

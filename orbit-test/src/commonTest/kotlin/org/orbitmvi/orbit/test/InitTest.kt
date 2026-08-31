@@ -87,7 +87,7 @@ internal class InitTest {
 
     private inner class GeneralTestMiddleware(coroutineScope: CoroutineScope, val dependency: BogusDependency) :
         OrbitContainerHost<State, State, Nothing> {
-        override val container = coroutineScope.orbitContainer<State, Nothing>(initialState) {
+        override val container = orbitContainer(coroutineScope, initialState) {
             created()
         }
 

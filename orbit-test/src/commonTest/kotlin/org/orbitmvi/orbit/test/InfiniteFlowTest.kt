@@ -69,7 +69,7 @@ internal class InfiniteFlowTest {
 //    org.orbitmvi.orbit.SuspendingStrategyDispatchTest[jvm] > suspending test maintains test dispatcher through runTest[jvm] PASSED
 
     private inner class InfiniteFlowMiddleware(testScope: TestScope) : OrbitContainerHost<List<Int>, List<Int>, Nothing> {
-        override val container: OrbitContainer<List<Int>, List<Int>, Nothing> = testScope.backgroundScope.orbitContainer(listOf(42))
+        override val container: OrbitContainer<List<Int>, List<Int>, Nothing> = orbitContainer(testScope.backgroundScope, listOf(42))
 
         fun incrementForever() = intent {
             while (coroutineContext.isActive) {

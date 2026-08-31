@@ -79,7 +79,7 @@ internal class RefCountStateTest {
     private data class TestState(val id: Int = Random.nextInt())
 
     private inner class Middleware(scope: TestScope, initialState: TestState) : OrbitContainerHost<TestState, TestState, String> {
-        override val container = scope.backgroundScope.orbitContainer<TestState, String>(initialState)
+        override val container = orbitContainer(scope.backgroundScope, initialState)
 
         fun something(action: Int) = intent {
             reduce {
