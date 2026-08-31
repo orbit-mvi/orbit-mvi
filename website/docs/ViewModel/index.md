@@ -52,6 +52,23 @@ When the `ViewModel` implements
 the state and side effect types are inferred from the class declaration, so no
 type arguments are needed at the call site.
 
+For the rarer case of a `ViewModel` that is not an `OrbitContainerHost`, use
+`createOrbitContainer` instead. There is no host to infer from, so all type
+arguments have to be provided explicitly:
+
+```kotlin
+class ExampleViewModel : ViewModel() {
+
+    val container = createOrbitContainer<ExampleState, Nothing>(ExampleState())
+
+    ...
+}
+```
+
+Every `createOrbitContainer` overload mirrors an `orbitContainer` one, including
+the saved state variants below. `ViewModel.orbitContainer` is deprecated for the
+host-less case and its quick fix rewrites the call to `createOrbitContainer`.
+
 ## Saved state functionality with Kotlinx Serialization (Multiplatform)
 
 To automatically save state on process death or UI destruction, two conditions
