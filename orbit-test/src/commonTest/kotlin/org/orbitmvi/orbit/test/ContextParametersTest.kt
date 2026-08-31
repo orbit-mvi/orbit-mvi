@@ -104,6 +104,43 @@ internal class ContextParametersTest {
         }
     }
 
+    @Test
+    @ExperimentalCoroutinesApi
+    fun explicit_test_scope_external_state_overload_still_resolves_when_a_test_scope_is_in_context() = runTest {
+        val scope = TestScope()
+
+        createMiddleware().testWithExternalState(scope) {
+            containerHost.incrementAfterDelay()
+
+            // The intent is delayed, so nothing is emitted until we advance the separate scope's virtual time
+            expectNoItems()
+
+            scope.testScheduler.advanceTimeBy(DELAY_MILLIS + 1)
+
+            expectExternalState { ExternalState(incrementedCount.toString()) }
+            expectSideEffect(incrementedCount)
+        }
+    }
+
+    @Test
+    @ExperimentalCoroutinesApi
+    fun explicit_test_scope_internal_and_external_state_overload_still_resolves_when_a_test_scope_is_in_context() = runTest {
+        val scope = TestScope()
+
+        createMiddleware().testWithInternalAndExternalState(scope) {
+            containerHost.incrementAfterDelay()
+
+            // The intent is delayed, so nothing is emitted until we advance the separate scope's virtual time
+            expectNoItems()
+
+            scope.testScheduler.advanceTimeBy(DELAY_MILLIS + 1)
+
+            expectInternalState { InternalState(incrementedCount) }
+            expectExternalState { ExternalState(incrementedCount.toString()) }
+            expectSideEffect(incrementedCount)
+        }
+    }
+
     private fun TestScope.createMiddleware(): GeneralTestMiddleware = GeneralTestMiddleware(backgroundScope)
 
     private inner class GeneralTestMiddleware(coroutineScope: CoroutineScope) :
